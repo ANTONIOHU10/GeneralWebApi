@@ -8,4 +8,8 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.6.0" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
+  </ItemGroup>
 </Project>
