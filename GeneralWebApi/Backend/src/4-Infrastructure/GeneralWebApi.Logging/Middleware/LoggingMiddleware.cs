@@ -1,4 +1,7 @@
-namespace GeneralWebApi.WebApi.Middleware;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+namespace GeneralWebApi.Logging.Middleware;
 
 public class LoggingMiddleware
 {

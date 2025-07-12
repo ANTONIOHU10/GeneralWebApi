@@ -1,6 +1,6 @@
 using GeneralWebApi.Logging.Configuration;
 using GeneralWebApi.Logging.Extensions;
-using GeneralWebApi.WebApi.Middleware;
+using GeneralWebApi.Logging.Middleware;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
