@@ -1,9 +1,17 @@
+using GeneralWebApi.Logging.Configuration;
+using GeneralWebApi.Logging.Extensions;
+using GeneralWebApi.WebApi.Middleware;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
+
+//Add custom Serilog logging
+builder.Host.ConfigureSerilog();
+builder.Services.AddCustomLogging();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
@@ -35,6 +43,8 @@ if (app.Environment.IsDevelopment())
     //scalar api reference: https://localhost:7297/scalar/v1
     app.MapScalarApiReference();
 }
+
+app.UseMiddleware<LoggingMiddleware>();
 
 app.UseHttpsRedirection();
 
