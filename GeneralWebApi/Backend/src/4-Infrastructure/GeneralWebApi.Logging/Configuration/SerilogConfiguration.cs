@@ -43,7 +43,7 @@ public static class SerilogConfiguration
                                     "   ├─ ConnectionId: {ConnectionId}{NewLine}" +
                                     "   ├─ Request: {RequestPath} | {RequestId}{NewLine}" +
                                     "   ├─ StatusCode: {StatusCode:}{NewLine}" +
-                                    "   └─ Exception: {Exception}",
+                                    "   └─ Exception: {Exception}{NewLine}",
                         theme: AnsiConsoleTheme.Code));
                 /*
                 .WriteTo.File(
