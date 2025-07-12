@@ -14,6 +14,7 @@ public class SerilogService(ILogger<SerilogService> logger) : ILoggingService
 
     public void LogInformation(string message, params object[] args)
     {
+        //@ is used to format the args as a json object
          _logger.LogInformation("Message: {Message}, Args: {@Args}", message, args);
     }
 

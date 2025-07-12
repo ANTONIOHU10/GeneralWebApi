@@ -4,7 +4,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+
+    <!-- API Versioning-->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+
+    <!-- API UI-->
     <PackageReference Include="Scalar.AspNetCore" Version="2.6.0" />
   </ItemGroup>
 

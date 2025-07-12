@@ -17,10 +17,10 @@ public class TestController : BaseController
     [HttpGet]
     public ActionResult<ApiResponse<object>> Get()
     {
-        _log.LogInformation("Test endpoint is working");
+        _log.LogInformation("Test endpoint v1 is working");
         //_log.LogWarning("Test endpoint is working");
         //_log.LogError("Test endpoint is working");
-        _log.LogCritical(new Exception("Test endpoint is working"), "Test endpoint is working");
+        //_log.LogCritical(new Exception("Test endpoint is working"), "Test endpoint is working");
         //_log.LogDebug(new Exception("Test endpoint is working"), "Test endpoint is working");
 
         var data = new {};
