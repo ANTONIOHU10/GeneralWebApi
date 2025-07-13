@@ -21,7 +21,7 @@ public class ApiKeyMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        // 只处理需要 API Key 认证的请求
+        // only handle the requests that need API Key authentication
         if (context.Request.Headers.ContainsKey(_apiKeySettings.HeaderName))
         {
             var apiKey = context.Request.Headers[_apiKeySettings.HeaderName].FirstOrDefault();
@@ -30,7 +30,7 @@ public class ApiKeyMiddleware
             {
                 var clientName = _apiKeySettings.ValidApiKeys.FirstOrDefault(x => x.Value == apiKey).Key;
                 
-                // 创建 API Key 身份
+                // create the API Key identity
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.Name, clientName),

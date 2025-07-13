@@ -9,14 +9,14 @@ public class UserService : IUserService
     private readonly IJwtService _jwtService;
     private readonly ILoggingService _logger;
     
-    // 临时用户存储 - 生产环境应该使用数据库
+    // temporary user storage - should use database in production
     private readonly Dictionary<string, (string Password, List<string> Roles)> _users = new()
     {
         { "admin", ("admin123", new List<string> { "Admin", "User" }) },
         { "user", ("user123", new List<string> { "User" }) }
     };
 
-    // 临时刷新令牌存储 - 生产环境应该使用 Redis 或数据库
+    // temporary refresh token storage - should use Redis or database in production
     private readonly Dictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
     public UserService(IJwtService jwtService, ILoggingService logger)
@@ -44,7 +44,7 @@ public class UserService : IUserService
             var accessToken = _jwtService.GenerateAccessToken(claims.Claims);
             var refreshToken = _jwtService.GenerateRefreshToken();
 
-            // 存储刷新令牌
+            // store the refresh token
             _refreshTokens[refreshToken] = (username, DateTime.UtcNow.AddDays(7));
 
             _logger.LogInformation($"User {username} logged in successfully");
@@ -120,7 +120,7 @@ public class UserService : IUserService
                 new(ClaimTypes.AuthenticationMethod, "JWT")
             };
 
-            // 添加角色声明
+            // add the role claims
             foreach (var role in userInfo.Roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
