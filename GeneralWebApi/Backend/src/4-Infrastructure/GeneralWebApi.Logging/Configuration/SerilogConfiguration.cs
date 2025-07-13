@@ -23,6 +23,12 @@ public static class SerilogConfiguration
                 .ReadFrom.Configuration(context.Configuration)
                 .ReadFrom.Services(services)
                 .Enrich.FromLogContext()
+                //General log format
+                .WriteTo.Console(
+                    outputTemplate: "[{Timestamp:HH:mm:ss} | {Level:u3}] {Message:lj}{NewLine}" +
+                                "└─ Source: {SourceContext}{NewLine}" +
+                                "└─ Exception: {Exception}{NewLine}",
+                    theme: AnsiConsoleTheme.Code)
                 // system lifecycle log - simple format
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") && 

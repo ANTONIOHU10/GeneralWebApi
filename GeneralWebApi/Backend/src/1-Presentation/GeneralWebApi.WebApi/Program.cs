@@ -1,8 +1,10 @@
+using GeneralWebApi.Identity.Extensions;
 using GeneralWebApi.Logging.Configuration;
 using GeneralWebApi.Logging.Extensions;
 using GeneralWebApi.Logging.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 //Add custom Serilog logging
 builder.Host.ConfigureSerilog();
 builder.Services.AddCustomLogging();
+
+//Add custom authentication
+builder.Services.AddCustomAuthentication(builder.Configuration);
 
 //Add API Versioning
 builder.Services.AddApiVersioning(options =>
@@ -59,7 +64,10 @@ builder.Services.AddOpenApi(options =>
         };
         return Task.CompletedTask;
     });
+    
+
 });
+
 
 var app = builder.Build();
 
@@ -77,6 +85,7 @@ app.UseMiddleware<LoggingMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseCustomAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

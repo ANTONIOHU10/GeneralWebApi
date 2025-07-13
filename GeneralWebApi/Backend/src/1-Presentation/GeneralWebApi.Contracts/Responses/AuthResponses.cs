@@ -1,4 +1,4 @@
-namespace GeneralWebApi.Contracts.Common;
+namespace GeneralWebApi.Contracts.Responses;
 
 using GeneralWebApi.Contracts.Common;
 

@@ -7,7 +7,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCustomLogging(this IServiceCollection services)
     {
-        services.AddScoped<ILoggingService, SerilogService>();
+        services.AddSingleton<ILoggingService, SerilogService>();
         return services;
     }
 }
