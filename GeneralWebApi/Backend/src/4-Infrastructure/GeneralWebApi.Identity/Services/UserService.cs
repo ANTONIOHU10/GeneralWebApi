@@ -19,6 +19,7 @@ public class UserService : IUserService
     // temporary refresh token storage - should use Redis or database in production
     private readonly Dictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
+    // the registration of the UserService is in the ServiceCollectionExtensions.cs file
     public UserService(IJwtService jwtService, ILoggingService logger)
     {
         _jwtService = jwtService;
@@ -86,33 +87,35 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<bool> LogoutAsync(string refreshToken)
+    public Task<bool> LogoutAsync(string refreshToken)
     {
         try
         {
             if (_refreshTokens.Remove(refreshToken))
             {
                 _logger.LogInformation("User logged out successfully");
-                return true;
+                return Task.FromResult(true);
             }
-            return false;
+            return Task.FromResult(false);
         }
         catch (Exception ex)
         {
             _logger.LogError($"Logout error: {ex.Message}");
-            return false;
+            return Task.FromResult(false);
         }
     }
 
-    public async Task<ClaimsPrincipal?> GetUserClaimsAsync(string userId)
+    public Task<ClaimsPrincipal?> GetUserClaimsAsync(string userId)
     {
         try
         {
+            // check if the user exists
             if (!_users.TryGetValue(userId, out var userInfo))
             {
-                return null;
+                return Task.FromResult<ClaimsPrincipal?>(null);
             }
 
+            // create a list of claims
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, userId),
@@ -127,26 +130,26 @@ public class UserService : IUserService
             }
 
             var identity = new ClaimsIdentity(claims, "JWT");
-            return new ClaimsPrincipal(identity);
+            return Task.FromResult<ClaimsPrincipal?>(new ClaimsPrincipal(identity));
         }
         catch (Exception ex)
         {
             _logger.LogError($"Get user claims error for {userId}: {ex.Message}");
-            return null;
+            return Task.FromResult<ClaimsPrincipal?>(null);
         }
     }
 
-    public async Task<bool> ValidateUserAsync(string username, string password)
+    public Task<bool> ValidateUserAsync(string username, string password)
     {
         try
         {
-            return _users.TryGetValue(username, out var userInfo) && 
-                   userInfo.Password == password;
+            return Task.FromResult(_users.TryGetValue(username, out var userInfo) && 
+                   userInfo.Password == password);
         }
         catch (Exception ex)
         {
             _logger.LogError($"User validation error: {ex.Message}");
-            return false;
+            return Task.FromResult(false);
         }
     }
 }
