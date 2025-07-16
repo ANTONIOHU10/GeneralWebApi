@@ -15,14 +15,3 @@ public class DatabaseSettings
     public bool EnableDetailedErrors { get; set; } = false;
     public int PoolSize { get; set; } = 128;
 }
-
-public class DatabaseOptions
-{
-    public const string SectionName = "Database";
-
-    // for the appsettings.json properties
-    public string DefaultConnection { get; set; } = string.Empty;
-    public string ReadOnlyConnection { get; set; } = string.Empty;
-    public string WriteConnection { get; set; } = string.Empty;
-    public DatabaseSettings Settings { get; set; } = new();
-}

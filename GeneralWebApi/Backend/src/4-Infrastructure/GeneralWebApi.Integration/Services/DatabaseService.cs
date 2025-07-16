@@ -13,6 +13,11 @@ public class DatabaseService : IDatabaseService
     private readonly DatabaseSettings _databaseSettings;
     private readonly ILogger<DatabaseService> _logger;
 
+    //the databaseSettings has been registered in the ServiceCollectionExtensions class
+    // and then we can use it in the DatabaseService class
+
+    // the logger has been registered in the program.cs file (loggingExtension)
+    // the logger type is used for the sourceContext in the log
     public DatabaseService(IOptions<DatabaseSettings> databaseSettings, ILogger<DatabaseService> logger)
     {
         _databaseSettings = databaseSettings.Value;
@@ -22,11 +27,11 @@ public class DatabaseService : IDatabaseService
     public async Task<int> ExecuteAsync(string sql, object? parameters = null, CancellationToken cancellationToken = default)
     {
         using var connection = new SqlConnection(_databaseSettings.ConnectionString);
-            return await Task.Run(async () =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return await connection.ExecuteAsync(sql, parameters, commandTimeout: _databaseSettings.CommandTimeout, commandType: System.Data.CommandType.Text);
-        }, cancellationToken);
+        return await Task.Run(async () =>
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return await connection.ExecuteAsync(sql, parameters, commandTimeout: _databaseSettings.CommandTimeout, commandType: System.Data.CommandType.Text);
+    }, cancellationToken);
     }
 
     // IsHealthyAsync → check if the database is healthy -> connection test -> query test
@@ -36,7 +41,7 @@ public class DatabaseService : IDatabaseService
         {
             using var connection = new SqlConnection(_databaseSettings.ConnectionString);
             await connection.OpenAsync(cancellationToken);
-            
+
             var result = await connection.QueryFirstOrDefaultAsync<int>(
                 "SELECT 1",
                 commandTimeout: _databaseSettings.CommandTimeout,
@@ -65,11 +70,11 @@ public class DatabaseService : IDatabaseService
     public async Task<T> QueryFirstAsync<T>(string sql, object? parameters = null, CancellationToken cancellationToken = default)
     {
         using var connection = new SqlConnection(_databaseSettings.ConnectionString);
-            return await Task.Run(async () =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return await connection.QueryFirstAsync<T>(sql, parameters, commandTimeout: _databaseSettings.CommandTimeout, commandType: System.Data.CommandType.Text);
-        }, cancellationToken);
+        return await Task.Run(async () =>
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return await connection.QueryFirstAsync<T>(sql, parameters, commandTimeout: _databaseSettings.CommandTimeout, commandType: System.Data.CommandType.Text);
+    }, cancellationToken);
     }
 
     public async Task<T?> QueryFirstOrDefaultAsync<T>(string sql, object? parameters = null, CancellationToken cancellationToken = default)

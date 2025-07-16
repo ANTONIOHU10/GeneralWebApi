@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GeneralWebApi.Integration.Configuration;
 
+//this configuration will automatically be scanned by ApplicationDbContext
+// and applied to the Product entity
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)

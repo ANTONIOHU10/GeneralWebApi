@@ -9,13 +9,26 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GeneralWebApi.Integration.Extensions;
 
+/// <summary>
+/// This class is used to register the database service
+/// to register a service, we need to add the service into the ServiceCollection
+/// and then we can register it in the Program.cs file
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="services"> the services container, that will be used to register the services</param>
+    /// <param name="configuration">the configuration to be registered into the services container</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static IServiceCollection AddDatabaseService(this IServiceCollection services, IConfiguration configuration)
     {
-        // DatabaseSettings : from Configuration → DatabaseSettings declaration class
+        // Register configuration : the database settings for other usages
         services.Configure<DatabaseSettings>(configuration.GetSection(DatabaseSettings.SectionName));
-        services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SectionName));
+
+        // get the database settings from the configuration
         var databaseSettings = configuration.GetSection(DatabaseSettings.SectionName).Get<DatabaseSettings>();
 
         if (databaseSettings == null)
@@ -23,7 +36,6 @@ public static class ServiceCollectionExtensions
             throw new InvalidOperationException("Database settings are not configured");
         }
 
-        //register the database context
 
         // the default lifecycles of the DbContext are Scoped - one for each request
         services.AddDbContext<ApplicationDbContext>
@@ -56,7 +68,7 @@ public static class ServiceCollectionExtensions
 
                 });
 
-                // for development environment
+
                 if (databaseSettings.EnableSensitiveDataLogging)
                 {
                     options.EnableSensitiveDataLogging();
@@ -69,10 +81,10 @@ public static class ServiceCollectionExtensions
             }
         );
 
-        // register the database service
+        // register the database service, with all the basic methods to interact with the database
         services.AddScoped<IDatabaseService, DatabaseService>();
 
-        // register the migration service
+        // register the migration service, to be used to migrate the database
         services.AddScoped<IDatabaseMigrationService, DatabaseMigrationService>();
 
 
@@ -99,6 +111,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Register the repositories, to be used in the services
+    /// we prefer to seperate the repositories registration from the base services
+    /// </summary>
+    /// <param name="services"> the services container, that will be used to register the services</param>
+    /// <returns></returns>
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();

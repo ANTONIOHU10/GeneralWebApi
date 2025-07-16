@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 
 using Scalar.AspNetCore;
 
+// from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,6 +23,7 @@ builder.Host.ConfigureSerilog();
 builder.Services.AddCustomLogging();
 
 //Add custom authentication
+
 builder.Services.AddCustomAuthentication(builder.Configuration);
 
 //Add database integration
