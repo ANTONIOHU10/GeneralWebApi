@@ -1,10 +1,14 @@
 using GeneralWebApi.Identity.Extensions;
+using GeneralWebApi.Integration.Context;
+using GeneralWebApi.Integration.Extensions;
+using GeneralWebApi.Integration.Seeds;
+using GeneralWebApi.Integration.Services;
 using GeneralWebApi.Logging.Configuration;
 using GeneralWebApi.Logging.Extensions;
 using GeneralWebApi.Logging.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.OpenApi.Models;
+
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +23,11 @@ builder.Services.AddCustomLogging();
 
 //Add custom authentication
 builder.Services.AddCustomAuthentication(builder.Configuration);
+
+//Add database integration
+builder.Services.AddDatabaseService(builder.Configuration);
+builder.Services.AddDatabaseHealthChecks(builder.Configuration);
+builder.Services.AddRepositories();
 
 //Add API Versioning
 builder.Services.AddApiVersioning(options =>
@@ -64,7 +73,7 @@ builder.Services.AddOpenApi(options =>
         };
         return Task.CompletedTask;
     });
-    
+
 
 });
 
