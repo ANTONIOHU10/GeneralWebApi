@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.Logging.Services;
 
 namespace GeneralWebApi.Identity.Services;
@@ -7,22 +8,18 @@ public class UserService : IUserService
 {
     private readonly IJwtService _jwtService;
     private readonly ILoggingService _logger;
-    
-    // temporary user storage - should use database in production
-    private readonly Dictionary<string, (string Password, List<string> Roles)> _users = new()
-    {
-        { "admin", ("admin123", new List<string> { "Admin", "User" }) },
-        { "user", ("user123", new List<string> { "User" }) }
-    };
+
+    private readonly IUserRepository _userRepository;
 
     // temporary refresh token storage - should use Redis or database in production
     private readonly Dictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
     // the registration of the UserService is in the ServiceCollectionExtensions.cs file
-    public UserService(IJwtService jwtService, ILoggingService logger)
+    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository)
     {
         _jwtService = jwtService;
         _logger = logger;
+        _userRepository = userRepository;
     }
 
     public async Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password)
@@ -61,7 +58,7 @@ public class UserService : IUserService
     {
         try
         {
-            if (!_refreshTokens.TryGetValue(refreshToken, out var tokenInfo) || 
+            if (!_refreshTokens.TryGetValue(refreshToken, out var tokenInfo) ||
                 tokenInfo.Expiry < DateTime.UtcNow)
             {
                 _logger.LogWarning("Invalid or expired refresh token");
@@ -76,7 +73,7 @@ public class UserService : IUserService
 
             var accessToken = _jwtService.GenerateAccessToken(claims.Claims);
             _logger.LogInformation($"Token refreshed for user: {tokenInfo.UserId}");
-            
+
             return (true, accessToken);
         }
         catch (Exception ex)
@@ -104,51 +101,49 @@ public class UserService : IUserService
         }
     }
 
-    public Task<ClaimsPrincipal?> GetUserClaimsAsync(string userId)
+    public async Task<ClaimsPrincipal?> GetUserClaimsAsync(string userName)
     {
         try
         {
-            // check if the user exists
-            if (!_users.TryGetValue(userId, out var userInfo))
+            var user = await _userRepository.GetByNameAsync(userName);
+            if (user == null)
             {
-                return Task.FromResult<ClaimsPrincipal?>(null);
+                return null;
             }
 
             // create a list of claims
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, userId),
-                new(ClaimTypes.Name, userId),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.Name),
                 new(ClaimTypes.AuthenticationMethod, "JWT")
             };
 
-            // add the role claims
-            foreach (var role in userInfo.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
             var identity = new ClaimsIdentity(claims, "JWT");
-            return Task.FromResult<ClaimsPrincipal?>(new ClaimsPrincipal(identity));
+            return new ClaimsPrincipal(identity);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Get user claims error for {userId}: {ex.Message}");
-            return Task.FromResult<ClaimsPrincipal?>(null);
+            _logger.LogError($"Get user claims error for {userName}: {ex.Message}");
+            return null;
         }
     }
 
-    public Task<bool> ValidateUserAsync(string username, string password)
+    public async Task<bool> ValidateUserAsync(string username, string password)
     {
         try
         {
-            return Task.FromResult(_users.TryGetValue(username, out var userInfo) && 
-                   userInfo.Password == password);
+            var user = await _userRepository.ValidateUserAsync(username, password);
+            if (user == null)
+            {
+                return false;
+            }
+            return true;
         }
         catch (Exception ex)
         {
             _logger.LogError($"User validation error: {ex.Message}");
-            return Task.FromResult(false);
+            return false;
         }
     }
 }

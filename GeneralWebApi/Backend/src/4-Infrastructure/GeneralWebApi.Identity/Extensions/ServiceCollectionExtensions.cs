@@ -82,9 +82,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    // middlewares
     public static IApplicationBuilder UseCustomAuthentication(this IApplicationBuilder app)
     {
+        //custom middleware for api key authentication
         app.UseMiddleware<ApiKeyMiddleware>();
+
+        // native middleware for authentication and authorization
         app.UseAuthentication();
         app.UseAuthorization();
         return app;

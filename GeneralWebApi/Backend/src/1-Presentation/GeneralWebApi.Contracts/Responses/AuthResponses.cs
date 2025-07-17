@@ -31,7 +31,7 @@ public class RegisterResponseData
     public bool EmailConfirmed { get; set; }
 
     //optional, depends on whether to auto-login after registration
-    public TokenInfo? Token { get; set; } 
+    public TokenInfo? Token { get; set; }
 }
 
 
@@ -50,24 +50,24 @@ public class LogoutResponseData
 //Factory methods for creating ApiResponse instances
 public static class AuthResponse
 {
-    public static ApiResponse<LoginResponseData> LoginSuccess(LoginResponseData data) 
+    public static ApiResponse<LoginResponseData> LoginSuccess(LoginResponseData data)
         => ApiResponse<LoginResponseData>.SuccessResult(data, "Login successful");
 
-    public static ApiResponse<RegisterResponseData> RegisterSuccess(RegisterResponseData data) 
+    public static ApiResponse<RegisterResponseData> RegisterSuccess(RegisterResponseData data)
         => ApiResponse<RegisterResponseData>.SuccessResult(data, "Register successful");
 
-    public static ApiResponse<RefreshTokenResponseData> RefreshTokenSuccess(RefreshTokenResponseData data) 
+    public static ApiResponse<RefreshTokenResponseData> RefreshTokenSuccess(RefreshTokenResponseData data)
         => ApiResponse<RefreshTokenResponseData>.SuccessResult(data, "Token refreshed successfully");
 
-    public static ApiResponse<LogoutResponseData> LogoutSuccess() 
+    public static ApiResponse<LogoutResponseData> LogoutSuccess()
         => ApiResponse<LogoutResponseData>.SuccessResult(new LogoutResponseData(), "Logout successful");
 
-    public static ApiResponse<LoginResponseData> LoginFailed(string error = "Username or password is incorrect") 
+    public static ApiResponse<LoginResponseData> LoginFailed(string error = "Username or password is incorrect")
         => ApiResponse<LoginResponseData>.Unauthorized(error);
 
-    public static ApiResponse<RegisterResponseData> RegisterFailed(string error) 
+    public static ApiResponse<RegisterResponseData> RegisterFailed(string error)
         => ApiResponse<RegisterResponseData>.ErrorResult(error, 400);
 
-    public static ApiResponse<RefreshTokenResponseData> RefreshTokenFailed(string error = "Invalid refresh token") 
+    public static ApiResponse<RefreshTokenResponseData> RefreshTokenFailed(string error = "Invalid refresh token")
         => ApiResponse<RefreshTokenResponseData>.Unauthorized(error);
 }

@@ -1,7 +1,9 @@
 using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Contracts.Requests;
 using GeneralWebApi.Contracts.Responses;
+using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Identity.Services;
+using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.WebApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,13 @@ public class AuthController : BaseController
 {
     private readonly IUserService _userService;
     private readonly IJwtService _jwtService;
+    private readonly IUserRepository _userRepository;
 
-    public AuthController(IUserService userService, IJwtService jwtService)
+    public AuthController(IUserService userService, IJwtService jwtService, IUserRepository userRepository)
     {
         _userService = userService;
         _jwtService = jwtService;
+        _userRepository = userRepository;
     }
 
     [HttpPost("login")]
@@ -31,7 +35,7 @@ public class AuthController : BaseController
             return Unauthorized(AuthResponse.LoginFailed("Invalid username or password"));
         }
 
-        // 获取用户信息
+        // get the user claims
         var userClaims = await _userService.GetUserClaimsAsync(request.Username);
         var roles = userClaims?.Claims
             .Where(c => c.Type == ClaimTypes.Role)
@@ -99,69 +103,60 @@ public class AuthController : BaseController
         return Ok(AuthResponse.LogoutSuccess());
     }
 
+    // add Authrorization   Bearer Token into the header
     [HttpGet("me")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<LoginResponseData>>> GetCurrentUser()
     {
-        var userId = User.Identity?.Name;
-        
-        if (string.IsNullOrEmpty(userId))
+        var userName = User.Identity?.Name;
+
+        if (string.IsNullOrEmpty(userName))
         {
             return Unauthorized(ApiResponse<LoginResponseData>.Unauthorized("User not found"));
         }
 
-        var userClaims = await _userService.GetUserClaimsAsync(userId);
-        
+        var userClaims = await _userService.GetUserClaimsAsync(userName);
+
         if (userClaims == null)
         {
             return NotFound(ApiResponse<LoginResponseData>.NotFound("User not found"));
         }
 
-        var roles = userClaims.Claims
-            .Where(c => c.Type == ClaimTypes.Role)
-            .Select(c => c.Value)
-            .ToArray();
-
         var responseData = new LoginResponseData
         {
-            UserId = userId,
-            Username = userId,
-            Email = $"{userId}@example.com", // 临时，实际应从数据库获取
-            Roles = roles,
-            Profile = new Dictionary<string, object>
-            {
-                ["LastLogin"] = DateTime.UtcNow,
-                ["AuthMethod"] = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.AuthenticationMethod)?.Value ?? "Unknown"
-            }
-            // 注意：这里不返回 Token 信息，因为这是获取用户信息的接口
+            UserId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            Username = userClaims.FindFirst(ClaimTypes.Name)?.Value,
+            Email = userClaims.FindFirst(ClaimTypes.AuthenticationMethod)?.Value
         };
 
         return Ok(ApiResponse<LoginResponseData>.SuccessResult(responseData, "User information retrieved successfully"));
     }
 
-    [HttpGet("validate")]
-    [Authorize]
-    public ActionResult<ApiResponse<object>> ValidateToken()
-    {
-        var tokenInfo = new
-        {
-            UserId = User.Identity?.Name,
-            IsAuthenticated = User.Identity?.IsAuthenticated ?? false,
-            AuthenticationType = User.Identity?.AuthenticationType,
-            Roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToArray(),
-            Claims = User.Claims.Select(c => new { c.Type, c.Value }).ToArray()
-        };
 
-        return Ok(ApiResponse<object>.SuccessResult(tokenInfo, "Token is valid"));
-    }
-    /*
     [HttpPost("register")]
     public async Task<ActionResult<ApiResponse<RegisterResponseData>>> Register([FromBody] RegisterRequest request)
     {
-        // 这里应该实现用户注册逻辑
-        // 目前先返回未实现的响应
-        
-        return BadRequest(AuthResponse.RegisterFailed("Registration not implemented yet"));
+        // TODO: validate the request
+        if (await _userRepository.ExistsByEmailAsync(request.Email) ||
+            await _userRepository.ExistsByNameAsync(request.Username))
+        {
+            return BadRequest(AuthResponse.RegisterFailed("User already exists"));
+        }
+        var user = new User
+        {
+            Name = request.Username,
+            Email = request.Email,
+            PasswordHash = request.Password,
+            CreatedBy = "System",
+
+        };
+        await _userRepository.RegisterUserAsync(user);
+        return Ok(AuthResponse.RegisterSuccess(new RegisterResponseData
+        {
+            UserId = user.Id.ToString(),
+            Username = user.Name,
+            Email = user.Email,
+            EmailConfirmed = false
+        }));
     }
-    */
 }

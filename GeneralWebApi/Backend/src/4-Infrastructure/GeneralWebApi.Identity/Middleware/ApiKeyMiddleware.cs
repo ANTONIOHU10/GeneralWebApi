@@ -24,12 +24,15 @@ public class ApiKeyMiddleware
         // only handle the requests that need API Key authentication
         if (context.Request.Headers.ContainsKey(_apiKeySettings.HeaderName))
         {
+            //get the api key from the header
             var apiKey = context.Request.Headers[_apiKeySettings.HeaderName].FirstOrDefault();
-            
+
+            // validate the api key
             if (!string.IsNullOrEmpty(apiKey) && _apiKeySettings.ValidApiKeys.ContainsValue(apiKey))
             {
+                // passed the api key validation, get the client name
                 var clientName = _apiKeySettings.ValidApiKeys.FirstOrDefault(x => x.Value == apiKey).Key;
-                
+
                 // create the API Key identity
                 var claims = new[]
                 {
@@ -38,9 +41,14 @@ public class ApiKeyMiddleware
                     new Claim("ClientId", clientName)
                 };
 
+                // create the identity for the client
                 var identity = new ClaimsIdentity(claims, "ApiKey");
+
+                // set the identity for the client, as a ClaimsPrincipa
+                // all the upcoming requests will be authenticated by this ClaimsPrincipal
+                // through the UseAuthentication middleware & the Authorization middleware
                 context.User = new ClaimsPrincipal(identity);
-                
+
                 _logger.LogInformation($"API Key authentication successful for client: {clientName}");
             }
         }
