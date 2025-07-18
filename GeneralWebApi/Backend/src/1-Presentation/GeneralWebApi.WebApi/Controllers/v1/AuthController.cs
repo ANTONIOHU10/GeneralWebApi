@@ -2,6 +2,7 @@ using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Contracts.Requests;
 using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.Domain.Entities;
+using GeneralWebApi.Domain.Enums;
 using GeneralWebApi.Identity.Services;
 using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.WebApi.Controllers.Base;
@@ -148,6 +149,7 @@ public class AuthController : BaseController
             Email = request.Email,
             PasswordHash = request.Password,
             CreatedBy = "System",
+            Role = Role.User.ToString()
 
         };
         await _userRepository.RegisterUserAsync(user);

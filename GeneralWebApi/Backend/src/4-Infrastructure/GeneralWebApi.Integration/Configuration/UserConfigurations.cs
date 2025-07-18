@@ -1,4 +1,5 @@
 using GeneralWebApi.Domain.Entities;
+using GeneralWebApi.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,6 +12,8 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("Users");
+
+        #region properties
         // primary key, db will create and auto increment an id
         builder.HasKey(u => u.Id);
         builder.Property(u => u.Id).ValueGeneratedOnAdd();
@@ -18,6 +21,18 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         builder.Property(u => u.Email).HasMaxLength(100).IsRequired();
         builder.Property(u => u.PasswordHash).HasMaxLength(100).IsRequired();
         builder.Property(u => u.PhoneNumber).HasMaxLength(20);
+        builder.Property(u => u.Role).HasConversion<string>();
         builder.Property(u => u.CreatedAt).HasDefaultValueSql("GETDATE()");
+        #endregion
+
+        #region order
+
+        builder.Property(u => u.Name).HasColumnOrder(1);
+        builder.Property(u => u.Email).HasColumnOrder(2);
+        builder.Property(u => u.PasswordHash).HasColumnOrder(3);
+        builder.Property(u => u.PhoneNumber).HasColumnOrder(4);
+        builder.Property(u => u.Role).HasColumnOrder(5);
+
+        #endregion
     }
 }
