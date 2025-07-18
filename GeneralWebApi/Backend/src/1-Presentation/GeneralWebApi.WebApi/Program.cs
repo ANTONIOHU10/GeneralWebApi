@@ -1,11 +1,9 @@
 using GeneralWebApi.Identity.Extensions;
-using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Extensions;
-using GeneralWebApi.Integration.Seeds;
-using GeneralWebApi.Integration.Services;
 using GeneralWebApi.Logging.Configuration;
 using GeneralWebApi.Logging.Extensions;
 using GeneralWebApi.Logging.Middleware;
+using GeneralWebApi.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 
@@ -60,6 +58,9 @@ builder.Services.AddVersionedApiExplorer(options =>
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
+// add rate limiter
+builder.Services.AddCustomRateLimiter();
+
 builder.Services.AddOpenApi(options =>
 {
     // add document transformer to modify the document before it is returned
@@ -100,5 +101,6 @@ app.UseCustomAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseRateLimiter();
 
 app.Run();

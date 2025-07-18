@@ -8,6 +8,7 @@ using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.WebApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 namespace GeneralWebApi.WebApi.Controllers.v1;
@@ -27,6 +28,7 @@ public class AuthController : BaseController
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("Default")]
     public async Task<ActionResult<ApiResponse<LoginResponseData>>> Login([FromBody] LoginRequest request)
     {
         var (success, accessToken, refreshToken) = await _userService.LoginAsync(request.Username, request.Password);
@@ -64,6 +66,7 @@ public class AuthController : BaseController
     }
 
     [HttpPost("refresh")]
+    [EnableRateLimiting("Default")]
     public async Task<ActionResult<ApiResponse<RefreshTokenResponseData>>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var (success, accessToken) = await _userService.RefreshTokenAsync(request.RefreshToken);
@@ -91,6 +94,7 @@ public class AuthController : BaseController
     }
 
     [HttpPost("logout")]
+    [EnableRateLimiting("Default")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<LogoutResponseData>>> Logout([FromBody] LogoutRequest request)
     {
@@ -106,6 +110,7 @@ public class AuthController : BaseController
 
     // add Authrorization   Bearer Token into the header
     [HttpGet("me")]
+    [EnableRateLimiting("Default")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<LoginResponseData>>> GetCurrentUser()
     {
@@ -135,6 +140,7 @@ public class AuthController : BaseController
 
 
     [HttpPost("register")]
+    [EnableRateLimiting("Default")]
     public async Task<ActionResult<ApiResponse<RegisterResponseData>>> Register([FromBody] RegisterRequest request)
     {
         // TODO: validate the request

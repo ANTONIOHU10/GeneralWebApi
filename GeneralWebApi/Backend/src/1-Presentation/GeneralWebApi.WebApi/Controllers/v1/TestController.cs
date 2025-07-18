@@ -2,6 +2,7 @@ using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.WebApi.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace GeneralWebApi.WebApi.Controllers.v1;
 
@@ -15,6 +16,7 @@ public class TestController : BaseController
         _log = log;
     }
     [HttpGet]
+    [EnableRateLimiting("Default")]
     public ActionResult<ApiResponse<object>> Get()
     {
         _log.LogInformation("Test endpoint v1 is working");
@@ -23,7 +25,7 @@ public class TestController : BaseController
         //_log.LogCritical(new Exception("Test endpoint is working"), "Test endpoint is working");
         //_log.LogDebug(new Exception("Test endpoint is working"), "Test endpoint is working");
 
-        var data = new {};
+        var data = new { };
         return Success((object)data, "Test endpoint is working");
     }
 }

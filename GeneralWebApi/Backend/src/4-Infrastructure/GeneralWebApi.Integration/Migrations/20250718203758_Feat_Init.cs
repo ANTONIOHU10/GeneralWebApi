@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GeneralWebApi.Integration.Migrations
 {
     /// <inheritdoc />
-    public partial class Feat_NewTable : Migration
+    public partial class Feat_Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

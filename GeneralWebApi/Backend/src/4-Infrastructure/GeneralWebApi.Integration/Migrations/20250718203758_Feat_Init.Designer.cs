@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeneralWebApi.Integration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250718130518_Feat_Recreate")]
-    partial class Feat_Recreate
+    [Migration("20250718203758_Feat_Init")]
+    partial class Feat_Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

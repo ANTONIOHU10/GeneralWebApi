@@ -16,9 +16,9 @@ public class ProductSeeder
             {
                 user = new User
                 {
-                    Name = "John Doe",
-                    Email = "john.doe@example.com",
-                    PasswordHash = "passworTest",
+                    Name = "antonio",
+                    Email = "antonio@example.com",
+                    PasswordHash = "antonio",
                     PhoneNumber = "1234567890",
                     CreatedAt = DateTime.UtcNow,
                     Role = Role.User.ToString(),
