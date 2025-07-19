@@ -116,6 +116,7 @@ public class UserService : IUserService
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.Name),
+                new(ClaimTypes.Email, user.Email),
                 new(ClaimTypes.AuthenticationMethod, "JWT"),
                 new(ClaimTypes.Role, user.Role)
             };

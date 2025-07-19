@@ -49,7 +49,8 @@ public class AuthController : BaseController
         {
             UserId = request.Username,
             Username = request.Username,
-            Email = $"{request.Username}@example.com", // 临时，实际应从数据库获取
+            //Email = $"{request.Username}@example.com", // 临时，实际应从数据库获取
+            Email = userClaims?.FindFirst(ClaimTypes.Email)?.Value,
             Roles = roles,
             Token = new TokenInfo
             {
@@ -137,6 +138,7 @@ public class AuthController : BaseController
         {
             UserId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value,
             Username = userClaims.FindFirst(ClaimTypes.Name)?.Value,
+            Email = userClaims.FindFirst(ClaimTypes.Email)?.Value,
             Roles = roles
         };
 

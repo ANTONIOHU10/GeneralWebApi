@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeneralWebApi.Integration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250718203758_Feat_Init")]
-    partial class Feat_Init
+    [Migration("20250719182144_InitialCreate_Test")]
+    partial class InitialCreate_Test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
