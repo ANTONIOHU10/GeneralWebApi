@@ -1,6 +1,10 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
+using GeneralWebApi.Domain.Entities;
+using GeneralWebApi.Domain.Enums;
 using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.Logging.Services;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace GeneralWebApi.Identity.Services;
 
@@ -140,12 +144,79 @@ public class UserService : IUserService
             {
                 return false;
             }
-            return true;
+
+            // check if the password is correct
+            var passwordHash = user.PasswordHash.Split(':');
+            var salt = Convert.FromBase64String(passwordHash[0]);
+            var hashedUserPassword = passwordHash[1];
+
+            // verify the password using the same hashing algorithm and salt
+            var computedInputPasswordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8
+            ));
+            Console.WriteLine("------Starting password validation------");
+            Console.WriteLine($"computedInputPasswordHash: {computedInputPasswordHash}");
+            Console.WriteLine($"hashedUserPassword: {hashedUserPassword}");
+            Console.WriteLine("------Ending password validation------");
+
+            // compare the computed hash with the hashed user password
+            return computedInputPasswordHash == hashedUserPassword;
         }
         catch (Exception ex)
         {
             _logger.LogError($"User validation error: {ex.Message}");
             return false;
         }
+    }
+
+    public async Task<bool> RegisterUserAsync(string username, string password, string email)
+    {
+        try
+        {
+            if (await _userRepository.ExistsByEmailAsync(email) ||
+                await _userRepository.ExistsByNameAsync(username))
+            {
+                return false;
+            }
+            var user = new User
+            {
+                Name = username,
+                Email = email,
+                PasswordHash = GeneratePasswordHash(password),
+                CreatedBy = "System",
+                Role = Role.User.ToString()
+            };
+            await _userRepository.RegisterUserAsync(user);
+
+            _logger.LogInformation($"User {username} registered successfully");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"User registration error: {ex.Message}");
+            return false;
+        }
+    }
+
+    public string GeneratePasswordHash(string password)
+    {
+        // generate a random salt to hash the password
+        byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+
+        // hash the password
+        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password!,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 100000,
+            numBytesRequested: 256 / 8
+        ));
+
+        // return the salt and the hashed password together
+        return $"{Convert.ToBase64String(salt)}:{hashed}";
     }
 }

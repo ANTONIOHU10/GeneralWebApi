@@ -21,10 +21,7 @@ public class UserRepository : IUserRepository
         {
             throw new Exception("User not found");
         }
-        if (user.PasswordHash != password)
-        {
-            throw new Exception("Invalid password");
-        }
+
         return user;
     }
 
@@ -35,9 +32,6 @@ public class UserRepository : IUserRepository
         {
             throw new Exception("User already exists");
         }
-
-        // TODO: hash the password
-        user.PasswordHash = user.PasswordHash;
 
         // add the user to the database
         await _dbContext.Users.AddAsync(user, cancellationToken);

@@ -151,26 +151,19 @@ public class AuthController : BaseController
     public async Task<ActionResult<ApiResponse<RegisterResponseData>>> Register([FromBody] RegisterRequest request)
     {
         // TODO: validate the request
-        if (await _userRepository.ExistsByEmailAsync(request.Email) ||
-            await _userRepository.ExistsByNameAsync(request.Username))
-        {
-            return BadRequest(AuthResponse.RegisterFailed("User already exists"));
-        }
-        var user = new User
-        {
-            Name = request.Username,
-            Email = request.Email,
-            PasswordHash = request.Password,
-            CreatedBy = "System",
-            Role = Role.User.ToString()
 
-        };
-        await _userRepository.RegisterUserAsync(user);
+        var success = await _userService.RegisterUserAsync(request.Username, request.Password, request.Email);
+
+        if (!success)
+        {
+            return BadRequest(AuthResponse.RegisterFailed("User registration failed"));
+        }
+
         return Ok(AuthResponse.RegisterSuccess(new RegisterResponseData
         {
-            UserId = user.Id.ToString(),
-            Username = user.Name,
-            Email = user.Email,
+            UserId = request.Username,
+            Username = request.Username,
+            Email = request.Email,
             EmailConfirmed = false
         }));
     }

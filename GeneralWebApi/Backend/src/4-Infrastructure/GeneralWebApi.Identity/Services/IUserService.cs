@@ -9,4 +9,6 @@ public interface IUserService
     Task<bool> LogoutAsync(string refreshToken);
     Task<ClaimsPrincipal?> GetUserClaimsAsync(string userName);
     Task<bool> ValidateUserAsync(string username, string password);
+    Task<bool> RegisterUserAsync(string username, string password, string email);
+    string GeneratePasswordHash(string password);
 }
