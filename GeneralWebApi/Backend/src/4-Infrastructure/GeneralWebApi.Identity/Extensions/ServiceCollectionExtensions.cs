@@ -35,7 +35,13 @@ public static class ServiceCollectionExtensions
         if (authSettings.EnableJwt)
         {
             var jwtSettings = authSettings.Jwt;
-            var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
+
+            // get the key from environment variable
+            // if the environment variable is not set, use the key from the configuration
+            var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET") ?? jwtSettings.SecretKey;
+            var key = Encoding.UTF8.GetBytes(secretKey);
+
+            //var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
 
             authBuilder.AddJwtBearer("Bearer", options =>
             {

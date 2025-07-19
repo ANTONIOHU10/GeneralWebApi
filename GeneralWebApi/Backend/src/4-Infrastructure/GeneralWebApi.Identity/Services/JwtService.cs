@@ -22,7 +22,12 @@ public class JwtService : IJwtService
         _jwtSettings = jwtSettings.Value;
         // convert the secret key string from appsettings.json to a symmetric security key byte array
         // the symmetric security key is used to sign the token, so user cannot see the secret key
-        _signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+
+        // the old way to get the secret key from the appsettings.json file
+        //_signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+
+        // the new way to get the secret key from the environment variable
+        _signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ?? _jwtSettings.SecretKey));
     }
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
