@@ -47,6 +47,19 @@ public class LogoutResponseData
     public string Message { get; set; } = "Logout successful";
 }
 
+public class UpdatePasswordResponseData
+{
+    public string Message { get; set; } = "Password updated successfully";
+}
+
+public class UserInfoResponseData
+{
+    public string? UserId { get; set; }
+    public string? Username { get; set; }
+    public string? Email { get; set; }
+    public string[]? Roles { get; set; }
+}
+
 //Factory methods for creating ApiResponse instances
 public static class AuthResponse
 {
@@ -62,6 +75,12 @@ public static class AuthResponse
     public static ApiResponse<LogoutResponseData> LogoutSuccess()
         => ApiResponse<LogoutResponseData>.SuccessResult(new LogoutResponseData(), "Logout successful");
 
+    public static ApiResponse<UpdatePasswordResponseData> UpdatePasswordSuccess()
+        => ApiResponse<UpdatePasswordResponseData>.SuccessResult(new UpdatePasswordResponseData(), "Password updated successfully");
+
+    public static ApiResponse<UserInfoResponseData> UserInfoSuccess(UserInfoResponseData data)
+        => ApiResponse<UserInfoResponseData>.SuccessResult(data, "User information retrieved successfully");
+
     public static ApiResponse<LoginResponseData> LoginFailed(string error = "Username or password is incorrect")
         => ApiResponse<LoginResponseData>.Unauthorized(error);
 
@@ -70,4 +89,10 @@ public static class AuthResponse
 
     public static ApiResponse<RefreshTokenResponseData> RefreshTokenFailed(string error = "Invalid refresh token")
         => ApiResponse<RefreshTokenResponseData>.Unauthorized(error);
+
+    public static ApiResponse<UpdatePasswordResponseData> UpdatePasswordFailed(string error = "Invalid passwords inserted")
+        => ApiResponse<UpdatePasswordResponseData>.ErrorResult(error, 400);
+
+    public static ApiResponse<UserInfoResponseData> UserInfoFailed(string error = "User not found")
+        => ApiResponse<UserInfoResponseData>.NotFound(error);
 }

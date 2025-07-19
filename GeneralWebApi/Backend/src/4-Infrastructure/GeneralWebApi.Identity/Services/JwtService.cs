@@ -46,6 +46,7 @@ public class JwtService : IJwtService
             Audience = _jwtSettings.Audience
         };
         // create a token object
+        // the expiration is always different, so the token is different
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         // write the token to a string

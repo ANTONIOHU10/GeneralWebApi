@@ -119,14 +119,14 @@ public class AuthController : BaseController
 
         if (string.IsNullOrEmpty(userName))
         {
-            return Unauthorized(ApiResponse<LoginResponseData>.Unauthorized("User not found"));
+            return Unauthorized(AuthResponse.UserInfoFailed("User not found"));
         }
 
         var userClaims = await _userService.GetUserClaimsAsync(userName);
 
         if (userClaims == null)
         {
-            return NotFound(ApiResponse<LoginResponseData>.NotFound("User not found"));
+            return NotFound(AuthResponse.UserInfoFailed("User not found"));
         }
 
         var roles = userClaims.Claims
@@ -134,7 +134,7 @@ public class AuthController : BaseController
             .Select(c => c.Value)
             .ToArray();
 
-        var responseData = new LoginResponseData
+        var responseData = new UserInfoResponseData
         {
             UserId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value,
             Username = userClaims.FindFirst(ClaimTypes.Name)?.Value,
@@ -142,7 +142,7 @@ public class AuthController : BaseController
             Roles = roles
         };
 
-        return Ok(ApiResponse<LoginResponseData>.SuccessResult(responseData, "User information retrieved successfully"));
+        return Ok(AuthResponse.UserInfoSuccess(responseData));
     }
 
 
@@ -166,5 +166,15 @@ public class AuthController : BaseController
             Email = request.Email,
             EmailConfirmed = false
         }));
+
     }
+
+    [HttpPost("update-password")]
+    [EnableRateLimiting("Default")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse<UpdatePasswordResponseData>>> UpdatePassword([FromBody] UpdatePasswordRequest request)
+    {
+        return Ok("Password updated successfully");
+    }
+
 }
