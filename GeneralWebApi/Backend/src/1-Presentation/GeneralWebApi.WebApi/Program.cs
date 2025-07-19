@@ -98,7 +98,6 @@ app.UseMiddleware<LoggingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseCustomAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 app.UseRateLimiter();

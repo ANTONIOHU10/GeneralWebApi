@@ -128,11 +128,16 @@ public class AuthController : BaseController
             return NotFound(ApiResponse<LoginResponseData>.NotFound("User not found"));
         }
 
+        var roles = userClaims.Claims
+            .Where(c => c.Type == ClaimTypes.Role)
+            .Select(c => c.Value)
+            .ToArray();
+
         var responseData = new LoginResponseData
         {
             UserId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value,
             Username = userClaims.FindFirst(ClaimTypes.Name)?.Value,
-            Email = userClaims.FindFirst(ClaimTypes.AuthenticationMethod)?.Value
+            Roles = roles
         };
 
         return Ok(ApiResponse<LoginResponseData>.SuccessResult(responseData, "User information retrieved successfully"));
