@@ -26,21 +26,33 @@ public static class OpenApiExtensions
                     Description = description
                 };
 
-                // define a new component for the security scheme
+                // define a new component for all the security scheme
                 // optional
                 document.Components = new()
                 {
                     SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
                     {
-                        ["Bearer"] = new()
+                        // Access Token
+                        ["AccessToken"] = new()
                         {
                             Type = SecuritySchemeType.Http,
                             Scheme = "bearer",
                             BearerFormat = "JWT",
-                            Description = "JWT Authorization header using the Bearer scheme"
+                            Description = "JWT Authorization header"
+                        },
+
+                        // Refresh Token
+                        // this value is not used in the body, but only an optional header
+                        ["RefreshToken"] = new()
+                        {
+                            Type = SecuritySchemeType.Http,
+                            Scheme = "bearer",
+                            //BearerFormat = "JWT",
+                            Description = "64 Bytes Refresh Token"
                         }
                     }
                 };
+
 
                 // apply the security scheme to all the endpoints
                 // document.SecurityRequirements = new List<OpenApiSecurityRequirement>
