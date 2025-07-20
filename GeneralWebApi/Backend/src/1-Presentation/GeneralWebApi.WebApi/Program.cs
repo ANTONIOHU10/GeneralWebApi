@@ -57,6 +57,11 @@ builder.Services.AddVersionedApiExplorer(options =>
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddRouting(options =>
+{
+    // make the urls lowercase
+    options.LowercaseUrls = true;
+});
 
 // add rate limiter
 builder.Services.AddCustomRateLimiter();
