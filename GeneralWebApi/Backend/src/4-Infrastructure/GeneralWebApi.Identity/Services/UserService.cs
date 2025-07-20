@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using GeneralWebApi.Domain.Entities;
@@ -15,8 +16,12 @@ public class UserService : IUserService
 
     private readonly IUserRepository _userRepository;
 
+    // need to save the refresh token in static, because it's a random byte array
+    // but access token is a decoded string, it contains all users' information to be validated
     // temporary refresh token storage - should use Redis or database in production
-    private readonly Dictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
+    // static to avoid multiple instances of the dictionary
+    // TODO: use Redis or database in production
+    private static readonly ConcurrentDictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
     // the registration of the UserService is in the ServiceCollectionExtensions.cs file
     public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository)
@@ -46,7 +51,13 @@ public class UserService : IUserService
             var refreshToken = _jwtService.GenerateRefreshToken();
 
             // store the refresh token
-            _refreshTokens[refreshToken] = (username, DateTime.UtcNow.AddDays(7));
+            _refreshTokens.TryAdd(refreshToken, (username, DateTime.UtcNow.AddDays(7)));
+
+            if (_refreshTokens.ContainsKey(refreshToken))
+            {
+                _logger.LogInformation($"Refresh token saved for user: {username}");
+                _logger.LogInformation($"Refresh tokens: {string.Join(", ", _refreshTokens.Keys)}");
+            }
 
             _logger.LogInformation($"User {username} logged in successfully");
             return (true, accessToken, refreshToken);
@@ -58,32 +69,53 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<(bool Success, string? AccessToken)> RefreshTokenAsync(string refreshToken)
+    public async Task<(bool Success, string? AccessToken, string? RefreshToken)> RefreshTokenAsync(string refreshToken)
     {
         try
         {
-            if (!_refreshTokens.TryGetValue(refreshToken, out var tokenInfo) ||
-                tokenInfo.Expiry < DateTime.UtcNow)
+            _logger.LogInformation($"Attempting to refresh token: {refreshToken}");
+            _logger.LogInformation($"Current refresh tokens count: {_refreshTokens.Count}");
+
+            if (!_refreshTokens.TryGetValue(refreshToken, out var tokenInfo))
             {
-                _logger.LogWarning("Invalid or expired refresh token");
-                return (false, null);
+                _logger.LogWarning("Invalid refresh token");
+                return (false, null, null);
+            }
+
+            if (tokenInfo.Expiry < DateTime.UtcNow)
+            {
+                // remove the expired refresh token
+                _refreshTokens.TryRemove(refreshToken, out _);
+                _logger.LogWarning("Expired refresh token");
+                return (false, null, null);
             }
 
             var claims = await GetUserClaimsAsync(tokenInfo.UserId);
             if (claims == null)
             {
-                return (false, null);
+                return (false, null, null);
             }
 
+            // generate a new access token
             var accessToken = _jwtService.GenerateAccessToken(claims.Claims);
             _logger.LogInformation($"Token refreshed for user: {tokenInfo.UserId}");
 
-            return (true, accessToken);
+            // update the refresh token
+            var newRefreshToken = _jwtService.GenerateRefreshToken();
+
+            // remove the old refresh token
+            _refreshTokens.TryRemove(refreshToken, out _);
+
+            // store the new refresh token
+            _refreshTokens[newRefreshToken] = (tokenInfo.UserId, DateTime.UtcNow.AddDays(7));
+            _logger.LogInformation($"New refresh token generated for user: {tokenInfo.UserId}");
+
+            return (true, accessToken, newRefreshToken);
         }
         catch (Exception ex)
         {
             _logger.LogError($"Token refresh error: {ex.Message}");
-            return (false, null);
+            return (false, null, null);
         }
     }
 
@@ -91,7 +123,7 @@ public class UserService : IUserService
     {
         try
         {
-            if (_refreshTokens.Remove(refreshToken))
+            if (_refreshTokens.TryRemove(refreshToken, out _))
             {
                 _logger.LogInformation("User logged out successfully");
                 return Task.FromResult(true);

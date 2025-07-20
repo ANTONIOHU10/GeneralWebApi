@@ -49,7 +49,6 @@ public class AuthController : BaseController
         {
             UserId = request.Username,
             Username = request.Username,
-            //Email = $"{request.Username}@example.com", // 临时，实际应从数据库获取
             Email = userClaims?.FindFirst(ClaimTypes.Email)?.Value,
             Roles = roles,
             Token = new TokenInfo
@@ -70,7 +69,7 @@ public class AuthController : BaseController
     [EnableRateLimiting("Default")]
     public async Task<ActionResult<ApiResponse<RefreshTokenResponseData>>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
-        var (success, accessToken) = await _userService.RefreshTokenAsync(request.RefreshToken);
+        var (success, accessToken, refreshToken) = await _userService.RefreshTokenAsync(request.RefreshToken);
 
         if (!success)
         {
@@ -82,7 +81,7 @@ public class AuthController : BaseController
             Token = new TokenInfo
             {
                 AccessToken = accessToken,
-                RefreshToken = request.RefreshToken, // 保持原有的 refresh token
+                RefreshToken = refreshToken,
                 TokenType = "Bearer",
                 ExpiresIn = 3600,
                 ExpiresAt = DateTime.UtcNow.AddHours(1),
