@@ -23,9 +23,15 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference
+      Include="..\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference
+      Include="..\..\5-Shared\GeneralWebApi.Common\GeneralWebApi.Common.csproj" />
   </ItemGroup>
 </Project>

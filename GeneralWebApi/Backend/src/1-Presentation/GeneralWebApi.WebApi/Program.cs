@@ -6,6 +6,7 @@ using GeneralWebApi.Logging.Middleware;
 using GeneralWebApi.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using GeneralWebApi.Common.Extensions;
 
 using Scalar.AspNetCore;
 
@@ -66,24 +67,8 @@ builder.Services.AddRouting(options =>
 // add rate limiter
 builder.Services.AddCustomRateLimiter();
 
-builder.Services.AddOpenApi(options =>
-{
-    // add document transformer to modify the document before it is returned
-    options.AddDocumentTransformer((document, context, _) =>
-    {
-        document.Info = new()
-        {
-            Title = "Product Catalog API",
-            Version = "v1",
-            Description = """
-                Modern API for managing product catalogs.
-                """
-        };
-        return Task.CompletedTask;
-    });
-
-
-});
+// add custom openapi documentation registration
+builder.Services.AddCustomOpenApi();
 
 
 var app = builder.Build();
