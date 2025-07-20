@@ -22,17 +22,8 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         builder.Property(u => u.PasswordHash).HasMaxLength(100).IsRequired();
         builder.Property(u => u.PhoneNumber).HasMaxLength(20);
         builder.Property(u => u.Role).HasConversion<string>();
-        builder.Property(u => u.CreatedAt).HasDefaultValueSql("GETDATE()");
+        builder.Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         #endregion
 
-        #region order
-
-        builder.Property(u => u.Name).HasColumnOrder(1);
-        builder.Property(u => u.Email).HasColumnOrder(2);
-        builder.Property(u => u.PasswordHash).HasColumnOrder(3);
-        builder.Property(u => u.PhoneNumber).HasColumnOrder(4);
-        builder.Property(u => u.Role).HasColumnOrder(5);
-
-        #endregion
     }
 }

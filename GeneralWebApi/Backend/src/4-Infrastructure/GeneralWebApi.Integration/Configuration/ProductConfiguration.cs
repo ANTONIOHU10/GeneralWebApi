@@ -17,7 +17,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.Name).HasMaxLength(100).IsRequired();
         builder.Property(p => p.Description).HasMaxLength(200);
         builder.Property(p => p.Price).HasColumnType("decimal(18,2)").IsRequired();
-        builder.Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+        builder.Property(p => p.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
     }
 }

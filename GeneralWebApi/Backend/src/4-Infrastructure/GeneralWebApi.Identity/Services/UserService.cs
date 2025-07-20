@@ -219,4 +219,32 @@ public class UserService : IUserService
         // return the salt and the hashed password together
         return $"{Convert.ToBase64String(salt)}:{hashed}";
     }
+
+    public async Task<bool> UpdatePasswordAsync(string username, string newPassword)
+    {
+        try
+        {
+            var user = await _userRepository.GetByNameAsync(username);
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.PasswordHash = GeneratePasswordHash(newPassword);
+            // add the helper fields
+            user.UpdatedBy = "User";
+            user.UpdatedAt = DateTime.UtcNow;
+            user.Version = user.Version + 1;
+
+            await _userRepository.UpdatePasswordAsync(user);
+
+            _logger.LogInformation($"Password updated for user: {username}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Password update error: {ex.Message}");
+            return false;
+        }
+    }
 }

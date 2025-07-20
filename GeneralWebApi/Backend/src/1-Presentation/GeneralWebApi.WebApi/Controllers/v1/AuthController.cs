@@ -169,12 +169,18 @@ public class AuthController : BaseController
 
     }
 
-    [HttpPost("update-password")]
+    [HttpPut("update-password")]
     [EnableRateLimiting("Default")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<UpdatePasswordResponseData>>> UpdatePassword([FromBody] UpdatePasswordRequest request)
     {
-        return Ok("Password updated successfully");
+        var success = await _userService.UpdatePasswordAsync(request.Username, request.NewPassword);
+
+        if (!success)
+        {
+            return BadRequest(AuthResponse.UpdatePasswordFailed("Password update failed"));
+        }
+        return Ok(AuthResponse.UpdatePasswordSuccess());
     }
 
 }

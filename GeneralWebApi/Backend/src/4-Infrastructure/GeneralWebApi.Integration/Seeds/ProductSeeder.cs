@@ -11,26 +11,6 @@ public class ProductSeeder
     {
         if (!dbContext.Products.Any())
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync();
-            if (user == null)
-            {
-                user = new User
-                {
-                    Name = "antonio",
-                    Email = "antonio@example.com",
-                    PasswordHash = "antonio",
-                    PhoneNumber = "1234567890",
-                    CreatedAt = DateTime.UtcNow,
-                    Role = Role.User.ToString(),
-                    CreatedBy = "System",
-                    IsActive = true,
-                    IsDeleted = false,
-                    Version = 1,
-                    SortOrder = 1
-                };
-                await dbContext.Users.AddAsync(user);
-                await dbContext.SaveChangesAsync();
-            }
 
             var products = new List<Product>
             {

@@ -56,6 +56,20 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<User> UpdatePasswordAsync(User user, CancellationToken cancellationToken = default)
+    {
+        // check if the user exists
+        if (!await ExistsByEmailAsync(user.Email, cancellationToken))
+        {
+            throw new Exception("User not found");
+        }
+
+        // update the user in the database
+        _dbContext.Users.Update(user);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return user;
+    }
+
     #region CRUD operations
     public async Task<User> AddAsync(User entity, CancellationToken cancellationToken = default)
     {
