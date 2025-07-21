@@ -27,6 +27,7 @@ public class AuthController : BaseController
 
     [HttpPost("login")]
     [EnableRateLimiting("Default")]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<LoginResponseData>>> Login([FromBody] LoginRequest request)
     {
         var (success, accessToken, refreshToken) = await _userService.LoginAsync(request.Username, request.Password);
@@ -65,6 +66,7 @@ public class AuthController : BaseController
 
     [HttpPost("refresh")]
     [EnableRateLimiting("Default")]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<RefreshTokenResponseData>>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var (success, accessToken, refreshToken) = await _userService.RefreshTokenAsync(request.RefreshToken);
@@ -93,7 +95,7 @@ public class AuthController : BaseController
 
     [HttpPost("logout")]
     [EnableRateLimiting("Default")]
-    [Authorize]
+    [Authorize(Policy = "UserOrAdmin")]
     public async Task<ActionResult<ApiResponse<LogoutResponseData>>> Logout([FromBody] LogoutRequest request)
     {
         var success = await _userService.LogoutAsync(request.RefreshToken);
@@ -109,7 +111,7 @@ public class AuthController : BaseController
     // add Authrorization   Bearer Token into the header
     [HttpGet("me")]
     [EnableRateLimiting("Default")]
-    [Authorize]
+    [Authorize(Policy = "UserOrAdmin")]
     public async Task<ActionResult<ApiResponse<LoginResponseData>>> GetCurrentUser()
     {
         var userName = User.Identity?.Name;
@@ -145,6 +147,7 @@ public class AuthController : BaseController
 
     [HttpPost("register")]
     [EnableRateLimiting("Default")]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<RegisterResponseData>>> Register([FromBody] RegisterRequest request)
     {
         // TODO: validate the request
@@ -168,7 +171,7 @@ public class AuthController : BaseController
 
     [HttpPut("update-password")]
     [EnableRateLimiting("Default")]
-    [Authorize]
+    [Authorize(Policy = "UserOrAdmin")]
     public async Task<ActionResult<ApiResponse<UpdatePasswordResponseData>>> UpdatePassword([FromBody] UpdatePasswordRequest request)
     {
         var success = await _userService.UpdatePasswordAsync(request.Username, request.NewPassword);

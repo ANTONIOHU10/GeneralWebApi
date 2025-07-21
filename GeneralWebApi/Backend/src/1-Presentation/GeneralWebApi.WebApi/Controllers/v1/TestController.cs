@@ -1,6 +1,7 @@
 using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.WebApi.Controllers.Base;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -17,6 +18,7 @@ public class TestController : BaseController
     }
     [HttpGet]
     [EnableRateLimiting("Default")]
+    //[Authorize(Policy = "AdminOnly")]
     public ActionResult<ApiResponse<object>> Get()
     {
         _log.LogInformation("Test endpoint v1 is working");
@@ -28,4 +30,6 @@ public class TestController : BaseController
         var data = new { };
         return Success((object)data, "Test endpoint is working");
     }
+
+
 }

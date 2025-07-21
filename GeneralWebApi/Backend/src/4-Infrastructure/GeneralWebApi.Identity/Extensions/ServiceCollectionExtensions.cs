@@ -79,6 +79,7 @@ public static class ServiceCollectionExtensions
             // API Key is handled by the middleware, no need to configure here
         }
 
+        // Role based authorization 
         services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
