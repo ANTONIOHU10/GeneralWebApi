@@ -71,7 +71,7 @@ builder.Services.AddCustomRateLimiter();
 builder.Services.AddCustomOpenApi();
 
 // add document controller checks
-builder.Services.AddDocumentControllerChecks();
+builder.Services.AddCustomDocumentHelper();
 
 
 var app = builder.Build();

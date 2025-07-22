@@ -83,19 +83,21 @@ public class DocumentChecks : IDocumentChecks
             return false;
         }
 
+        // get the max signature length, for example, .pdf has 5 bytes, .jpg has 4 bytes
         var maxSignatureLength = signatures.Max(m => m.Length);
 
+        // read the HEADER of the file, to validate the signature
+        var headerBytes = new byte[maxSignatureLength];
+        var bytesRead = fileStream.Read(headerBytes, 0, maxSignatureLength);
         // check if the file is too small to validate the signature
-        if (fileStream.Length < maxSignatureLength)
+        if (bytesRead < maxSignatureLength)
         {
             _logger.LogWarning("File too small to validate signature");
             return false;
         }
 
-        using var reader = new BinaryReader(fileStream);
-        var fileBytes = reader.ReadBytes((int)fileStream.Length);
-        _logger.LogInformation("File type signature certificate: {FileBytes}", fileBytes);
+        _logger.LogInformation("File type signature certificate: {FileBytes}", headerBytes);
         return signatures.Any(signature =>
-            fileBytes.Take(signature.Length).SequenceEqual(signature));
+            headerBytes.Take(signature.Length).SequenceEqual(signature));
     }
 }

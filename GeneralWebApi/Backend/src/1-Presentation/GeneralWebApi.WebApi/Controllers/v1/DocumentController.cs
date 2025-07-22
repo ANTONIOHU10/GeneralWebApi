@@ -10,6 +10,7 @@ using Microsoft.Net.Http.Headers;
 using GeneralWebApi.Common.Attributes;
 using GeneralWebApi.Common.Helpers;
 using GeneralWebApi.Contracts.Responses;
+using System.Reflection.PortableExecutable;
 
 namespace GeneralWebApi.WebApi.Controllers.v1;
 
@@ -18,11 +19,13 @@ public class DocumentController : BaseController
 {
     private readonly ILoggingService _log;
     private readonly IDocumentChecks _documentChecks;
+    private readonly IMultipartRequestHelper _multipartRequestHelper;
 
-    public DocumentController(ILoggingService log, IDocumentChecks documentChecks)
+    public DocumentController(ILoggingService log, IDocumentChecks documentChecks, IMultipartRequestHelper multipartRequestHelper)
     {
         _log = log;
         _documentChecks = documentChecks;
+        _multipartRequestHelper = multipartRequestHelper;
     }
 
     [HttpPost("bufferUpload")]
@@ -88,17 +91,15 @@ public class DocumentController : BaseController
             return BadRequest(DocumentResponse.UploadFailed("Content-Type is null"));
         }
 
-        if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
+        if (!_multipartRequestHelper.IsMultipartContentType(Request.ContentType))
         {
             return BadRequest(DocumentResponse.UploadFailed("Not a multipart/form-data request"));
         }
 
-        // get the information of the file
-
-        var boundary = MultipartRequestHelper.GetBoundary(
-            // limit the size of the boundary
-            MediaTypeHeaderValue.Parse(Request.ContentType), 4096
-        );
+        var boundary = _multipartRequestHelper.GetBoundary(
+          // limit the size of the boundary
+          MediaTypeHeaderValue.Parse(Request.ContentType), 4096
+      );
 
         // create a reader for the multipart/form-data request
         var reader = new MultipartReader(boundary, HttpContext.Request.Body);
@@ -117,15 +118,55 @@ public class DocumentController : BaseController
             var hasContentDisposition = ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition);
 
             // if it's a file, save it to the desktop
-            if (hasContentDisposition && contentDisposition != null && MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
+            if (hasContentDisposition && contentDisposition != null && _multipartRequestHelper.HasFileContentDisposition(contentDisposition))
             {
                 var originalFileName = Path.GetFileName(contentDisposition.FileName.Value);
+                var fileExtension = Path.GetExtension(originalFileName);
+
+                // checks
+                if (string.IsNullOrEmpty(originalFileName))
+                {
+                    return BadRequest(DocumentResponse.UploadFailed("Invalid file name"));
+                }
+
+                bool isValidExtension = _documentChecks.IsValidExtension(originalFileName);
+                if (!isValidExtension)
+                {
+                    return BadRequest(DocumentResponse.UploadFailed("Invalid file extension"));
+                }
+
+                bool isValidSize = _documentChecks.IsValidSize(section.Body.Length);
+                if (!isValidSize)
+                {
+                    return BadRequest(DocumentResponse.UploadFailed("File size is too large"));
+                }
+
+                if (string.IsNullOrEmpty(fileExtension))
+                {
+                    return BadRequest(DocumentResponse.UploadFailed("Invalid file extension"));
+                }
+
+                // to avoid reading the whole file, read the header of the file in a limited size buffer
+                // the read mechanism will remain as stream
+                // keep it high performance
+                var headerBuffer = new byte[1024];
+                var bytesRead = await section.Body.ReadAsync(headerBuffer, cancellationToken);
+                bool isValidTypeSignature = _documentChecks.IsValidTypeSignature(new MemoryStream(headerBuffer, 0, bytesRead), fileExtension);
+                if (!isValidTypeSignature)
+                {
+                    return BadRequest(DocumentResponse.UploadFailed("Invalid file type signature"));
+                }
+
                 var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 var safeFileName = $"{timestamp}_{originalFileName}";
                 savedFilePath = Path.Combine(desktopPath, safeFileName);
 
                 // save the file to the desktop
                 await using var targetStream = System.IO.File.Create(savedFilePath);
+
+                // write the header of the file to the target stream
+                await targetStream.WriteAsync(headerBuffer, 0, bytesRead, cancellationToken);
+                // write the rest of the file to the target stream
                 await section.Body.CopyToAsync(targetStream, cancellationToken);
 
                 // only process the first file

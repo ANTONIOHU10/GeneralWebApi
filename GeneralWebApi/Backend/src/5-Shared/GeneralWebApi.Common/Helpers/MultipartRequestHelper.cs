@@ -14,9 +14,9 @@ namespace GeneralWebApi.Common.Helpers;
 // ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 
-public static class MultipartRequestHelper
+public class MultipartRequestHelper : IMultipartRequestHelper
 {
-    public static string GetBoundary(MediaTypeHeaderValue contentType, int lengthLimit)
+    public string GetBoundary(MediaTypeHeaderValue contentType, int lengthLimit)
     {
         // its necessary to remove the quotes, otherwise, the boundary will be invalid
         // for example, boundary = "----WebKitFormBoundary1234567890"
@@ -27,13 +27,13 @@ public static class MultipartRequestHelper
         return boundary;
     }
 
-    public static bool IsMultipartContentType(string contentType)
+    public bool IsMultipartContentType(string contentType)
     {
         return !string.IsNullOrEmpty(contentType) &&
                contentType.Contains("multipart/", StringComparison.OrdinalIgnoreCase);
     }
 
-    public static bool HasFileContentDisposition(ContentDispositionHeaderValue contentDisposition)
+    public bool HasFileContentDisposition(ContentDispositionHeaderValue contentDisposition)
     {
 
         // verify the content disposition is a file
