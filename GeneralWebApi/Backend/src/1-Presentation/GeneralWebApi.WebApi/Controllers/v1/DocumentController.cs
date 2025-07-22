@@ -17,10 +17,12 @@ namespace GeneralWebApi.WebApi.Controllers.v1;
 public class DocumentController : BaseController
 {
     private readonly ILoggingService _log;
+    private readonly IDocumentChecks _documentChecks;
 
-    public DocumentController(ILoggingService log)
+    public DocumentController(ILoggingService log, IDocumentChecks documentChecks)
     {
         _log = log;
+        _documentChecks = documentChecks;
     }
 
     [HttpPost("bufferUpload")]
@@ -36,17 +38,31 @@ public class DocumentController : BaseController
             return BadRequest(DocumentResponse.UploadFailed("No file provided"));
         }
 
+        // get the information of the file
         long fileSize = file.Length;
         string fileName = file.FileName;
         string contentType = file.ContentType;
         string fileExtension = Path.GetExtension(fileName);
         string fileSizeInMB = (fileSize / 1024 / 1024).ToString("F2");
 
-        _log.LogInformation("Uploading document");
-        _log.LogInformation("File size: {FileSize} MB", fileSizeInMB);
-        _log.LogInformation("File name: {FileName}", fileName);
-        _log.LogInformation("File extension: {FileExtension}", fileExtension);
-        _log.LogInformation("Content type: {ContentType}", contentType);
+        // checks
+        bool isValidExtension = _documentChecks.IsValidExtension(fileName);
+        if (!isValidExtension)
+        {
+            return BadRequest(DocumentResponse.UploadFailed("Invalid file extension"));
+        }
+
+        bool isValidSize = _documentChecks.IsValidSize(fileSize);
+        if (!isValidSize)
+        {
+            return BadRequest(DocumentResponse.UploadFailed("File size is too large"));
+        }
+
+        bool isValidTypeSignature = _documentChecks.IsValidTypeSignature(file.OpenReadStream(), fileExtension);
+        if (!isValidTypeSignature)
+        {
+            return BadRequest(DocumentResponse.UploadFailed("Invalid file type signature"));
+        }
 
         // save the file on the desktop
         string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);

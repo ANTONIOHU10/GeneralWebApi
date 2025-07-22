@@ -70,6 +70,9 @@ builder.Services.AddCustomRateLimiter();
 // add custom openapi documentation registration
 builder.Services.AddCustomOpenApi();
 
+// add document controller checks
+builder.Services.AddDocumentControllerChecks();
+
 
 var app = builder.Build();
 
