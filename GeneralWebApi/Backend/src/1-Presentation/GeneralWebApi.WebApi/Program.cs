@@ -106,6 +106,9 @@ builder.Services.AddCustomDocumentHelper();
 // add signalr service
 builder.Services.AddSignalRService();
 
+// add file operation services
+builder.Services.AddFileOperationServices();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
