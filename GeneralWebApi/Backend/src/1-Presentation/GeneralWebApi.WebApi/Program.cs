@@ -3,7 +3,6 @@ using GeneralWebApi.Integration.Extensions;
 using GeneralWebApi.Logging.Configuration;
 using GeneralWebApi.Logging.Extensions;
 using GeneralWebApi.Logging.Middleware;
-using GeneralWebApi.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using GeneralWebApi.Common.Extensions;
@@ -12,6 +11,7 @@ using Scalar.AspNetCore;
 using GeneralWebApi.RealTime;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Http.Features;
+using GeneralWebApi.Extensions;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);

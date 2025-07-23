@@ -1,15 +1,15 @@
 using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Contracts.Requests;
 using GeneralWebApi.Contracts.Responses;
+using GeneralWebApi.Controllers.Base;
 using GeneralWebApi.Identity.Services;
 using GeneralWebApi.Integration.Repository;
-using GeneralWebApi.WebApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
-namespace GeneralWebApi.WebApi.Controllers.v1;
+namespace GeneralWebApi.Controllers.v1;
 
 [ApiVersion("1.0")]
 public class AuthController : BaseController

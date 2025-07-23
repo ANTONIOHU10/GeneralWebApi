@@ -1,7 +1,7 @@
 using System.Threading;
 using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Logging.Services;
-using GeneralWebApi.WebApi.Controllers.Base;
+using GeneralWebApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -53,9 +53,7 @@ public class DocumentController : BaseController
         // get the information of the file
         long fileSize = file.Length;
         string fileName = file.FileName;
-        string contentType = file.ContentType;
         string fileExtension = Path.GetExtension(fileName);
-        string fileSizeInMB = (fileSize / 1024 / 1024).ToString("F2");
 
         // record the upload start
         await _progressService.StartUploadAsync(uploadId, fileName, fileSize);
@@ -82,33 +80,43 @@ public class DocumentController : BaseController
             return BadRequest(DocumentResponse.UploadFailed("Invalid file type signature"));
         }
 
-        // save the file to the desktop with progress tracking
+        // get the desktop path
         string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        // get the file path
         string filePath = Path.Combine(desktopPath, fileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension);
 
+        // start the upload
         var startTime = DateTime.UtcNow;
         var lastProgressUpdate = startTime;
         long processedBytes = 0;
-        const int bufferSize = 8192; // 8KB buffer
+        const int bufferSize = 8192; // 8KB buffer for the buffer
         var buffer = new byte[bufferSize];
 
+        // open the source stream
         using (var sourceStream = file.OpenReadStream())
+        // open the target stream
         using (var targetStream = System.IO.File.Create(filePath))
         {
+            // read the file
             int bytesRead;
             while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
+                // write the file to the target stream
                 await targetStream.WriteAsync(buffer, 0, bytesRead);
                 processedBytes += bytesRead;
 
                 // every 100ms update the progress
+                // update the progress
                 var now = DateTime.UtcNow;
                 if ((now - lastProgressUpdate).TotalMilliseconds >= 100)
                 {
+                    // calculate the elapsed time
                     var elapsed = now - startTime;
                     var speedMBps = elapsed.TotalSeconds > 0 ? (processedBytes / 1024.0 / 1024.0) / elapsed.TotalSeconds : 0;
                     var estimatedTimeRemaining = speedMBps > 0 ? TimeSpan.FromSeconds((fileSize - processedBytes) / 1024.0 / 1024.0 / speedMBps) : TimeSpan.Zero;
 
+                    // create the progress
                     var progress = new UploadProgress
                     {
                         UploadId = uploadId,
@@ -122,16 +130,18 @@ public class DocumentController : BaseController
                         Status = UploadStatus.InProgress
                     };
 
+                    // update the progress
                     await _progressService.UpdateProgressAsync(uploadId, progress);
                     lastProgressUpdate = now;
                 }
             }
         }
 
-        // 🔧 show the 100% progress
+        // show the 100% progress
         var finalElapsed = DateTime.UtcNow - startTime;
         var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? (fileSize / 1024.0 / 1024.0) / finalElapsed.TotalSeconds : 0;
 
+        // create the final progress
         var finalProgress = new UploadProgress
         {
             UploadId = uploadId,
@@ -145,9 +155,11 @@ public class DocumentController : BaseController
             Status = UploadStatus.Completed
         };
 
+        // update the final progress
         await _progressService.UpdateProgressAsync(uploadId, finalProgress);
 
         // record the upload completed
+        // complete the upload
         await _progressService.CompleteUploadAsync(uploadId, filePath);
 
         return Ok(DocumentResponse.UploadSuccess(filePath, file.FileName, file.Length));

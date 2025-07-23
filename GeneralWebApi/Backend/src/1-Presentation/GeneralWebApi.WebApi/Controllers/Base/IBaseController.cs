@@ -1,9 +1,7 @@
-
-
 using GeneralWebApi.Contracts.Common;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GeneralWebApi.WebApi.Controllers.Base;
+namespace GeneralWebApi.Controllers.Base;
 
 public interface IBaseController
 {

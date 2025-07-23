@@ -1,11 +1,11 @@
 using GeneralWebApi.Contracts.Common;
+using GeneralWebApi.Controllers.Base;
 using GeneralWebApi.Logging.Services;
-using GeneralWebApi.WebApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace GeneralWebApi.WebApi.Controllers.v1;
+namespace GeneralWebApi.Controllers.v1;
 
 
 public class TestController : BaseController

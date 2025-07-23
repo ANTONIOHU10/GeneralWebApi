@@ -2,7 +2,7 @@ using System.Threading.RateLimiting;
 using GeneralWebApi.Contracts.Common;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace GeneralWebApi.WebApi.Extensions;
+namespace GeneralWebApi.Extensions;
 
 public static class RateLimiterExtension
 {
