@@ -34,6 +34,6 @@
     <ProjectReference
       Include="..\..\5-Shared\GeneralWebApi.Common\GeneralWebApi.Common.csproj" />
     <ProjectReference
-      Include="..\..\4-Infrastructure\GeneralWebApi.RealTime\GeneralWebApi.RealTime.csproj" />
+      Include="..\..\4-Infrastructure\GeneralWebApi.FileOperation\GeneralWebApi.FileOperation.csproj" />
   </ItemGroup>
 </Project>

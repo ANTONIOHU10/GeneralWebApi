@@ -1,4 +1,6 @@
-namespace GeneralWebApi.RealTime;
+using GeneralWebApi.FileOperation.Models;
+
+namespace GeneralWebApi.FileOperation.Services;
 
 public interface IProgressService
 {

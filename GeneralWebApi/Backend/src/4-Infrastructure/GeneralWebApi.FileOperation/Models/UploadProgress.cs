@@ -1,4 +1,4 @@
-namespace GeneralWebApi.RealTime;
+namespace GeneralWebApi.FileOperation.Models;
 
 public class UploadProgress
 {

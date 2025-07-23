@@ -1,6 +1,7 @@
+using GeneralWebApi.FileOperation.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GeneralWebApi.RealTime;
+namespace GeneralWebApi.FileOperation.Extensions;
 
 public static class SignalRServiceExtensions
 {

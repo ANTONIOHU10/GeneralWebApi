@@ -1,7 +1,8 @@
+using GeneralWebApi.FileOperation.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
-namespace GeneralWebApi.RealTime;
+namespace GeneralWebApi.FileOperation.Services;
 
 public class ProgressService : IProgressService
 {

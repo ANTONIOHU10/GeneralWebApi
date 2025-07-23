@@ -11,9 +11,10 @@ using GeneralWebApi.Common.Attributes;
 using GeneralWebApi.Common.Helpers;
 using GeneralWebApi.Contracts.Responses;
 using System.Reflection.PortableExecutable;
-using GeneralWebApi.RealTime;
+using GeneralWebApi.FileOperation.Models;
+using GeneralWebApi.FileOperation.Services;
 
-namespace GeneralWebApi.WebApi.Controllers.v1;
+namespace GeneralWebApi.Controllers.v1;
 
 [ApiVersion("1.0")]
 public class DocumentController : BaseController
@@ -113,7 +114,7 @@ public class DocumentController : BaseController
                 {
                     // calculate the elapsed time
                     var elapsed = now - startTime;
-                    var speedMBps = elapsed.TotalSeconds > 0 ? (processedBytes / 1024.0 / 1024.0) / elapsed.TotalSeconds : 0;
+                    var speedMBps = elapsed.TotalSeconds > 0 ? processedBytes / 1024.0 / 1024.0 / elapsed.TotalSeconds : 0;
                     var estimatedTimeRemaining = speedMBps > 0 ? TimeSpan.FromSeconds((fileSize - processedBytes) / 1024.0 / 1024.0 / speedMBps) : TimeSpan.Zero;
 
                     // create the progress
@@ -139,7 +140,7 @@ public class DocumentController : BaseController
 
         // show the 100% progress
         var finalElapsed = DateTime.UtcNow - startTime;
-        var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? (fileSize / 1024.0 / 1024.0) / finalElapsed.TotalSeconds : 0;
+        var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? fileSize / 1024.0 / 1024.0 / finalElapsed.TotalSeconds : 0;
 
         // create the final progress
         var finalProgress = new UploadProgress
