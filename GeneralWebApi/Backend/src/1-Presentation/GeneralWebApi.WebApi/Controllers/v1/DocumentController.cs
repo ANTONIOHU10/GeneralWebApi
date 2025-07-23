@@ -11,6 +11,7 @@ using GeneralWebApi.Common.Attributes;
 using GeneralWebApi.Common.Helpers;
 using GeneralWebApi.Contracts.Responses;
 using System.Reflection.PortableExecutable;
+using GeneralWebApi.RealTime;
 
 namespace GeneralWebApi.WebApi.Controllers.v1;
 
@@ -20,12 +21,14 @@ public class DocumentController : BaseController
     private readonly ILoggingService _log;
     private readonly IDocumentChecks _documentChecks;
     private readonly IMultipartRequestHelper _multipartRequestHelper;
+    private readonly IProgressService _progressService;
 
-    public DocumentController(ILoggingService log, IDocumentChecks documentChecks, IMultipartRequestHelper multipartRequestHelper)
+    public DocumentController(ILoggingService log, IDocumentChecks documentChecks, IMultipartRequestHelper multipartRequestHelper, IProgressService progressService)
     {
         _log = log;
         _documentChecks = documentChecks;
         _multipartRequestHelper = multipartRequestHelper;
+        _progressService = progressService;
     }
 
     [HttpPost("bufferUpload")]
@@ -41,6 +44,9 @@ public class DocumentController : BaseController
             return BadRequest(DocumentResponse.UploadFailed("No file provided"));
         }
 
+        // generate the upload id
+        var uploadId = Guid.NewGuid().ToString();
+
         // get the information of the file
         long fileSize = file.Length;
         string fileName = file.FileName;
@@ -48,32 +54,98 @@ public class DocumentController : BaseController
         string fileExtension = Path.GetExtension(fileName);
         string fileSizeInMB = (fileSize / 1024 / 1024).ToString("F2");
 
+        // record the upload start
+        await _progressService.StartUploadAsync(uploadId, fileName, fileSize);
+
         // checks
         bool isValidExtension = _documentChecks.IsValidExtension(fileName);
         if (!isValidExtension)
         {
+            await _progressService.FailUploadAsync(uploadId, "Invalid file extension");
             return BadRequest(DocumentResponse.UploadFailed("Invalid file extension"));
         }
 
         bool isValidSize = _documentChecks.IsValidSize(fileSize);
         if (!isValidSize)
         {
+            await _progressService.FailUploadAsync(uploadId, "File size is too large");
             return BadRequest(DocumentResponse.UploadFailed("File size is too large"));
         }
 
         bool isValidTypeSignature = _documentChecks.IsValidTypeSignature(file.OpenReadStream(), fileExtension);
         if (!isValidTypeSignature)
         {
+            await _progressService.FailUploadAsync(uploadId, "Invalid file type signature");
             return BadRequest(DocumentResponse.UploadFailed("Invalid file type signature"));
         }
 
-        // save the file on the desktop
+        // save the file to the desktop with progress tracking
         string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         string filePath = Path.Combine(desktopPath, fileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension);
-        using (var stream = System.IO.File.Create(filePath))
+
+        var startTime = DateTime.UtcNow;
+        var lastProgressUpdate = startTime;
+        long processedBytes = 0;
+        const int bufferSize = 8192; // 8KB buffer
+        var buffer = new byte[bufferSize];
+
+        using (var sourceStream = file.OpenReadStream())
+        using (var targetStream = System.IO.File.Create(filePath))
         {
-            await file.CopyToAsync(stream);
+            int bytesRead;
+            while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await targetStream.WriteAsync(buffer, 0, bytesRead);
+                processedBytes += bytesRead;
+
+                // every 100ms update the progress
+                var now = DateTime.UtcNow;
+                if ((now - lastProgressUpdate).TotalMilliseconds >= 100)
+                {
+                    var elapsed = now - startTime;
+                    var speedMBps = elapsed.TotalSeconds > 0 ? (processedBytes / 1024.0 / 1024.0) / elapsed.TotalSeconds : 0;
+                    var estimatedTimeRemaining = speedMBps > 0 ? TimeSpan.FromSeconds((fileSize - processedBytes) / 1024.0 / 1024.0 / speedMBps) : TimeSpan.Zero;
+
+                    var progress = new UploadProgress
+                    {
+                        UploadId = uploadId,
+                        FileName = fileName,
+                        ProgressPercentage = (double)processedBytes / fileSize * 100,
+                        ProcessedBytes = processedBytes,
+                        TotalBytes = fileSize,
+                        SpeedMBps = speedMBps,
+                        EstimatedTimeRemaining = estimatedTimeRemaining,
+                        StartTime = startTime,
+                        Status = UploadStatus.InProgress
+                    };
+
+                    await _progressService.UpdateProgressAsync(uploadId, progress);
+                    lastProgressUpdate = now;
+                }
+            }
         }
+
+        // 🔧 show the 100% progress
+        var finalElapsed = DateTime.UtcNow - startTime;
+        var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? (fileSize / 1024.0 / 1024.0) / finalElapsed.TotalSeconds : 0;
+
+        var finalProgress = new UploadProgress
+        {
+            UploadId = uploadId,
+            FileName = fileName,
+            ProgressPercentage = 100.0,
+            ProcessedBytes = fileSize,
+            TotalBytes = fileSize,
+            SpeedMBps = finalSpeedMBps,
+            EstimatedTimeRemaining = TimeSpan.Zero,
+            StartTime = startTime,
+            Status = UploadStatus.Completed
+        };
+
+        await _progressService.UpdateProgressAsync(uploadId, finalProgress);
+
+        // record the upload completed
+        await _progressService.CompleteUploadAsync(uploadId, filePath);
 
         return Ok(DocumentResponse.UploadSuccess(filePath, file.FileName, file.Length));
     }

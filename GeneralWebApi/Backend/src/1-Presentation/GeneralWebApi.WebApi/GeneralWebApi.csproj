@@ -33,5 +33,7 @@
       Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
     <ProjectReference
       Include="..\..\5-Shared\GeneralWebApi.Common\GeneralWebApi.Common.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.RealTime\GeneralWebApi.RealTime.csproj" />
   </ItemGroup>
 </Project>

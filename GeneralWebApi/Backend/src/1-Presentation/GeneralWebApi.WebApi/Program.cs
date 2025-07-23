@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using GeneralWebApi.Common.Extensions;
 
 using Scalar.AspNetCore;
+using GeneralWebApi.RealTime;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Http.Features;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +23,33 @@ var builder = WebApplication.CreateBuilder(args);
 //Add custom Serilog logging
 builder.Host.ConfigureSerilog();
 builder.Services.AddCustomLogging();
+
+//Add IIS server options
+// set the max request body size to 1GB
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 1024 * 1024 * 1024; // 1GB
+});
+
+// configure the kestrel server options
+// set the max request body size to 1GB
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 1024 * 1024 * 1024; // 1GB
+    options.Limits.MaxConcurrentConnections = 100;
+    options.Limits.MaxConcurrentUpgradedConnections = 100;
+    options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(10);
+    options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);
+});
+
+// configure the form options
+// set the max request body size to 1GB
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 1024 * 1024 * 1024; // 1GB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MemoryBufferThreshold = int.MaxValue;
+});
 
 //Add custom authentication
 
@@ -73,6 +103,8 @@ builder.Services.AddCustomOpenApi();
 // add document controller checks
 builder.Services.AddCustomDocumentHelper();
 
+// add signalr service
+builder.Services.AddSignalRService();
 
 var app = builder.Build();
 
