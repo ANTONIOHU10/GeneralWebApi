@@ -19,32 +19,34 @@ public class ProgressService : IProgressService
         var fileSizeMB = progress.TotalBytes / 1024.0 / 1024.0;
         var processedMB = progress.ProcessedBytes / 1024.0 / 1024.0;
 
-        // 🔧 handle chinese file name display
+        //  handle chinese file name display
         var displayFileName = progress.FileName ?? "Unknown";
         if (displayFileName.Length > 25)
         {
             displayFileName = displayFileName.Substring(0, 22) + "...";
         }
 
-        // 🔧 optimize display format
+        // optimize display format
         var sizeDisplay = fileSizeMB < 1 ? $"{processedMB * 1024:F0}KB/{fileSizeMB * 1024:F0}KB" : $"{processedMB:F1}MB/{fileSizeMB:F1}MB";
         var speedDisplay = progress.SpeedMBps < 1 ? $"{progress.SpeedMBps * 1024:F1}KB/s" : $"{progress.SpeedMBps:F2}MB/s";
 
-        // 🔧 100% progress special display
+        // 100% progress special display
         if (progress.ProgressPercentage >= 100.0)
         {
-            Console.WriteLine($"🎉 {displayFileName} | {progressBar} | 100.0% | {sizeDisplay} | {speedDisplay} | ✅ 完成!");
+            var line = $"{displayFileName} | {progressBar} | 100.0% | {sizeDisplay} | {speedDisplay} | ✅ 完成!";
+            Console.Write($"\r{line.PadRight(Console.WindowWidth - 1)}");
         }
         else
         {
-            Console.WriteLine($"📊 {displayFileName} | {progressBar} | {progress.ProgressPercentage:F1}% | {sizeDisplay} | {speedDisplay} | ETA: {progress.EstimatedTimeRemaining:mm\\:ss}");
+            var line = $"{displayFileName} | {progressBar} | {progress.ProgressPercentage:F1}% | {sizeDisplay} | {speedDisplay} | ETA: {progress.EstimatedTimeRemaining:mm\\:ss}";
+            Console.Write($"\r{line.PadRight(Console.WindowWidth - 1)}");
         }
 
         // detailed log
-        _logger.LogInformation(
-            "Upload progress: {UploadId} | {FileName} | {Progress:F1}% | {ProcessedMB:F1}MB/{TotalMB:F1}MB | {Speed:F2}MB/s | ETA: {ETA:mm\\:ss}",
-            uploadId, progress.FileName, progress.ProgressPercentage,
-            processedMB, fileSizeMB, progress.SpeedMBps, progress.EstimatedTimeRemaining);
+        // _logger.LogInformation(
+        //     "Upload progress: {UploadId} | {FileName} | {Progress:F1}% | {ProcessedMB:F1}MB/{TotalMB:F1}MB | {Speed:F2}MB/s | ETA: {ETA:mm\\:ss}",
+        //     uploadId, progress.FileName, progress.ProgressPercentage,
+        //     processedMB, fileSizeMB, progress.SpeedMBps, progress.EstimatedTimeRemaining);
 
         await Task.CompletedTask;
     }
@@ -52,7 +54,7 @@ public class ProgressService : IProgressService
     public async Task CompleteUploadAsync(string uploadId, string filePath)
     {
         // console output
-        Console.WriteLine($"✅ Upload completed: {uploadId} -> {Path.GetFileName(filePath)}");
+        Console.WriteLine($" Upload completed: {uploadId} -> {Path.GetFileName(filePath)}");
 
         // log
         _logger.LogInformation("Upload completed: {UploadId} -> {FilePath}", uploadId, filePath);
@@ -62,7 +64,7 @@ public class ProgressService : IProgressService
     public async Task FailUploadAsync(string uploadId, string errorMessage)
     {
         // console output
-        Console.WriteLine($"❌ Upload failed: {uploadId} - {errorMessage}");
+        Console.WriteLine($" Upload failed: {uploadId} - {errorMessage}");
 
         // log
         _logger.LogWarning("Upload failed: {UploadId} - {ErrorMessage}", uploadId, errorMessage);
@@ -74,7 +76,7 @@ public class ProgressService : IProgressService
         var fileSizeMB = fileSize / 1024.0 / 1024.0;
 
         // console output
-        Console.WriteLine($"🚀 Upload started: {fileName} ({fileSizeMB:F1}MB) | ID: {uploadId}");
+        Console.WriteLine($" Upload started: {fileName} ({fileSizeMB:F1}MB) | ID: {uploadId}");
 
         // log
         _logger.LogInformation("Upload started: {UploadId} - {FileName} ({FileSizeMB:F1}MB)",

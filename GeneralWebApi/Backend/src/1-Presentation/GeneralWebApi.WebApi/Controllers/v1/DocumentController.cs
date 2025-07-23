@@ -33,12 +33,15 @@ public class DocumentController : BaseController
 
     [HttpPost("bufferUpload")]
     [EnableRateLimiting("Default")]
-    //[Authorize(Policy = "UserOrAdmin")]
+    [DisableFormValueModelBinding]
     [AllowAnonymous]
-
     // for file with size less than 10MB
-    public async Task<ActionResult<ApiResponse<object>>> UploadDocumentAsync(IFormFile file)
+    //public async Task<ActionResult<ApiResponse<object>>> UploadDocumentAsync(IFormFile file)
+    public async Task<ActionResult<ApiResponse<object>>> UploadDocumentAsync()
     {
+        // get the file from the request
+        var file = Request.Form.Files.FirstOrDefault();
+
         if (file == null || file.Length == 0)
         {
             return BadRequest(DocumentResponse.UploadFailed("No file provided"));
