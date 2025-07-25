@@ -1,9 +1,11 @@
 using GeneralWebApi.Common.Helpers;
 using GeneralWebApi.FileOperation.Models;
+using GeneralWebApi.Domain.Entities;
+using GeneralWebApi.Integration.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
-using System.IO;
+
 
 namespace GeneralWebApi.FileOperation.Services;
 
@@ -12,57 +14,55 @@ public class FileUploadService : IFileUploadService
     private readonly IDocumentChecks _documentCheckService;
     private readonly IProgressService _progressService;
     private readonly IMultipartRequestHelper _multipartRequestHelper;
+    private readonly IFileDocumentRepository _fileDocumentRepository;
 
     public FileUploadService(
         IDocumentChecks documentCheckService,
         IProgressService progressService,
-        IMultipartRequestHelper multipartRequestHelper)
+        IMultipartRequestHelper multipartRequestHelper,
+        IFileDocumentRepository fileDocumentRepository)
     {
         _documentCheckService = documentCheckService;
         _progressService = progressService;
         _multipartRequestHelper = multipartRequestHelper;
+        _fileDocumentRepository = fileDocumentRepository;
     }
 
-    public async Task<string> UploadFileWithProgressAsync(IFormFile file, string uploadId)
+    public async Task<FileDocument> UploadFileWithProgressAsync(IFormFile file, string uploadId)
     {
-        // get the file information
+        // Get file information
         long fileSize = file.Length;
         string fileName = file.FileName;
-        string fileExtension = Path.GetExtension(fileName);
 
-        // record the upload start
+        // Record upload start
         await _progressService.StartUploadAsync(uploadId, fileName, fileSize);
 
-        // validate the file
+        // Validate file
         if (!await ValidateFileAsync(file, uploadId))
         {
-            return string.Empty;
+            return null;
         }
 
-        // get the desktop path
-        string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        string filePath = Path.Combine(desktopPath, fileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension);
-
-        // start the upload
+        // Start upload
         var startTime = DateTime.UtcNow;
         var lastProgressUpdate = startTime;
         long processedBytes = 0;
         const int bufferSize = 8192; // 8KB buffer
         var buffer = new byte[bufferSize];
 
-        // open the source stream and target stream
+        // Read file content to memory with progress tracking
         using (var sourceStream = file.OpenReadStream())
-        using (var targetStream = System.IO.File.Create(filePath))
+        using (var memoryStream = new MemoryStream())
         {
-            // read the file
+            // Read file
             int bytesRead;
             while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
-                // write the target stream
-                await targetStream.WriteAsync(buffer, 0, bytesRead);
+                // Write to memory stream
+                await memoryStream.WriteAsync(buffer, 0, bytesRead);
                 processedBytes += bytesRead;
 
-                // update the progress every 100ms
+                // Update progress every 100ms
                 var now = DateTime.UtcNow;
                 if ((now - lastProgressUpdate).TotalMilliseconds >= 100)
                 {
@@ -70,40 +70,55 @@ public class FileUploadService : IFileUploadService
                     lastProgressUpdate = now;
                 }
             }
+
+            // Get file content
+            var fileContent = memoryStream.ToArray();
+
+            // Generate unique filename
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var uniqueFileName = $"{timestamp}_{file.FileName}";
+            var fileExtension = Path.GetExtension(file.FileName);
+
+            // Add to database
+            var fileDocument = await _fileDocumentRepository.AddFileDocumentWithContentAsync(
+                uniqueFileName,
+                fileContent,
+                fileExtension,
+                file.ContentType);
+
+            // Show 100% progress
+            var finalElapsed = DateTime.UtcNow - startTime;
+            var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? fileSize / 1024.0 / 1024.0 / finalElapsed.TotalSeconds : 0;
+
+            // Create final progress
+            var finalProgress = new UploadProgress
+            {
+                UploadId = uploadId,
+                FileName = fileName,
+                ProgressPercentage = 100.0,
+                ProcessedBytes = fileSize,
+                TotalBytes = fileSize,
+                SpeedMBps = finalSpeedMBps,
+                EstimatedTimeRemaining = TimeSpan.Zero,
+                StartTime = startTime,
+                Status = UploadStatus.Completed
+            };
+
+            // Update final progress
+            await _progressService.UpdateProgressAsync(uploadId, finalProgress);
+
+            // Complete upload
+            await _progressService.CompleteUploadAsync(uploadId, fileDocument.FileName);
+
+            return fileDocument;
         }
-
-        // show the 100% progress
-        var finalElapsed = DateTime.UtcNow - startTime;
-        var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? fileSize / 1024.0 / 1024.0 / finalElapsed.TotalSeconds : 0;
-
-        // create the final progress
-        var finalProgress = new UploadProgress
-        {
-            UploadId = uploadId,
-            FileName = fileName,
-            ProgressPercentage = 100.0,
-            ProcessedBytes = fileSize,
-            TotalBytes = fileSize,
-            SpeedMBps = finalSpeedMBps,
-            EstimatedTimeRemaining = TimeSpan.Zero,
-            StartTime = startTime,
-            Status = UploadStatus.Completed
-        };
-
-        // update the final progress
-        await _progressService.UpdateProgressAsync(uploadId, finalProgress);
-
-        // complete the upload
-        await _progressService.CompleteUploadAsync(uploadId, filePath);
-
-        return filePath;
     }
 
     public async Task<string> StreamUploadAsync(HttpContext httpContext, CancellationToken cancellationToken)
     {
         var request = httpContext.Request;
 
-        // check if the request is a multipart/form-data request
+        // Check if it's a multipart/form-data request
         if (request.ContentType == null)
         {
             throw new InvalidOperationException("Content-Type is null");
@@ -118,68 +133,53 @@ public class FileUploadService : IFileUploadService
             MediaTypeHeaderValue.Parse(request.ContentType), 4096
         );
 
-        // create the reader for the multipart/form-data request
+        // Create reader for multipart/form-data request
         var reader = new MultipartReader(boundary, request.Body);
 
-        // read the first section
+        // Read first section
         var section = await reader.ReadNextSectionAsync(cancellationToken);
 
         string? savedFilePath = null;
-        string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-        // read the next section
+        // Read next section
         while (section != null)
         {
             var hasContentDisposition = ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition);
 
-            // if it is a file, save it to the desktop
+            // If it's a file, save it to desktop
             if (hasContentDisposition && contentDisposition != null && _multipartRequestHelper.HasFileContentDisposition(contentDisposition))
             {
                 var originalFileName = Path.GetFileName(contentDisposition.FileName.Value);
                 var fileExtension = Path.GetExtension(originalFileName);
 
-                // validate the file
-                if (string.IsNullOrEmpty(originalFileName))
-                {
-                    throw new InvalidOperationException("Invalid file name");
-                }
+                // Validate file
+                ValidateFileName(originalFileName);
+                ValidateFileExtension(fileExtension);
+                ValidateFileSize(section.Body.Length);
 
-                if (!_documentCheckService.IsValidExtension(originalFileName))
-                {
-                    throw new InvalidOperationException("Invalid file extension");
-                }
-
-                if (!_documentCheckService.IsValidSize(section.Body.Length))
-                {
-                    throw new InvalidOperationException("File size is too large");
-                }
-
-                if (string.IsNullOrEmpty(fileExtension))
-                {
-                    throw new InvalidOperationException("Invalid file extension");
-                }
-
-                // read the file header to validate the signature
+                // Read file header to validate signature
                 var headerBuffer = new byte[1024];
                 var bytesRead = await section.Body.ReadAsync(headerBuffer, cancellationToken);
-                if (!_documentCheckService.IsValidTypeSignature(new MemoryStream(headerBuffer, 0, bytesRead), fileExtension))
+                if (fileExtension != null)
                 {
-                    throw new InvalidOperationException("Invalid file type signature");
+                    ValidateFileSignature(new MemoryStream(headerBuffer, 0, bytesRead), fileExtension);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid file extension");
                 }
 
                 var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 var safeFileName = $"{timestamp}_{originalFileName}";
-                savedFilePath = Path.Combine(desktopPath, safeFileName);
+                savedFilePath = safeFileName;
 
-                // save the file to the desktop
-                await using var targetStream = System.IO.File.Create(savedFilePath);
+                // Read the rest of the file content
+                using var memoryStream = new MemoryStream();
+                await memoryStream.WriteAsync(headerBuffer, 0, bytesRead, cancellationToken);
+                await section.Body.CopyToAsync(memoryStream, cancellationToken);
+                var fileContent = memoryStream.ToArray();
 
-                // write the file header
-                await targetStream.WriteAsync(headerBuffer, 0, bytesRead, cancellationToken);
-                // write the rest of the file
-                await section.Body.CopyToAsync(targetStream, cancellationToken);
-
-                // only process the first file
+                // Only process first file
                 break;
             }
 
@@ -196,79 +196,99 @@ public class FileUploadService : IFileUploadService
 
     public async Task<string> UploadFileAsync(IFormFile file, string folderName)
     {
-        // simple upload implementation
+        // Simple upload implementation
         if (file == null || file.Length == 0)
         {
             throw new InvalidOperationException("No file provided");
         }
 
-        // validate the file
-        if (!_documentCheckService.IsValidExtension(file.FileName))
-        {
-            throw new InvalidOperationException("Invalid file extension");
-        }
+        // Validate file
+        ValidateFile(file);
 
-        if (!_documentCheckService.IsValidSize(file.Length))
-        {
-            throw new InvalidOperationException("File size is too large");
-        }
-
-        if (!_documentCheckService.IsValidTypeSignature(file.OpenReadStream(), Path.GetExtension(file.FileName)))
-        {
-            throw new InvalidOperationException("Invalid file type signature");
-        }
-
-        // create the target folder
-        var targetFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), folderName);
-        Directory.CreateDirectory(targetFolder);
-
-        // generate the file name
+        // Generate file name
         var fileName = $"{DateTime.Now:yyyyMMdd_HHmmss}_{file.FileName}";
-        var filePath = Path.Combine(targetFolder, fileName);
+        var filePath = fileName;
 
-        // 保存文件
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
+        // Save file content to memory (for demonstration)
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        var fileContent = memoryStream.ToArray();
 
         return filePath;
     }
 
+    #region Private Methods
+
     private async Task<bool> ValidateFileAsync(IFormFile file, string uploadId)
     {
-        // validate the file extension
-        if (!_documentCheckService.IsValidExtension(file.FileName))
+        try
         {
-            await _progressService.FailUploadAsync(uploadId, "Invalid file extension");
+            ValidateFile(file);
+            return true;
+        }
+        catch (InvalidOperationException ex)
+        {
+            await _progressService.FailUploadAsync(uploadId, ex.Message);
             return false;
         }
+    }
 
-        // validate the file size
-        if (!_documentCheckService.IsValidSize(file.Length))
+    private void ValidateFile(IFormFile file)
+    {
+        ValidateFileName(file.FileName);
+
+        var fileExtension = Path.GetExtension(file.FileName);
+        ValidateFileExtension(fileExtension);
+        ValidateFileSize(file.Length);
+        ValidateFileSignature(file.OpenReadStream(), fileExtension);
+    }
+
+    private void ValidateFileName(string? fileName)
+    {
+        if (string.IsNullOrEmpty(fileName))
         {
-            await _progressService.FailUploadAsync(uploadId, "File size is too large");
-            return false;
+            throw new InvalidOperationException("Invalid file name");
         }
+    }
 
-        // validate the file type signature
-        if (!_documentCheckService.IsValidTypeSignature(file.OpenReadStream(), Path.GetExtension(file.FileName)))
+    private void ValidateFileExtension(string? fileExtension)
+    {
+        if (string.IsNullOrEmpty(fileExtension))
         {
-            await _progressService.FailUploadAsync(uploadId, "Invalid file type signature");
-            return false;
+            throw new InvalidOperationException("Invalid file extension");
         }
+    }
 
-        return true;
+    private void ValidateFileSize(long fileSize)
+    {
+        if (!_documentCheckService.IsValidSize(fileSize))
+        {
+            throw new InvalidOperationException("File size is too large");
+        }
+    }
+
+    private void ValidateFileSignature(Stream fileStream, string fileExtension)
+    {
+        if (!_documentCheckService.IsValidTypeSignature(fileStream, fileExtension))
+        {
+            throw new InvalidOperationException("Invalid file type signature");
+        }
+    }
+
+    private string GenerateFilePath(string fileName)
+    {
+        string fileExtension = Path.GetExtension(fileName);
+        return fileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
     }
 
     private async Task UpdateProgressAsync(string uploadId, string fileName, long fileSize, long processedBytes, DateTime startTime, DateTime currentTime)
     {
-        // calculate the elapsed time
+        // Calculate elapsed time
         var elapsed = currentTime - startTime;
         var speedMBps = elapsed.TotalSeconds > 0 ? processedBytes / 1024.0 / 1024.0 / elapsed.TotalSeconds : 0;
         var estimatedTimeRemaining = speedMBps > 0 ? TimeSpan.FromSeconds((fileSize - processedBytes) / 1024.0 / 1024.0 / speedMBps) : TimeSpan.Zero;
 
-        // create the progress
+        // Create progress
         var progress = new UploadProgress
         {
             UploadId = uploadId,
@@ -282,7 +302,45 @@ public class FileUploadService : IFileUploadService
             Status = UploadStatus.InProgress
         };
 
-        // update the progress
+        // Update progress
         await _progressService.UpdateProgressAsync(uploadId, progress);
     }
+
+    public async Task<FileDocument> UploadFileToDatabaseAsync(IFormFile file, CancellationToken cancellationToken = default)
+    {
+        // Validate file
+        if (file == null || file.Length == 0)
+        {
+            throw new InvalidOperationException("No file provided");
+        }
+
+        ValidateFile(file);
+
+        // Read file content
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream, cancellationToken);
+        var fileContent = memoryStream.ToArray();
+
+        // Generate unique filename
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        var fileName = $"{timestamp}_{file.FileName}";
+        var fileExtension = Path.GetExtension(file.FileName);
+
+        // Add to database
+        return await _fileDocumentRepository.AddFileDocumentWithContentAsync(
+            fileName,
+            fileContent,
+            fileExtension,
+            file.ContentType,
+            cancellationToken);
+    }
+
+    public async Task<byte[]> GetFileContentFromDatabaseAsync(string fileName, CancellationToken cancellationToken = default)
+    {
+        return await _fileDocumentRepository.GetFileContentAsync(fileName, cancellationToken);
+    }
+
+
+
+    #endregion
 }

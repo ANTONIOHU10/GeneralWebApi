@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using GeneralWebApi.Common.Attributes;
 using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.FileOperation.Services;
+using GeneralWebApi.Domain.Entities;
 
 namespace GeneralWebApi.Controllers.v1;
 
@@ -43,15 +44,19 @@ public class DocumentController : BaseController
             // generate the upload id
             var uploadId = Guid.NewGuid().ToString();
 
-            // use the file upload service to upload the file
-            var filePath = await _fileUploadService.UploadFileWithProgressAsync(file, uploadId);
+            // upload file to database with progress tracking
+            var fileDocument = await _fileUploadService.UploadFileWithProgressAsync(file, uploadId);
 
-            if (string.IsNullOrEmpty(filePath))
+            if (fileDocument == null)
             {
                 return BadRequest(DocumentResponse.UploadFailed("Upload failed"));
             }
 
-            return Ok(DocumentResponse.UploadSuccess(filePath, file.FileName, file.Length));
+            return Ok(DocumentResponse.UploadSuccess(
+                fileDocument.FileName,
+                fileDocument.FileSize,
+                fileDocument.FileContentType,
+                fileDocument.Id));
         }
         catch (Exception ex)
         {
@@ -68,10 +73,10 @@ public class DocumentController : BaseController
     {
         try
         {
-            // 使用FileUploadService进行流式上传
+            // use the file upload service to upload the file, without the progress bar
             var savedFilePath = await _fileUploadService.StreamUploadAsync(HttpContext, cancellationToken);
 
-            return Ok(DocumentResponse.UploadSuccess(savedFilePath, Path.GetFileName(savedFilePath), new FileInfo(savedFilePath).Length));
+            return Ok(DocumentResponse.UploadSuccess(savedFilePath, Path.GetFileName(savedFilePath), 0));
         }
         catch (Exception ex)
         {

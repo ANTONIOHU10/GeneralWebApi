@@ -14,6 +14,12 @@ public static class ServiceCollectionExtensions
         // register progress service
         services.AddScoped<IProgressService, ProgressService>();
 
+        // register document checks helper
+        services.AddScoped<IDocumentChecks, DocumentChecks>();
+
+        // register multipart request helper
+        services.AddScoped<IMultipartRequestHelper, MultipartRequestHelper>();
+
         return services;
     }
 }
