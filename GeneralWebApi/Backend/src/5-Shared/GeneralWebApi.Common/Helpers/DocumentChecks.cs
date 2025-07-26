@@ -10,6 +10,7 @@ public class DocumentChecks : IDocumentChecks
     private static long _maxFileSize;
     private readonly ILogger _logger;
 
+    // TODO: add more file signature and understand if its necessary
     private static readonly Dictionary<string, List<byte[]>> _fileSignature =
         new Dictionary<string, List<byte[]>>
     {

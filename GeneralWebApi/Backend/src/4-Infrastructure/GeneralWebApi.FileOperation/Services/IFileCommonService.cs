@@ -16,33 +16,38 @@ public interface IFileCommonService
     /// </summary>
     Task<FileDocument> GetFileByFileNameAsync(string fileName, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Get all files
+    /// </summary>
     Task<IEnumerable<FileDocument>> GetAllFilesAsync(CancellationToken cancellationToken = default);
+
+
+
+    /// <summary>
+    /// Get file stream for download
+    /// </summary>
+    Task<Stream> GetFileStreamAsync(int fileId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get file stream by file name for download
+    /// </summary>
+    Task<Stream> GetFileStreamByFileNameAsync(string fileName, CancellationToken cancellationToken = default);
 
     #endregion
 
     #region Write Operations
-
-    /// <summary>
-    /// Update file metadata (not content)
-    /// </summary>
-    Task<FileDocument> UpdateFileMetadataAsync(FileDocument fileDocument, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Update file content
-    /// </summary>
-    Task<FileDocument> UpdateFileContentAsync(string fileName, byte[] newContent, CancellationToken cancellationToken = default);
 
     #endregion
 
     #region Delete Operations
 
     /// <summary>
-    /// Delete file by file name
+    /// Delete file by file name (both database record and local file)
     /// </summary>
     Task<FileDocument> DeleteFileByFileNameAsync(string fileName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Delete file by ID
+    /// Delete file by ID (both database record and local file)
     /// </summary>
     Task<FileDocument> DeleteFileByIdAsync(int id, CancellationToken cancellationToken = default);
 
@@ -55,11 +60,17 @@ public interface IFileCommonService
 
     #region Utility Operations
 
-
     /// <summary>
     /// Get file count
     /// </summary>
     Task<int> GetFileCountAsync(CancellationToken cancellationToken = default);
+
+
+
+    /// <summary>
+    /// Check if file exists in local file system
+    /// </summary>
+    Task<bool> FileExistsAsync(int fileId, CancellationToken cancellationToken = default);
 
     #endregion
 }

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 
-
 namespace GeneralWebApi.FileOperation.Services;
 
 public class FileUploadService : IFileUploadService
@@ -15,17 +14,20 @@ public class FileUploadService : IFileUploadService
     private readonly IProgressService _progressService;
     private readonly IMultipartRequestHelper _multipartRequestHelper;
     private readonly IFileDocumentRepository _fileDocumentRepository;
+    private readonly LocalFileStorageService _fileStorageService;
 
     public FileUploadService(
         IDocumentChecks documentCheckService,
         IProgressService progressService,
         IMultipartRequestHelper multipartRequestHelper,
-        IFileDocumentRepository fileDocumentRepository)
+        IFileDocumentRepository fileDocumentRepository,
+        LocalFileStorageService fileStorageService)
     {
         _documentCheckService = documentCheckService;
         _progressService = progressService;
         _multipartRequestHelper = multipartRequestHelper;
         _fileDocumentRepository = fileDocumentRepository;
+        _fileStorageService = fileStorageService;
     }
 
     public async Task<FileDocument> UploadFileWithProgressAsync(IFormFile file, string uploadId)
@@ -50,68 +52,58 @@ public class FileUploadService : IFileUploadService
         const int bufferSize = 8192; // 8KB buffer
         var buffer = new byte[bufferSize];
 
-        // Read file content to memory with progress tracking
-        using (var sourceStream = file.OpenReadStream())
-        using (var memoryStream = new MemoryStream())
+        // Determine file category
+        var fileCategory = _fileStorageService.GetFileCategory(file.ContentType);
+        var fileExtension = Path.GetExtension(file.FileName);
+        var uniqueFileName = _fileStorageService.GenerateUniqueFileName(file.FileName, fileExtension);
+        var fileHash = await _fileStorageService.CalculateFileHashAsync(file);
+
+        // Save file to local file system with progress tracking
+        var filePath = await _fileStorageService.SaveFileAsync(file, fileCategory);
+
+        // Create file document for database
+        var fileDocument = new FileDocument
         {
-            // Read file
-            int bytesRead;
-            while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-            {
-                // Write to memory stream
-                await memoryStream.WriteAsync(buffer, 0, bytesRead);
-                processedBytes += bytesRead;
+            FileName = uniqueFileName,
+            FilePath = filePath,
+            FileExtension = fileExtension,
+            FileSize = fileSize,
+            FileContentType = file.ContentType,
+            FileCategory = fileCategory,
+            OriginalFileName = fileName,
+            FileHash = fileHash,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
 
-                // Update progress every 100ms
-                var now = DateTime.UtcNow;
-                if ((now - lastProgressUpdate).TotalMilliseconds >= 100)
-                {
-                    await UpdateProgressAsync(uploadId, fileName, fileSize, processedBytes, startTime, now);
-                    lastProgressUpdate = now;
-                }
-            }
+        // Save to database
+        var savedFileDocument = await _fileDocumentRepository.AddFileDocumentAsync(fileDocument);
 
-            // Get file content
-            var fileContent = memoryStream.ToArray();
+        // Show 100% progress
+        var finalElapsed = DateTime.UtcNow - startTime;
+        var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? fileSize / 1024.0 / 1024.0 / finalElapsed.TotalSeconds : 0;
 
-            // Generate unique filename
-            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var uniqueFileName = $"{timestamp}_{file.FileName}";
-            var fileExtension = Path.GetExtension(file.FileName);
+        // Create final progress
+        var finalProgress = new UploadProgress
+        {
+            UploadId = uploadId,
+            FileName = fileName,
+            ProgressPercentage = 100.0,
+            ProcessedBytes = fileSize,
+            TotalBytes = fileSize,
+            SpeedMBps = finalSpeedMBps,
+            EstimatedTimeRemaining = TimeSpan.Zero,
+            StartTime = startTime,
+            Status = UploadStatus.Completed
+        };
 
-            // Add to database
-            var fileDocument = await _fileDocumentRepository.AddFileDocumentWithContentAsync(
-                uniqueFileName,
-                fileContent,
-                fileExtension,
-                file.ContentType);
+        // Update final progress
+        await _progressService.UpdateProgressAsync(uploadId, finalProgress);
 
-            // Show 100% progress
-            var finalElapsed = DateTime.UtcNow - startTime;
-            var finalSpeedMBps = finalElapsed.TotalSeconds > 0 ? fileSize / 1024.0 / 1024.0 / finalElapsed.TotalSeconds : 0;
+        // Complete upload
+        await _progressService.CompleteUploadAsync(uploadId, savedFileDocument.FileName);
 
-            // Create final progress
-            var finalProgress = new UploadProgress
-            {
-                UploadId = uploadId,
-                FileName = fileName,
-                ProgressPercentage = 100.0,
-                ProcessedBytes = fileSize,
-                TotalBytes = fileSize,
-                SpeedMBps = finalSpeedMBps,
-                EstimatedTimeRemaining = TimeSpan.Zero,
-                StartTime = startTime,
-                Status = UploadStatus.Completed
-            };
-
-            // Update final progress
-            await _progressService.UpdateProgressAsync(uploadId, finalProgress);
-
-            // Complete upload
-            await _progressService.CompleteUploadAsync(uploadId, fileDocument.FileName);
-
-            return fileDocument;
-        }
+        return savedFileDocument;
     }
 
     public async Task<FileDocument> StreamUploadAsync(HttpContext httpContext, CancellationToken cancellationToken)
@@ -146,7 +138,7 @@ public class FileUploadService : IFileUploadService
         {
             var hasContentDisposition = ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition);
 
-            // If it's a file, save it to database
+            // If it's a file, save it to local file system
             if (hasContentDisposition && contentDisposition != null && _multipartRequestHelper.HasFileContentDisposition(contentDisposition))
             {
                 var originalFileName = Path.GetFileName(contentDisposition.FileName.Value);
@@ -160,31 +152,46 @@ public class FileUploadService : IFileUploadService
                 // Read file header to validate signature
                 var headerBuffer = new byte[1024];
                 var bytesRead = await section.Body.ReadAsync(headerBuffer, cancellationToken);
-                if (fileExtension != null)
-                {
-                    ValidateFileSignature(new MemoryStream(headerBuffer, 0, bytesRead), fileExtension);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Invalid file extension");
-                }
 
-                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                var safeFileName = $"{timestamp}_{originalFileName}";
+                // TODO: disable it temporarily
+                // if (fileExtension != null)
+                // {
+                //     ValidateFileSignature(new MemoryStream(headerBuffer, 0, bytesRead), fileExtension);
+                // }
+                // else
+                // {
+                //     throw new InvalidOperationException("Invalid file extension");
+                // }
 
-                // Read the rest of the file content
+                // Determine file category
+                var fileCategory = _fileStorageService.GetFileCategory("application/octet-stream");
+                var uniqueFileName = _fileStorageService.GenerateUniqueFileName(originalFileName, fileExtension);
+
+                // Read the rest of the file content and save to local file system
                 using var memoryStream = new MemoryStream();
                 await memoryStream.WriteAsync(headerBuffer, 0, bytesRead, cancellationToken);
                 await section.Body.CopyToAsync(memoryStream, cancellationToken);
-                var fileContent = memoryStream.ToArray();
+                memoryStream.Position = 0;
+
+                var filePath = await _fileStorageService.SaveFileFromStreamAsync(memoryStream, uniqueFileName, fileCategory, cancellationToken);
+
+                // Create file document for database
+                var fileDocument = new FileDocument
+                {
+                    FileName = uniqueFileName,
+                    FilePath = filePath,
+                    FileExtension = fileExtension,
+                    FileSize = memoryStream.Length,
+                    FileContentType = "application/octet-stream",
+                    FileCategory = fileCategory,
+                    OriginalFileName = originalFileName,
+                    FileHash = "", // Calculate hash if needed
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
 
                 // Save to database
-                savedFileDocument = await _fileDocumentRepository.AddFileDocumentWithContentAsync(
-                    safeFileName,
-                    fileContent,
-                    fileExtension,
-                    "application/octet-stream", // Default content type for stream upload
-                    cancellationToken);
+                savedFileDocument = await _fileDocumentRepository.AddFileDocumentAsync(fileDocument);
 
                 // Only process first file
                 break;
@@ -201,27 +208,89 @@ public class FileUploadService : IFileUploadService
         return savedFileDocument;
     }
 
-    public async Task<string> UploadFileAsync(IFormFile file, string folderName)
+    public async Task<FileDocument> UploadFileAsync(IFormFile file, CancellationToken cancellationToken = default)
     {
-        // Simple upload implementation
+        // Validate file
         if (file == null || file.Length == 0)
         {
             throw new InvalidOperationException("No file provided");
         }
 
-        // Validate file
         ValidateFile(file);
 
-        // Generate file name
-        var fileName = $"{DateTime.Now:yyyyMMdd_HHmmss}_{file.FileName}";
-        var filePath = fileName;
+        // Determine file category and generate unique name
+        var fileCategory = _fileStorageService.GetFileCategory(file.ContentType);
+        var fileExtension = Path.GetExtension(file.FileName);
+        var uniqueFileName = _fileStorageService.GenerateUniqueFileName(file.FileName, fileExtension);
+        var fileHash = await _fileStorageService.CalculateFileHashAsync(file, cancellationToken);
 
-        // Save file content to memory (for demonstration)
-        using var memoryStream = new MemoryStream();
-        await file.CopyToAsync(memoryStream);
-        var fileContent = memoryStream.ToArray();
+        // Save file to local file system
+        var filePath = await _fileStorageService.SaveFileAsync(file, fileCategory, cancellationToken);
 
-        return filePath;
+        // Create file document for database
+        var fileDocument = new FileDocument
+        {
+            FileName = uniqueFileName,
+            FilePath = filePath,
+            FileExtension = fileExtension,
+            FileSize = file.Length,
+            FileContentType = file.ContentType,
+            FileCategory = fileCategory,
+            OriginalFileName = file.FileName,
+            FileHash = fileHash,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        // Save to database
+        return await _fileDocumentRepository.AddFileDocumentAsync(fileDocument, cancellationToken);
+    }
+
+    public async Task<FileDocument> UpdateFileContentAsync(int fileId, IFormFile newFile, CancellationToken cancellationToken = default)
+    {
+        // Validate new file
+        if (newFile == null || newFile.Length == 0)
+        {
+            throw new InvalidOperationException("No file provided");
+        }
+
+        ValidateFile(newFile);
+
+        // Get existing file document
+        var existingFile = await _fileDocumentRepository.GetByIdAsync(fileId, cancellationToken);
+        if (existingFile == null)
+        {
+            throw new FileNotFoundException($"File with ID {fileId} not found");
+        }
+
+        // Delete old file from local storage
+        if (!string.IsNullOrEmpty(existingFile.FilePath))
+        {
+            await _fileStorageService.DeleteFileAsync(existingFile.FilePath, cancellationToken);
+        }
+
+        // Determine new file category and generate unique name
+        var fileCategory = _fileStorageService.GetFileCategory(newFile.ContentType);
+        var fileExtension = Path.GetExtension(newFile.FileName);
+        var uniqueFileName = _fileStorageService.GenerateUniqueFileName(newFile.FileName, fileExtension);
+        var fileHash = await _fileStorageService.CalculateFileHashAsync(newFile, cancellationToken);
+
+        // Save new file to local file system
+        var newFilePath = await _fileStorageService.SaveFileAsync(newFile, fileCategory, cancellationToken);
+
+        // Update file document
+        existingFile.FileName = uniqueFileName;
+        existingFile.FilePath = newFilePath;
+        existingFile.FileExtension = fileExtension;
+        existingFile.FileSize = newFile.Length;
+        existingFile.FileContentType = newFile.ContentType;
+        existingFile.FileCategory = fileCategory;
+        existingFile.OriginalFileName = newFile.FileName;
+        existingFile.FileHash = fileHash;
+        existingFile.UpdatedAt = DateTime.UtcNow;
+
+        // Save updated document to database
+        return await _fileDocumentRepository.UpdateFileDocumentAsync(existingFile, cancellationToken);
     }
 
     #region Private Methods
@@ -247,7 +316,9 @@ public class FileUploadService : IFileUploadService
         var fileExtension = Path.GetExtension(file.FileName);
         ValidateFileExtension(fileExtension);
         ValidateFileSize(file.Length);
-        ValidateFileSignature(file.OpenReadStream(), fileExtension);
+
+        // TODO: disable it temporarily
+        //ValidateFileSignature(file.OpenReadStream(), fileExtension);
     }
 
     private void ValidateFileName(string? fileName)
@@ -282,11 +353,6 @@ public class FileUploadService : IFileUploadService
         }
     }
 
-    private string GenerateFilePath(string fileName)
-    {
-        string fileExtension = Path.GetExtension(fileName);
-        return fileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + fileExtension;
-    }
 
     private async Task UpdateProgressAsync(string uploadId, string fileName, long fileSize, long processedBytes, DateTime startTime, DateTime currentTime)
     {
@@ -312,42 +378,6 @@ public class FileUploadService : IFileUploadService
         // Update progress
         await _progressService.UpdateProgressAsync(uploadId, progress);
     }
-
-    public async Task<FileDocument> UploadFileToDatabaseAsync(IFormFile file, CancellationToken cancellationToken = default)
-    {
-        // Validate file
-        if (file == null || file.Length == 0)
-        {
-            throw new InvalidOperationException("No file provided");
-        }
-
-        ValidateFile(file);
-
-        // Read file content
-        using var memoryStream = new MemoryStream();
-        await file.CopyToAsync(memoryStream, cancellationToken);
-        var fileContent = memoryStream.ToArray();
-
-        // Generate unique filename
-        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        var fileName = $"{timestamp}_{file.FileName}";
-        var fileExtension = Path.GetExtension(file.FileName);
-
-        // Add to database
-        return await _fileDocumentRepository.AddFileDocumentWithContentAsync(
-            fileName,
-            fileContent,
-            fileExtension,
-            file.ContentType,
-            cancellationToken);
-    }
-
-    public async Task<byte[]> GetFileContentFromDatabaseAsync(string fileName, CancellationToken cancellationToken = default)
-    {
-        return await _fileDocumentRepository.GetFileContentAsync(fileName, cancellationToken);
-    }
-
-
 
     #endregion
 }

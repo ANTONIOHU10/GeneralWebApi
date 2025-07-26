@@ -23,6 +23,9 @@ public static class ServiceCollectionExtensions
         // register file common service
         services.AddScoped<IFileCommonService, FileCommonService>();
 
+        // register local file storage service
+        services.AddScoped<LocalFileStorageService>();
+
         return services;
     }
 }

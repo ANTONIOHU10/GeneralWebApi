@@ -6,15 +6,16 @@ namespace GeneralWebApi.FileOperation.Services;
 
 public interface IFileUploadService
 {
-    // Buffer upload with progress tracking (database storage)
+    // Upload file to local file system with progress tracking
     Task<FileDocument> UploadFileWithProgressAsync(IFormFile file, string uploadId);
 
-    // Stream upload for large files (database storage)
+    // Stream upload for large files to local file system
     Task<FileDocument> StreamUploadAsync(HttpContext httpContext, CancellationToken cancellationToken);
 
-    // Simple upload without progress
-    Task<string> UploadFileAsync(IFormFile file, string folderName);
+    // Simple upload to local file system
+    Task<FileDocument> UploadFileAsync(IFormFile file, CancellationToken cancellationToken = default);
 
-    // Database storage methods
-    Task<FileDocument> UploadFileToDatabaseAsync(IFormFile file, CancellationToken cancellationToken = default);
+    // Update file content
+    Task<FileDocument> UpdateFileContentAsync(int fileId, IFormFile newFile, CancellationToken cancellationToken = default);
+
 }

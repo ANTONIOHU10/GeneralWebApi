@@ -19,23 +19,26 @@ public class DocumentController : BaseController
     private readonly IFileUploadService _fileUploadService;
     private readonly IFileCommonService _fileCommonService;
 
-    public DocumentController(ILoggingService log, IFileUploadService fileUploadService, IFileCommonService fileCommonService)
+    public DocumentController(
+        ILoggingService log,
+        IFileUploadService fileUploadService,
+        IFileCommonService fileCommonService)
     {
         _log = log;
         _fileUploadService = fileUploadService;
         _fileCommonService = fileCommonService;
     }
 
-    [HttpPost("bufferUpload")]
+    [HttpPost("upload")]
     [EnableRateLimiting("Default")]
     [DisableFormValueModelBinding]
     [AllowAnonymous]
-    // for file with size less than 10MB
+    // Upload file to local file system using multipart/form-data
     public async Task<ActionResult<ApiResponse<object>>> UploadDocumentAsync()
     {
         try
         {
-            // get the file from the request
+            // Get the file from multipart/form-data request
             var file = Request.Form.Files.FirstOrDefault();
 
             if (file == null || file.Length == 0)
@@ -43,11 +46,8 @@ public class DocumentController : BaseController
                 return BadRequest(DocumentResponse.UploadFailed("No file provided"));
             }
 
-            // generate the upload id
-            var uploadId = Guid.NewGuid().ToString();
-
-            // upload file to database with progress tracking
-            var fileDocument = await _fileUploadService.UploadFileWithProgressAsync(file, uploadId);
+            // Upload file to local file system and save metadata to database
+            var fileDocument = await _fileUploadService.UploadFileAsync(file);
 
             if (fileDocument == null)
             {
@@ -62,20 +62,21 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError("Error during buffer upload: {Message}", ex.Message);
+            _log.LogError("Error during file upload: {Message}", ex.Message);
             return BadRequest(DocumentResponse.UploadFailed(ex.Message));
         }
     }
 
+
+
     [HttpPost("streamUpload")]
     [DisableFormValueModelBinding]
     [AllowAnonymous]
-    // for file with size greater than 10MB
-    public async Task<IActionResult> StreamUploadToDesktop(CancellationToken cancellationToken)
+    // Stream upload for large files using multipart/form-data
+    public async Task<IActionResult> StreamUploadAsync(CancellationToken cancellationToken)
     {
         try
         {
-            // Upload file to database using stream upload
             var fileDocument = await _fileUploadService.StreamUploadAsync(HttpContext, cancellationToken);
 
             return Ok(DocumentResponse.UploadSuccess(
@@ -116,126 +117,162 @@ public class DocumentController : BaseController
         }
     }
 
-    [HttpGet("files/{id}")]
+    [HttpPost("files/{id}/content")]
+    [EnableRateLimiting("Default")]
+    [DisableFormValueModelBinding]
     [AllowAnonymous]
-    // Get file by ID
-    public async Task<ActionResult<ApiResponse<object>>> GetFileByIdAsync(int id, CancellationToken cancellationToken = default)
+    // Update file content (multipart/form-data)
+    public async Task<ActionResult<ApiResponse<object>>> UpdateFileContentAsync(int id, CancellationToken cancellationToken = default)
     {
         try
         {
-            var file = await _fileCommonService.GetFileByIdAsync(id, cancellationToken);
-            return Ok(ApiResponse<object>.SuccessResult(file, "File retrieved successfully"));
-        }
-        catch (Exception ex)
-        {
-            _log.LogError("Error getting file by ID {Id}: {Message}", id, ex.Message);
-            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
-        }
-    }
-
-    [HttpGet("files/download/{fileName}")]
-    [AllowAnonymous]
-    // Download file from database
-    public async Task<IActionResult> DownloadFileAsync(string fileName, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            // Get file document with full content and metadata
-            var fileDocument = await _fileCommonService.GetFileByFileNameAsync(fileName, cancellationToken);
-
-            // Return file content directly as binary stream
-            return new FileContentResult(fileDocument.Content, fileDocument.FileContentType)
+            if (id <= 0)
             {
-                FileDownloadName = fileDocument.FileName
-            };
-        }
-        catch (Exception ex)
-        {
-            _log.LogError("Error downloading file {FileName}: {Message}", fileName, ex.Message);
-            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
-        }
-    }
+                return BadRequest(ApiResponse<object>.ErrorResult("Invalid file ID"));
+            }
 
-    [HttpPut("files/{id}")]
-    [AllowAnonymous]
-    // Update file metadata
-    public async Task<ActionResult<ApiResponse<object>>> UpdateFileMetadataAsync(int id, [FromBody] FileDocument updateModel, CancellationToken cancellationToken = default)
-    {
-        try
-        {
+            // Get the file from multipart/form-data request
+            var file = Request.Form.Files.FirstOrDefault();
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResult("No file provided"));
+            }
+
+            // Check if file exists
             var existingFile = await _fileCommonService.GetFileByIdAsync(id, cancellationToken);
 
-            // Update only allowed fields
-            existingFile.FileName = updateModel.FileName;
-            existingFile.FileContentType = updateModel.FileContentType;
-            existingFile.UpdatedAt = DateTime.UtcNow;
+            // Update file content
+            var updatedFile = await _fileUploadService.UpdateFileContentAsync(id, file, cancellationToken);
 
-            var updatedFile = await _fileCommonService.UpdateFileMetadataAsync(existingFile, cancellationToken);
-            return Ok(ApiResponse<object>.SuccessResult(updatedFile, "File metadata updated successfully"));
+            if (updatedFile == null)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResult("File content update failed"));
+            }
+
+            return Ok(ApiResponse<object>.SuccessResult(updatedFile, "File content updated successfully"));
+        }
+        catch (FileNotFoundException ex)
+        {
+            _log.LogWarning("File not found with ID {Id}: {Message}", id, ex.Message);
+            return NotFound(ApiResponse<object>.NotFound($"File with ID {id} not found"));
         }
         catch (Exception ex)
         {
-            _log.LogError("Error updating file metadata for ID {Id}: {Message}", id, ex.Message);
+            _log.LogError("Error updating file content for ID {Id}: {Message}", id, ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }
+
+
+    [HttpGet("files/download/{id}")]
+    [AllowAnonymous]
+    // Download file by ID
+    public async Task<IActionResult> DownloadFileByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (id <= 0)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResult("Invalid file ID"));
+            }
+
+            var fileDocument = await _fileCommonService.GetFileByIdAsync(id, cancellationToken);
+
+            // Check if file exists in local storage
+            if (!await _fileCommonService.FileExistsAsync(id, cancellationToken))
+            {
+                return NotFound(ApiResponse<object>.NotFound($"File with ID {id} not found in storage"));
+            }
+
+            var fileStream = await _fileCommonService.GetFileStreamAsync(id, cancellationToken);
+
+            // Create a safe filename for download (handle Chinese characters)
+            var safeFileName = GetSafeFileName(fileDocument.OriginalFileName);
+
+            // Use FileStreamResult for better control
+            var result = new FileStreamResult(fileStream, fileDocument.FileContentType)
+            {
+                FileDownloadName = safeFileName
+            };
+
+            return result;
+        }
+        catch (FileNotFoundException ex)
+        {
+            _log.LogWarning("File not found with ID {Id}: {Message}", id, ex.Message);
+            return NotFound(ApiResponse<object>.NotFound($"File with ID {id} not found"));
+        }
+        catch (Exception ex)
+        {
+            _log.LogError("Error downloading file with ID {Id}: {Message}", id, ex.Message);
+            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
+        }
+    }
+
+    private string GetSafeFileName(string originalFileName)
+    {
+        try
+        {
+            // Remove or replace problematic characters
+            var safeName = originalFileName
+                .Replace("\\", "_")
+                .Replace("/", "_")
+                .Replace(":", "_")
+                .Replace("*", "_")
+                .Replace("?", "_")
+                .Replace("\"", "_")
+                .Replace("<", "_")
+                .Replace(">", "_")
+                .Replace("|", "_");
+
+            // If the filename contains Chinese characters, use a simplified approach
+            if (safeName.Any(c => c > 127))
+            {
+                var extension = Path.GetExtension(safeName);
+                var nameWithoutExt = Path.GetFileNameWithoutExtension(safeName);
+
+                // Keep only ASCII characters and replace others with underscore
+                var asciiName = new string(nameWithoutExt.Select(c => c <= 127 ? c : '_').ToArray());
+
+                return asciiName + extension;
+            }
+
+            return safeName;
+        }
+        catch
+        {
+            // Fallback to a simple name if anything goes wrong
+            return $"file_{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
+        }
+    }
+
+
+
 
     [HttpDelete("files/{id}")]
     [AllowAnonymous]
-    // Delete file by ID
+    // Delete file by ID (both database record and local file)
     public async Task<ActionResult<ApiResponse<object>>> DeleteFileByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         try
         {
+            if (id <= 0)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResult("Invalid file ID"));
+            }
+
             var deletedFile = await _fileCommonService.DeleteFileByIdAsync(id, cancellationToken);
             return Ok(ApiResponse<object>.SuccessResult(deletedFile, "File deleted successfully"));
+        }
+        catch (FileNotFoundException ex)
+        {
+            _log.LogWarning("File not found with ID {Id}: {Message}", id, ex.Message);
+            return NotFound(ApiResponse<object>.NotFound($"File with ID {id} not found"));
         }
         catch (Exception ex)
         {
             _log.LogError("Error deleting file with ID {Id}: {Message}", id, ex.Message);
-            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
-        }
-    }
-
-    [HttpDelete("files/name/{fileName}")]
-    [AllowAnonymous]
-    // Delete file by file name
-    public async Task<ActionResult<ApiResponse<object>>> DeleteFileByFileNameAsync(string fileName, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var deletedFile = await _fileCommonService.DeleteFileByFileNameAsync(fileName, cancellationToken);
-            return Ok(ApiResponse<object>.SuccessResult(deletedFile, "File deleted successfully"));
-        }
-        catch (Exception ex)
-        {
-            _log.LogError("Error deleting file {FileName}: {Message}", fileName, ex.Message);
-            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
-        }
-    }
-
-    [HttpDelete("files/all")]
-    [AllowAnonymous]
-    // Delete all files
-    public async Task<ActionResult<ApiResponse<object>>> DeleteAllFilesAsync(CancellationToken cancellationToken = default)
-    {
-        var deletedFiles = await _fileCommonService.DeleteAllFilesAsync(cancellationToken);
-        return Ok(ApiResponse<object>.SuccessResult(deletedFiles, "All files deleted successfully"));
-    }
-
-    [HttpGet("files/count")]
-    [AllowAnonymous]
-    // Get total file count
-    public async Task<ActionResult<ApiResponse<object>>> GetFileCountAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var count = await _fileCommonService.GetFileCountAsync(cancellationToken);
-            return Ok(ApiResponse<object>.SuccessResult(new { count }, "File count retrieved successfully"));
-        }
-        catch (Exception ex)
-        {
-            _log.LogError("Error getting file count: {Message}", ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }
