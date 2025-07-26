@@ -114,7 +114,7 @@ public class FileUploadService : IFileUploadService
         }
     }
 
-    public async Task<string> StreamUploadAsync(HttpContext httpContext, CancellationToken cancellationToken)
+    public async Task<FileDocument> StreamUploadAsync(HttpContext httpContext, CancellationToken cancellationToken)
     {
         var request = httpContext.Request;
 
@@ -139,14 +139,14 @@ public class FileUploadService : IFileUploadService
         // Read first section
         var section = await reader.ReadNextSectionAsync(cancellationToken);
 
-        string? savedFilePath = null;
+        FileDocument? savedFileDocument = null;
 
         // Read next section
         while (section != null)
         {
             var hasContentDisposition = ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition);
 
-            // If it's a file, save it to desktop
+            // If it's a file, save it to database
             if (hasContentDisposition && contentDisposition != null && _multipartRequestHelper.HasFileContentDisposition(contentDisposition))
             {
                 var originalFileName = Path.GetFileName(contentDisposition.FileName.Value);
@@ -171,13 +171,20 @@ public class FileUploadService : IFileUploadService
 
                 var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 var safeFileName = $"{timestamp}_{originalFileName}";
-                savedFilePath = safeFileName;
 
                 // Read the rest of the file content
                 using var memoryStream = new MemoryStream();
                 await memoryStream.WriteAsync(headerBuffer, 0, bytesRead, cancellationToken);
                 await section.Body.CopyToAsync(memoryStream, cancellationToken);
                 var fileContent = memoryStream.ToArray();
+
+                // Save to database
+                savedFileDocument = await _fileDocumentRepository.AddFileDocumentWithContentAsync(
+                    safeFileName,
+                    fileContent,
+                    fileExtension,
+                    "application/octet-stream", // Default content type for stream upload
+                    cancellationToken);
 
                 // Only process first file
                 break;
@@ -186,12 +193,12 @@ public class FileUploadService : IFileUploadService
             section = await reader.ReadNextSectionAsync(cancellationToken);
         }
 
-        if (string.IsNullOrEmpty(savedFilePath))
+        if (savedFileDocument == null)
         {
             throw new InvalidOperationException("No file was uploaded");
         }
 
-        return savedFilePath;
+        return savedFileDocument;
     }
 
     public async Task<string> UploadFileAsync(IFormFile file, string folderName)

@@ -15,4 +15,5 @@ public interface IFileDocumentRepository : IBaseRepository<FileDocument>
     Task<FileDocument> AddFileDocumentWithContentAsync(string fileName, byte[] content, string fileExtension, string contentType, CancellationToken cancellationToken = default);
     Task<byte[]> GetFileContentAsync(string fileName, CancellationToken cancellationToken = default);
     Task<FileDocument> UpdateFileContentAsync(string fileName, byte[] newContent, CancellationToken cancellationToken = default);
+    Task<int> CountAsync(CancellationToken cancellationToken = default);
 }

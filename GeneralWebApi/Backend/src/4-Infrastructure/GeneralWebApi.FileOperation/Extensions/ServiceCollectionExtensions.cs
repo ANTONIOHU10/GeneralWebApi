@@ -20,6 +20,9 @@ public static class ServiceCollectionExtensions
         // register multipart request helper
         services.AddScoped<IMultipartRequestHelper, MultipartRequestHelper>();
 
+        // register file common service
+        services.AddScoped<IFileCommonService, FileCommonService>();
+
         return services;
     }
 }

@@ -41,7 +41,22 @@ public class FileRepository : IFileDocumentRepository
 
     public async Task<IEnumerable<FileDocument>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.FileDocuments.ToListAsync(cancellationToken);
+        return await _dbContext.FileDocuments
+            .Select(f => new FileDocument
+            {
+                Id = f.Id,
+                FileName = f.FileName,
+                FileExtension = f.FileExtension,
+                FileSize = f.FileSize,
+                FileContentType = f.FileContentType,
+                CreatedAt = f.CreatedAt,
+                UpdatedAt = f.UpdatedAt,
+                IsActive = f.IsActive,
+                IsDeleted = f.IsDeleted,
+                Version = f.Version,
+                // Exclude Content field to avoid loading large binary data
+            })
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<FileDocument> UpdateAsync(FileDocument entity, CancellationToken cancellationToken = default)
@@ -95,6 +110,20 @@ public class FileRepository : IFileDocumentRepository
     public async Task<List<FileDocument>> GetAllFileDocumentsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.FileDocuments
+            .Select(f => new FileDocument
+            {
+                Id = f.Id,
+                FileName = f.FileName,
+                FileExtension = f.FileExtension,
+                FileSize = f.FileSize,
+                FileContentType = f.FileContentType,
+                CreatedAt = f.CreatedAt,
+                UpdatedAt = f.UpdatedAt,
+                IsActive = f.IsActive,
+                IsDeleted = f.IsDeleted,
+                Version = f.Version,
+                // Exclude Content field to avoid loading large binary data
+            })
             .OrderByDescending(f => f.CreatedAt)
             .ToListAsync(cancellationToken);
     }
@@ -122,7 +151,7 @@ public class FileRepository : IFileDocumentRepository
 
     public async Task<FileDocument> DeleteFileDocumentAsync(string fileName, CancellationToken cancellationToken = default)
     {
-        // check if the file exists
+        // Check if the file exists
         if (!await ExistsByFileNameAsync(fileName, cancellationToken))
         {
             throw new Exception("File not found");
@@ -136,10 +165,28 @@ public class FileRepository : IFileDocumentRepository
 
     public async Task<List<FileDocument>> DeleteAllFileDocumentsAsync(CancellationToken cancellationToken = default)
     {
-        var allFileDocuments = await GetAllFileDocumentsAsync(cancellationToken);
-        _dbContext.FileDocuments.RemoveRange(allFileDocuments);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return allFileDocuments;
+        // Get files to delete (metadata only)
+        var filesToDelete = await _dbContext.FileDocuments
+            .Select(f => new FileDocument
+            {
+                Id = f.Id,
+                FileName = f.FileName,
+                FileExtension = f.FileExtension,
+                FileSize = f.FileSize,
+                FileContentType = f.FileContentType,
+                CreatedAt = f.CreatedAt,
+                UpdatedAt = f.UpdatedAt,
+                IsActive = f.IsActive,
+                IsDeleted = f.IsDeleted,
+                Version = f.Version,
+                // Exclude Content field to avoid loading large binary data
+            })
+            .ToListAsync(cancellationToken);
+
+        // Execute SQL delete directly without loading binary content
+        await _dbContext.Database.ExecuteSqlRawAsync("DELETE FROM FileDocuments", cancellationToken);
+
+        return filesToDelete;
     }
 
     public async Task<bool> ExistsByFileNameAsync(string fileName, CancellationToken cancellationToken = default)
@@ -178,6 +225,12 @@ public class FileRepository : IFileDocumentRepository
         _dbContext.FileDocuments.Update(fileDocument);
         await _dbContext.SaveChangesAsync(cancellationToken);
         return fileDocument;
+    }
+
+    public async Task<int> CountAsync(CancellationToken cancellationToken = default)
+    {
+        // Query count directly without loading any data
+        return await _dbContext.FileDocuments.CountAsync(cancellationToken);
     }
 
     #endregion
