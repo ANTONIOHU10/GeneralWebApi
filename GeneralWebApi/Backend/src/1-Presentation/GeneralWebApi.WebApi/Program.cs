@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http.Features;
 using GeneralWebApi.Extensions;
 using GeneralWebApi.FileOperation.Extensions;
 using GeneralWebApi.Contracts.Extensions;
+using GeneralWebApi.Application.Extensions;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -94,6 +95,8 @@ builder.Services.AddRouting(options =>
     // make the urls lowercase
     options.LowercaseUrls = true;
 });
+
+builder.Services.AddCSVExport();
 
 // add rate limiter
 builder.Services.AddCustomRateLimiter();

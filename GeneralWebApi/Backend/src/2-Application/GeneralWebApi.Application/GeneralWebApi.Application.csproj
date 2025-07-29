@@ -3,4 +3,17 @@
   <PropertyGroup>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.0.1" />
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
+    <ProjectReference Include="..\GeneralWebApi.DTOs\GeneralWebApi.DTOs.csproj" />
+  </ItemGroup>
+
 </Project>

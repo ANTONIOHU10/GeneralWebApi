@@ -9,6 +9,7 @@ using GeneralWebApi.Common.Attributes;
 using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.FileOperation.Services;
 using GeneralWebApi.Domain.Entities;
+using GeneralWebApi.Application.Services;
 
 namespace GeneralWebApi.Controllers.v1;
 
@@ -19,14 +20,18 @@ public class DocumentController : BaseController
     private readonly IFileUploadService _fileUploadService;
     private readonly IFileCommonService _fileCommonService;
 
+    private readonly ICSVExportService _csvExportService;
+
     public DocumentController(
         ILoggingService log,
         IFileUploadService fileUploadService,
-        IFileCommonService fileCommonService)
+        IFileCommonService fileCommonService,
+        ICSVExportService csvExportService)
     {
         _log = log;
         _fileUploadService = fileUploadService;
         _fileCommonService = fileCommonService;
+        _csvExportService = csvExportService;
     }
 
     [HttpPost("upload")]
@@ -273,6 +278,44 @@ public class DocumentController : BaseController
         catch (Exception ex)
         {
             _log.LogError("Error deleting file with ID {Id}: {Message}", id, ex.Message);
+            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
+        }
+    }
+
+    [HttpGet("export/csv/{entityType}")]
+    [AllowAnonymous]
+    [EnableRateLimiting("Default")]
+    public async Task<IActionResult> ExportCSVAsync(string entityType, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            byte[] csvData;
+            string fileName;
+
+            // format the type to lowercase
+            switch (entityType.ToLower())
+            {
+                case "products":
+                    csvData = await _csvExportService.ExportProductsToCSVAsync(cancellationToken);
+                    fileName = $"products_{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
+                    break;
+                case "users":
+                    csvData = await _csvExportService.ExportUsersToCSVAsync(cancellationToken);
+                    fileName = $"users_{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
+                    break;
+                case "filedocuments":
+                    csvData = await _csvExportService.ExportFileDocumentsToCSVAsync(cancellationToken);
+                    fileName = $"fileDocuments_{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
+                    break;
+                default:
+                    return BadRequest(ApiResponse<object>.ErrorResult($"Invalid entity type '{entityType}'. Supported types: products, users, fileDocuments"));
+            }
+
+            return File(csvData, "text/csv", fileName);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError("Error exporting CSV: {Message}", ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }
