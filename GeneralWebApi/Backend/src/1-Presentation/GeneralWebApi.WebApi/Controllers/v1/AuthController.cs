@@ -12,56 +12,51 @@ using System.Security.Claims;
 namespace GeneralWebApi.Controllers.v1;
 
 [ApiVersion("1.0")]
-public class AuthController : BaseController
+public class AuthController(IUserService userService) : BaseController
 {
-    private readonly IUserService _userService;
-    private readonly IJwtService _jwtService;
-    private readonly IUserRepository _userRepository;
-
-    public AuthController(IUserService userService, IJwtService jwtService, IUserRepository userRepository)
-    {
-        _userService = userService;
-        _jwtService = jwtService;
-        _userRepository = userRepository;
-    }
+    private readonly IUserService _userService = userService;
 
     [HttpPost("login")]
     [EnableRateLimiting("Default")]
     [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<LoginResponseData>>> Login([FromBody] LoginRequest request)
     {
-        var (success, accessToken, refreshToken) = await _userService.LoginAsync(request.Username, request.Password);
-
-        if (!success)
+        return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            return Unauthorized(AuthResponse.LoginFailed("Invalid username or password"));
-        }
+            var (success, accessToken, refreshToken) = await _userService.LoginAsync(request.Username, request.Password);
 
-        // get the user claims
-        var userClaims = await _userService.GetUserClaimsAsync(request.Username);
-        var roles = userClaims?.Claims
-            .Where(c => c.Type == ClaimTypes.Role)
-            .Select(c => c.Value)
-            .ToArray() ?? Array.Empty<string>();
-
-        var responseData = new LoginResponseData
-        {
-            UserId = request.Username,
-            Username = request.Username,
-            Email = userClaims?.FindFirst(ClaimTypes.Email)?.Value,
-            Roles = roles,
-            Token = new TokenInfo
+            if (!success)
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                TokenType = "Bearer",
-                ExpiresIn = 3600, // 1 hour
-                ExpiresAt = DateTime.UtcNow.AddHours(1),
-                RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7)
+                return ApiResponse<LoginResponseData>.ErrorResult("Invalid username or password");
             }
-        };
 
-        return Ok(AuthResponse.LoginSuccess(responseData));
+            // get the user claims
+            var userClaims = await _userService.GetUserClaimsAsync(request.Username);
+            var roles = userClaims?.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToArray() ?? [];
+
+            var responseData = new LoginResponseData
+            {
+                UserId = request.Username,
+                Username = request.Username,
+                Email = userClaims?.FindFirst(ClaimTypes.Email)?.Value,
+                Roles = roles,
+                Token = new TokenInfo
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                    TokenType = "Bearer",
+                    ExpiresIn = 3600, // 1 hour
+                    ExpiresAt = DateTime.UtcNow.AddHours(1),
+                    RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7)
+                }
+            };
+
+            return ApiResponse<LoginResponseData>.SuccessResult(responseData, "Login successful");
+        });
+
     }
 
     [HttpPost("refresh")]
@@ -69,28 +64,31 @@ public class AuthController : BaseController
     [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<RefreshTokenResponseData>>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
-        var (success, accessToken, refreshToken) = await _userService.RefreshTokenAsync(request.RefreshToken);
-
-        if (!success)
+        return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            return Unauthorized(AuthResponse.RefreshTokenFailed("Invalid or expired refresh token"));
-        }
+            var (success, accessToken, refreshToken) = await _userService.RefreshTokenAsync(req.RefreshToken);
 
-        var responseData = new RefreshTokenResponseData
-        {
-            Token = new TokenInfo
+            if (!success)
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                TokenType = "Bearer",
-                ExpiresIn = 3600,
-                ExpiresAt = DateTime.UtcNow.AddHours(1),
-                RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7)
-            },
-            RefreshedAt = DateTime.UtcNow
-        };
+                return AuthResponse.RefreshTokenFailed("Invalid or expired refresh token");
+            }
 
-        return Ok(AuthResponse.RefreshTokenSuccess(responseData));
+            var responseData = new RefreshTokenResponseData
+            {
+                Token = new TokenInfo
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                    TokenType = "Bearer",
+                    ExpiresIn = 3600,
+                    ExpiresAt = DateTime.UtcNow.AddHours(1),
+                    RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7)
+                },
+                RefreshedAt = DateTime.UtcNow
+            };
+
+            return AuthResponse.RefreshTokenSuccess(responseData);
+        });
     }
 
     [HttpPost("logout")]
@@ -98,14 +96,17 @@ public class AuthController : BaseController
     [Authorize(Policy = "UserOrAdmin")]
     public async Task<ActionResult<ApiResponse<LogoutResponseData>>> Logout([FromBody] LogoutRequest request)
     {
-        var success = await _userService.LogoutAsync(request.RefreshToken);
-
-        if (!success)
+        return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            return BadRequest(ApiResponse<LogoutResponseData>.ErrorResult("Invalid refresh token"));
-        }
+            var success = await _userService.LogoutAsync(req.RefreshToken);
 
-        return Ok(AuthResponse.LogoutSuccess());
+            if (!success)
+            {
+                return ApiResponse<LogoutResponseData>.ErrorResult("Invalid refresh token");
+            }
+
+            return AuthResponse.LogoutSuccess();
+        });
     }
 
     // add Authrorization   Bearer Token into the header
@@ -150,23 +151,25 @@ public class AuthController : BaseController
     [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<RegisterResponseData>>> Register([FromBody] RegisterRequest request)
     {
-        // TODO: validate the request
-
-        var success = await _userService.RegisterUserAsync(request.Username, request.Password, request.Email);
-
-        if (!success)
+        return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            return BadRequest(AuthResponse.RegisterFailed("User registration failed"));
-        }
+            var success = await _userService.RegisterUserAsync(req.Username, req.Password, req.Email);
 
-        return Ok(AuthResponse.RegisterSuccess(new RegisterResponseData
-        {
-            UserId = request.Username,
-            Username = request.Username,
-            Email = request.Email,
-            EmailConfirmed = false
-        }));
+            if (!success)
+            {
+                return AuthResponse.RegisterFailed("User registration failed");
+            }
 
+            var responseData = new RegisterResponseData
+            {
+                UserId = req.Username,
+                Username = req.Username,
+                Email = req.Email,
+                EmailConfirmed = false
+            };
+
+            return AuthResponse.RegisterSuccess(responseData);
+        });
     }
 
     [HttpPut("update-password")]
@@ -174,13 +177,17 @@ public class AuthController : BaseController
     [Authorize(Policy = "UserOrAdmin")]
     public async Task<ActionResult<ApiResponse<UpdatePasswordResponseData>>> UpdatePassword([FromBody] UpdatePasswordRequest request)
     {
-        var success = await _userService.UpdatePasswordAsync(request.Username, request.NewPassword);
-
-        if (!success)
+        return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            return BadRequest(AuthResponse.UpdatePasswordFailed("Password update failed"));
-        }
-        return Ok(AuthResponse.UpdatePasswordSuccess());
+            var success = await _userService.UpdatePasswordAsync(req.Username, req.NewPassword);
+
+            if (!success)
+            {
+                return AuthResponse.UpdatePasswordFailed("Password update failed");
+            }
+
+            return AuthResponse.UpdatePasswordSuccess();
+        });
     }
 
 }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Http.Features;
 using GeneralWebApi.Extensions;
 using GeneralWebApi.FileOperation.Extensions;
+using GeneralWebApi.Contracts.Extensions;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -105,6 +106,9 @@ builder.Services.AddCustomDocumentHelper();
 
 // add signalr service
 builder.Services.AddSignalRService();
+
+// add validators
+builder.Services.AddValidators();
 
 // add file operation services
 builder.Services.AddFileOperationServices();
