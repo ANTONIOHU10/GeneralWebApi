@@ -47,17 +47,18 @@ public abstract class BaseController : ControllerBase, IBaseController
         return StatusCode(500, response);
     }
 
-    // validation 
-    // the T type will be inferred from the action parameter
-    // For example:
-    // 1. request = LoginRequest -> use the LoginRequestValidator to validate the request
-    // 2. because of the return type of the controller endpoint is LoginResponseData
-    // 3. so the compiler infers that T = LoginResponseData
-    // 4. so the return type will be ActionResult<ApiResponse<LoginResponseData>>
-    protected async Task<ActionResult<ApiResponse<T>>> ValidateAndExecuteAsync<TRequest, T>(
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TRequest"> this type dependes on the request type</typeparam>
+    /// <param name="request"> decide the type of the request</param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    protected async Task<ActionResult> ValidateAndExecuteAsync<TRequest>(
         TRequest request,
-        Func<TRequest, Task<ApiResponse<T>>> action)
+        Func<TRequest, Task<ActionResult>> action)
     {
+        //this TRequest is the type of the request object passed from the input parameter of the method
         var validator = HttpContext.RequestServices.GetService<IValidator<TRequest>>();
         if (validator != null)
         {
@@ -65,7 +66,7 @@ public abstract class BaseController : ControllerBase, IBaseController
             if (!validationResult.IsValid)
             {
                 var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return BadRequest(ApiResponse<T>.ErrorResult(string.Join(", ", errors)));
+                return BadRequest(ApiResponse<object>.ErrorResult(string.Join(", ", errors)));
             }
         }
 

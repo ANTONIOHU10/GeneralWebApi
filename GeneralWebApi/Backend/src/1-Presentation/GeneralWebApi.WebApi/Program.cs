@@ -14,6 +14,7 @@ using GeneralWebApi.Extensions;
 using GeneralWebApi.FileOperation.Extensions;
 using GeneralWebApi.Contracts.Extensions;
 using GeneralWebApi.Application.Extensions;
+using GeneralWebApi.WebApi.Extensions;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -110,6 +111,9 @@ builder.Services.AddCustomDocumentHelper();
 // add signalr service
 builder.Services.AddSignalRService();
 
+// add cors
+builder.Services.AddCORS();
+
 // add validators
 builder.Services.AddValidators();
 
@@ -126,6 +130,12 @@ if (app.Environment.IsDevelopment())
 
     //scalar api reference: https://localhost:7297/scalar/v1
     app.MapScalarApiReference();
+
+    app.UseCors("DevelopmentPolicy");
+}
+else
+{
+    app.UseCors("ProductionPolicy");
 }
 
 app.UseMiddleware<LoggingMiddleware>();
@@ -133,7 +143,6 @@ app.UseMiddleware<LoggingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseCustomAuthentication();
-
 app.MapControllers();
 app.UseRateLimiter();
 

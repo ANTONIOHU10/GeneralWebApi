@@ -19,7 +19,7 @@ public class AuthController(IUserService userService) : BaseController
     [HttpPost("login")]
     [EnableRateLimiting("Default")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<LoginResponseData>>> Login([FromBody] LoginRequest request)
+    public async Task<ActionResult> Login([FromBody] LoginRequest request)
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
@@ -27,7 +27,7 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return ApiResponse<LoginResponseData>.ErrorResult("Invalid username or password");
+                return Unauthorized(ApiResponse<LoginResponseData>.Unauthorized("Invalid username or password"));
             }
 
             // get the user claims
@@ -54,15 +54,14 @@ public class AuthController(IUserService userService) : BaseController
                 }
             };
 
-            return ApiResponse<LoginResponseData>.SuccessResult(responseData, "Login successful");
+            return Ok(ApiResponse<LoginResponseData>.SuccessResult(responseData, "Login successful"));
         });
-
     }
 
     [HttpPost("refresh")]
     [EnableRateLimiting("Default")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<RefreshTokenResponseData>>> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
@@ -70,7 +69,7 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return AuthResponse.RefreshTokenFailed("Invalid or expired refresh token");
+                return Unauthorized(ApiResponse<RefreshTokenResponseData>.Unauthorized("Invalid or expired refresh token"));
             }
 
             var responseData = new RefreshTokenResponseData
@@ -87,14 +86,14 @@ public class AuthController(IUserService userService) : BaseController
                 RefreshedAt = DateTime.UtcNow
             };
 
-            return AuthResponse.RefreshTokenSuccess(responseData);
+            return Ok(ApiResponse<RefreshTokenResponseData>.SuccessResult(responseData, "Token refreshed successfully"));
         });
     }
 
     [HttpPost("logout")]
     [EnableRateLimiting("Default")]
     [Authorize(Policy = "UserOrAdmin")]
-    public async Task<ActionResult<ApiResponse<LogoutResponseData>>> Logout([FromBody] LogoutRequest request)
+    public async Task<ActionResult> Logout([FromBody] LogoutRequest request)
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
@@ -102,10 +101,10 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return ApiResponse<LogoutResponseData>.ErrorResult("Invalid refresh token");
+                return BadRequest(ApiResponse<LogoutResponseData>.ErrorResult("Invalid refresh token"));
             }
 
-            return AuthResponse.LogoutSuccess();
+            return Ok(ApiResponse<LogoutResponseData>.SuccessResult(null, "Logout successful"));
         });
     }
 
@@ -149,7 +148,7 @@ public class AuthController(IUserService userService) : BaseController
     [HttpPost("register")]
     [EnableRateLimiting("Default")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<RegisterResponseData>>> Register([FromBody] RegisterRequest request)
+    public async Task<ActionResult> Register([FromBody] RegisterRequest request)
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
@@ -157,7 +156,7 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return AuthResponse.RegisterFailed("User registration failed");
+                return BadRequest(ApiResponse<RegisterResponseData>.ErrorResult("User registration failed"));
             }
 
             var responseData = new RegisterResponseData
@@ -168,14 +167,14 @@ public class AuthController(IUserService userService) : BaseController
                 EmailConfirmed = false
             };
 
-            return AuthResponse.RegisterSuccess(responseData);
+            return Ok(ApiResponse<RegisterResponseData>.SuccessResult(responseData, "User registered successfully"));
         });
     }
 
     [HttpPut("update-password")]
     [EnableRateLimiting("Default")]
     [Authorize(Policy = "UserOrAdmin")]
-    public async Task<ActionResult<ApiResponse<UpdatePasswordResponseData>>> UpdatePassword([FromBody] UpdatePasswordRequest request)
+    public async Task<ActionResult> UpdatePassword([FromBody] UpdatePasswordRequest request)
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
@@ -183,10 +182,10 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return AuthResponse.UpdatePasswordFailed("Password update failed");
+                return BadRequest(ApiResponse<UpdatePasswordResponseData>.ErrorResult("Password update failed"));
             }
 
-            return AuthResponse.UpdatePasswordSuccess();
+            return Ok(ApiResponse<UpdatePasswordResponseData>.SuccessResult(null, "Password updated successfully"));
         });
     }
 

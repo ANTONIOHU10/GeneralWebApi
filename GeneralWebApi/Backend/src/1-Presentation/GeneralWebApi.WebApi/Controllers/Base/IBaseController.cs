@@ -11,5 +11,5 @@ public interface IBaseController
     ActionResult<ApiResponse<T>> Unauthorized<T>(string error = "Unauthorized access");
     ActionResult<ApiResponse<T>> Forbidden<T>(string error = "Access forbidden");
     ActionResult<ApiResponse<T>> InternalServerError<T>(string error = "Internal server error");
-    
+
 }
