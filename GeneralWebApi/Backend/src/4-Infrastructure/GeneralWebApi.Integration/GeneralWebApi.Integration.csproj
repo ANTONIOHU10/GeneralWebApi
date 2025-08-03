@@ -28,4 +28,9 @@
     <ProjectReference Include="..\..\3-Domain\GeneralWebApi.Domain\GeneralWebApi.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
+  </ItemGroup>
+
 </Project>

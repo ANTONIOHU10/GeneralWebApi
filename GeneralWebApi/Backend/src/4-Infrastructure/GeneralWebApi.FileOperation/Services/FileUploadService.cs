@@ -5,6 +5,7 @@ using GeneralWebApi.Integration.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
+using System.Security.Cryptography;
 
 namespace GeneralWebApi.FileOperation.Services;
 
@@ -163,8 +164,8 @@ public class FileUploadService : IFileUploadService
                 //     throw new InvalidOperationException("Invalid file extension");
                 // }
 
-                // Determine file category
-                var fileCategory = _fileStorageService.GetFileCategory("application/octet-stream");
+                // Determine file category and generate unique name (same as UploadFileAsync)
+                var fileCategory = _fileStorageService.GetFileCategory(GetContentTypeFromExtension(fileExtension));
                 var uniqueFileName = _fileStorageService.GenerateUniqueFileName(originalFileName, fileExtension);
 
                 // Read the rest of the file content and save to local file system
@@ -173,19 +174,23 @@ public class FileUploadService : IFileUploadService
                 await section.Body.CopyToAsync(memoryStream, cancellationToken);
                 memoryStream.Position = 0;
 
+                // Calculate file hash (same as UploadFileAsync)
+                var fileHash = await CalculateFileHashFromStreamAsync(memoryStream, cancellationToken);
+
+                // Save file to local file system
                 var filePath = await _fileStorageService.SaveFileFromStreamAsync(memoryStream, uniqueFileName, fileCategory, cancellationToken);
 
-                // Create file document for database
+                // Create file document for database (same as UploadFileAsync)
                 var fileDocument = new FileDocument
                 {
                     FileName = uniqueFileName,
                     FilePath = filePath,
                     FileExtension = fileExtension,
                     FileSize = memoryStream.Length,
-                    FileContentType = "application/octet-stream",
+                    FileContentType = GetContentTypeFromExtension(fileExtension),
                     FileCategory = fileCategory,
                     OriginalFileName = originalFileName,
-                    FileHash = "", // Calculate hash if needed
+                    FileHash = fileHash,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -377,6 +382,38 @@ public class FileUploadService : IFileUploadService
 
         // Update progress
         await _progressService.UpdateProgressAsync(uploadId, progress);
+    }
+
+    private string GetContentTypeFromExtension(string fileExtension)
+    {
+        return fileExtension.ToLower() switch
+        {
+            ".pdf" => "application/pdf",
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".gif" => "image/gif",
+            ".bmp" => "image/bmp",
+            ".doc" => "application/msword",
+            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            ".xls" => "application/vnd.ms-excel",
+            ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ".ppt" => "application/vnd.ms-powerpoint",
+            ".pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            ".txt" => "text/plain",
+            ".zip" => "application/zip",
+            ".rar" => "application/x-rar-compressed",
+            ".7z" => "application/x-7z-compressed",
+            _ => "application/octet-stream"
+        };
+    }
+
+    private async Task<string> CalculateFileHashFromStreamAsync(Stream stream, CancellationToken cancellationToken)
+    {
+        using var sha256 = SHA256.Create();
+        stream.Position = 0; // Reset position to beginning
+        var hashBytes = await sha256.ComputeHashAsync(stream, cancellationToken);
+        stream.Position = 0; // Reset position back to beginning for further use
+        return Convert.ToHexString(hashBytes).ToLower();
     }
 
     #endregion

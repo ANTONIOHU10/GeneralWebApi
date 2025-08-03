@@ -1,5 +1,6 @@
 
 using GeneralWebApi.Integration.Context;
+using GeneralWebApi.Logging.Templates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -25,13 +26,13 @@ public class DatabaseMigrationService : IDatabaseMigrationService
             var created = await _context.Database.EnsureCreatedAsync(cancellationToken);
             if (created)
             {
-                _logger.LogInformation("Database created successfully");
+                _logger.LogInformation(LogTemplates.Database.DatabaseCreated);
                 return true;
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error ensuring database created");
+            _logger.LogError(ex, LogTemplates.Database.DatabaseCreatedError);
             return false;
         }
 
@@ -45,14 +46,14 @@ public class DatabaseMigrationService : IDatabaseMigrationService
             var deleted = await _context.Database.EnsureDeletedAsync(cancellationToken);
             if (deleted)
             {
-                _logger.LogInformation("Database deleted successfully");
+                _logger.LogInformation(LogTemplates.Database.DatabaseDeleted);
                 return true;
             }
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error ensuring database deleted");
+            _logger.LogError(ex, LogTemplates.Database.DatabaseDeletedError);
             return false;
         }
 
@@ -64,12 +65,12 @@ public class DatabaseMigrationService : IDatabaseMigrationService
         try
         {
             await _context.Database.MigrateAsync(cancellationToken);
-            _logger.LogInformation("Database migrated successfully");
+            _logger.LogInformation(LogTemplates.Database.DatabaseMigrated);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error migrating database");
+            _logger.LogError(ex, LogTemplates.Database.DatabaseMigratedError);
             return false;
         }
     }

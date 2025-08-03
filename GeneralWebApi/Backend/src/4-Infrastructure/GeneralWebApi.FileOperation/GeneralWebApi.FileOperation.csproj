@@ -4,6 +4,7 @@
     <ProjectReference Include="..\..\5-Shared\GeneralWebApi.Common\GeneralWebApi.Common.csproj" />
     <ProjectReference Include="..\..\3-Domain\GeneralWebApi.Domain\GeneralWebApi.Domain.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference Include="..\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,8 @@
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Integration.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 
 namespace GeneralWebApi.FileOperation.Services;
 
@@ -8,11 +10,13 @@ public class FileCommonService : IFileCommonService
 {
     private readonly IFileDocumentRepository _fileDocumentRepository;
     private readonly LocalFileStorageService _fileStorageService;
+    private readonly ILogger<FileCommonService> _logger;
 
-    public FileCommonService(IFileDocumentRepository fileDocumentRepository, LocalFileStorageService fileStorageService)
+    public FileCommonService(IFileDocumentRepository fileDocumentRepository, LocalFileStorageService fileStorageService, ILogger<FileCommonService> logger)
     {
         _fileDocumentRepository = fileDocumentRepository;
         _fileStorageService = fileStorageService;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<FileDocument>> GetAllFilesAsync(CancellationToken cancellationToken = default)
@@ -31,8 +35,6 @@ public class FileCommonService : IFileCommonService
     {
         return await _fileDocumentRepository.GetByFileNameAsync(fileName, cancellationToken);
     }
-
-
 
     public async Task<Stream> GetFileStreamAsync(int fileId, CancellationToken cancellationToken = default)
     {
@@ -92,35 +94,62 @@ public class FileCommonService : IFileCommonService
 
     public async Task<FileDocument> DeleteFileByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var fileDocument = await _fileDocumentRepository.GetByIdAsync(id, cancellationToken);
-        if (fileDocument == null)
+        _logger.LogInformation(LogTemplates.FileOperation.FileDeletionStarted, id);
+
+        try
         {
-            throw new FileNotFoundException($"File with ID {id} not found");
+            var fileDocument = await _fileDocumentRepository.GetByIdAsync(id, cancellationToken);
+            if (fileDocument == null)
+            {
+                _logger.LogWarning(LogTemplates.FileOperation.FileNotFoundById, id);
+                throw new FileNotFoundException($"File with ID {id} not found");
+            }
+
+            // Delete from local file system
+            await _fileStorageService.DeleteFileAsync(fileDocument.FilePath, cancellationToken);
+
+            // Delete from database
+            var deletedFile = await _fileDocumentRepository.DeleteAsync(id, cancellationToken);
+
+            _logger.LogInformation(LogTemplates.FileOperation.FileDeleted, fileDocument.FilePath);
+            return deletedFile;
         }
-
-        // Delete from local file system
-        await _fileStorageService.DeleteFileAsync(fileDocument.FilePath, cancellationToken);
-
-        // Delete from database
-        return await _fileDocumentRepository.DeleteAsync(id, cancellationToken);
+        catch (Exception ex) when (ex is not FileNotFoundException)
+        {
+            _logger.LogError(LogTemplates.FileOperation.FileDeletionFailedById, id, ex.Message);
+            throw;
+        }
     }
 
     public async Task<IEnumerable<FileDocument>> DeleteAllFilesAsync(CancellationToken cancellationToken = default)
     {
-        var allFiles = await _fileDocumentRepository.GetAllFileDocumentsAsync(cancellationToken);
-        var deletedFiles = new List<FileDocument>();
+        _logger.LogInformation(LogTemplates.FileOperation.BulkDeletionStarted);
 
-        foreach (var file in allFiles)
+        try
         {
-            // Delete from local file system
-            await _fileStorageService.DeleteFileAsync(file.FilePath, cancellationToken);
+            var allFiles = await _fileDocumentRepository.GetAllFileDocumentsAsync(cancellationToken);
+            var deletedFiles = new List<FileDocument>();
 
-            // Delete from database
-            var deletedFile = await _fileDocumentRepository.DeleteAsync(file.Id, cancellationToken);
-            deletedFiles.Add(deletedFile);
+            _logger.LogInformation(LogTemplates.FileOperation.BulkDeletionInProgress, allFiles.Count());
+
+            foreach (var file in allFiles)
+            {
+                // Delete from local file system
+                await _fileStorageService.DeleteFileAsync(file.FilePath, cancellationToken);
+
+                // Delete from database
+                var deletedFile = await _fileDocumentRepository.DeleteAsync(file.Id, cancellationToken);
+                deletedFiles.Add(deletedFile);
+            }
+
+            _logger.LogInformation(LogTemplates.FileOperation.BulkDeletionCompleted, deletedFiles.Count);
+            return deletedFiles;
         }
-
-        return deletedFiles;
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, LogTemplates.FileOperation.BulkDeletionFailed);
+            throw;
+        }
     }
 
     #endregion
@@ -131,8 +160,6 @@ public class FileCommonService : IFileCommonService
     {
         return await _fileDocumentRepository.CountAsync(cancellationToken);
     }
-
-
 
     public async Task<bool> FileExistsAsync(int fileId, CancellationToken cancellationToken = default)
     {

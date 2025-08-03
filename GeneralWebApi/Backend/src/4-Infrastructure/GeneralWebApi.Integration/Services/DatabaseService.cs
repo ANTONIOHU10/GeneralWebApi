@@ -1,5 +1,6 @@
 using Dapper;
 using GeneralWebApi.Integration.Configuration;
+using GeneralWebApi.Logging.Templates;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -52,7 +53,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error checking database health");
+            _logger.LogError(ex, LogTemplates.Database.DatabaseHealthCheckError);
             return false;
         }
     }

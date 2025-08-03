@@ -1,6 +1,7 @@
 using System.Threading;
 using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Logging.Services;
+using GeneralWebApi.Logging.Templates;
 using GeneralWebApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ public class DocumentController : BaseController
     [DisableFormValueModelBinding]
     [AllowAnonymous]
     // Upload file to local file system using multipart/form-data
-    public async Task<ActionResult<ApiResponse<object>>> UploadDocumentAsync()
+    public async Task<ActionResult<ApiResponse<FileUploadResponse>>> UploadDocumentAsync()
     {
         try
         {
@@ -67,7 +68,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError("Error during file upload: {Message}", ex.Message);
+            _log.LogError(LogTemplates.DocumentController.FileUploadError, ex.Message);
             return BadRequest(DocumentResponse.UploadFailed(ex.Message));
         }
     }
@@ -92,7 +93,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError("Error during stream upload: {Message}", ex.Message);
+            _log.LogError(LogTemplates.DocumentController.StreamUploadError, ex.Message);
             return BadRequest(DocumentResponse.UploadFailed(ex.Message));
         }
     }
@@ -102,22 +103,18 @@ public class DocumentController : BaseController
     [HttpGet("files")]
     [AllowAnonymous]
     // Get all files
-    public async Task<ActionResult<ApiResponse<object>>> GetAllFilesAsync(CancellationToken cancellationToken = default)
+    public async Task<ActionResult<ApiResponse<FileListResponse>>> GetAllFilesAsync(CancellationToken cancellationToken = default)
     {
         try
         {
             var files = await _fileCommonService.GetAllFilesAsync(cancellationToken);
             var totalCount = await _fileCommonService.GetFileCountAsync(cancellationToken);
 
-            return Ok(ApiResponse<object>.SuccessResult(new
-            {
-                files,
-                totalCount,
-            }, "Files retrieved successfully"));
+            return Ok(DocumentResponse.FileListSuccess(files, totalCount));
         }
         catch (Exception ex)
         {
-            _log.LogError("Error getting files: {Message}", ex.Message);
+            _log.LogError(LogTemplates.DocumentController.GetFilesError, ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }
@@ -127,13 +124,13 @@ public class DocumentController : BaseController
     [DisableFormValueModelBinding]
     [AllowAnonymous]
     // Update file content (multipart/form-data)
-    public async Task<ActionResult<ApiResponse<object>>> UpdateFileContentAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<ApiResponse<FileDocument>>> UpdateFileContentAsync(int id, CancellationToken cancellationToken = default)
     {
         try
         {
             if (id <= 0)
             {
-                return BadRequest(ApiResponse<object>.ErrorResult("Invalid file ID"));
+                return BadRequest(ApiResponse<FileDocument>.ErrorResult("Invalid file ID"));
             }
 
             // Get the file from multipart/form-data request
@@ -141,7 +138,7 @@ public class DocumentController : BaseController
 
             if (file == null || file.Length == 0)
             {
-                return BadRequest(ApiResponse<object>.ErrorResult("No file provided"));
+                return BadRequest(ApiResponse<FileDocument>.ErrorResult("No file provided"));
             }
 
             // Check if file exists
@@ -152,20 +149,20 @@ public class DocumentController : BaseController
 
             if (updatedFile == null)
             {
-                return BadRequest(ApiResponse<object>.ErrorResult("File content update failed"));
+                return BadRequest(ApiResponse<FileDocument>.ErrorResult("File content update failed"));
             }
 
-            return Ok(ApiResponse<object>.SuccessResult(updatedFile, "File content updated successfully"));
+            return Ok(DocumentResponse.FileUpdateSuccess(updatedFile));
         }
         catch (FileNotFoundException ex)
         {
-            _log.LogWarning("File not found with ID {Id}: {Message}", id, ex.Message);
-            return NotFound(ApiResponse<object>.NotFound($"File with ID {id} not found"));
+            _log.LogWarning(LogTemplates.DocumentController.FileNotFound, id, ex.Message);
+            return NotFound(ApiResponse<FileDocument>.NotFound($"File with ID {id} not found"));
         }
         catch (Exception ex)
         {
-            _log.LogError("Error updating file content for ID {Id}: {Message}", id, ex.Message);
-            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
+            _log.LogError(LogTemplates.DocumentController.UpdateFileContentError, id, ex.Message);
+            return BadRequest(ApiResponse<FileDocument>.ErrorResult(ex.Message));
         }
     }
 
@@ -205,12 +202,12 @@ public class DocumentController : BaseController
         }
         catch (FileNotFoundException ex)
         {
-            _log.LogWarning("File not found with ID {Id}: {Message}", id, ex.Message);
+            _log.LogWarning(LogTemplates.DocumentController.FileNotFound, id, ex.Message);
             return NotFound(ApiResponse<object>.NotFound($"File with ID {id} not found"));
         }
         catch (Exception ex)
         {
-            _log.LogError("Error downloading file with ID {Id}: {Message}", id, ex.Message);
+            _log.LogError(LogTemplates.DocumentController.DownloadFileError, id, ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }
@@ -258,27 +255,27 @@ public class DocumentController : BaseController
     [HttpDelete("files/{id}")]
     [AllowAnonymous]
     // Delete file by ID (both database record and local file)
-    public async Task<ActionResult<ApiResponse<object>>> DeleteFileByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<ApiResponse<FileDeleteResponse>>> DeleteFileByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         try
         {
             if (id <= 0)
             {
-                return BadRequest(ApiResponse<object>.ErrorResult("Invalid file ID"));
+                return BadRequest(ApiResponse<FileDeleteResponse>.ErrorResult("Invalid file ID"));
             }
 
             var deletedFile = await _fileCommonService.DeleteFileByIdAsync(id, cancellationToken);
-            return Ok(ApiResponse<object>.SuccessResult(deletedFile, "File deleted successfully"));
+            return Ok(DocumentResponse.FileDeleteSuccess());
         }
         catch (FileNotFoundException ex)
         {
-            _log.LogWarning("File not found with ID {Id}: {Message}", id, ex.Message);
-            return NotFound(ApiResponse<object>.NotFound($"File with ID {id} not found"));
+            _log.LogWarning(LogTemplates.DocumentController.FileNotFound, id, ex.Message);
+            return NotFound(ApiResponse<FileDeleteResponse>.NotFound($"File with ID {id} not found"));
         }
         catch (Exception ex)
         {
-            _log.LogError("Error deleting file with ID {Id}: {Message}", id, ex.Message);
-            return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
+            _log.LogError(LogTemplates.DocumentController.DeleteFileError, id, ex.Message);
+            return BadRequest(ApiResponse<FileDeleteResponse>.ErrorResult(ex.Message));
         }
     }
 
@@ -315,7 +312,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError("Error exporting CSV: {Message}", ex.Message);
+            _log.LogError(LogTemplates.DocumentController.ExportCSVError, ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }

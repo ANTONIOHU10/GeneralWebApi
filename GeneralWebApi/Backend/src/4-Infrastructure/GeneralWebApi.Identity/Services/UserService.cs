@@ -1,10 +1,12 @@
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Enums;
 using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.Logging.Services;
+using GeneralWebApi.Logging.Templates;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace GeneralWebApi.Identity.Services;
@@ -37,7 +39,7 @@ public class UserService : IUserService
         {
             if (!await ValidateUserAsync(username, password))
             {
-                _logger.LogWarning($"Login failed for user: {username}");
+                _logger.LogWarning(LogTemplates.Identity.UserLoginFailed, username, "Invalid credentials");
                 return (false, null, null);
             }
 
@@ -53,18 +55,12 @@ public class UserService : IUserService
             // store the refresh token
             _refreshTokens.TryAdd(refreshToken, (username, DateTime.UtcNow.AddDays(7)));
 
-            if (_refreshTokens.ContainsKey(refreshToken))
-            {
-                _logger.LogInformation($"Refresh token saved for user: {username}");
-                _logger.LogInformation($"Refresh tokens: {string.Join(", ", _refreshTokens.Keys)}");
-            }
-
-            _logger.LogInformation($"User {username} logged in successfully");
+            _logger.LogInformation(LogTemplates.Identity.UserLoginSuccess, username);
             return (true, accessToken, refreshToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Login error for user {username}: {ex.Message}");
+            _logger.LogError(LogTemplates.Identity.UserLoginFailed, username, ex.Message);
             return (false, null, null);
         }
     }
@@ -73,12 +69,11 @@ public class UserService : IUserService
     {
         try
         {
-            _logger.LogInformation($"Attempting to refresh token: {refreshToken}");
-            _logger.LogInformation($"Current refresh tokens count: {_refreshTokens.Count}");
+            _logger.LogInformation(LogTemplates.Identity.TokenRefreshAttempt);
 
             if (!_refreshTokens.TryGetValue(refreshToken, out var tokenInfo))
             {
-                _logger.LogWarning("Invalid refresh token");
+                _logger.LogWarning(LogTemplates.Identity.InvalidRefreshToken);
                 return (false, null, null);
             }
 
@@ -86,7 +81,7 @@ public class UserService : IUserService
             {
                 // remove the expired refresh token
                 _refreshTokens.TryRemove(refreshToken, out _);
-                _logger.LogWarning("Expired refresh token");
+                _logger.LogWarning(LogTemplates.Identity.ExpiredRefreshToken);
                 return (false, null, null);
             }
 
@@ -98,7 +93,7 @@ public class UserService : IUserService
 
             // generate a new access token
             var accessToken = _jwtService.GenerateAccessToken(claims.Claims);
-            _logger.LogInformation($"Token refreshed for user: {tokenInfo.UserId}");
+            _logger.LogInformation(LogTemplates.Identity.TokenRefreshSuccess, tokenInfo.UserId);
 
             // update the refresh token
             var newRefreshToken = _jwtService.GenerateRefreshToken();
@@ -108,13 +103,12 @@ public class UserService : IUserService
 
             // store the new refresh token
             _refreshTokens[newRefreshToken] = (tokenInfo.UserId, DateTime.UtcNow.AddDays(7));
-            _logger.LogInformation($"New refresh token generated for user: {tokenInfo.UserId}");
 
             return (true, accessToken, newRefreshToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Token refresh error: {ex.Message}");
+            _logger.LogError(LogTemplates.Identity.TokenRefreshFailed, ex.Message);
             return (false, null, null);
         }
     }
@@ -123,16 +117,16 @@ public class UserService : IUserService
     {
         try
         {
-            if (_refreshTokens.TryRemove(refreshToken, out _))
+            if (_refreshTokens.TryRemove(refreshToken, out var tokenInfo))
             {
-                _logger.LogInformation("User logged out successfully");
+                _logger.LogInformation(LogTemplates.Identity.UserLogout, tokenInfo.UserId);
                 return Task.FromResult(true);
             }
             return Task.FromResult(false);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Logout error: {ex.Message}");
+            _logger.LogError(LogTemplates.Identity.LogoutError, ex.Message);
             return Task.FromResult(false);
         }
     }
@@ -162,7 +156,7 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Get user claims error for {userName}: {ex.Message}");
+            _logger.LogError(LogTemplates.Identity.GetUserClaimsError, userName, ex.Message);
             return null;
         }
     }
@@ -190,17 +184,13 @@ public class UserService : IUserService
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8
             ));
-            Console.WriteLine("------Starting password validation------");
-            Console.WriteLine($"computedInputPasswordHash: {computedInputPasswordHash}");
-            Console.WriteLine($"hashedUserPassword: {hashedUserPassword}");
-            Console.WriteLine("------Ending password validation------");
 
             // compare the computed hash with the hashed user password
             return computedInputPasswordHash == hashedUserPassword;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"User validation error: {ex.Message}");
+            _logger.LogError(LogTemplates.Identity.UserValidationError, ex.Message);
             return false;
         }
     }
@@ -224,12 +214,12 @@ public class UserService : IUserService
             };
             await _userRepository.RegisterUserAsync(user);
 
-            _logger.LogInformation($"User {username} registered successfully");
+            _logger.LogInformation(LogTemplates.Identity.UserRegistration, username);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"User registration error: {ex.Message}");
+            _logger.LogError(LogTemplates.Identity.UserRegistrationError, ex.Message);
             return false;
         }
     }
@@ -270,12 +260,12 @@ public class UserService : IUserService
 
             await _userRepository.UpdatePasswordAsync(user);
 
-            _logger.LogInformation($"Password updated for user: {username}");
+            _logger.LogInformation(LogTemplates.Identity.PasswordUpdate, username);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Password update error: {ex.Message}");
+            _logger.LogError(LogTemplates.Identity.PasswordUpdateError, ex.Message);
             return false;
         }
     }

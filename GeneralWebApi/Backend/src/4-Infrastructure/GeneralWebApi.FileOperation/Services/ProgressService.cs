@@ -1,4 +1,5 @@
 using GeneralWebApi.FileOperation.Models;
+using GeneralWebApi.Logging.Templates;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -58,7 +59,7 @@ public class ProgressService : IProgressService
         Console.WriteLine($" Upload completed: {uploadId} -> {Path.GetFileName(filePath)}");
 
         // log
-        _logger.LogInformation("Upload completed: {UploadId} -> {FilePath}", uploadId, filePath);
+        _logger.LogInformation(LogTemplates.FileOperation.UploadCompleted, uploadId, filePath);
         await Task.CompletedTask;
     }
 
@@ -68,7 +69,7 @@ public class ProgressService : IProgressService
         Console.WriteLine($" Upload failed: {uploadId} - {errorMessage}");
 
         // log
-        _logger.LogWarning("Upload failed: {UploadId} - {ErrorMessage}", uploadId, errorMessage);
+        _logger.LogWarning(LogTemplates.FileOperation.UploadFailed, uploadId, errorMessage);
         await Task.CompletedTask;
     }
 
@@ -80,8 +81,7 @@ public class ProgressService : IProgressService
         Console.WriteLine($" Upload started: {fileName} ({fileSizeMB:F1}MB) | ID: {uploadId}");
 
         // log
-        _logger.LogInformation("Upload started: {UploadId} - {FileName} ({FileSizeMB:F1}MB)",
-            uploadId, fileName, fileSizeMB);
+        _logger.LogInformation(LogTemplates.FileOperation.UploadStarted, uploadId, fileName, fileSizeMB);
         await Task.CompletedTask;
     }
 

@@ -16,7 +16,6 @@ public class UserRepository : IUserRepository
     public async Task<User> ValidateUserAsync(string username, string password, CancellationToken cancellationToken = default)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Name == username, cancellationToken);
-        Console.WriteLine($"User: {user}");
         if (user == null)
         {
             throw new Exception("User not found");

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 using System.Linq;
 
 namespace GeneralWebApi.Common.Helpers;
@@ -56,10 +57,10 @@ public class DocumentChecks : IDocumentChecks
         if (string.IsNullOrEmpty(ext) || _permittedExtensions == null || !_permittedExtensions.Contains(ext))
         {
             // The extension is invalid ... discontinue processing the file
-            _logger.LogWarning("Invalid file extension: {Extension}", ext);
+            _logger.LogWarning(LogTemplates.DocumentValidation.InvalidFileExtension, ext);
             return false;
         }
-        _logger.LogInformation("File extension is valid: {Extension}", ext);
+        _logger.LogInformation(LogTemplates.DocumentValidation.ValidFileExtension, ext);
         return true;
     }
 
@@ -67,10 +68,10 @@ public class DocumentChecks : IDocumentChecks
     {
         if (fileSize > _maxFileSize)
         {
-            _logger.LogWarning("File size is too large: {FileSize}", fileSize);
+            _logger.LogWarning(LogTemplates.DocumentValidation.FileSizeTooLarge, fileSize);
             return false;
         }
-        _logger.LogInformation("File size is valid: {FileSize}", fileSize);
+        _logger.LogInformation(LogTemplates.DocumentValidation.ValidFileSize, fileSize);
         return true;
     }
 
@@ -80,7 +81,7 @@ public class DocumentChecks : IDocumentChecks
 
         if (!_fileSignature.TryGetValue(ext, out List<byte[]>? signatures))
         {
-            _logger.LogWarning("No signature found for extension: {Extension}", ext);
+            _logger.LogWarning(LogTemplates.DocumentValidation.NoSignatureFound, ext);
             return false;
         }
 
@@ -93,11 +94,11 @@ public class DocumentChecks : IDocumentChecks
         // check if the file is too small to validate the signature
         if (bytesRead < maxSignatureLength)
         {
-            _logger.LogWarning("File too small to validate signature");
+            _logger.LogWarning(LogTemplates.DocumentValidation.FileTooSmall);
             return false;
         }
 
-        _logger.LogInformation("File type signature certificate: {FileBytes}", headerBytes);
+        _logger.LogInformation(LogTemplates.DocumentValidation.FileSignatureCertificate, headerBytes);
         return signatures.Any(signature =>
             headerBytes.Take(signature.Length).SequenceEqual(signature));
     }

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using CsvHelper;
 using GeneralWebApi.Integration.Repository;
+using GeneralWebApi.Logging.Templates;
 using Microsoft.Extensions.Logging;
 
 namespace GeneralWebApi.Application.Services;
@@ -24,13 +25,13 @@ public class CSVExportService(ILogger<CSVExportService> logger, IUserRepository 
 
             await csvWriter.WriteRecordsAsync(data);
             await streamWriter.FlushAsync();
-            _logger.LogInformation("CSV file exported successfully for {fileName}", fileName);
+            _logger.LogInformation(LogTemplates.CSVExport.ExportCompleted, fileName);
 
             return memoryStream.ToArray();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error exporting custom data to CSV");
+            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "custom data", ex.Message);
             throw;
         }
     }
@@ -42,19 +43,46 @@ public class CSVExportService(ILogger<CSVExportService> logger, IUserRepository 
 
     public async Task<byte[]> ExportFileDocumentsToCSVAsync(CancellationToken cancellationToken = default)
     {
-        var fileDocuments = await _fileDocumentRepository.GetAllAsync(cancellationToken);
-        return await ExportToCSVAsync(fileDocuments, "fileDocuments.csv");
+        try
+        {
+            _logger.LogInformation(LogTemplates.CSVExport.ExportStarted, "FileDocuments");
+            var fileDocuments = await _fileDocumentRepository.GetAllAsync(cancellationToken);
+            return await ExportToCSVAsync(fileDocuments, "fileDocuments.csv");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "FileDocuments", ex.Message);
+            throw;
+        }
     }
 
     public async Task<byte[]> ExportProductsToCSVAsync(CancellationToken cancellationToken = default)
     {
-        var products = await _productRepository.GetAllAsync(cancellationToken);
-        return await ExportToCSVAsync(products, "products.csv");
+        try
+        {
+            _logger.LogInformation(LogTemplates.CSVExport.ExportStarted, "Products");
+            var products = await _productRepository.GetAllAsync(cancellationToken);
+            return await ExportToCSVAsync(products, "products.csv");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "Products", ex.Message);
+            throw;
+        }
     }
 
     public async Task<byte[]> ExportUsersToCSVAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userRepository.GetAllAsync(cancellationToken);
-        return await ExportToCSVAsync(users, "users.csv");
+        try
+        {
+            _logger.LogInformation(LogTemplates.CSVExport.ExportStarted, "Users");
+            var users = await _userRepository.GetAllAsync(cancellationToken);
+            return await ExportToCSVAsync(users, "users.csv");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "Users", ex.Message);
+            throw;
+        }
     }
 }

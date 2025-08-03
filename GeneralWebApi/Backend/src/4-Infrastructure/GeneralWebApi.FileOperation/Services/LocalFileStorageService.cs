@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 using System.Security.Cryptography;
 
 namespace GeneralWebApi.FileOperation.Services;
@@ -39,12 +40,12 @@ public class LocalFileStorageService
             using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream, cancellationToken);
 
-            _logger.LogInformation("File saved successfully: {FilePath}", filePath);
+            _logger.LogInformation(LogTemplates.FileOperation.FileSaved, filePath);
             return filePath;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error saving file {FileName} to category {Category}", file.FileName, category);
+            _logger.LogError(ex, LogTemplates.FileOperation.FileSaveError, file.FileName, category);
             throw;
         }
     }
@@ -66,12 +67,12 @@ public class LocalFileStorageService
             using var stream = new FileStream(filePath, FileMode.Create);
             await fileStream.CopyToAsync(stream, cancellationToken);
 
-            _logger.LogInformation("File saved from stream successfully: {FilePath}", filePath);
+            _logger.LogInformation(LogTemplates.FileOperation.FileSavedFromStream, filePath);
             return filePath;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error saving file from stream {FileName} to category {Category}", fileName, category);
+            _logger.LogError(ex, LogTemplates.FileOperation.FileSaveFromStreamError, fileName, category);
             throw;
         }
     }
@@ -98,14 +99,14 @@ public class LocalFileStorageService
             if (FileExists(filePath))
             {
                 File.Delete(filePath);
-                _logger.LogInformation("File deleted successfully: {FilePath}", filePath);
+                _logger.LogInformation(LogTemplates.FileOperation.FileDeleted, filePath);
                 return true;
             }
             return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting file: {FilePath}", filePath);
+            _logger.LogError(ex, LogTemplates.FileOperation.FileDeleteError, filePath);
             return false;
         }
     }

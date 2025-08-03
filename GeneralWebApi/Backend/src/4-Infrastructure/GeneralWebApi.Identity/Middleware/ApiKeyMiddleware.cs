@@ -1,5 +1,6 @@
 using GeneralWebApi.Identity.Configuration;
 using GeneralWebApi.Logging.Services;
+using GeneralWebApi.Logging.Templates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -49,7 +50,7 @@ public class ApiKeyMiddleware
                 // through the UseAuthentication middleware & the Authorization middleware
                 context.User = new ClaimsPrincipal(identity);
 
-                _logger.LogInformation($"API Key authentication successful for client: {clientName}");
+                _logger.LogInformation(LogTemplates.Identity.ApiKeyAuthSuccess, clientName);
             }
         }
 
