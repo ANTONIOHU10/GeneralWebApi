@@ -48,10 +48,7 @@ public class FileUploadService : IFileUploadService
 
         // Start upload
         var startTime = DateTime.UtcNow;
-        var lastProgressUpdate = startTime;
-        long processedBytes = 0;
-        const int bufferSize = 8192; // 8KB buffer
-        var buffer = new byte[bufferSize];
+
 
         // Determine file category
         var fileCategory = _fileStorageService.GetFileCategory(file.ContentType);

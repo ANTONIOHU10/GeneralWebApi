@@ -37,5 +37,7 @@
       Include="..\..\4-Infrastructure\GeneralWebApi.FileOperation\GeneralWebApi.FileOperation.csproj" />
     <ProjectReference
       Include="..\..\2-Application\GeneralWebApi.Application\GeneralWebApi.Application.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
   </ItemGroup>
 </Project>

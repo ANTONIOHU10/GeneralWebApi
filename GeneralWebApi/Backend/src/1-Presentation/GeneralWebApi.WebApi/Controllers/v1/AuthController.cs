@@ -152,11 +152,11 @@ public class AuthController(IUserService userService) : BaseController
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            var success = await _userService.RegisterUserAsync(req.Username, req.Password, req.Email);
+            var (success, errorMessage) = await _userService.RegisterUserAsync(req.Username, req.Password, req.Email);
 
             if (!success)
             {
-                return BadRequest(ApiResponse<RegisterResponseData>.ErrorResult("User registration failed"));
+                return BadRequest(ApiResponse<RegisterResponseData>.ErrorResult(errorMessage));
             }
 
             var responseData = new RegisterResponseData

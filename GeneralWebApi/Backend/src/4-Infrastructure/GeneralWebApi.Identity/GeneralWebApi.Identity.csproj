@@ -35,6 +35,7 @@
       Include="..\..\1-Presentation\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference Include="..\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
   </ItemGroup>
 
 </Project>

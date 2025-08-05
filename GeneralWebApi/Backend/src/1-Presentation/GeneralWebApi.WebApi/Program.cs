@@ -15,6 +15,7 @@ using GeneralWebApi.FileOperation.Extensions;
 using GeneralWebApi.Contracts.Extensions;
 using GeneralWebApi.Application.Extensions;
 using GeneralWebApi.WebApi.Extensions;
+using GeneralWebApi.Caching.Extensions;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -119,6 +120,9 @@ builder.Services.AddValidators();
 
 // add file operation services
 builder.Services.AddFileOperationServices();
+
+// add redis
+builder.Services.AddRedis(builder.Configuration);
 
 var app = builder.Build();
 

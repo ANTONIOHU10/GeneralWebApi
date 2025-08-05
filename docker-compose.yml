@@ -1,0 +1,17 @@
+# no more need to specify the version of the copmose version
+services:
+  redis:
+    image: redis:latest
+    container_name: redis-generalwebapi
+    ports: ["6379:6379"]
+    volumes: ["redis_data:/data"]
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  redis_data:

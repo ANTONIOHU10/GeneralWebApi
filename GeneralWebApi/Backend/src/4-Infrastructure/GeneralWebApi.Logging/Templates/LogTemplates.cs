@@ -41,30 +41,59 @@ public static class LogTemplates
 
     #endregion
 
-
     #region Infrastructure Layer
 
     public static class Identity
     {
+        // Login/Logout Templates
         public const string UserLoginAttempt = "Login attempt for user {Username} from {IpAddress}";
         public const string UserLoginSuccess = "User {Username} logged in successfully";
         public const string UserLoginFailed = "Login failed for user {Username}: {Reason}";
         public const string UserLogout = "User {Username} logged out successfully";
+        
+        // Token Management Templates
         public const string TokenRefreshAttempt = "Token refresh attempt";
         public const string TokenRefreshSuccess = "Token refreshed successfully for user {UserId}";
         public const string TokenRefreshFailed = "Token refresh failed: {Reason}";
-        public const string UserRegistration = "User {Username} registered successfully";
-        public const string PasswordUpdate = "Password updated for user {Username}";
-        public const string ApiKeyAuthSuccess = "API Key authentication successful for client {ClientName}";
-
-        // Additional templates for UserService
         public const string InvalidRefreshToken = "Invalid refresh token";
         public const string ExpiredRefreshToken = "Expired refresh token";
+        
+        // User Registration Templates
+        public const string UserRegistration = "User {Username} registered successfully";
+        public const string UserRegistrationAttempt = "Registration attempt for username '{Username}' and email '{Email}'";
+        public const string EmailAlreadyExists = "Registration failed: Email '{Email}' already exists in database";
+        public const string UsernameAlreadyExists = "Registration failed: Username '{Username}' already exists in database"; 
+        public const string UserAndEmailAlreadyExist = "Registration failed: Both username '{Username}' and email '{Email}' already exist in database";
+        public const string UserRegistrationValidationPassed = "Registration validation passed for username '{Username}' and email '{Email}'";
+        public const string UserCreationStarted = "Creating new user: '{Username}' with email '{Email}' and role '{Role}'";
+        public const string UserCreationCompleted = "User creation completed successfully for '{Username}' with ID {UserId}";
+        public const string UserRegistrationError = "User registration error: {ErrorMessage}";
+        
+        // Password Management Templates
+        public const string PasswordUpdate = "Password updated for user {Username}";
+        public const string PasswordUpdateError = "Password update error: {ErrorMessage}";
+        public const string PasswordHashGenerated = "Password hash generated successfully for user '{Username}'";
+        
+        // Authentication Templates
+        public const string ApiKeyAuthSuccess = "API Key authentication successful for client {ClientName}";
+        public const string UserValidationError = "User validation error: {ErrorMessage}";
+        public const string UserValidationAttempt = "Validating user credentials for '{Username}'";
+        public const string UserValidationSuccess = "User validation successful for '{Username}'";
+        public const string UserValidationFailed = "User validation failed for '{Username}': Invalid credentials";
+        
+        // Claims Management Templates
         public const string LogoutError = "Logout error: {ErrorMessage}";
         public const string GetUserClaimsError = "Get user claims error for {Username}: {ErrorMessage}";
-        public const string UserValidationError = "User validation error: {ErrorMessage}";
-        public const string UserRegistrationError = "User registration error: {ErrorMessage}";
-        public const string PasswordUpdateError = "Password update error: {ErrorMessage}";
+        public const string GetUserClaimsAttempt = "Attempting to get user claims for '{Username}'";
+        public const string GetUserClaimsFromCache = "Retrieved user claims from cache for '{Username}'";
+        public const string GetUserClaimsFromDatabase = "Retrieved user claims from database for '{Username}'";
+        public const string UserClaimsCached = "User claims cached successfully for '{Username}' with expiry {ExpiryMinutes} minutes";
+        
+        // Database Existence Check Templates
+        public const string CheckingEmailExists = "Checking if email '{Email}' already exists in database";
+        public const string CheckingUsernameExists = "Checking if username '{Username}' already exists in database";
+        public const string EmailExistsResult = "Email existence check result for '{Email}': {Exists}";
+        public const string UsernameExistsResult = "Username existence check result for '{Username}': {Exists}";
     }
 
     public static class Database
@@ -73,7 +102,7 @@ public static class LogTemplates
         public const string QueryExecuted = "Database query executed: {QueryType} in {Duration}ms";
         public const string QueryFailed = "Database query failed: {QueryType} - {ErrorMessage}";
 
-        // Additional templates for DatabaseMigrationService
+        // Database Management Templates
         public const string DatabaseCreated = "Database created successfully";
         public const string DatabaseCreatedError = "Error ensuring database created";
         public const string DatabaseDeleted = "Database deleted successfully";
@@ -96,23 +125,23 @@ public static class LogTemplates
         public const string FileValidationPassed = "File validation passed: {FileName} ({Extension})";
         public const string FileValidationFailed = "File validation failed: {FileName} - {Reason}";
 
-        // Additional templates for LocalFileStorageService
+        // Local File Storage Templates
         public const string FileSaved = "File saved successfully: {FilePath}";
         public const string FileSaveError = "Error saving file {FileName} to category {Category}";
         public const string FileSavedFromStream = "File saved from stream successfully: {FilePath}";
         public const string FileSaveFromStreamError = "Error saving file from stream {FileName} to category {Category}";
         public const string FileDeleteError = "Error deleting file: {FilePath}";
 
-        // Additional templates for FileCommonService
+        // File Common Service Templates
         public const string FileDeletionStarted = "Deleting file by ID: {FileId}";
         public const string FileNotFoundById = "File not found by ID: {FileId}";
         public const string FileDeletionFailedById = "File deletion failed for ID {FileId}: {ErrorMessage}";
         public const string BulkDeletionStarted = "Starting bulk file deletion";
         public const string BulkDeletionInProgress = "Deleting {FileCount} files";
-        public const string BulkDeletionCompleted = "Bulk file deletion completed. {DeletedCount} files deleted";
+        public const string BulkDeletionCompleted = "Bulk file deletion completed successfully: {FileCount} files deleted";
         public const string BulkDeletionFailed = "Bulk file deletion failed";
 
-        // Additional templates for ProgressService
+        // Progress Service Templates
         public const string UploadCompleted = "Upload completed: {UploadId} -> {FilePath}";
         public const string UploadFailed = "Upload failed: {UploadId} - {ErrorMessage}";
         public const string UploadStarted = "Upload started: {UploadId} - {FileName} ({FileSizeMB:F1}MB)";
@@ -130,5 +159,4 @@ public static class LogTemplates
     }
 
     #endregion
-
 }

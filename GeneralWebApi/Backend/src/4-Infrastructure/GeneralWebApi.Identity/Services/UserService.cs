@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using GeneralWebApi.Caching.Services;
 using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Enums;
@@ -17,6 +18,7 @@ public class UserService : IUserService
     private readonly ILoggingService _logger;
 
     private readonly IUserRepository _userRepository;
+    private readonly IRedisCacheService _cacheService;
 
     // need to save the refresh token in static, because it's a random byte array
     // but access token is a decoded string, it contains all users' information to be validated
@@ -26,11 +28,12 @@ public class UserService : IUserService
     private static readonly ConcurrentDictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
     // the registration of the UserService is in the ServiceCollectionExtensions.cs file
-    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository)
+    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository, IRedisCacheService cacheService)
     {
         _jwtService = jwtService;
         _logger = logger;
         _userRepository = userRepository;
+        _cacheService = cacheService;
     }
 
     public async Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password)
@@ -53,7 +56,9 @@ public class UserService : IUserService
             var refreshToken = _jwtService.GenerateRefreshToken();
 
             // store the refresh token
-            _refreshTokens.TryAdd(refreshToken, (username, DateTime.UtcNow.AddDays(7)));
+            //_refreshTokens.TryAdd(refreshToken, (username, DateTime.UtcNow.AddDays(7)));
+
+            await _cacheService.SetAsync($"refreshToken:{refreshToken}", username, TimeSpan.FromDays(7));
 
             _logger.LogInformation(LogTemplates.Identity.UserLoginSuccess, username);
             return (true, accessToken, refreshToken);
@@ -71,21 +76,15 @@ public class UserService : IUserService
         {
             _logger.LogInformation(LogTemplates.Identity.TokenRefreshAttempt);
 
-            if (!_refreshTokens.TryGetValue(refreshToken, out var tokenInfo))
+            // 从 Redis 获取 refresh token 信息
+            var userId = await _cacheService.GetAsync<string>($"refreshToken:{refreshToken}");
+            if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning(LogTemplates.Identity.InvalidRefreshToken);
                 return (false, null, null);
             }
 
-            if (tokenInfo.Expiry < DateTime.UtcNow)
-            {
-                // remove the expired refresh token
-                _refreshTokens.TryRemove(refreshToken, out _);
-                _logger.LogWarning(LogTemplates.Identity.ExpiredRefreshToken);
-                return (false, null, null);
-            }
-
-            var claims = await GetUserClaimsAsync(tokenInfo.UserId);
+            var claims = await GetUserClaimsAsync(userId);
             if (claims == null)
             {
                 return (false, null, null);
@@ -93,16 +92,16 @@ public class UserService : IUserService
 
             // generate a new access token
             var accessToken = _jwtService.GenerateAccessToken(claims.Claims);
-            _logger.LogInformation(LogTemplates.Identity.TokenRefreshSuccess, tokenInfo.UserId);
+            _logger.LogInformation(LogTemplates.Identity.TokenRefreshSuccess, userId);
 
             // update the refresh token
             var newRefreshToken = _jwtService.GenerateRefreshToken();
 
             // remove the old refresh token
-            _refreshTokens.TryRemove(refreshToken, out _);
+            await _cacheService.RemoveAsync($"refreshToken:{refreshToken}");
 
             // store the new refresh token
-            _refreshTokens[newRefreshToken] = (tokenInfo.UserId, DateTime.UtcNow.AddDays(7));
+            await _cacheService.SetAsync($"refreshToken:{newRefreshToken}", userId, TimeSpan.FromDays(7));
 
             return (true, accessToken, newRefreshToken);
         }
@@ -113,35 +112,64 @@ public class UserService : IUserService
         }
     }
 
-    public Task<bool> LogoutAsync(string refreshToken)
+    public async Task<bool> LogoutAsync(string refreshToken)
     {
         try
         {
-            if (_refreshTokens.TryRemove(refreshToken, out var tokenInfo))
+            // first check if the refresh token is in the cache
+            var userId = await _cacheService.GetAsync<string>($"refreshToken:{refreshToken}");
+            if (userId != null)
             {
-                _logger.LogInformation(LogTemplates.Identity.UserLogout, tokenInfo.UserId);
-                return Task.FromResult(true);
+                // remove the refresh token from the cache
+                await _cacheService.RemoveAsync($"refreshToken:{refreshToken}");
+                _logger.LogInformation(LogTemplates.Identity.UserLogout, userId);
+                return true;
             }
-            return Task.FromResult(false);
+            return false;
         }
         catch (Exception ex)
         {
             _logger.LogError(LogTemplates.Identity.LogoutError, ex.Message);
-            return Task.FromResult(false);
+            return false;
         }
     }
 
+    // Get user claims with improved caching and logging
     public async Task<ClaimsPrincipal?> GetUserClaimsAsync(string userName)
     {
         try
         {
+            _logger.LogInformation(LogTemplates.Identity.GetUserClaimsAttempt, userName);
+
+            // Try to get cached user info first
+            var cachedUserInfo = await _cacheService.GetAsync<CachedUserInfo>($"user_info:{userName}");
+            if (cachedUserInfo != null)
+            {
+                _logger.LogInformation(LogTemplates.Identity.GetUserClaimsFromCache, userName);
+
+                // Rebuild ClaimsPrincipal from cached info
+                var cachedClaims = new List<Claim>
+                {
+                    new(ClaimTypes.NameIdentifier, cachedUserInfo.UserId),
+                    new(ClaimTypes.Name, cachedUserInfo.Username),
+                    new(ClaimTypes.Email, cachedUserInfo.Email),
+                    new(ClaimTypes.AuthenticationMethod, "JWT"),
+                    new(ClaimTypes.Role, cachedUserInfo.Role)
+                };
+
+                var cachedIdentity = new ClaimsIdentity(cachedClaims, "JWT");
+                return new ClaimsPrincipal(cachedIdentity);
+            }
+
+            // Get user from database
+            _logger.LogInformation(LogTemplates.Identity.GetUserClaimsFromDatabase, userName);
             var user = await _userRepository.GetByNameAsync(userName);
             if (user == null)
             {
                 return null;
             }
 
-            // create a list of claims
+            // Create claims list
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -152,7 +180,22 @@ public class UserService : IUserService
             };
 
             var identity = new ClaimsIdentity(claims, "JWT");
-            return new ClaimsPrincipal(identity);
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            // Cache simplified user info (not ClaimsPrincipal to avoid circular reference)
+            var userInfoToCache = new CachedUserInfo
+            {
+                UserId = user.Id.ToString(),
+                Username = user.Name,
+                Email = user.Email,
+                Role = user.Role
+            };
+
+            const int cacheExpiryMinutes = 60;
+            await _cacheService.SetAsync($"user_info:{userName}", userInfoToCache, TimeSpan.FromMinutes(cacheExpiryMinutes));
+            _logger.LogInformation(LogTemplates.Identity.UserClaimsCached, userName, cacheExpiryMinutes);
+
+            return claimsPrincipal;
         }
         catch (Exception ex)
         {
@@ -165,18 +208,21 @@ public class UserService : IUserService
     {
         try
         {
+            _logger.LogInformation(LogTemplates.Identity.UserValidationAttempt, username);
+
             var user = await _userRepository.ValidateUserAsync(username, password);
             if (user == null)
             {
+                _logger.LogWarning(LogTemplates.Identity.UserValidationFailed, username);
                 return false;
             }
 
-            // check if the password is correct
+            // Check if the password is correct
             var passwordHash = user.PasswordHash.Split(':');
             var salt = Convert.FromBase64String(passwordHash[0]);
             var hashedUserPassword = passwordHash[1];
 
-            // verify the password using the same hashing algorithm and salt
+            // Verify the password using the same hashing algorithm and salt
             var computedInputPasswordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
                 salt: salt,
@@ -185,8 +231,19 @@ public class UserService : IUserService
                 numBytesRequested: 256 / 8
             ));
 
-            // compare the computed hash with the hashed user password
-            return computedInputPasswordHash == hashedUserPassword;
+            // Compare the computed hash with the hashed user password
+            var isValid = computedInputPasswordHash == hashedUserPassword;
+
+            if (isValid)
+            {
+                _logger.LogInformation(LogTemplates.Identity.UserValidationSuccess, username);
+            }
+            else
+            {
+                _logger.LogWarning(LogTemplates.Identity.UserValidationFailed, username);
+            }
+
+            return isValid;
         }
         catch (Exception ex)
         {
@@ -195,32 +252,75 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<bool> RegisterUserAsync(string username, string password, string email)
+    public async Task<(bool Success, string ErrorMessage)> RegisterUserAsync(string username, string password, string email)
     {
         try
         {
-            if (await _userRepository.ExistsByEmailAsync(email) ||
-                await _userRepository.ExistsByNameAsync(username))
+            // Log registration attempt
+            _logger.LogInformation(LogTemplates.Identity.UserRegistrationAttempt, username, email);
+
+            // Check if email already exists
+            _logger.LogInformation(LogTemplates.Identity.CheckingEmailExists, email);
+            var emailExists = await _userRepository.ExistsByEmailAsync(email);
+            _logger.LogInformation(LogTemplates.Identity.EmailExistsResult, email, emailExists);
+
+            // Check if username already exists
+            _logger.LogInformation(LogTemplates.Identity.CheckingUsernameExists, username);
+            var usernameExists = await _userRepository.ExistsByNameAsync(username);
+            _logger.LogInformation(LogTemplates.Identity.UsernameExistsResult, username, usernameExists);
+
+            // Handle different existence scenarios with specific logging and error messages
+            if (emailExists && usernameExists)
             {
-                return false;
+                _logger.LogWarning(LogTemplates.Identity.UserAndEmailAlreadyExist, username, email);
+                return (false, "Both username and email are already in use. Please choose different credentials.");
             }
+
+            if (emailExists)
+            {
+                _logger.LogWarning(LogTemplates.Identity.EmailAlreadyExists, email);
+                return (false, "This email address is already registered. Please use a different email or try logging in.");
+            }
+
+            if (usernameExists)
+            {
+                _logger.LogWarning(LogTemplates.Identity.UsernameAlreadyExists, username);
+                return (false, "This username is already taken. Please choose a different username.");
+            }
+
+            // Validation passed
+            _logger.LogInformation(LogTemplates.Identity.UserRegistrationValidationPassed, username, email);
+
+            // Generate password hash
+            _logger.LogInformation(LogTemplates.Identity.PasswordHashGenerated, username);
+            var passwordHash = GeneratePasswordHash(password);
+
+            // Create user object
             var user = new User
             {
                 Name = username,
                 Email = email,
-                PasswordHash = GeneratePasswordHash(password),
+                PasswordHash = passwordHash,
                 CreatedBy = "System",
                 Role = Role.User.ToString()
             };
+
+            // Log user creation start
+            _logger.LogInformation(LogTemplates.Identity.UserCreationStarted, username, email, user.Role);
+
+            // Save to database
             await _userRepository.RegisterUserAsync(user);
 
+            // Log successful completion
+            _logger.LogInformation(LogTemplates.Identity.UserCreationCompleted, username, user.Id);
             _logger.LogInformation(LogTemplates.Identity.UserRegistration, username);
-            return true;
+
+            return (true, "User registered successfully");
         }
         catch (Exception ex)
         {
             _logger.LogError(LogTemplates.Identity.UserRegistrationError, ex.Message);
-            return false;
+            return (false, $"Registration failed due to a system error: {ex.Message}");
         }
     }
 
@@ -269,4 +369,11 @@ public class UserService : IUserService
             return false;
         }
     }
+}// 新增简化的用户信息类
+public class CachedUserInfo
+{
+    public string UserId { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
 }
