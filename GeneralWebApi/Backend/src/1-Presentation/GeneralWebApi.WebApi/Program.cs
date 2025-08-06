@@ -4,7 +4,6 @@ using GeneralWebApi.Logging.Configuration;
 using GeneralWebApi.Logging.Extensions;
 using GeneralWebApi.Logging.Middleware;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using GeneralWebApi.Common.Extensions;
 
 using Scalar.AspNetCore;
@@ -64,32 +63,6 @@ builder.Services.AddDatabaseService(builder.Configuration);
 builder.Services.AddDatabaseHealthChecks(builder.Configuration);
 builder.Services.AddRepositories();
 
-//Add API Versioning
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ReportApiVersions = true;
-
-    //configure the ApiVersionReader to use the header
-    options.ApiVersionReader = ApiVersionReader.Combine(
-        //read the version from the url segment, header, media type, or query string
-        new UrlSegmentApiVersionReader(),
-        //read the version from the header
-        new HeaderApiVersionReader("X-API-Version"),
-        //read the version from the media type
-        new MediaTypeApiVersionReader("version"),
-        //read the version from the query string
-        new QueryStringApiVersionReader("api-version")
-    );
-});
-
-builder.Services.AddVersionedApiExplorer(options =>
-{
-    options.GroupNameFormat = "'v'VVV";
-    options.SubstituteApiVersionInUrl = true;
-});
-
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddRouting(options =>
@@ -123,6 +96,12 @@ builder.Services.AddFileOperationServices();
 
 // add redis
 builder.Services.AddRedis(builder.Configuration);
+
+// add API versioning services
+builder.Services.AddApiVersioningServices();
+
+// add enterprise architecture services
+builder.Services.AddEnterpriseArchitecture();
 
 var app = builder.Build();
 

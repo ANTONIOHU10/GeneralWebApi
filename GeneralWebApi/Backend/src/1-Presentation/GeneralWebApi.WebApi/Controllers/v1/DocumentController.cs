@@ -14,6 +14,8 @@ using GeneralWebApi.Application.Services;
 
 namespace GeneralWebApi.Controllers.v1;
 
+[ApiController]
+[Route("api/v1/[controller]")]
 [ApiVersion("1.0")]
 public class DocumentController : BaseController
 {

@@ -1,10 +1,12 @@
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using GeneralWebApi.Application.Common.Models;
 using GeneralWebApi.Caching.Services;
 using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Enums;
+using GeneralWebApi.Domain.Shared.Constants;
 using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.Logging.Templates;
@@ -369,7 +371,277 @@ public class UserService : IUserService
             return false;
         }
     }
-}// 新增简化的用户信息类
+
+    #region Enterprise Methods (Recommended for new development)
+
+    /// <summary>
+    /// Enterprise login method with rich error handling
+    /// </summary>
+    public async Task<AuthResult> LoginEnterpriseAsync(string username, string password)
+    {
+        try
+        {
+            var validationResult = await ValidateUserEnterpriseAsync(username, password);
+            if (!validationResult.IsSuccess)
+            {
+                return AuthResult.Failure("Invalid username or password", ErrorCodes.Authentication.InvalidCredentials);
+            }
+
+            var claimsResult = await GetUserClaimsEnterpriseAsync(username);
+            if (!claimsResult.IsSuccess || claimsResult.Data == null)
+            {
+                return AuthResult.Failure("Failed to get user claims", ErrorCodes.Authentication.ClaimsGenerationFailed);
+            }
+
+            var accessToken = _jwtService.GenerateAccessToken(claimsResult.Data.Claims);
+            var refreshToken = _jwtService.GenerateRefreshToken();
+            var expiresAt = DateTime.UtcNow.AddHours(1);
+
+            await _cacheService.SetAsync($"refreshToken:{refreshToken}", username, TimeSpan.FromDays(7));
+
+            var userInfo = new UserInfoResponse
+            {
+                Id = claimsResult.Data.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "",
+                Username = claimsResult.Data.FindFirst(ClaimTypes.Name)?.Value ?? "",
+                Email = claimsResult.Data.FindFirst(ClaimTypes.Email)?.Value ?? "",
+                Role = claimsResult.Data.FindFirst(ClaimTypes.Role)?.Value ?? "",
+                Permissions = GetUserPermissions(claimsResult.Data)
+            };
+
+            _logger.LogInformation(LogTemplates.Identity.UserLoginSuccess, username);
+            return AuthResult.Success(accessToken, refreshToken, expiresAt, userInfo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.UserLoginFailed, username, ex.Message);
+            return AuthResult.Failure("An error occurred during login", ErrorCodes.System.InternalError);
+        }
+    }
+
+    /// <summary>
+    /// Enterprise refresh token method
+    /// </summary>
+    public async Task<AuthResult> RefreshTokenEnterpriseAsync(string refreshToken)
+    {
+        try
+        {
+            var userId = await _cacheService.GetAsync<string>($"refreshToken:{refreshToken}");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return AuthResult.Failure("Invalid refresh token", ErrorCodes.Authentication.InvalidRefreshToken);
+            }
+
+            var claimsResult = await GetUserClaimsEnterpriseAsync(userId);
+            if (!claimsResult.IsSuccess || claimsResult.Data == null)
+            {
+                return AuthResult.Failure("Failed to get user claims for refresh", ErrorCodes.Authentication.UserNotFound);
+            }
+
+            var accessToken = _jwtService.GenerateAccessToken(claimsResult.Data.Claims);
+            var newRefreshToken = _jwtService.GenerateRefreshToken();
+            var expiresAt = DateTime.UtcNow.AddHours(1);
+
+            await _cacheService.RemoveAsync($"refreshToken:{refreshToken}");
+            await _cacheService.SetAsync($"refreshToken:{newRefreshToken}", userId, TimeSpan.FromDays(7));
+
+            return AuthResult.Success(accessToken, newRefreshToken, expiresAt);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.TokenRefreshFailed, ex.Message);
+            return AuthResult.Failure("An error occurred during token refresh", ErrorCodes.System.InternalError);
+        }
+    }
+
+    /// <summary>
+    /// Enterprise logout method
+    /// </summary>
+    public async Task<ServiceResult> LogoutEnterpriseAsync(string refreshToken)
+    {
+        try
+        {
+            var userId = await _cacheService.GetAsync<string>($"refreshToken:{refreshToken}");
+            if (userId != null)
+            {
+                await _cacheService.RemoveAsync($"refreshToken:{refreshToken}");
+                _logger.LogInformation(LogTemplates.Identity.UserLogout, userId);
+                return ServiceResult.Success();
+            }
+            return ServiceResult.Failure("Refresh token not found", ErrorCodes.Authentication.InvalidRefreshToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.LogoutError, ex.Message);
+            return ServiceResult.Failure("An error occurred during logout", ErrorCodes.System.InternalError);
+        }
+    }
+
+    /// <summary>
+    /// Enterprise get user claims method
+    /// </summary>
+    public async Task<ServiceResult<ClaimsPrincipal>> GetUserClaimsEnterpriseAsync(string userName)
+    {
+        try
+        {
+            var claimsPrincipal = await GetUserClaimsAsync(userName); // Reuse existing logic
+            if (claimsPrincipal == null)
+            {
+                return ServiceResult<ClaimsPrincipal>.Failure("User not found", ErrorCodes.Authentication.UserNotFound);
+            }
+            return ServiceResult<ClaimsPrincipal>.Success(claimsPrincipal);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.GetUserClaimsError, userName, ex.Message);
+            return ServiceResult<ClaimsPrincipal>.Failure("An error occurred while getting user claims", ErrorCodes.System.InternalError);
+        }
+    }
+
+    /// <summary>
+    /// Enterprise validate user method
+    /// </summary>
+    public async Task<ServiceResult<bool>> ValidateUserEnterpriseAsync(string username, string password)
+    {
+        try
+        {
+            var isValid = await ValidateUserAsync(username, password); // Reuse existing logic
+            return ServiceResult<bool>.Success(isValid);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.UserValidationError, ex.Message);
+            return ServiceResult<bool>.Failure("An error occurred during user validation", ErrorCodes.System.InternalError);
+        }
+    }
+
+    /// <summary>
+    /// Enterprise register user method
+    /// </summary>
+    public async Task<ServiceResult<string>> RegisterUserEnterpriseAsync(string username, string password, string email)
+    {
+        try
+        {
+            var emailExists = await _userRepository.ExistsByEmailAsync(email);
+            var usernameExists = await _userRepository.ExistsByNameAsync(username);
+
+            if (emailExists && usernameExists)
+            {
+                return ServiceResult<string>.Failure("Both username and email are already in use", ErrorCodes.User.UsernameAlreadyExists);
+            }
+
+            if (emailExists)
+            {
+                return ServiceResult<string>.Failure("Email already exists", ErrorCodes.User.EmailAlreadyExists);
+            }
+
+            if (usernameExists)
+            {
+                return ServiceResult<string>.Failure("Username already exists", ErrorCodes.User.UsernameAlreadyExists);
+            }
+
+            var passwordHash = GeneratePasswordHash(password);
+            var user = new User
+            {
+                Name = username,
+                Email = email,
+                PasswordHash = passwordHash,
+                CreatedBy = "System",
+                Role = Role.User.ToString()
+            };
+
+            await _userRepository.RegisterUserAsync(user);
+            _logger.LogInformation(LogTemplates.Identity.UserRegistration, username);
+
+            return ServiceResult<string>.Success(user.Id.ToString());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.UserRegistrationError, ex.Message);
+            return ServiceResult<string>.Failure("Registration failed", ErrorCodes.User.UserCreationFailed);
+        }
+    }
+
+    /// <summary>
+    /// Enterprise update password method
+    /// </summary>
+    public async Task<ServiceResult> UpdatePasswordEnterpriseAsync(string username, string newPassword)
+    {
+        try
+        {
+            var success = await UpdatePasswordAsync(username, newPassword); // Reuse existing logic
+            if (success)
+            {
+                return ServiceResult.Success();
+            }
+            return ServiceResult.Failure("Failed to update password", ErrorCodes.User.PasswordUpdateFailed);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.PasswordUpdateError, ex.Message);
+            return ServiceResult.Failure("An error occurred during password update", ErrorCodes.System.InternalError);
+        }
+    }
+
+    /// <summary>
+    /// Get user information
+    /// </summary>
+    public async Task<ServiceResult<UserInfoResponse>> GetUserInfoAsync(string username)
+    {
+        try
+        {
+            var claimsResult = await GetUserClaimsEnterpriseAsync(username);
+            if (!claimsResult.IsSuccess || claimsResult.Data == null)
+            {
+                return ServiceResult<UserInfoResponse>.Failure("Failed to get user claims", ErrorCodes.Authentication.UserNotFound);
+            }
+
+            var userInfo = new UserInfoResponse
+            {
+                Id = claimsResult.Data.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "",
+                Username = claimsResult.Data.FindFirst(ClaimTypes.Name)?.Value ?? "",
+                Email = claimsResult.Data.FindFirst(ClaimTypes.Email)?.Value ?? "",
+                Role = claimsResult.Data.FindFirst(ClaimTypes.Role)?.Value ?? "",
+                Permissions = GetUserPermissions(claimsResult.Data)
+            };
+
+            return ServiceResult<UserInfoResponse>.Success(userInfo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogTemplates.Identity.GetUserClaimsError, username, ex.Message);
+            return ServiceResult<UserInfoResponse>.Failure("An error occurred while getting user info", ErrorCodes.System.InternalError);
+        }
+    }
+
+    private List<string> GetUserPermissions(ClaimsPrincipal claimsPrincipal)
+    {
+        var permissions = new List<string>();
+        var role = claimsPrincipal.FindFirst(ClaimTypes.Role)?.Value;
+
+        if (!string.IsNullOrEmpty(role))
+        {
+            // Add role-based permissions
+            permissions.Add($"role:{role.ToLower()}");
+
+            // Add specific permissions based on role
+            switch (role.ToLower())
+            {
+                case "admin":
+                    permissions.AddRange(new[] { "users:read", "users:write", "users:delete", "files:read", "files:write", "files:delete" });
+                    break;
+                case "user":
+                    permissions.AddRange(new[] { "files:read", "files:write" });
+                    break;
+            }
+        }
+
+        return permissions;
+    }
+
+    #endregion
+}
+
+// 新增简化的用户信息类
 public class CachedUserInfo
 {
     public string UserId { get; set; } = string.Empty;

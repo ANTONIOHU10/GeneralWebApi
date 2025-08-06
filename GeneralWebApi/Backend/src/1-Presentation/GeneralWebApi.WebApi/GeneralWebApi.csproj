@@ -26,6 +26,8 @@
     <ProjectReference
       Include="..\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
     <ProjectReference
+      Include="..\..\2-Application\GeneralWebApi.Application.Common\GeneralWebApi.Application.Common.csproj" />
+    <ProjectReference
       Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
     <ProjectReference
       Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
