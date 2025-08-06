@@ -2,12 +2,12 @@ using GeneralWebApi.Application.Common.Models;
 using GeneralWebApi.Contracts.Responses;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GeneralWebApi.WebApi.Helpers;
+namespace GeneralWebApi.Contracts.Mapping;
 
 /// <summary>
-/// Helper methods for controllers to handle service results
+/// Maps service results to HTTP action results with proper status codes and error handling
 /// </summary>
-public static class ControllerHelpers
+public static class ResultMapper
 {
     /// <summary>
     /// Convert ServiceResult to IActionResult
@@ -164,6 +164,9 @@ public static class ControllerHelpers
         });
     }
 
+    /// <summary>
+    /// Maps error codes to appropriate HTTP status codes
+    /// </summary>
     private static int GetStatusCodeFromErrorCode(string? errorCode)
     {
         return errorCode switch

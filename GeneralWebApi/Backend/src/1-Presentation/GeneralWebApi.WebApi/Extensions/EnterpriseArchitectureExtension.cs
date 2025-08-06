@@ -1,5 +1,5 @@
 using System.Text.Json;
-using GeneralWebApi.WebApi.Helpers;
+using GeneralWebApi.Contracts.Mapping;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeneralWebApi.WebApi.Extensions;

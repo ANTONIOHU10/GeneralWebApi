@@ -1,6 +1,6 @@
 using GeneralWebApi.Contracts.Requests;
+using GeneralWebApi.Contracts.Mapping;
 using GeneralWebApi.Identity.Services;
-using GeneralWebApi.WebApi.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
