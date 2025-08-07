@@ -100,8 +100,6 @@ builder.Services.AddRedis(builder.Configuration);
 // add API versioning services
 builder.Services.AddApiVersioningServices();
 
-// add enterprise architecture services
-builder.Services.AddEnterpriseArchitecture();
 
 var app = builder.Build();
 

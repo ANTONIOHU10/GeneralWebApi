@@ -33,10 +33,6 @@
   <ItemGroup>
     <ProjectReference
       Include="..\..\1-Presentation\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
-    <ProjectReference
-      Include="..\..\2-Application\GeneralWebApi.Application.Common\GeneralWebApi.Application.Common.csproj" />
-    <ProjectReference
-      Include="..\..\3-Domain\GeneralWebApi.Domain.Shared\GeneralWebApi.Domain.Shared.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />

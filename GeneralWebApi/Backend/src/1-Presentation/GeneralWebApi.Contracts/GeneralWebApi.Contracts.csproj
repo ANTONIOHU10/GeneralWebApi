@@ -16,4 +16,5 @@
     <ProjectReference
       Include="..\..\2-Application\GeneralWebApi.Application.Common\GeneralWebApi.Application.Common.csproj" />
   </ItemGroup>
+
 </Project>

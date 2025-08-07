@@ -16,13 +16,4 @@ public interface IUserService
     string GeneratePasswordHash(string password);
     Task<bool> UpdatePasswordAsync(string username, string newPassword);
 
-    // Enterprise methods (new recommended approach)
-    Task<AuthResult> LoginEnterpriseAsync(string username, string password);
-    Task<AuthResult> RefreshTokenEnterpriseAsync(string refreshToken);
-    Task<ServiceResult> LogoutEnterpriseAsync(string refreshToken);
-    Task<ServiceResult<ClaimsPrincipal>> GetUserClaimsEnterpriseAsync(string userName);
-    Task<ServiceResult<bool>> ValidateUserEnterpriseAsync(string username, string password);
-    Task<ServiceResult<string>> RegisterUserEnterpriseAsync(string username, string password, string email);
-    Task<ServiceResult> UpdatePasswordEnterpriseAsync(string username, string newPassword);
-    Task<ServiceResult<UserInfoResponse>> GetUserInfoAsync(string username);
 }
