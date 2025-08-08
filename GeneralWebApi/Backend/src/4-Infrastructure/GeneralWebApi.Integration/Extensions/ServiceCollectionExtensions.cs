@@ -122,6 +122,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IFileDocumentRepository, FileRepository>();
+        services.AddScoped<IExternalApiConfigRepository, ExternalApiConfigRepository>();
         return services;
     }
 
