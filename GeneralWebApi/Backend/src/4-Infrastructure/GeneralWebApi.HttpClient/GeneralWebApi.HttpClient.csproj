@@ -13,6 +13,6 @@
     <ProjectReference
       Include="..\..\2-Application\GeneralWebApi.Application.Common\GeneralWebApi.Application.Common.csproj" />
     <ProjectReference
-      Include="..\..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+      Include="..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
   </ItemGroup>
 </Project>

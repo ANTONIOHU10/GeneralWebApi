@@ -29,7 +29,7 @@ public class ExternalApiConfigRepository : IExternalApiConfigRepository
 
     public async Task<ExternalApiConfig> GetByIdAsync(object id, CancellationToken cancellationToken = default)
     {
-        return await _context.ExternalApiConfigs.FindAsync(new object[] { id }, cancellationToken) ?? throw new NotFoundException("External API config not found");
+        return await _context.ExternalApiConfigs.FindAsync(new object[] { id }, cancellationToken) ?? throw new Exception("ExternalApiConfig not found");
     }
 
     public async Task<IEnumerable<ExternalApiConfig>> GetAllAsync(CancellationToken cancellationToken = default)

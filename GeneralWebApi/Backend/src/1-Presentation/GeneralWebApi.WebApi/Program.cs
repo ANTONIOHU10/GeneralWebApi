@@ -15,6 +15,7 @@ using GeneralWebApi.Contracts.Extensions;
 using GeneralWebApi.Application.Extensions;
 using GeneralWebApi.WebApi.Extensions;
 using GeneralWebApi.Caching.Extensions;
+using GeneralWebApi.HttpClient.Extensions;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -100,6 +101,8 @@ builder.Services.AddRedis(builder.Configuration);
 // add API versioning services
 builder.Services.AddApiVersioningServices();
 
+// add external http client
+builder.Services.AddExternalHttpClient(builder.Configuration);
 
 var app = builder.Build();
 

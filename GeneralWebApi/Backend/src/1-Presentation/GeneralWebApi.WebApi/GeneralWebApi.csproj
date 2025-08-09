@@ -39,5 +39,7 @@
       Include="..\..\2-Application\GeneralWebApi.Application\GeneralWebApi.Application.csproj" />
     <ProjectReference
       Include="..\..\4-Infrastructure\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
   </ItemGroup>
 </Project>

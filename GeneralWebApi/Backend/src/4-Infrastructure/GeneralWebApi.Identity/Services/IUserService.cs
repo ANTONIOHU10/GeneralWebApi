@@ -1,6 +1,4 @@
 using System.Security.Claims;
-using GeneralWebApi.Application.Common.Models;
-using GeneralWebApi.Contracts.Responses;
 
 namespace GeneralWebApi.Identity.Services;
 

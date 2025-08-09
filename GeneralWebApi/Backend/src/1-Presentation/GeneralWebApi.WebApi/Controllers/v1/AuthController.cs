@@ -113,32 +113,24 @@ public class AuthController(IUserService userService) : BaseController
     [HttpGet("me")]
     [EnableRateLimiting("Default")]
     [Authorize(Policy = "UserOrAdmin")]
-    public async Task<ActionResult<ApiResponse<LoginResponseData>>> GetCurrentUser()
+    public ActionResult<ApiResponse<LoginResponseData>> GetCurrentUser()
     {
-        var userName = User.Identity?.Name;
-
-        if (string.IsNullOrEmpty(userName))
+        // check if the user is authenticated
+        if (!(User?.Identity?.IsAuthenticated ?? false))
         {
             return Unauthorized(AuthResponse.UserInfoFailed("User not found"));
         }
 
-        var userClaims = await _userService.GetUserClaimsAsync(userName);
-
-        if (userClaims == null)
-        {
-            return NotFound(AuthResponse.UserInfoFailed("User not found"));
-        }
-
-        var roles = userClaims.Claims
+        var roles = User.Claims
             .Where(c => c.Type == ClaimTypes.Role)
             .Select(c => c.Value)
             .ToArray();
 
         var responseData = new UserInfoResponseData
         {
-            UserId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-            Username = userClaims.FindFirst(ClaimTypes.Name)?.Value,
-            Email = userClaims.FindFirst(ClaimTypes.Email)?.Value,
+            UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            Username = User.FindFirst(ClaimTypes.Name)?.Value,
+            Email = User.FindFirst(ClaimTypes.Email)?.Value,
             Roles = roles
         };
 

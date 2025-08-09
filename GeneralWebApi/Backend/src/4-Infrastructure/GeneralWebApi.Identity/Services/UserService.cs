@@ -1,12 +1,9 @@
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using GeneralWebApi.Application.Common.Models;
 using GeneralWebApi.Caching.Services;
-using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Enums;
-using GeneralWebApi.Domain.Shared.Constants;
 using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.Logging.Templates;
