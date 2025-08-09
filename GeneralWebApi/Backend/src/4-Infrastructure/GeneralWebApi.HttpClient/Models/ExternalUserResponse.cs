@@ -1,4 +1,4 @@
-namespace GeneralWebApi.HttpClient.Models.ExternalUsers;
+namespace GeneralWebApi.HttpClient.Models;
 
 public class ExternalUserResponse
 {

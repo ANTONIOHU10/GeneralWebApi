@@ -15,7 +15,7 @@ public class ExternalApiConfiguration : IEntityTypeConfiguration<ExternalApiConf
 
         builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
         builder.Property(x => x.BaseUrl).HasMaxLength(500).IsRequired();
-        builder.Property(x => x.ApiKey).HasMaxLength(500).IsRequired();
+        builder.Property(x => x.ApiKey).HasMaxLength(500);
         builder.Property(x => x.AuthToken).HasMaxLength(1000);
         builder.Property(x => x.Username).HasMaxLength(100);
         builder.Property(x => x.Password).HasMaxLength(100);

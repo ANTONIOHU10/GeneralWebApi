@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeneralWebApi.Integration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250808104943_InitialCreate_Test")]
+    [Migration("20250809221221_InitialCreate_Test")]
     partial class InitialCreate_Test
     {
         /// <inheritdoc />
@@ -34,7 +34,6 @@ namespace GeneralWebApi.Integration.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApiKey")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 

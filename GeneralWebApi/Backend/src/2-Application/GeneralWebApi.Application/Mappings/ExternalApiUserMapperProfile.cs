@@ -1,6 +1,6 @@
 using AutoMapper;
 using GeneralWebApi.DTOs.Users;
-using GeneralWebApi.HttpClient.Models.ExternalUsers;
+using GeneralWebApi.HttpClient.Models;
 
 namespace GeneralWebApi.Application.Mappings;
 

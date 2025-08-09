@@ -26,21 +26,4 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
-
-    /// <summary>
-    /// Add external HTTP client services with custom options
-    /// </summary>
-    public static IServiceCollection AddExternalHttpClient(this IServiceCollection services, Action<HttpClientOptions> configureOptions)
-    {
-        // Configure HttpClient options
-        services.Configure(configureOptions);
-
-        // Register HttpClient factory
-        services.AddHttpClient();
-
-        // Register external HTTP client service
-        services.AddScoped<IExternalHttpClientService, ExternalHttpClientService>();
-
-        return services;
-    }
 }
