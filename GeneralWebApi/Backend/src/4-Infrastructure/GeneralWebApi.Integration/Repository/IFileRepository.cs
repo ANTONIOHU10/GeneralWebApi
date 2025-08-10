@@ -1,4 +1,5 @@
 using GeneralWebApi.Domain.Entities;
+using GeneralWebApi.Integration.Repository.Base;
 
 namespace GeneralWebApi.Integration.Repository;
 

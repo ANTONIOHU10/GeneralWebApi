@@ -2,6 +2,7 @@ using GeneralWebApi.Domain.Entities.Base;
 using GeneralWebApi.Integration.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 
 namespace GeneralWebApi.Integration.Repository.Base;
 
@@ -34,12 +35,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             var result = await _dbSet.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Entity {EntityType} with ID {EntityId} added successfully", typeof(T).Name, entity.Id);
+            _logger.LogInformation(LogTemplates.Repository.EntityAdded, typeof(T).Name, entity.Id);
             return result.Entity;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to add entity {EntityType}", typeof(T).Name);
+            _logger.LogError(ex, LogTemplates.Repository.EntityAddFailed, typeof(T).Name);
             throw;
         }
     }
@@ -59,12 +60,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             await _dbSet.AddRangeAsync(entityList, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Added {Count} entities of type {EntityType}", entityList.Count, typeof(T).Name);
+            _logger.LogInformation(LogTemplates.Repository.EntitiesAdded, entityList.Count, typeof(T).Name);
             return entityList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to add range of entities {EntityType}", typeof(T).Name);
+            _logger.LogError(ex, LogTemplates.Repository.EntitiesAddRangeFailed, typeof(T).Name);
             throw;
         }
     }
@@ -77,7 +78,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
 
             if (entity == null)
             {
-                _logger.LogWarning("Entity {EntityType} with ID {EntityId} not found", typeof(T).Name, id);
+                _logger.LogWarning(LogTemplates.Repository.EntityNotFound, typeof(T).Name, id);
                 throw new KeyNotFoundException($"Entity of type {typeof(T).Name} with ID {id} not found");
             }
 
@@ -85,7 +86,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "Failed to get entity {EntityType} with ID {EntityId}", typeof(T).Name, id);
+            _logger.LogError(ex, LogTemplates.Repository.EntityGetByIdFailed, typeof(T).Name, id);
             throw;
         }
     }
@@ -95,12 +96,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
         try
         {
             var entities = await _dbSet.ToListAsync(cancellationToken);
-            _logger.LogDebug("Retrieved {Count} entities of type {EntityType}", entities.Count, typeof(T).Name);
+            _logger.LogInformation(LogTemplates.Repository.EntitiesRetrieved, typeof(T).Name, entities.Count);
             return entities;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get all entities {EntityType}", typeof(T).Name);
+            _logger.LogError(ex, LogTemplates.Repository.EntitiesGetAllFailed, typeof(T).Name);
             throw;
         }
     }
@@ -115,12 +116,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             _dbSet.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Entity {EntityType} with ID {EntityId} updated successfully", typeof(T).Name, entity.Id);
+            _logger.LogInformation(LogTemplates.Repository.EntityUpdated, typeof(T).Name, entity.Id);
             return entity;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to update entity {EntityType} with ID {EntityId}", typeof(T).Name, entity.Id);
+            _logger.LogError(ex, LogTemplates.Repository.EntityUpdateFailed, typeof(T).Name, entity.Id);
             throw;
         }
     }
@@ -140,12 +141,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             _dbSet.UpdateRange(entityList);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Updated {Count} entities of type {EntityType}", entityList.Count, typeof(T).Name);
+            _logger.LogInformation(LogTemplates.Repository.EntitiesUpdated, entityList.Count, typeof(T).Name);
             return entityList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to update range of entities {EntityType}", typeof(T).Name);
+            _logger.LogError(ex, LogTemplates.Repository.EntitiesUpdateRangeFailed, typeof(T).Name);
             throw;
         }
     }
@@ -163,12 +164,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Entity {EntityType} with ID {EntityId} soft deleted successfully", typeof(T).Name, entity.Id);
+            _logger.LogInformation(LogTemplates.Repository.EntitySoftDeleted, typeof(T).Name, entity.Id);
             return entity;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to delete entity {EntityType} with ID {EntityId}", typeof(T).Name, id);
+            _logger.LogError(ex, LogTemplates.Repository.EntityDeleteFailed, typeof(T).Name, id);
             throw;
         }
     }
@@ -189,12 +190,12 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Soft deleted {Count} entities of type {EntityType}", entityList.Count, typeof(T).Name);
+            _logger.LogInformation(LogTemplates.Repository.EntitiesSoftDeleted, entityList.Count, typeof(T).Name);
             return entityList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to delete range of entities {EntityType}", typeof(T).Name);
+            _logger.LogError(ex, LogTemplates.Repository.EntitiesDeleteRangeFailed, typeof(T).Name);
             throw;
         }
     }

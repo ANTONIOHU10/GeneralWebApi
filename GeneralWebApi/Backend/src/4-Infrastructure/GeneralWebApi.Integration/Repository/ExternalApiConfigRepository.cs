@@ -3,6 +3,7 @@ using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 
 namespace GeneralWebApi.Integration.Repository;
 
@@ -24,14 +25,14 @@ public class ExternalApiConfigRepository : BaseRepository<ExternalApiConfig>, IE
 
             if (config == null)
             {
-                _logger.LogDebug("ExternalApiConfig with name {Name} not found or not active", name);
+                _logger.LogDebug(LogTemplates.Repository.ExternalApiConfigNotFound, name);
             }
 
             return config;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get ExternalApiConfig with name {Name}", name);
+            _logger.LogError(ex, LogTemplates.Repository.ExternalApiConfigGetFailed, name);
             throw;
         }
     }

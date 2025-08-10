@@ -3,6 +3,7 @@ using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 
 namespace GeneralWebApi.Integration.Repository;
 
@@ -22,7 +23,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             var user = await _dbSet.FirstOrDefaultAsync(u => u.Name == username, cancellationToken);
             if (user == null)
             {
-                _logger.LogWarning("User with username {Username} not found", username);
+                _logger.LogWarning(LogTemplates.Repository.UserNotFound, username);
                 throw new KeyNotFoundException($"User with username {username} not found");
             }
 
@@ -30,7 +31,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "Failed to validate user with username {Username}", username);
+            _logger.LogError(ex, LogTemplates.Repository.UserValidationFailed, username);
             throw;
         }
     }
@@ -42,7 +43,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             // Check if the user already exists
             if (await ExistsByEmailAsync(user.Email, cancellationToken))
             {
-                _logger.LogWarning("User with email {Email} already exists", user.Email);
+                _logger.LogWarning(LogTemplates.Repository.UserEmailExists, user.Email);
                 throw new InvalidOperationException($"User with email {user.Email} already exists");
             }
 
@@ -51,7 +52,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         }
         catch (Exception ex) when (ex is not InvalidOperationException)
         {
-            _logger.LogError(ex, "Failed to register user with email {Email}", user.Email);
+            _logger.LogError(ex, LogTemplates.Repository.UserRegistrationFailed, user.Email);
             throw;
         }
     }
@@ -63,7 +64,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             // Check if the user exists
             if (!await ExistsByEmailAsync(user.Email, cancellationToken))
             {
-                _logger.LogWarning("User with email {Email} not found", user.Email);
+                _logger.LogWarning(LogTemplates.Repository.UserNotFound, user.Email);
                 throw new KeyNotFoundException($"User with email {user.Email} not found");
             }
 
@@ -72,7 +73,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "Failed to update password for user with email {Email}", user.Email);
+            _logger.LogError(ex, LogTemplates.Repository.UserPasswordUpdateFailed, user.Email);
             throw;
         }
     }
@@ -94,14 +95,14 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             var user = await _dbSet.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
             if (user == null)
             {
-                _logger.LogWarning("User with email {Email} not found", email);
+                _logger.LogWarning(LogTemplates.Repository.UserNotFound, email);
                 throw new KeyNotFoundException($"User with email {email} not found");
             }
             return user;
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "Failed to get user with email {Email}", email);
+            _logger.LogError(ex, LogTemplates.Repository.UserGetByEmailFailed, email);
             throw;
         }
     }
@@ -113,14 +114,14 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             var user = await _dbSet.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
             if (user == null)
             {
-                _logger.LogWarning("User with name {Name} not found", name);
+                _logger.LogWarning(LogTemplates.Repository.UserNotFound, name);
                 throw new KeyNotFoundException($"User with name {name} not found");
             }
             return user;
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "Failed to get user with name {Name}", name);
+            _logger.LogError(ex, LogTemplates.Repository.UserGetByNameFailed, name);
             throw;
         }
     }

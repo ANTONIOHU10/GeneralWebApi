@@ -1,6 +1,6 @@
 using GeneralWebApi.Domain.Entities.Base;
 
-namespace GeneralWebApi.Integration.Repository;
+namespace GeneralWebApi.Integration.Repository.Base;
 
 // here T is the entity type that inherits from BaseEntity
 public interface IBaseRepository<T> where T : BaseEntity

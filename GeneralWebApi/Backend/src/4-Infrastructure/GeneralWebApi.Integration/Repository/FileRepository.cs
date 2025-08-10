@@ -3,6 +3,7 @@ using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 
 namespace GeneralWebApi.Integration.Repository;
 
@@ -25,7 +26,7 @@ public class FileRepository : BaseRepository<FileDocument>, IFileDocumentReposit
 
             if (fileDocument == null)
             {
-                _logger.LogWarning("FileDocument with fileName {FileName} not found", fileName);
+                _logger.LogWarning(LogTemplates.Repository.FileNotFound, fileName);
                 throw new KeyNotFoundException($"FileDocument with fileName {fileName} not found");
             }
 
@@ -33,7 +34,7 @@ public class FileRepository : BaseRepository<FileDocument>, IFileDocumentReposit
         }
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            _logger.LogError(ex, "Failed to get FileDocument with fileName {FileName}", fileName);
+            _logger.LogError(ex, LogTemplates.Repository.FileGetByFileNameFailed, fileName);
             throw;
         }
     }
@@ -63,12 +64,12 @@ public class FileRepository : BaseRepository<FileDocument>, IFileDocumentReposit
                 })
                 .ToListAsync(cancellationToken);
 
-            _logger.LogDebug("Retrieved {Count} FileDocuments", fileDocuments.Count);
+            _logger.LogDebug(LogTemplates.Repository.FilesRetrieved, fileDocuments.Count);
             return fileDocuments;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get all FileDocuments");
+            _logger.LogError(ex, LogTemplates.Repository.FilesGetAllFailed);
             throw;
         }
     }
@@ -82,7 +83,7 @@ public class FileRepository : BaseRepository<FileDocument>, IFileDocumentReposit
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to add FileDocument with fileName {FileName}", fileDocument.FileName);
+            _logger.LogError(ex, LogTemplates.Repository.FileAddFailed, fileDocument.FileName);
             throw;
         }
     }
@@ -96,7 +97,7 @@ public class FileRepository : BaseRepository<FileDocument>, IFileDocumentReposit
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to update FileDocument with ID {Id}", fileDocument.Id);
+            _logger.LogError(ex, LogTemplates.Repository.FileUpdateFailed, fileDocument.Id);
             throw;
         }
     }
@@ -112,7 +113,7 @@ public class FileRepository : BaseRepository<FileDocument>, IFileDocumentReposit
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to delete FileDocument with fileName {FileName}", fileName);
+            _logger.LogError(ex, LogTemplates.Repository.FileDeleteFailed, fileName);
             throw;
         }
     }
@@ -136,7 +137,7 @@ public class FileRepository : BaseRepository<FileDocument>, IFileDocumentReposit
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to delete all FileDocuments");
+            _logger.LogError(ex, LogTemplates.Repository.FilesDeleteAllFailed);
             throw;
         }
     }

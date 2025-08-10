@@ -50,37 +50,37 @@ public static class LogTemplates
         public const string UserLoginSuccess = "User {Username} logged in successfully";
         public const string UserLoginFailed = "Login failed for user {Username}: {Reason}";
         public const string UserLogout = "User {Username} logged out successfully";
-        
+
         // Token Management Templates
         public const string TokenRefreshAttempt = "Token refresh attempt";
         public const string TokenRefreshSuccess = "Token refreshed successfully for user {UserId}";
         public const string TokenRefreshFailed = "Token refresh failed: {Reason}";
         public const string InvalidRefreshToken = "Invalid refresh token";
         public const string ExpiredRefreshToken = "Expired refresh token";
-        
+
         // User Registration Templates
         public const string UserRegistration = "User {Username} registered successfully";
         public const string UserRegistrationAttempt = "Registration attempt for username '{Username}' and email '{Email}'";
         public const string EmailAlreadyExists = "Registration failed: Email '{Email}' already exists in database";
-        public const string UsernameAlreadyExists = "Registration failed: Username '{Username}' already exists in database"; 
+        public const string UsernameAlreadyExists = "Registration failed: Username '{Username}' already exists in database";
         public const string UserAndEmailAlreadyExist = "Registration failed: Both username '{Username}' and email '{Email}' already exist in database";
         public const string UserRegistrationValidationPassed = "Registration validation passed for username '{Username}' and email '{Email}'";
         public const string UserCreationStarted = "Creating new user: '{Username}' with email '{Email}' and role '{Role}'";
         public const string UserCreationCompleted = "User creation completed successfully for '{Username}' with ID {UserId}";
         public const string UserRegistrationError = "User registration error: {ErrorMessage}";
-        
+
         // Password Management Templates
         public const string PasswordUpdate = "Password updated for user {Username}";
         public const string PasswordUpdateError = "Password update error: {ErrorMessage}";
         public const string PasswordHashGenerated = "Password hash generated successfully for user '{Username}'";
-        
+
         // Authentication Templates
         public const string ApiKeyAuthSuccess = "API Key authentication successful for client {ClientName}";
         public const string UserValidationError = "User validation error: {ErrorMessage}";
         public const string UserValidationAttempt = "Validating user credentials for '{Username}'";
         public const string UserValidationSuccess = "User validation successful for '{Username}'";
         public const string UserValidationFailed = "User validation failed for '{Username}': Invalid credentials";
-        
+
         // Claims Management Templates
         public const string LogoutError = "Logout error: {ErrorMessage}";
         public const string GetUserClaimsError = "Get user claims error for {Username}: {ErrorMessage}";
@@ -88,7 +88,7 @@ public static class LogTemplates
         public const string GetUserClaimsFromCache = "Retrieved user claims from cache for '{Username}'";
         public const string GetUserClaimsFromDatabase = "Retrieved user claims from database for '{Username}'";
         public const string UserClaimsCached = "User claims cached successfully for '{Username}' with expiry {ExpiryMinutes} minutes";
-        
+
         // Database Existence Check Templates
         public const string CheckingEmailExists = "Checking if email '{Email}' already exists in database";
         public const string CheckingUsernameExists = "Checking if username '{Username}' already exists in database";
@@ -159,4 +159,52 @@ public static class LogTemplates
     }
 
     #endregion
+
+    #region Base Repository
+    public static class Repository
+    {
+        public const string EntityAdded = "Entity {EntityType} with ID {EntityId} added successfully";
+        public const string EntityAddFailed = "Failed to add entity {EntityType}";
+        public const string EntityNotFound = "Entity {EntityType} with ID {EntityId} not found";
+        public const string EntityGetByIdFailed = "Failed to get entity {EntityType} with ID {EntityId}";
+        public const string EntitiesRetrieved = "Retrieved {Count} entities of type {EntityType}";
+        public const string EntitiesGetAllFailed = "Failed to get all entities {EntityType}";
+        public const string EntityUpdated = "Entity {EntityType} with ID {EntityId} updated successfully";
+        public const string EntityUpdateFailed = "Failed to update entity {EntityType} with ID {EntityId}";
+        public const string EntityDeleteFailed = "Failed to delete entity {EntityType} with ID {EntityId}";
+        
+        // Range operation templates
+        public const string EntitiesAdded = "Added {Count} entities of type {EntityType}";
+        public const string EntitiesAddRangeFailed = "Failed to add range of entities {EntityType}";
+        public const string EntitiesUpdated = "Updated {Count} entities of type {EntityType}";
+        public const string EntitiesUpdateRangeFailed = "Failed to update range of entities {EntityType}";
+        public const string EntitySoftDeleted = "Entity {EntityType} with ID {EntityId} soft deleted successfully";
+        public const string EntitiesSoftDeleted = "Soft deleted {Count} entities of type {EntityType}";
+        public const string EntitiesDeleteRangeFailed = "Failed to delete range of entities {EntityType}";
+        
+        // User-specific templates
+        public const string UserNotFound = "User with {Identifier} not found";
+        public const string UserValidationFailed = "Failed to validate user with {Identifier}";
+        public const string UserEmailExists = "User with email {Email} already exists";
+        public const string UserRegistrationFailed = "Failed to register user with email {Email}";
+        public const string UserPasswordUpdateFailed = "Failed to update password for user with email {Email}";
+        public const string UserGetByEmailFailed = "Failed to get user with email {Email}";
+        public const string UserGetByNameFailed = "Failed to get user with name {Name}";
+        
+        // File-specific templates
+        public const string FileNotFound = "FileDocument with fileName {FileName} not found";
+        public const string FileGetByFileNameFailed = "Failed to get FileDocument with fileName {FileName}";
+        public const string FilesRetrieved = "Retrieved {Count} FileDocuments";
+        public const string FilesGetAllFailed = "Failed to get all FileDocuments";
+        public const string FileAddFailed = "Failed to add FileDocument with fileName {FileName}";
+        public const string FileUpdateFailed = "Failed to update FileDocument with ID {Id}";
+        public const string FileDeleteFailed = "Failed to delete FileDocument with fileName {FileName}";
+        public const string FilesDeleteAllFailed = "Failed to delete all FileDocuments";
+        
+        // ExternalApiConfig-specific templates
+        public const string ExternalApiConfigNotFound = "ExternalApiConfig with name {Name} not found or not active";
+        public const string ExternalApiConfigGetFailed = "Failed to get ExternalApiConfig with name {Name}";
+    }
+    #endregion
 }
+
