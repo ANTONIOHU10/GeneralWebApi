@@ -1,4 +1,4 @@
-namespace GeneralWebApi.WebApi.Extensions;
+namespace GeneralWebApi.Extensions;
 
 public static class CORSExtension
 {

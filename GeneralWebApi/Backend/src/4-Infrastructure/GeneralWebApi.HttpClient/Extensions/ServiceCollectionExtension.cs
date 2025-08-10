@@ -1,4 +1,4 @@
-using GeneralWebApi.HttpClient.Models;
+using GeneralWebApi.HttpClient.Options;
 using GeneralWebApi.HttpClient.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

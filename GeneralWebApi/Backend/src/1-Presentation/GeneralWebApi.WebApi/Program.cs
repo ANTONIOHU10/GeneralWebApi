@@ -13,7 +13,6 @@ using GeneralWebApi.Extensions;
 using GeneralWebApi.FileOperation.Extensions;
 using GeneralWebApi.Contracts.Extensions;
 using GeneralWebApi.Application.Extensions;
-using GeneralWebApi.WebApi.Extensions;
 using GeneralWebApi.Caching.Extensions;
 using GeneralWebApi.HttpClient.Extensions;
 

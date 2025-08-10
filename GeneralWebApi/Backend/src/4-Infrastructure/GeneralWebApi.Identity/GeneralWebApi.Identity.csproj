@@ -10,29 +10,20 @@
 
     <!--Default
     Identity-->
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.7" />
 
     <!-- DB & SQL Server-->
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
 
     <!--Configuration-,
     to read the appsettings.json file-->
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.7" />
 
     <!--primary
     dependency injection-->
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-      Version="9.0.7" />
 
     <!--JWT
     utilities, code, decode, validate, etc-->
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="..\..\1-Presentation\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />

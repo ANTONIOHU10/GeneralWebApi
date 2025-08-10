@@ -2,7 +2,7 @@ using System.Text;
 using GeneralWebApi.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GeneralWebApi.WebApi.Controllers.v1;
+namespace GeneralWebApi.Controllers.v1;
 
 [ApiController]
 [Route("api/v1/[controller]")]

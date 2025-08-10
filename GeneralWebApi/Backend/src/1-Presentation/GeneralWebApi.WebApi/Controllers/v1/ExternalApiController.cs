@@ -5,7 +5,7 @@ using GeneralWebApi.Integration.Repository;
 using Microsoft.AspNetCore.Mvc;
 using GeneralWebApi.HttpClient.Services;
 
-namespace GeneralWebApi.WebApi.Controllers.v1;
+namespace GeneralWebApi.Controllers.v1;
 
 [ApiController]
 [Route("api/v1/[controller]")]

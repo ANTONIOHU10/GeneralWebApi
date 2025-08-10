@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 
-namespace GeneralWebApi.WebApi.Extensions;
+namespace GeneralWebApi.Extensions;
 
 /// <summary>
 /// Extension methods for API versioning configuration

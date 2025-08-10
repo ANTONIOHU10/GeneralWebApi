@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace GeneralWebApi.HttpClient.Models;
+namespace GeneralWebApi.HttpClient.Configurations;
 
 /// <summary>
 /// HTTP request model for external API calls

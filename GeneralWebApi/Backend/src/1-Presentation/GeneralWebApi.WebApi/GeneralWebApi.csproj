@@ -6,15 +6,7 @@
   <ItemGroup>
 
     <!-- API Versioning-->
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
-
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
 
     <!-- API UI-->
     <PackageReference Include="Scalar.AspNetCore" Version="2.6.0" />
@@ -23,23 +15,14 @@
 
 
   <ItemGroup>
-    <ProjectReference
-      Include="..\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
-    <ProjectReference
-      Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
-    <ProjectReference
-      Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
-    <ProjectReference
-      Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
-    <ProjectReference
-      Include="..\..\5-Shared\GeneralWebApi.Common\GeneralWebApi.Common.csproj" />
-    <ProjectReference
-      Include="..\..\4-Infrastructure\GeneralWebApi.FileOperation\GeneralWebApi.FileOperation.csproj" />
-    <ProjectReference
-      Include="..\..\2-Application\GeneralWebApi.Application\GeneralWebApi.Application.csproj" />
-    <ProjectReference
-      Include="..\..\4-Infrastructure\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
-    <ProjectReference
-      Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
+    <ProjectReference Include="..\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
+    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
+    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
+    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference Include="..\..\5-Shared\GeneralWebApi.Common\GeneralWebApi.Common.csproj" />
+    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.FileOperation\GeneralWebApi.FileOperation.csproj" />
+    <ProjectReference Include="..\..\2-Application\GeneralWebApi.Application\GeneralWebApi.Application.csproj" />
+    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
+    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
   </ItemGroup>
 </Project>

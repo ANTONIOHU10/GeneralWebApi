@@ -1,4 +1,4 @@
-namespace GeneralWebApi.HttpClient.Models;
+namespace GeneralWebApi.HttpClient.Options;
 
 /// <summary>
 /// Configuration options for HttpClient service

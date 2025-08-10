@@ -1,4 +1,4 @@
-using GeneralWebApi.HttpClient.Models;
+using GeneralWebApi.HttpClient.Configurations;
 
 namespace GeneralWebApi.HttpClient.Services;
 

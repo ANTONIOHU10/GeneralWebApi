@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\3-Domain\GeneralWebApi.Domain\GeneralWebApi.Domain.csproj" />
-    <ProjectReference Include="..\..\2-Application\GeneralWebApi.Application.Common\GeneralWebApi.Application.Common.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
   </ItemGroup>
 </Project>
