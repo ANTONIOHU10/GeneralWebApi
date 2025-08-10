@@ -72,6 +72,7 @@ builder.Services.AddRouting(options =>
 });
 
 builder.Services.AddCSVExport();
+builder.Services.AddExternalApiMapper();
 
 // add rate limiter
 builder.Services.AddCustomRateLimiter();

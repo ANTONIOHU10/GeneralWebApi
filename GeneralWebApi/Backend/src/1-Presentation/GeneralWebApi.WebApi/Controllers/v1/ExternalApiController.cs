@@ -4,6 +4,9 @@ using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Integration.Repository;
 using Microsoft.AspNetCore.Mvc;
 using GeneralWebApi.HttpClient.Services;
+using GeneralWebApi.Contracts.Requests;
+using GeneralWebApi.Contracts.Responses;
+using AutoMapper;
 
 namespace GeneralWebApi.Controllers.v1;
 
@@ -14,13 +17,16 @@ public class ExternalApiController : BaseController
 {
     private readonly IExternalApiConfigRepository _configRepository;
     private readonly IExternalHttpClientService _externalHttpClientService;
+    private readonly IMapper _mapper;
 
     public ExternalApiController(
         IExternalApiConfigRepository configRepository,
-        IExternalHttpClientService externalHttpClientService)
+        IExternalHttpClientService externalHttpClientService,
+        IMapper mapper)
     {
         _configRepository = configRepository;
         _externalHttpClientService = externalHttpClientService;
+        _mapper = mapper;
     }
 
     #region call external API
@@ -63,106 +69,116 @@ public class ExternalApiController : BaseController
 
     // GET: api/v1/externalapi
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<IEnumerable<ExternalApiConfig>>>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<IEnumerable<ExternalApiConfigResponse>>>> GetAllAsync(CancellationToken cancellationToken)
     {
         var items = await _configRepository.GetAllAsync(cancellationToken);
-        return Success(items, "Fetched external API configs successfully");
+        var responseDtos = _mapper.Map<IEnumerable<ExternalApiConfigResponse>>(items);
+        return Success(responseDtos, "Fetched external API configs successfully");
     }
 
     // GET: api/v1/externalapi/5
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ApiResponse<ExternalApiConfig>>> GetByIdAsync([FromRoute] int id, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<ExternalApiConfigResponse>>> GetByIdAsync([FromRoute] int id, CancellationToken cancellationToken)
     {
         try
         {
             var item = await _configRepository.GetByIdAsync(id, cancellationToken);
-            return Success(item, "Fetched external API config successfully");
+            if (item == null)
+            {
+                return NotFound<ExternalApiConfigResponse>("ExternalApiConfig not found");
+            }
+
+            var responseDto = _mapper.Map<ExternalApiConfigResponse>(item);
+            return Success(responseDto, "Fetched external API config successfully");
         }
         catch (Exception)
         {
-            return NotFound<ExternalApiConfig>("ExternalApiConfig not found");
+            return NotFound<ExternalApiConfigResponse>("ExternalApiConfig not found");
         }
     }
 
     // GET: api/v1/externalapi/by-name/{name}
     [HttpGet("by-name/{name}")]
-    public async Task<ActionResult<ApiResponse<ExternalApiConfig>>> GetByNameAsync([FromRoute] string name, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<ExternalApiConfigResponse>>> GetByNameAsync([FromRoute] string name, CancellationToken cancellationToken)
     {
         var item = await _configRepository.GetByNameAsync(name, cancellationToken);
         if (item == null)
         {
-            return NotFound<ExternalApiConfig>("ExternalApiConfig not found");
+            return NotFound<ExternalApiConfigResponse>("ExternalApiConfig not found");
         }
-        return Success(item, "Fetched external API config successfully");
+
+        var responseDto = _mapper.Map<ExternalApiConfigResponse>(item);
+        return Success(responseDto, "Fetched external API config successfully");
     }
 
     // POST: api/v1/externalapi
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<ExternalApiConfig>>> CreateAsync([FromBody] ExternalApiConfig request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<ExternalApiConfigResponse>>> CreateAsync(
+        [FromBody] ExternalApiConfigRequest request,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.BaseUrl))
+        return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            return BadRequest<ExternalApiConfig>("Name and BaseUrl are required");
-        }
+            // check if name already exists
+            var existingConfig = await _configRepository.GetByNameAsync(req.Name, cancellationToken);
+            if (existingConfig != null)
+            {
+                return BadRequest(ApiResponse<ExternalApiConfigResponse>.ErrorResult($"External API config with name '{req.Name}' already exists"));
+            }
 
-        request.Id = 0;
-        request.CreatedAt = DateTime.UtcNow;
-        request.UpdatedAt = null;
-        request.IsActive = true;
+            // map to Domain Entity using AutoMapper
+            var config = _mapper.Map<ExternalApiConfig>(req);
 
-        var created = await _configRepository.AddAsync(request, cancellationToken);
-        return Success(created, "Created external API config successfully");
+            var created = await _configRepository.AddAsync(config, cancellationToken);
+            var responseDto = _mapper.Map<ExternalApiConfigResponse>(created);
+            return Ok(ApiResponse<ExternalApiConfigResponse>.SuccessResult(responseDto, "Created external API config successfully"));
+        });
     }
 
-    // PUT: api/v1/externalapi/5
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<ApiResponse<ExternalApiConfig>>> UpdateAsync([FromRoute] int id, [FromBody] ExternalApiConfig request, CancellationToken cancellationToken)
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ApiResponse<ExternalApiConfigResponse>>> UpdateAsync(
+        int id,
+        [FromBody] ExternalApiConfigRequest request,
+        CancellationToken cancellationToken)
     {
-        try
+        return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            var existing = await _configRepository.GetByIdAsync(id, cancellationToken);
+            // check if config exists
+            var existingConfig = await _configRepository.GetByIdAsync(id, cancellationToken);
+            if (existingConfig == null)
+            {
+                return NotFound(ApiResponse<ExternalApiConfigResponse>.ErrorResult($"External API config with ID {id} not found"));
+            }
 
-            // Update fields
-            existing.Name = request.Name;
-            existing.BaseUrl = request.BaseUrl;
-            existing.ApiKey = request.ApiKey;
-            existing.AuthToken = request.AuthToken;
-            existing.Username = request.Username;
-            existing.Password = request.Password;
-            existing.ClientId = request.ClientId;
-            existing.ClientSecret = request.ClientSecret;
-            existing.Endpoint = request.Endpoint;
-            existing.HttpMethod = request.HttpMethod;
-            existing.Headers = request.Headers;
-            existing.TimeoutSeconds = request.TimeoutSeconds;
-            existing.Description = request.Description;
-            existing.Category = request.Category;
-            existing.IsActive = request.IsActive;
-            existing.Remarks = request.Remarks;
-            existing.SortOrder = request.SortOrder;
-            existing.UpdatedAt = DateTime.UtcNow;
+            // check if name already exists
+            var configWithSameName = await _configRepository.GetByNameAsync(req.Name, cancellationToken);
+            if (configWithSameName != null && configWithSameName.Id != id)
+            {
+                return BadRequest(ApiResponse<ExternalApiConfigResponse>.ErrorResult($"External API config with name '{req.Name}' already exists"));
+            }
 
-            var updated = await _configRepository.UpdateAsync(existing, cancellationToken);
-            return Success(updated, "Updated external API config successfully");
-        }
-        catch (Exception)
-        {
-            return NotFound<ExternalApiConfig>("ExternalApiConfig not found");
-        }
+            // update config using AutoMapper
+            _mapper.Map(req, existingConfig);
+
+            var updated = await _configRepository.UpdateAsync(existingConfig, cancellationToken);
+            var responseDto = _mapper.Map<ExternalApiConfigResponse>(updated);
+            return Ok(ApiResponse<ExternalApiConfigResponse>.SuccessResult(responseDto, "Updated external API config successfully"));
+        });
     }
 
     // DELETE: api/v1/externalapi/5
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<ApiResponse<ExternalApiConfig>>> DeleteAsync([FromRoute] int id, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<ExternalApiConfigResponse>>> DeleteAsync([FromRoute] int id, CancellationToken cancellationToken)
     {
         try
         {
             var deleted = await _configRepository.DeleteAsync(id, cancellationToken);
-            return Success(deleted, "Deleted external API config successfully");
+            var responseDto = _mapper.Map<ExternalApiConfigResponse>(deleted);
+            return Success(responseDto, "Deleted external API config successfully");
         }
         catch (Exception)
         {
-            return NotFound<ExternalApiConfig>("ExternalApiConfig not found");
+            return NotFound<ExternalApiConfigResponse>("ExternalApiConfig not found");
         }
     }
 
