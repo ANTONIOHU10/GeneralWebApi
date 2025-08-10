@@ -1,167 +1,145 @@
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Integration.Context;
+using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GeneralWebApi.Integration.Repository;
 
-public class UserRepository : IUserRepository
+public class UserRepository : BaseRepository<User>, IUserRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public UserRepository(ApplicationDbContext dbContext)
+    public UserRepository(ApplicationDbContext context, ILogger<UserRepository> logger)
+        : base(context, logger)
     {
-        _dbContext = dbContext;
     }
+
+    #region User-specific business methods
 
     public async Task<User> ValidateUserAsync(string username, string password, CancellationToken cancellationToken = default)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Name == username, cancellationToken);
-        if (user == null)
+        try
         {
-            throw new Exception("User not found");
-        }
+            var user = await _dbSet.FirstOrDefaultAsync(u => u.Name == username, cancellationToken);
+            if (user == null)
+            {
+                _logger.LogWarning("User with username {Username} not found", username);
+                throw new KeyNotFoundException($"User with username {username} not found");
+            }
 
-        return user;
+            return user;
+        }
+        catch (Exception ex) when (ex is not KeyNotFoundException)
+        {
+            _logger.LogError(ex, "Failed to validate user with username {Username}", username);
+            throw;
+        }
     }
 
     public async Task<User> RegisterUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        // check if the user already exists
-        if (await ExistsByEmailAsync(user.Email, cancellationToken))
+        try
         {
-            throw new Exception("User already exists");
+            // Check if the user already exists
+            if (await ExistsByEmailAsync(user.Email, cancellationToken))
+            {
+                _logger.LogWarning("User with email {Email} already exists", user.Email);
+                throw new InvalidOperationException($"User with email {user.Email} already exists");
+            }
+
+            // Use base repository method for adding
+            return await AddAsync(user, cancellationToken);
         }
-
-        // add the user to the database
-        await _dbContext.Users.AddAsync(user, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return user;
-    }
-
-    public async Task<User> ModifyPasswordAsync(User user, CancellationToken cancellationToken = default)
-    {
-        // check if the user exists
-        if (!await ExistsByEmailAsync(user.Email, cancellationToken))
+        catch (Exception ex) when (ex is not InvalidOperationException)
         {
-            throw new Exception("User not found");
+            _logger.LogError(ex, "Failed to register user with email {Email}", user.Email);
+            throw;
         }
-
-        // TODO: hash the password
-        user.PasswordHash = user.PasswordHash;
-
-        // update the user in the database
-        _dbContext.Users.Update(user);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return user;
     }
 
     public async Task<User> UpdatePasswordAsync(User user, CancellationToken cancellationToken = default)
     {
-        // check if the user exists
-        if (!await ExistsByEmailAsync(user.Email, cancellationToken))
+        try
         {
-            throw new Exception("User not found");
+            // Check if the user exists
+            if (!await ExistsByEmailAsync(user.Email, cancellationToken))
+            {
+                _logger.LogWarning("User with email {Email} not found", user.Email);
+                throw new KeyNotFoundException($"User with email {user.Email} not found");
+            }
+
+            // Use base repository method for updating
+            return await UpdateAsync(user, cancellationToken);
         }
-
-        // update the user in the database
-        _dbContext.Users.Update(user);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return user;
-    }
-
-    #region CRUD operations
-    public async Task<User> AddAsync(User entity, CancellationToken cancellationToken = default)
-    {
-        await _dbContext.Users.AddAsync(entity, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return entity;
-    }
-
-    public async Task<IEnumerable<User>> AddRangeAsync(IEnumerable<User> entities, CancellationToken cancellationToken = default)
-    {
-        await _dbContext.Users.AddRangeAsync(entities, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return entities;
-    }
-
-    public async Task<User> DeleteAsync(object id, CancellationToken cancellationToken = default)
-    {
-        var user = await _dbContext.Users.FindAsync(id, cancellationToken);
-        if (user == null)
+        catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            throw new Exception("User not found");
+            _logger.LogError(ex, "Failed to update password for user with email {Email}", user.Email);
+            throw;
         }
-        _dbContext.Users.Remove(user);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return user;
-    }
-
-    public async Task<IEnumerable<User>> DeleteRangeAsync(IEnumerable<User> entities, CancellationToken cancellationToken = default)
-    {
-        _dbContext.Users.RemoveRange(entities);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return entities;
     }
 
     public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken);
+        return await _dbSet.AnyAsync(u => u.Email == email, cancellationToken);
     }
 
     public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users.AnyAsync(u => u.Name == name, cancellationToken);
-    }
-
-    public async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Users.ToListAsync(cancellationToken);
+        return await _dbSet.AnyAsync(u => u.Name == name, cancellationToken);
     }
 
     public async Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
-        if (user == null)
+        try
         {
-            throw new Exception("User not found");
+            var user = await _dbSet.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            if (user == null)
+            {
+                _logger.LogWarning("User with email {Email} not found", email);
+                throw new KeyNotFoundException($"User with email {email} not found");
+            }
+            return user;
         }
-        return user;
+        catch (Exception ex) when (ex is not KeyNotFoundException)
+        {
+            _logger.LogError(ex, "Failed to get user with email {Email}", email);
+            throw;
+        }
     }
 
     public async Task<User> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
-        if (user == null)
+        try
         {
-            throw new Exception("User not found");
+            var user = await _dbSet.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
+            if (user == null)
+            {
+                _logger.LogWarning("User with name {Name} not found", name);
+                throw new KeyNotFoundException($"User with name {name} not found");
+            }
+            return user;
         }
-        return user;
-    }
-
-    public async Task<User> GetByIdAsync(object id, CancellationToken cancellationToken = default)
-    {
-        var user = await _dbContext.Users.FindAsync(id, cancellationToken);
-        if (user == null)
+        catch (Exception ex) when (ex is not KeyNotFoundException)
         {
-            throw new Exception("User not found");
+            _logger.LogError(ex, "Failed to get user with name {Name}", name);
+            throw;
         }
-        return user;
     }
 
-    public async Task<User> UpdateAsync(User entity, CancellationToken cancellationToken = default)
+    #endregion
+
+    #region Override base methods if needed
+
+    // override GetActiveEntities to filter out deleted users
+    protected override IQueryable<User> GetActiveEntities()
     {
-        _dbContext.Users.Update(entity);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return entity;
+        return base.GetActiveEntities().Where(u => u.IsActive);
     }
 
-    public async Task<IEnumerable<User>> UpdateRangeAsync(IEnumerable<User> entities, CancellationToken cancellationToken = default)
+    // override GetAllAsync to only return active users
+    public override async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        _dbContext.Users.UpdateRange(entities);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return entities;
+        return await GetActiveEntities().ToListAsync(cancellationToken);
     }
-
 
     #endregion
 }

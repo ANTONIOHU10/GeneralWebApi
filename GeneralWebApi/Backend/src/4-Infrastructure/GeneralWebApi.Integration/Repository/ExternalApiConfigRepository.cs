@@ -1,78 +1,50 @@
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Integration.Context;
+using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GeneralWebApi.Integration.Repository;
 
-public class ExternalApiConfigRepository : IExternalApiConfigRepository
+public class ExternalApiConfigRepository : BaseRepository<ExternalApiConfig>, IExternalApiConfigRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public ExternalApiConfigRepository(ApplicationDbContext context)
+    public ExternalApiConfigRepository(ApplicationDbContext context, ILogger<ExternalApiConfigRepository> logger)
+        : base(context, logger)
     {
-        _context = context;
     }
 
-    public async Task<ExternalApiConfig> AddAsync(ExternalApiConfig entity, CancellationToken cancellationToken = default)
-    {
-        await _context.ExternalApiConfigs.AddAsync(entity, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-        return entity;
-    }
-
-    public async Task<IEnumerable<ExternalApiConfig>> AddRangeAsync(IEnumerable<ExternalApiConfig> entities, CancellationToken cancellationToken = default)
-    {
-        await _context.ExternalApiConfigs.AddRangeAsync(entities, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-        return entities;
-    }
-
-    public async Task<ExternalApiConfig> GetByIdAsync(object id, CancellationToken cancellationToken = default)
-    {
-        return await _context.ExternalApiConfigs.FindAsync(new object[] { id }, cancellationToken) ?? throw new Exception("ExternalApiConfig not found");
-    }
-
-    public async Task<IEnumerable<ExternalApiConfig>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.ExternalApiConfigs.ToListAsync(cancellationToken);
-    }
-
-    public async Task<ExternalApiConfig> UpdateAsync(ExternalApiConfig entity, CancellationToken cancellationToken = default)
-    {
-        _context.ExternalApiConfigs.Update(entity);
-        await _context.SaveChangesAsync(cancellationToken);
-        return entity;
-    }
-
-    public async Task<IEnumerable<ExternalApiConfig>> UpdateRangeAsync(IEnumerable<ExternalApiConfig> entities, CancellationToken cancellationToken = default)
-    {
-        _context.ExternalApiConfigs.UpdateRange(entities);
-        await _context.SaveChangesAsync(cancellationToken);
-        return entities;
-    }
-
-    public async Task<ExternalApiConfig> DeleteAsync(object id, CancellationToken cancellationToken = default)
-    {
-        var entity = await GetByIdAsync(id, cancellationToken);
-        if (entity != null)
-        {
-            _context.ExternalApiConfigs.Remove(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        return entity;
-    }
-
-    public async Task<IEnumerable<ExternalApiConfig>> DeleteRangeAsync(IEnumerable<ExternalApiConfig> entities, CancellationToken cancellationToken = default)
-    {
-        _context.ExternalApiConfigs.RemoveRange(entities);
-        await _context.SaveChangesAsync(cancellationToken);
-        return entities;
-    }
+    #region ExternalApiConfig-specific business methods
 
     public async Task<ExternalApiConfig?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        return await _context.ExternalApiConfigs
-            .FirstOrDefaultAsync(x => x.Name == name && x.IsActive, cancellationToken);
+        try
+        {
+            var config = await _dbSet
+                .FirstOrDefaultAsync(x => x.Name == name && x.IsActive, cancellationToken);
+
+            if (config == null)
+            {
+                _logger.LogDebug("ExternalApiConfig with name {Name} not found or not active", name);
+            }
+
+            return config;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get ExternalApiConfig with name {Name}", name);
+            throw;
+        }
     }
 
+    #endregion
+
+    #region Override base methods if needed
+
+    // Override GetAllAsync to only return active configurations
+    public override async Task<IEnumerable<ExternalApiConfig>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await GetActiveAndEnabledEntities().ToListAsync(cancellationToken);
+    }
+
+    #endregion
 }

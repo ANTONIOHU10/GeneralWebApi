@@ -1,7 +1,9 @@
+using GeneralWebApi.Domain.Entities.Base;
+
 namespace GeneralWebApi.Integration.Repository;
 
-// here T is the entity type (class)
-public interface IBaseRepository<T> where T : class
+// here T is the entity type that inherits from BaseEntity
+public interface IBaseRepository<T> where T : BaseEntity
 {
 
     #region Basic CRUD operations
