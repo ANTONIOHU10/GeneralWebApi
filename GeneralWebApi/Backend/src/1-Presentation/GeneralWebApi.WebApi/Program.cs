@@ -15,6 +15,7 @@ using GeneralWebApi.Contracts.Extensions;
 using GeneralWebApi.Application.Extensions;
 using GeneralWebApi.Caching.Extensions;
 using GeneralWebApi.HttpClient.Extensions;
+using GeneralWebApi.Scheduler.Extensions;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -104,12 +105,15 @@ builder.Services.AddApiVersioningServices();
 // add external http client
 builder.Services.AddExternalHttpClient(builder.Configuration);
 
+// add scheduler services
+builder.Services.AddSchedulerServices(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    //open api expose document: https://localhost:7297/openapi/v1.json
+    //open api expose document only for development: https://localhost:7297/openapi/v1.json
     app.MapOpenApi();
 
     //scalar api reference: https://localhost:7297/scalar/v1

@@ -16,13 +16,22 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GeneralWebApi.Contracts\GeneralWebApi.Contracts.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
     <ProjectReference Include="..\..\5-Shared\GeneralWebApi.Common\GeneralWebApi.Common.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.FileOperation\GeneralWebApi.FileOperation.csproj" />
-    <ProjectReference Include="..\..\2-Application\GeneralWebApi.Application\GeneralWebApi.Application.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.FileOperation\GeneralWebApi.FileOperation.csproj" />
+    <ProjectReference
+      Include="..\..\2-Application\GeneralWebApi.Application\GeneralWebApi.Application.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Scheduler\GeneralWebApi.Scheduler.csproj" />
   </ItemGroup>
 </Project>

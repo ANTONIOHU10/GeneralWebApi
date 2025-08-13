@@ -198,6 +198,7 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
+            // Check the cache service first
             _logger.LogError(LogTemplates.Identity.GetUserClaimsError, userName, ex.Message);
             return null;
         }

@@ -38,6 +38,8 @@ public class AuthController(IUserService userService) : BaseController
                 .Select(c => c.Value)
                 .ToArray() ?? [];
 
+            // here we don't use the AutoMapper to map the response data
+            // because the LoginResponseData is not a complex object
             var responseData = new LoginResponseData
             {
                 UserId = request.Username,
