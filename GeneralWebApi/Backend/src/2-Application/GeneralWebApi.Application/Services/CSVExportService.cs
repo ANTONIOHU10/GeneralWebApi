@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using CsvHelper;
 using GeneralWebApi.Integration.Repository;
+using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Logging.Templates;
 using Microsoft.Extensions.Logging;
 

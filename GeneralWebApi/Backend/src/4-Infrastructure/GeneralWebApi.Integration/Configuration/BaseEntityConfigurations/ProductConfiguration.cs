@@ -2,7 +2,7 @@ using GeneralWebApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GeneralWebApi.Integration.Configuration;
+namespace GeneralWebApi.Integration.Configuration.BaseEntityConfigurations;
 
 //this configuration will automatically be scanned by ApplicationDbContext
 // and applied to the Product entity

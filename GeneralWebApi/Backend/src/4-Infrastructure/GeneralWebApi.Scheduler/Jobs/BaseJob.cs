@@ -1,7 +1,7 @@
 using Quartz;
 using GeneralWebApi.Logging.Services;
 
-namespace GeneralWebApi.Scheduler.Jobs.Base;
+namespace GeneralWebApi.Scheduler.Jobs;
 
 public abstract class BaseJob : IJob
 {

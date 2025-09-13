@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using GeneralWebApi.Logging.Templates;
 
-namespace GeneralWebApi.Integration.Repository;
+namespace GeneralWebApi.Integration.Repository.BasesRepository;
 
 public class UserRepository : BaseRepository<User>, IUserRepository
 {

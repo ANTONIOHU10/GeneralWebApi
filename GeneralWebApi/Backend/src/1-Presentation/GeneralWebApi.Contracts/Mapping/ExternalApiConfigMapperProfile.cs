@@ -2,7 +2,7 @@ using AutoMapper;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Contracts.Responses;
 
-namespace GeneralWebApi.Application.Mappings;
+namespace GeneralWebApi.Contracts.Mapping;
 
 /// <summary>
 /// AutoMapper profile for ExternalApiConfig entity mappings
@@ -32,7 +32,7 @@ public class ExternalApiConfigMapperProfile : Profile
             .ForMember(dest => dest.Remarks, opt => opt.MapFrom(src => src.Remarks));
 
         // Map from Request DTO to Domain Entity (for create/update operations)
-        CreateMap<GeneralWebApi.Contracts.Requests.ExternalApiConfigRequest, ExternalApiConfig>()
+        CreateMap<Requests.ExternalApiConfigRequest, ExternalApiConfig>()
             .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id for create operations
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) // Ignore audit fields
             .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())

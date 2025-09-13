@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using GeneralWebApi.Caching.Services;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Enums;
-using GeneralWebApi.Integration.Repository;
+using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.Logging.Templates;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;

@@ -1,11 +1,10 @@
-
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace GeneralWebApi.Integration.Repository;
+namespace GeneralWebApi.Integration.Repository.BasesRepository;
 
 public class ProductRepository : BaseRepository<Product>, IProductRepository
 {

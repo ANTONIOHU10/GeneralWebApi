@@ -1,6 +1,7 @@
 using GeneralWebApi.Integration.Configuration;
 using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository;
+using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
 using Microsoft.EntityFrameworkCore;

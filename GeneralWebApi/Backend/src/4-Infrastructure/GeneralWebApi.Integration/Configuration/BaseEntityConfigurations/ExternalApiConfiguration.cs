@@ -2,7 +2,7 @@ using GeneralWebApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GeneralWebApi.Integration.Configuration;
+namespace GeneralWebApi.Integration.Configuration.BaseEntityConfigurations;
 
 public class ExternalApiConfiguration : IEntityTypeConfiguration<ExternalApiConfig>
 {
