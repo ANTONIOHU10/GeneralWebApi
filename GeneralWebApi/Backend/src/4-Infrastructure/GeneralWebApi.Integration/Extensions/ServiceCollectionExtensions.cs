@@ -1,6 +1,7 @@
 using GeneralWebApi.Integration.Configuration;
 using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository;
+using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
@@ -124,6 +125,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IFileDocumentRepository, FileRepository>();
         services.AddScoped<IExternalApiConfigRepository, ExternalApiConfigRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         return services;
     }
 

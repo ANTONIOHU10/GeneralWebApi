@@ -26,15 +26,17 @@ public class DepartmentConfigurations : IEntityTypeConfiguration<Department>
         #endregion
 
         #region Foreign Key Relationships
+        // parent department relationship - 自引用必须用 NoAction
         builder.HasOne(d => d.ParentDepartment)
                .WithMany(d => d.SubDepartments)
                .HasForeignKey(d => d.ParentDepartmentId)
                .OnDelete(DeleteBehavior.NoAction);
 
+        // manager relationship
         builder.HasOne(d => d.Manager)
                .WithMany()
                .HasForeignKey(d => d.ManagerId)
-               .OnDelete(DeleteBehavior.NoAction);
+               .OnDelete(DeleteBehavior.SetNull);
         #endregion
 
         #region Indexes

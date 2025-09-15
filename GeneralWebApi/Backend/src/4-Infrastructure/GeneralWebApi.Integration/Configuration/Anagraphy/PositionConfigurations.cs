@@ -31,9 +31,9 @@ public class PositionConfigurations : IEntityTypeConfiguration<Position>
         builder.HasOne(p => p.Department)
                .WithMany(d => d.Positions)
                .HasForeignKey(p => p.DepartmentId)
-               .OnDelete(DeleteBehavior.NoAction);
+               .OnDelete(DeleteBehavior.Restrict);
 
-        // self-reference relationship - parent position
+        // parent position relationship - 自引用必须用 NoAction
         builder.HasOne(p => p.ParentPosition)
                .WithMany(p => p.SubPositions)
                .HasForeignKey(p => p.ParentPositionId)

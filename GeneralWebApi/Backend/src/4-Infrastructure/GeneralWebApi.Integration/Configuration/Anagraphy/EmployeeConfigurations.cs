@@ -22,6 +22,7 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.Property(e => e.FirstName).HasMaxLength(50).IsRequired();
               builder.Property(e => e.LastName).HasMaxLength(50).IsRequired();
               builder.Property(e => e.EmployeeNumber).HasMaxLength(20).IsRequired();
+              builder.Property(e => e.TaxCode).HasMaxLength(16);
 
               // organizational structure relationship
               builder.Property(e => e.DepartmentId);
@@ -43,16 +44,8 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.Property(e => e.EmergencyContactPhone).HasMaxLength(20);
               builder.Property(e => e.EmergencyContactRelation).HasMaxLength(50);
 
-              // document information
-              builder.Property(e => e.IdentityDocumentType).HasMaxLength(50);
-              builder.Property(e => e.IdentityDocumentNumber).HasMaxLength(50);
-              builder.Property(e => e.IdentityDocumentExpirationDate);
-              builder.Property(e => e.IdentityDocumentIssuingAuthority).HasMaxLength(100);
-              builder.Property(e => e.IdentityDocumentIssuingDate);
-              builder.Property(e => e.IdentityDocumentIssuingPlace).HasMaxLength(100);
-              builder.Property(e => e.IdentityDocumentIssuingCountry).HasMaxLength(50);
-              builder.Property(e => e.IdentityDocumentIssuingState).HasMaxLength(50);
-              builder.Property(e => e.TaxCode).HasMaxLength(16);
+
+
 
               // salary information
               builder.Property(e => e.CurrentSalary).HasColumnType("decimal(18,2)");
@@ -71,15 +64,15 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.HasOne(e => e.Department)
                      .WithMany(d => d.Employees)
                      .HasForeignKey(e => e.DepartmentId)
-                     .OnDelete(DeleteBehavior.NoAction);
+                     .OnDelete(DeleteBehavior.SetNull);
 
               // position relationship
               builder.HasOne(e => e.Position)
                      .WithMany(p => p.Employees)
                      .HasForeignKey(e => e.PositionId)
-                     .OnDelete(DeleteBehavior.NoAction);
+                     .OnDelete(DeleteBehavior.SetNull);
 
-              // manager relationship
+              // manager relationship - 自引用必须用 NoAction
               builder.HasOne(e => e.Manager)
                      .WithMany(e => e.Subordinates)
                      .HasForeignKey(e => e.ManagerId)

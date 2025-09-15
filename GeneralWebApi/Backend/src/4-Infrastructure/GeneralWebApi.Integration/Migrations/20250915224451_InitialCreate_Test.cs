@@ -362,7 +362,8 @@ namespace GeneralWebApi.Integration.Migrations
                         name: "FK_Positions_Departments_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Departments",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Positions_Positions_ParentPositionId",
                         column: x => x.ParentPositionId,
@@ -374,10 +375,12 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     EmployeeNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: true),
                     PositionId = table.Column<int>(type: "int", nullable: true),
                     ManagerId = table.Column<int>(type: "int", nullable: true),
@@ -390,14 +393,6 @@ namespace GeneralWebApi.Integration.Migrations
                     EmergencyContactName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     EmergencyContactPhone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     EmergencyContactRelation = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IdentityDocumentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IdentityDocumentNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IdentityDocumentExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IdentityDocumentIssuingAuthority = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IdentityDocumentIssuingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IdentityDocumentIssuingPlace = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IdentityDocumentIssuingCountry = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IdentityDocumentIssuingState = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     TaxCode = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
                     CurrentSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     SalaryCurrency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: true, defaultValue: "EUR"),
@@ -405,7 +400,18 @@ namespace GeneralWebApi.Integration.Migrations
                     NextSalaryIncreaseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EmploymentStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Active"),
                     EmploymentType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "FullTime"),
-                    WorkingHoursPerWeek = table.Column<int>(type: "int", nullable: true)
+                    WorkingHoursPerWeek = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -414,7 +420,8 @@ namespace GeneralWebApi.Integration.Migrations
                         name: "FK_Employees_Departments_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Departments",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Employees_Employees_ManagerId",
                         column: x => x.ManagerId,
@@ -424,13 +431,8 @@ namespace GeneralWebApi.Integration.Migrations
                         name: "FK_Employees_Positions_PositionId",
                         column: x => x.PositionId,
                         principalTable: "Positions",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Employees_Users_Id",
-                        column: x => x.Id,
-                        principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -505,6 +507,45 @@ namespace GeneralWebApi.Integration.Migrations
                         name: "FK_EmployeeRoles_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IdentityDocument",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    DocumentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DocumentNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IssueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IssuingAuthority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IssuingPlace = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IssuingCountry = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IssuingState = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdentityDocument", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IdentityDocument_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -625,8 +666,7 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "IX_Employees_EmployeeNumber",
                 table: "Employees",
                 column: "EmployeeNumber",
-                unique: true,
-                filter: "[EmployeeNumber] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_EmploymentStatus",
@@ -652,8 +692,7 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "IX_Employees_TaxCode",
                 table: "Employees",
                 column: "TaxCode",
-                unique: true,
-                filter: "[TaxCode] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExternalApiConfigs_Category",
@@ -670,6 +709,11 @@ namespace GeneralWebApi.Integration.Migrations
                 table: "ExternalApiConfigs",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IdentityDocument_EmployeeId",
+                table: "IdentityDocument",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions_Action",
@@ -777,7 +821,8 @@ namespace GeneralWebApi.Integration.Migrations
                 table: "Departments",
                 column: "ManagerId",
                 principalTable: "Employees",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
@@ -806,10 +851,16 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "FileDocuments");
 
             migrationBuilder.DropTable(
+                name: "IdentityDocument");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
@@ -822,9 +873,6 @@ namespace GeneralWebApi.Integration.Migrations
 
             migrationBuilder.DropTable(
                 name: "Positions");
-
-            migrationBuilder.DropTable(
-                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Departments");

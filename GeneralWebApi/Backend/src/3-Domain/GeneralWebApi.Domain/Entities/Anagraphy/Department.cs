@@ -17,10 +17,10 @@ public class Department : BaseEntity
     public string Path { get; set; } = string.Empty;
 
     #region navigation properties
-    public ICollection<Employee> Employees { get; set; } = [];
-    public ICollection<Department> SubDepartments { get; set; } = [];
-    public ICollection<Position> Positions { get; set; } = [];
     public Department? ParentDepartment { get; set; }
+    public ICollection<Department> SubDepartments { get; set; } = [];
+    public ICollection<Employee> Employees { get; set; } = [];
+    public ICollection<Position> Positions { get; set; } = [];
     public Employee? Manager { get; set; }
     #endregion
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeneralWebApi.Integration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250913073042_InitialCreate_Test")]
+    [Migration("20250915224451_InitialCreate_Test")]
     partial class InitialCreate_Test
     {
         /// <inheritdoc />
@@ -110,6 +110,177 @@ namespace GeneralWebApi.Integration.Migrations
                     b.HasIndex("ParentDepartmentId");
 
                     b.ToTable("Departments", (string)null);
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Italia");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("CurrentSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmergencyContactName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EmergencyContactPhone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("EmergencyContactRelation")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("EmployeeNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("EmploymentStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Active");
+
+                    b.Property<string>("EmploymentType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("FullTime");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("HireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("LastSalaryIncreaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("NextSalaryIncreaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PositionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalaryCurrency")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)")
+                        .HasDefaultValue("EUR");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TaxCode")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateTime?>("TerminationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkingHoursPerWeek")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("EmployeeNumber")
+                        .IsUnique();
+
+                    b.HasIndex("EmploymentStatus");
+
+                    b.HasIndex("HireDate");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("PositionId");
+
+                    b.HasIndex("TaxCode")
+                        .IsUnique();
+
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Position", b =>
@@ -466,6 +637,91 @@ namespace GeneralWebApi.Integration.Migrations
                     b.HasIndex("Institution");
 
                     b.ToTable("Educations", (string)null);
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Documents.IdentityDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IssuingAuthority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IssuingCountry")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IssuingPlace")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IssuingState")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("IdentityDocument");
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.ExternalApiConfig", b =>
@@ -1086,173 +1342,6 @@ namespace GeneralWebApi.Integration.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", (string)null);
-
-                    b.UseTptMappingStrategy();
-                });
-
-            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Employee", b =>
-                {
-                    b.HasBaseType("GeneralWebApi.Domain.Entities.User");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("Italia");
-
-                    b.Property<decimal?>("CurrentSalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmergencyContactName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("EmergencyContactPhone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("EmergencyContactRelation")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("EmployeeNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("EmploymentStatus")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<string>("EmploymentType")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("FullTime");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("IdentityDocumentExpirationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("IdentityDocumentIssuingAuthority")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("IdentityDocumentIssuingCountry")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("IdentityDocumentIssuingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("IdentityDocumentIssuingPlace")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("IdentityDocumentIssuingState")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("IdentityDocumentNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("IdentityDocumentType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("LastSalaryIncreaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("NextSalaryIncreaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("PositionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("SalaryCurrency")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)")
-                        .HasDefaultValue("EUR");
-
-                    b.Property<string>("TaxCode")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("nvarchar(16)");
-
-                    b.Property<DateTime?>("TerminationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("WorkingHoursPerWeek")
-                        .HasColumnType("int");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("EmployeeNumber")
-                        .IsUnique()
-                        .HasFilter("[EmployeeNumber] IS NOT NULL");
-
-                    b.HasIndex("EmploymentStatus");
-
-                    b.HasIndex("HireDate");
-
-                    b.HasIndex("ManagerId");
-
-                    b.HasIndex("PositionId");
-
-                    b.HasIndex("TaxCode")
-                        .IsUnique()
-                        .HasFilter("[TaxCode] IS NOT NULL");
-
-                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Department", b =>
@@ -1260,7 +1349,7 @@ namespace GeneralWebApi.Integration.Migrations
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Department", "ParentDepartment")
                         .WithMany("SubDepartments")
@@ -1272,12 +1361,36 @@ namespace GeneralWebApi.Integration.Migrations
                     b.Navigation("ParentDepartment");
                 });
 
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Employee", b =>
+                {
+                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Department", "Department")
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Manager")
+                        .WithMany("Subordinates")
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Position", "Position")
+                        .WithMany("Employees")
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Manager");
+
+                    b.Navigation("Position");
+                });
+
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Position", b =>
                 {
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Department", "Department")
                         .WithMany("Positions")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Position", "ParentPosition")
@@ -1316,6 +1429,17 @@ namespace GeneralWebApi.Integration.Migrations
                 {
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Employee")
                         .WithMany("Educations")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Documents.IdentityDocument", b =>
+                {
+                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Employee")
+                        .WithMany("IdentityDocuments")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1368,36 +1492,6 @@ namespace GeneralWebApi.Integration.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Employee", b =>
-                {
-                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Department", "Department")
-                        .WithMany("Employees")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("GeneralWebApi.Domain.Entities.User", null)
-                        .WithOne()
-                        .HasForeignKey("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Manager")
-                        .WithMany("Subordinates")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Position", "Position")
-                        .WithMany("Employees")
-                        .HasForeignKey("PositionId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Manager");
-
-                    b.Navigation("Position");
-                });
-
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Department", b =>
                 {
                     b.Navigation("Employees");
@@ -1405,6 +1499,21 @@ namespace GeneralWebApi.Integration.Migrations
                     b.Navigation("Positions");
 
                     b.Navigation("SubDepartments");
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Employee", b =>
+                {
+                    b.Navigation("Certifications");
+
+                    b.Navigation("Contracts");
+
+                    b.Navigation("Educations");
+
+                    b.Navigation("EmployeeRoles");
+
+                    b.Navigation("IdentityDocuments");
+
+                    b.Navigation("Subordinates");
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Position", b =>
@@ -1429,19 +1538,6 @@ namespace GeneralWebApi.Integration.Migrations
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.User", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Employee", b =>
-                {
-                    b.Navigation("Certifications");
-
-                    b.Navigation("Contracts");
-
-                    b.Navigation("Educations");
-
-                    b.Navigation("EmployeeRoles");
-
-                    b.Navigation("Subordinates");
                 });
 #pragma warning restore 612, 618
         }

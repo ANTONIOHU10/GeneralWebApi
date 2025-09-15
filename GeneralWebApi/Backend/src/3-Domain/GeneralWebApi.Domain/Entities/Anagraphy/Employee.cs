@@ -1,14 +1,16 @@
+using GeneralWebApi.Domain.Entities.Base;
 using GeneralWebApi.Domain.Entities.Documents;
 using GeneralWebApi.Domain.Entities.Permissions;
 
 namespace GeneralWebApi.Domain.Entities.Anagraphy;
 
-public class Employee : User
+public class Employee : BaseEntity
 {
     // Employee properties
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string EmployeeNumber { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
     public int? DepartmentId { get; set; }
     public int? PositionId { get; set; }
     public int? ManagerId { get; set; }
@@ -26,16 +28,6 @@ public class Employee : User
     public string EmergencyContactName { get; set; } = string.Empty;
     public string EmergencyContactPhone { get; set; } = string.Empty;
     public string EmergencyContactRelation { get; set; } = string.Empty;
-
-    // Documents
-    public string IdentityDocumentType { get; set; } = string.Empty;
-    public string IdentityDocumentNumber { get; set; } = string.Empty;
-    public DateTime IdentityDocumentExpirationDate { get; set; }
-    public string IdentityDocumentIssuingAuthority { get; set; } = string.Empty;
-    public DateTime IdentityDocumentIssuingDate { get; set; }
-    public string IdentityDocumentIssuingPlace { get; set; } = string.Empty;
-    public string IdentityDocumentIssuingCountry { get; set; } = string.Empty;
-    public string IdentityDocumentIssuingState { get; set; } = string.Empty;
     public string TaxCode { get; set; } = string.Empty;
 
 
@@ -62,6 +54,7 @@ public class Employee : User
     public ICollection<Education> Educations { get; set; } = [];
     public ICollection<Certification> Certifications { get; set; } = [];
     public ICollection<EmployeeRole> EmployeeRoles { get; set; } = [];
+    public ICollection<IdentityDocument> IdentityDocuments { get; set; } = [];
 
     #endregion
 }

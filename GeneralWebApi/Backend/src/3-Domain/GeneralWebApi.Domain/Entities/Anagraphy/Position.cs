@@ -16,10 +16,10 @@ public class Position : BaseEntity
     public bool IsManagement { get; set; } = false;
 
     #region navigation properties
-    public ICollection<Employee> Employees { get; set; } = [];
-    public ICollection<Position> SubPositions { get; set; } = [];
     public Position? ParentPosition { get; set; }
-    public Department Department { get; set; } = null!;
+    public ICollection<Position> SubPositions { get; set; } = [];
+    public ICollection<Employee> Employees { get; set; } = [];
+    public Department? Department { get; set; } = null!;
     #endregion
 
 }
