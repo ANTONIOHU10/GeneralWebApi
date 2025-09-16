@@ -22,7 +22,6 @@ public class DepartmentConfigurations : IEntityTypeConfiguration<Department>
         builder.Property(d => d.ParentDepartmentId);
         builder.Property(d => d.Level).IsRequired().HasDefaultValue(1);
         builder.Property(d => d.Path).HasMaxLength(500);
-        builder.Property(d => d.ManagerId);
         #endregion
 
         #region Foreign Key Relationships
@@ -31,19 +30,12 @@ public class DepartmentConfigurations : IEntityTypeConfiguration<Department>
                .WithMany(d => d.SubDepartments)
                .HasForeignKey(d => d.ParentDepartmentId)
                .OnDelete(DeleteBehavior.NoAction);
-
-        // manager relationship
-        builder.HasOne(d => d.Manager)
-               .WithMany()
-               .HasForeignKey(d => d.ManagerId)
-               .OnDelete(DeleteBehavior.SetNull);
         #endregion
 
         #region Indexes
         builder.HasIndex(d => d.Code).IsUnique();
         builder.HasIndex(d => d.ParentDepartmentId);
         builder.HasIndex(d => d.Level);
-        builder.HasIndex(d => d.ManagerId);
         #endregion
     }
 }

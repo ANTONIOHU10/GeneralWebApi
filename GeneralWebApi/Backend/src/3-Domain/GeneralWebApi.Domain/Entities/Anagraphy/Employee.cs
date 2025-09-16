@@ -41,6 +41,7 @@ public class Employee : BaseEntity
     public string EmploymentStatus { get; set; } = string.Empty;
     public string EmploymentType { get; set; } = string.Empty;
     public int? WorkingHoursPerWeek { get; set; }
+    public bool IsManager { get; set; } = false;
 
 
     #region navigation properties

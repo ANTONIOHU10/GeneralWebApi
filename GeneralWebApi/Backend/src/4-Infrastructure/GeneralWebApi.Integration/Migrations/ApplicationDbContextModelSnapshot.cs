@@ -64,9 +64,6 @@ namespace GeneralWebApi.Integration.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -101,8 +98,6 @@ namespace GeneralWebApi.Integration.Migrations
                         .IsUnique();
 
                     b.HasIndex("Level");
-
-                    b.HasIndex("ManagerId");
 
                     b.HasIndex("ParentDepartmentId");
 
@@ -155,7 +150,8 @@ namespace GeneralWebApi.Integration.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("EmergencyContactName")
                         .IsRequired()
@@ -204,6 +200,11 @@ namespace GeneralWebApi.Integration.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsManager")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -270,12 +271,18 @@ namespace GeneralWebApi.Integration.Migrations
 
                     b.HasIndex("HireDate");
 
+                    b.HasIndex("IsManager");
+
                     b.HasIndex("ManagerId");
 
                     b.HasIndex("PositionId");
 
                     b.HasIndex("TaxCode")
                         .IsUnique();
+
+                    b.HasIndex("DepartmentId", "IsManager")
+                        .IsUnique()
+                        .HasFilter("IsManager = 1");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -1343,17 +1350,10 @@ namespace GeneralWebApi.Integration.Migrations
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Department", b =>
                 {
-                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Department", "ParentDepartment")
                         .WithMany("SubDepartments")
                         .HasForeignKey("ParentDepartmentId")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Manager");
 
                     b.Navigation("ParentDepartment");
                 });

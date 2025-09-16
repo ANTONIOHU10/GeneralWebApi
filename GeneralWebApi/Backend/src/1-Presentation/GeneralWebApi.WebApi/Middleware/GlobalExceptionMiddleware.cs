@@ -15,6 +15,7 @@ namespace GeneralWebApi.Middleware;
 /// </summary>
 public class GlobalExceptionMiddleware
 {
+    // next middleware
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionMiddleware> _logger;
 
@@ -185,6 +186,7 @@ public class GlobalExceptionMiddleware
         await context.Response.WriteAsync(jsonResponse);
     }
 
+    #region helper methods
     /// <summary>
     /// Handles Entity Framework database update exceptions
     /// </summary>
@@ -304,11 +306,6 @@ public class GlobalExceptionMiddleware
             return "The specified department does not exist. Please select a valid department for the position.";
         }
 
-        if (sqlMessage.Contains("FK_Departments_Employees_ManagerId"))
-        {
-            return "The specified manager does not exist. Please select a valid manager for the department.";
-        }
-
         // Generic foreign key error
         if (sqlMessage.Contains("FOREIGN KEY"))
         {
@@ -317,8 +314,11 @@ public class GlobalExceptionMiddleware
 
         return "The operation cannot be completed due to data integrity constraints. Please check your data and try again.";
     }
+
+    #endregion
 }
 
+#region custom exceptions classes
 /// <summary>
 /// Custom validation exception for business logic validation
 /// </summary>
@@ -365,8 +365,11 @@ public class BusinessException : Exception
 /// Validation error details
 /// </summary>
 public class ValidationError
+
 {
     public string PropertyName { get; set; } = string.Empty;
     public string ErrorMessage { get; set; } = string.Empty;
     public object? AttemptedValue { get; set; }
 }
+
+#endregion

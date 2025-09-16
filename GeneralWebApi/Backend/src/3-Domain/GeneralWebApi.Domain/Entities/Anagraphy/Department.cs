@@ -13,7 +13,6 @@ public class Department : BaseEntity
     public int Level { get; set; }
     // esempio IT/Development
 
-    public int? ManagerId { get; set; }
     public string Path { get; set; } = string.Empty;
 
     #region navigation properties
@@ -21,7 +20,6 @@ public class Department : BaseEntity
     public ICollection<Department> SubDepartments { get; set; } = [];
     public ICollection<Employee> Employees { get; set; } = [];
     public ICollection<Position> Positions { get; set; } = [];
-    public Employee? Manager { get; set; }
     #endregion
 
 }
