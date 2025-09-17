@@ -1,7 +1,7 @@
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.DTOs.Employee;
 
-namespace GeneralWebApi.Application.Interfaces;
+namespace GeneralWebApi.Application.Services;
 
 public interface IEmployeeService
 {
