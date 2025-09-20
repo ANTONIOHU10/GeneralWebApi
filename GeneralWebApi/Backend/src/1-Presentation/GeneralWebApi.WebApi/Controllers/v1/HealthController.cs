@@ -245,11 +245,12 @@ public class HealthController : ControllerBase
                 var retrievedValue = await _cacheService.GetAsync<string>(testKey);
                 await _cacheService.RemoveAsync(testKey);
 
+                var testPassed = retrievedValue == testValue;
                 return new
                 {
-                    Status = "Healthy",
-                    Available = true,
-                    TestResult = retrievedValue == testValue ? "Passed" : "Failed"
+                    Status = testPassed ? "Healthy" : "Unhealthy",
+                    Available = testPassed,
+                    TestResult = testPassed ? "Passed" : "Failed"
                 };
             }
             catch (Exception ex)
