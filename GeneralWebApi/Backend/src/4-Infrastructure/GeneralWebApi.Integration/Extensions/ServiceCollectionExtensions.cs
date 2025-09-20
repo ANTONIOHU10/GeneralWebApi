@@ -3,6 +3,8 @@ using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository;
 using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using GeneralWebApi.Integration.Repository.BasesRepository;
+using GeneralWebApi.Integration.Repository.DocumentRepository;
+using GeneralWebApi.Integration.Repository.DocumentsRepository;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
 using Microsoft.EntityFrameworkCore;
@@ -126,6 +128,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFileDocumentRepository, FileRepository>();
         services.AddScoped<IExternalApiConfigRepository, ExternalApiConfigRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IEducationRepository, EducationRepository>();
+        services.AddScoped<IIdentityDocumentRepository, IdentityDocumentRepository>();
+        services.AddScoped<IPositionRepository, PositionRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        services.AddScoped<ICertificationRepository, CertificationRepository>();
+        services.AddScoped<IContractRepository, ContractRepository>();
         return services;
     }
 

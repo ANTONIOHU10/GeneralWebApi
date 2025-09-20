@@ -1,6 +1,6 @@
 using AutoMapper;
 using GeneralWebApi.Application.Features.Employees.Queries;
-using GeneralWebApi.Application.Interfaces;
+using GeneralWebApi.Application.Services;
 using GeneralWebApi.DTOs.Employee;
 using MediatR;
 

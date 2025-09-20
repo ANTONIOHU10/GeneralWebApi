@@ -5,7 +5,7 @@ using GeneralWebApi.DTOs.Employee;
 using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using Microsoft.Extensions.Logging;
 
-namespace GeneralWebApi.Application.Interfaces;
+namespace GeneralWebApi.Application.Services;
 public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;

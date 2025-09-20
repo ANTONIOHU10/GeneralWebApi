@@ -35,6 +35,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Certification> Certifications { get; set; }
     public DbSet<Contract> Contracts { get; set; }
     public DbSet<Education> Educations { get; set; }
+    public DbSet<IdentityDocument> IdentityDocuments { get; set; }
     #endregion
 
     // constructor to inject the DbContextOptions in ServiceCollectionExtensions
