@@ -10,3 +10,5 @@ public class GetDepartmentsByParentQuery : IRequest<List<DepartmentDto>>
 
 
 
+
+

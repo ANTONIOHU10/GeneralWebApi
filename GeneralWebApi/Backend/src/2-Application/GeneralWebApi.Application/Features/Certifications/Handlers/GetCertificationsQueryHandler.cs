@@ -23,3 +23,5 @@ public class GetCertificationsQueryHandler : IRequestHandler<GetCertificationsQu
 
 
 
+
+

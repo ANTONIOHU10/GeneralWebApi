@@ -22,3 +22,5 @@ public class DeleteContractCommandHandler : IRequestHandler<DeleteContractComman
 
 
 
+
+

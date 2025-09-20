@@ -22,3 +22,5 @@ public class GetDepartmentHierarchyQueryHandler : IRequestHandler<GetDepartmentH
 
 
 
+
+

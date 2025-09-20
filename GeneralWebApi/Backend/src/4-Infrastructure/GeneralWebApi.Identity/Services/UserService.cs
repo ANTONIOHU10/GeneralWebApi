@@ -4,7 +4,9 @@ using System.Security.Cryptography;
 using GeneralWebApi.Caching.Services;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Enums;
+using GeneralWebApi.Domain.Entities.Anagraphy;
 using GeneralWebApi.Integration.Repository.BasesRepository;
+using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.Logging.Templates;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -17,6 +19,7 @@ public class UserService : IUserService
     private readonly ILoggingService _logger;
 
     private readonly IUserRepository _userRepository;
+    private readonly IEmployeeRepository _employeeRepository;
     private readonly IRedisCacheService _cacheService;
 
     // need to save the refresh token in static, because it's a random byte array
@@ -27,11 +30,12 @@ public class UserService : IUserService
     private static readonly ConcurrentDictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
     // the registration of the UserService is in the ServiceCollectionExtensions.cs file
-    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository, IRedisCacheService cacheService)
+    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository, IEmployeeRepository employeeRepository, IRedisCacheService cacheService)
     {
         _jwtService = jwtService;
         _logger = logger;
         _userRepository = userRepository;
+        _employeeRepository = employeeRepository;
         _cacheService = cacheService;
     }
 
@@ -259,15 +263,22 @@ public class UserService : IUserService
             // Log registration attempt
             _logger.LogInformation(LogTemplates.Identity.UserRegistrationAttempt, username, email);
 
-            // Check if email already exists
+            // Check if email already exists in User table
             _logger.LogInformation(LogTemplates.Identity.CheckingEmailExists, email);
-            var emailExists = await _userRepository.ExistsByEmailAsync(email);
-            _logger.LogInformation(LogTemplates.Identity.EmailExistsResult, email, emailExists);
+            var userEmailExists = await _userRepository.ExistsByEmailAsync(email);
+            _logger.LogInformation(LogTemplates.Identity.EmailExistsResult, email, userEmailExists);
+
+            // Check if email already exists in Employee table
+            var employeeEmailExists = await _employeeRepository.ExistsByEmailAsync(email);
+            _logger.LogInformation("Checking if email exists in Employee table: {Email}, Exists: {Exists}", email, employeeEmailExists);
 
             // Check if username already exists
             _logger.LogInformation(LogTemplates.Identity.CheckingUsernameExists, username);
             var usernameExists = await _userRepository.ExistsByNameAsync(username);
             _logger.LogInformation(LogTemplates.Identity.UsernameExistsResult, username, usernameExists);
+
+            // Check if email exists in either User or Employee table
+            var emailExists = userEmailExists || employeeEmailExists;
 
             // Handle different existence scenarios with specific logging and error messages
             if (emailExists && usernameExists)
@@ -295,6 +306,9 @@ public class UserService : IUserService
             _logger.LogInformation(LogTemplates.Identity.PasswordHashGenerated, username);
             var passwordHash = GeneratePasswordHash(password);
 
+            // Generate unique employee number
+            var employeeNumber = await GenerateUniqueEmployeeNumberAsync();
+
             // Create user object
             var user = new User
             {
@@ -308,14 +322,34 @@ public class UserService : IUserService
             // Log user creation start
             _logger.LogInformation(LogTemplates.Identity.UserCreationStarted, username, email, user.Role);
 
-            // Save to database
+            // Save user to database
             await _userRepository.RegisterUserAsync(user);
+
+            // Create basic Employee record
+            var employee = new Employee
+            {
+                FirstName = username, // Use username as default first name
+                LastName = "", // Can be updated later
+                Email = email,
+                EmployeeNumber = employeeNumber,
+                HireDate = DateTime.UtcNow,
+                EmploymentStatus = "Active",
+                EmploymentType = "FullTime",
+                CreatedBy = "System"
+            };
+
+            // Save Employee to database
+            await _employeeRepository.AddAsync(employee);
+
+            // Update User with EmployeeId
+            user.EmployeeId = employee.Id;
+            await _userRepository.UpdateAsync(user);
 
             // Log successful completion
             _logger.LogInformation(LogTemplates.Identity.UserCreationCompleted, username, user.Id);
             _logger.LogInformation(LogTemplates.Identity.UserRegistration, username);
 
-            return (true, "User registered successfully");
+            return (true, "User registered successfully with basic employee information");
         }
         catch (Exception ex)
         {
@@ -340,6 +374,43 @@ public class UserService : IUserService
 
         // return the salt and the hashed password together
         return $"{Convert.ToBase64String(salt)}:{hashed}";
+    }
+
+    /// <summary>
+    /// Generate unique employee number using fixed prefix + GUID
+    /// </summary>
+    private string GenerateEmployeeNumber()
+    {
+        // Use fixed prefix "EMP" + first 8 characters of GUID (uppercase)
+        return $"EMP{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+    }
+
+    /// <summary>
+    /// Generate unique employee number with collision checking
+    /// Using GUID-based generation, collisions are extremely unlikely but we keep the check as safety measure
+    /// </summary>
+    private async Task<string> GenerateUniqueEmployeeNumberAsync()
+    {
+        string employeeNumber;
+        bool exists;
+        int attempts = 0;
+        const int maxAttempts = 5; // Reduced attempts since GUID collision is extremely rare
+
+        do
+        {
+            employeeNumber = GenerateEmployeeNumber();
+            exists = await _employeeRepository.ExistsByEmployeeNumberAsync(employeeNumber);
+            attempts++;
+
+            if (attempts >= maxAttempts)
+            {
+                throw new InvalidOperationException("Unable to generate unique employee number after maximum attempts");
+            }
+
+            // No delay needed with GUID-based generation
+        } while (exists);
+
+        return employeeNumber;
     }
 
     public async Task<bool> UpdatePasswordAsync(string username, string newPassword)

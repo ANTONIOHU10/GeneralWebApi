@@ -11,3 +11,5 @@ public class GetEducationsQuery : IRequest<PagedResult<EducationListDto>>
 
 
 
+
+

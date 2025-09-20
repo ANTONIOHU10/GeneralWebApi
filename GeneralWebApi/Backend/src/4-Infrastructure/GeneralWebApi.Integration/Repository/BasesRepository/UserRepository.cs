@@ -4,6 +4,7 @@ using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using GeneralWebApi.Logging.Templates;
+using GeneralWebApi.DTOs.Users;
 
 namespace GeneralWebApi.Integration.Repository.BasesRepository;
 
@@ -122,6 +123,87 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         catch (Exception ex) when (ex is not KeyNotFoundException)
         {
             _logger.LogError(ex, LogTemplates.Repository.UserGetByNameFailed, name);
+            throw;
+        }
+    }
+
+    #endregion
+
+    #region User-Employee relationship methods
+
+    public async Task<UserWithEmployeeDto?> GetUserWithEmployeeAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await _dbSet
+                .Where(u => u.Id == userId)
+                .Include(u => u.Employee)
+                .ThenInclude(e => e.Department)
+                .Include(u => u.Employee)
+                .ThenInclude(e => e.Position)
+                .Select(u => new UserWithEmployeeDto
+                {
+                    UserId = u.Id,
+                    Username = u.Name,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    Role = u.Role,
+                    EmployeeId = u.EmployeeId,
+                    EmployeeName = u.Employee != null
+                        ? $"{u.Employee.FirstName} {u.Employee.LastName}".Trim()
+                        : null,
+                    EmployeeNumber = u.Employee != null ? u.Employee.EmployeeNumber : null,
+                    DepartmentName = u.Employee != null && u.Employee.Department != null
+                        ? u.Employee.Department.Name
+                        : null,
+                    PositionName = u.Employee != null && u.Employee.Position != null
+                        ? u.Employee.Position.Title
+                        : null,
+                    CreatedAt = u.CreatedAt
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get user with employee information for user ID: {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task<List<UserWithEmployeeDto>> GetUsersWithEmployeeAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await _dbSet
+                .Include(u => u.Employee)
+                .ThenInclude(e => e.Department)
+                .Include(u => u.Employee)
+                .ThenInclude(e => e.Position)
+                .Select(u => new UserWithEmployeeDto
+                {
+                    UserId = u.Id,
+                    Username = u.Name,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    Role = u.Role,
+                    EmployeeId = u.EmployeeId,
+                    EmployeeName = u.Employee != null
+                        ? $"{u.Employee.FirstName} {u.Employee.LastName}".Trim()
+                        : null,
+                    EmployeeNumber = u.Employee != null ? u.Employee.EmployeeNumber : null,
+                    DepartmentName = u.Employee != null && u.Employee.Department != null
+                        ? u.Employee.Department.Name
+                        : null,
+                    PositionName = u.Employee != null && u.Employee.Position != null
+                        ? u.Employee.Position.Title
+                        : null,
+                    CreatedAt = u.CreatedAt
+                })
+                .ToListAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get users with employee information");
             throw;
         }
     }

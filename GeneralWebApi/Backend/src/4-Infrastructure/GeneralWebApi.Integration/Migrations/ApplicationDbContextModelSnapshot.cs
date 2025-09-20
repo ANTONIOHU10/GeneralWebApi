@@ -666,11 +666,13 @@ namespace GeneralWebApi.Integration.Migrations
 
                     b.Property<string>("DocumentNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("DocumentType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
@@ -689,22 +691,27 @@ namespace GeneralWebApi.Integration.Migrations
 
                     b.Property<string>("IssuingAuthority")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("IssuingCountry")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("IssuingPlace")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("IssuingState")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -723,9 +730,19 @@ namespace GeneralWebApi.Integration.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DocumentNumber");
+
+                    b.HasIndex("DocumentType");
+
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("IdentityDocument");
+                    b.HasIndex("ExpirationDate");
+
+                    b.HasIndex("IssuingAuthority");
+
+                    b.HasIndex("IssuingCountry");
+
+                    b.ToTable("IdentityDocuments", (string)null);
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.ExternalApiConfig", b =>
@@ -1304,6 +1321,9 @@ namespace GeneralWebApi.Integration.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1344,6 +1364,10 @@ namespace GeneralWebApi.Integration.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique()
+                        .HasFilter("[EmployeeId] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -1487,6 +1511,16 @@ namespace GeneralWebApi.Integration.Migrations
                     b.HasOne("GeneralWebApi.Domain.Entities.User", null)
                         .WithMany("Products")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.User", b =>
+                {
+                    b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Employee")
+                        .WithOne()
+                        .HasForeignKey("GeneralWebApi.Domain.Entities.User", "EmployeeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Department", b =>

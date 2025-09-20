@@ -19,6 +19,12 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
             .AnyAsync(e => e.EmployeeNumber == employeeNumber, cancellationToken);
     }
 
+    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await GetActiveAndEnabledEntities()
+            .AnyAsync(e => e.Email == email, cancellationToken);
+    }
+
 
 
     public async Task<PagedResult<Employee>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? positionId = null, string? employmentStatus = null, DateTime? hireDateFrom = null, DateTime? hireDateTo = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)

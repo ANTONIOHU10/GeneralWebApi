@@ -11,3 +11,5 @@ public class GetDepartmentsQuery : IRequest<PagedResult<DepartmentListDto>>
 
 
 
+
+

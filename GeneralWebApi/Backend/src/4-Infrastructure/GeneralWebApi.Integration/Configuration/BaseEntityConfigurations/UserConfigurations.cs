@@ -25,5 +25,15 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         #endregion
 
+        #region foreign key relationships
+        builder.HasOne(u => u.Employee)
+               .WithOne()
+               .HasForeignKey<User>(u => u.EmployeeId)
+               .OnDelete(DeleteBehavior.SetNull);
+        #endregion
+
+        #region indexes
+        builder.HasIndex(u => u.EmployeeId);
+        #endregion
     }
 }

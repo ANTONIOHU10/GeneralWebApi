@@ -22,3 +22,5 @@ public class CreateContractCommandHandler : IRequestHandler<CreateContractComman
 
 
 
+
+

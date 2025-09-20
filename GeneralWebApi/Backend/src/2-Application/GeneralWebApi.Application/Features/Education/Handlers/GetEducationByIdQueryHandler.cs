@@ -22,3 +22,5 @@ public class GetEducationByIdQueryHandler : IRequestHandler<GetEducationByIdQuer
 
 
 
+
+

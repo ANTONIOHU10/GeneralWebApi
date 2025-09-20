@@ -10,3 +10,5 @@ public class GetEducationByIdQuery : IRequest<EducationDto>
 
 
 
+
+

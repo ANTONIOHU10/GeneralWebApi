@@ -10,3 +10,5 @@ public class GetEducationsByEmployeeIdQuery : IRequest<IEnumerable<EducationList
 
 
 
+
+
