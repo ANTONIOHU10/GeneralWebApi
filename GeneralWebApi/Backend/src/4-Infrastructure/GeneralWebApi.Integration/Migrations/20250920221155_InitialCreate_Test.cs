@@ -569,6 +569,61 @@ namespace GeneralWebApi.Integration.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUsedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedFromIp = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    CreatedFromUserAgent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    AccessToken = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastAccessedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedFromIp = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    CreatedFromUserAgent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    EndedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndReason = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Certifications_EmployeeId",
                 table: "Certifications",
@@ -825,6 +880,11 @@ namespace GeneralWebApi.Integration.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RolePermissions_ExpiryDate",
                 table: "RolePermissions",
                 column: "ExpiryDate");
@@ -857,6 +917,11 @@ namespace GeneralWebApi.Integration.Migrations
                 column: "EmployeeId",
                 unique: true,
                 filter: "[EmployeeId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSessions_UserId",
+                table: "UserSessions",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -887,16 +952,22 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
+                name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "UserSessions");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Employees");

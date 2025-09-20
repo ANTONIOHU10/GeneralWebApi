@@ -15,6 +15,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<FileDocument> FileDocuments { get; set; }
     public DbSet<ExternalApiConfig> ExternalApiConfigs { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<UserSession> UserSessions { get; set; }
     #endregion
 
 

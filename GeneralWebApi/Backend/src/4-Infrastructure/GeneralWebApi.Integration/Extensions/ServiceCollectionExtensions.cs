@@ -134,6 +134,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<ICertificationRepository, CertificationRepository>();
         services.AddScoped<IContractRepository, ContractRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IUserSessionRepository, UserSessionRepository>();
         return services;
     }
 

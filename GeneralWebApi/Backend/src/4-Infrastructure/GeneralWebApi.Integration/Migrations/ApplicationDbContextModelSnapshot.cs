@@ -1293,6 +1293,52 @@ namespace GeneralWebApi.Integration.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedFromIp")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("CreatedFromUserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastUsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -1370,6 +1416,64 @@ namespace GeneralWebApi.Integration.Migrations
                         .HasFilter("[EmployeeId] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.UserSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedFromIp")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("CreatedFromUserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("EndReason")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("EndedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastAccessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSessions");
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Department", b =>
@@ -1513,6 +1617,17 @@ namespace GeneralWebApi.Integration.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("GeneralWebApi.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.User", b =>
                 {
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Employee")
@@ -1521,6 +1636,17 @@ namespace GeneralWebApi.Integration.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.UserSession", b =>
+                {
+                    b.HasOne("GeneralWebApi.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Anagraphy.Department", b =>

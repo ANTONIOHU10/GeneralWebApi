@@ -19,4 +19,8 @@ public interface IRedisCacheService
     Task<long> IncrementAsync(string key, long value = 1);
     Task<double> IncrementAsync(string key, double value = 1);
     Task<IDatabase> GetDatabase();
+
+    // Cache availability and recovery
+    bool IsCacheAvailable();
+    Task<bool> TryRecoverCacheAsync();
 }
