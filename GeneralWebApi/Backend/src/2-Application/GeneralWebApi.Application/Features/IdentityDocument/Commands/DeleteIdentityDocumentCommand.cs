@@ -8,3 +8,5 @@ public class DeleteIdentityDocumentCommand : IRequest<IdentityDocumentDto>
     public int Id { get; set; }
 }
 
+
+

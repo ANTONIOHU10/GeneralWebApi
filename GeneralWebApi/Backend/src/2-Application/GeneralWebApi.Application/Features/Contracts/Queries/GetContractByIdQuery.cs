@@ -8,3 +8,5 @@ public class GetContractByIdQuery : IRequest<ContractDto>
     public int Id { get; set; }
 }
 
+
+

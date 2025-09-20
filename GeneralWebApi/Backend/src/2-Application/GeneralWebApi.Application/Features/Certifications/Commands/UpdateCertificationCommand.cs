@@ -8,3 +8,5 @@ public class UpdateCertificationCommand : IRequest<CertificationDto>
     public UpdateCertificationDto UpdateCertificationDto { get; set; } = null!;
 }
 
+
+

@@ -9,3 +9,5 @@ public class GetContractsQuery : IRequest<PagedResult<ContractListDto>>
     public ContractSearchDto ContractSearchDto { get; set; } = null!;
 }
 
+
+

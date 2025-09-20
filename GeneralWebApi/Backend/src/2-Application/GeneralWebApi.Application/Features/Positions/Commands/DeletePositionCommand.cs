@@ -8,3 +8,5 @@ public class DeletePositionCommand : IRequest<PositionDto>
     public int Id { get; set; }
 }
 
+
+

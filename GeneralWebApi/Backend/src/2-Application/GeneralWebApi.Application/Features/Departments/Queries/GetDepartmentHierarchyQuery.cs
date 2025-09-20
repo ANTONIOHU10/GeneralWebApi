@@ -7,3 +7,5 @@ public class GetDepartmentHierarchyQuery : IRequest<List<DepartmentDto>>
 {
 }
 
+
+

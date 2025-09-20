@@ -8,3 +8,5 @@ public class GetExpiringContractsQuery : IRequest<List<ContractDto>>
     public DateTime ExpiryDate { get; set; }
 }
 
+
+

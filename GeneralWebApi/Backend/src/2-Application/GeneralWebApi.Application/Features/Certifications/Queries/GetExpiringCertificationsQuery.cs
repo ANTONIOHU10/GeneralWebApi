@@ -8,3 +8,5 @@ public class GetExpiringCertificationsQuery : IRequest<List<CertificationDto>>
     public DateTime ExpiryDate { get; set; }
 }
 
+
+

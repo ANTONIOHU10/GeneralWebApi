@@ -42,3 +42,5 @@ public class UpdatePositionDtoValidator : AbstractValidator<UpdatePositionDto>
     }
 }
 
+
+

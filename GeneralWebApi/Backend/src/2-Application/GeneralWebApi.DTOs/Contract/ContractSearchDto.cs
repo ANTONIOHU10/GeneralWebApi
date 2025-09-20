@@ -12,3 +12,5 @@ public class ContractSearchDto
     public bool SortDescending { get; set; } = true;
 }
 
+
+

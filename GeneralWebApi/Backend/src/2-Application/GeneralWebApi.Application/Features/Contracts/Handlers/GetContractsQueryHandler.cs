@@ -21,3 +21,5 @@ public class GetContractsQueryHandler : IRequestHandler<GetContractsQuery, Paged
     }
 }
 
+
+

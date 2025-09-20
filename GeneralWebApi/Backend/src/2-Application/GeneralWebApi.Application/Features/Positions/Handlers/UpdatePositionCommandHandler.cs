@@ -20,3 +20,5 @@ public class UpdatePositionCommandHandler : IRequestHandler<UpdatePositionComman
     }
 }
 
+
+

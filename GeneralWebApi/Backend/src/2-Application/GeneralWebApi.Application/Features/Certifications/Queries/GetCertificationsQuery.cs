@@ -9,3 +9,5 @@ public class GetCertificationsQuery : IRequest<PagedResult<CertificationListDto>
     public CertificationSearchDto CertificationSearchDto { get; set; } = null!;
 }
 
+
+

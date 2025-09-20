@@ -8,3 +8,5 @@ public class DeleteEducationCommand : IRequest<EducationDto>
     public int Id { get; set; }
 }
 
+
+

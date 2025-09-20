@@ -20,3 +20,5 @@ public class GetContractsByStatusQueryHandler : IRequestHandler<GetContractsBySt
     }
 }
 
+
+

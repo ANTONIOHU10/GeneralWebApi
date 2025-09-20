@@ -8,3 +8,5 @@ public class GetContractsByEmployeeQuery : IRequest<List<ContractDto>>
     public int EmployeeId { get; set; }
 }
 
+
+

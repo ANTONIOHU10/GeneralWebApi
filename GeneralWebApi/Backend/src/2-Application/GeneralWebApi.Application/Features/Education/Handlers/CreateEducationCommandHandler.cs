@@ -20,3 +20,5 @@ public class CreateEducationCommandHandler : IRequestHandler<CreateEducationComm
     }
 }
 
+
+

@@ -8,3 +8,5 @@ public class DeleteContractCommand : IRequest<ContractDto>
     public int Id { get; set; }
 }
 
+
+

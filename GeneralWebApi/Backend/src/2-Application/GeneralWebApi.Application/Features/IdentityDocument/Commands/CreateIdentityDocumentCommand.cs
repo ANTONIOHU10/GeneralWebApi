@@ -8,3 +8,5 @@ public class CreateIdentityDocumentCommand : IRequest<IdentityDocumentDto>
     public CreateIdentityDocumentDto CreateIdentityDocumentDto { get; set; } = null!;
 }
 
+
+

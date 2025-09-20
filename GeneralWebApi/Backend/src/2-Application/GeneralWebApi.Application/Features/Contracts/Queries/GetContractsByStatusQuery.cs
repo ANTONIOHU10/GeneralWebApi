@@ -8,3 +8,5 @@ public class GetContractsByStatusQuery : IRequest<List<ContractDto>>
     public string Status { get; set; } = string.Empty;
 }
 
+
+

@@ -16,3 +16,5 @@ public class ContractDto
     public DateTime? UpdatedAt { get; set; }
 }
 
+
+

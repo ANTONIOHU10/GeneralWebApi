@@ -11,3 +11,5 @@ public class DepartmentSearchDto
     public bool SortDescending { get; set; } = false;
 }
 
+
+

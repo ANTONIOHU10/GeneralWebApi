@@ -20,3 +20,5 @@ public class DeleteCertificationCommandHandler : IRequestHandler<DeleteCertifica
     }
 }
 
+
+

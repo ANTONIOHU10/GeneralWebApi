@@ -8,3 +8,5 @@ public class GetPositionByIdQuery : IRequest<PositionDto>
     public int Id { get; set; }
 }
 
+
+

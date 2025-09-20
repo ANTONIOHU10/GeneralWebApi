@@ -21,3 +21,5 @@ public class GetEducationsQueryHandler : IRequestHandler<GetEducationsQuery, Pag
     }
 }
 
+
+

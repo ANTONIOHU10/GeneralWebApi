@@ -8,3 +8,5 @@ public class GetCertificationsByEmployeeQuery : IRequest<List<CertificationDto>>
     public int EmployeeId { get; set; }
 }
 
+
+

@@ -8,3 +8,5 @@ public class CreateEducationCommand : IRequest<EducationDto>
     public CreateEducationDto CreateEducationDto { get; set; } = null!;
 }
 
+
+

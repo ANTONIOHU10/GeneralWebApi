@@ -142,3 +142,5 @@ public class EducationRepository : BaseRepository<Education>, IEducationReposito
     #endregion
 }
 
+
+

@@ -8,3 +8,5 @@ public class UpdateIdentityDocumentCommand : IRequest<IdentityDocumentDto>
     public UpdateIdentityDocumentDto UpdateIdentityDocumentDto { get; set; } = null!;
 }
 
+
+

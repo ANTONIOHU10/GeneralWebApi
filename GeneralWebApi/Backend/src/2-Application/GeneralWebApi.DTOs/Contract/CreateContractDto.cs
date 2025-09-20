@@ -12,3 +12,5 @@ public class CreateContractDto
     public DateTime? RenewalReminderDate { get; set; }
 }
 
+
+

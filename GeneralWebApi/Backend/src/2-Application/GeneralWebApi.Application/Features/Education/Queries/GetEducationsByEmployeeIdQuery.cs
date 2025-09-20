@@ -8,3 +8,5 @@ public class GetEducationsByEmployeeIdQuery : IRequest<IEnumerable<EducationList
     public int EmployeeId { get; set; }
 }
 
+
+

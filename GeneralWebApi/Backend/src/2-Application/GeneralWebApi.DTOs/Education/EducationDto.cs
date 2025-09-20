@@ -16,3 +16,5 @@ public class EducationDto
     public DateTime? UpdatedAt { get; set; }
 }
 
+
+

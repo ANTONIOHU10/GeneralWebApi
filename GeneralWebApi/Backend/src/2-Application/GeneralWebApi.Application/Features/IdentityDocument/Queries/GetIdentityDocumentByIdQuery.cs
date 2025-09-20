@@ -8,3 +8,5 @@ public class GetIdentityDocumentByIdQuery : IRequest<IdentityDocumentDto>
     public int Id { get; set; }
 }
 
+
+

@@ -8,3 +8,5 @@ public class GetDepartmentByIdQuery : IRequest<DepartmentDto>
     public int Id { get; set; }
 }
 
+
+

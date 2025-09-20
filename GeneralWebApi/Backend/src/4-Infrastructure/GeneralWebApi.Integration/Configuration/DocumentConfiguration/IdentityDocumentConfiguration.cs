@@ -45,3 +45,5 @@ public class IdentityDocumentConfiguration : IEntityTypeConfiguration<IdentityDo
         #endregion
     }
 }
+
+

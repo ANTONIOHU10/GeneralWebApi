@@ -9,3 +9,5 @@ public class GetIdentityDocumentsQuery : IRequest<PagedResult<IdentityDocumentLi
     public IdentityDocumentSearchDto IdentityDocumentSearchDto { get; set; } = null!;
 }
 
+
+

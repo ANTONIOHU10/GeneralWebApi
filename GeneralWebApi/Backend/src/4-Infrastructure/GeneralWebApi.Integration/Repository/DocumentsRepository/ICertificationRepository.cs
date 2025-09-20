@@ -12,3 +12,5 @@ public interface ICertificationRepository : IBaseRepository<Certification>
     Task<List<Certification>> GetExpiringCertificationsAsync(DateTime expiryDate, CancellationToken cancellationToken = default);
 }
 
+
+

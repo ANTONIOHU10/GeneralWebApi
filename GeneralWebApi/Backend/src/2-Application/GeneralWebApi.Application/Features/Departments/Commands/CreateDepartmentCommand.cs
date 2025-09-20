@@ -8,3 +8,5 @@ public class CreateDepartmentCommand : IRequest<DepartmentDto>
     public CreateDepartmentDto CreateDepartmentDto { get; set; } = null!;
 }
 
+
+

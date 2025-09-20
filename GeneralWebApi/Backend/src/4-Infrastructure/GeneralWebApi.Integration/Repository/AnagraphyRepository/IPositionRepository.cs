@@ -12,3 +12,5 @@ public interface IPositionRepository : IBaseRepository<Position>
     Task<List<Position>> GetByParentIdAsync(int parentId, CancellationToken cancellationToken = default);
 }
 
+
+

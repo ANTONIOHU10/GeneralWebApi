@@ -8,3 +8,5 @@ public class UpdateContractCommand : IRequest<ContractDto>
     public UpdateContractDto UpdateContractDto { get; set; } = null!;
 }
 
+
+

@@ -49,3 +49,5 @@ public class UpdateContractDtoValidator : AbstractValidator<UpdateContractDto>
     }
 }
 
+
+

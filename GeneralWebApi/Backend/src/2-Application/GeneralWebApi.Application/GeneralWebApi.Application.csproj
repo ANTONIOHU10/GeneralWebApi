@@ -11,10 +11,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
     <ProjectReference Include="..\GeneralWebApi.DTOs\GeneralWebApi.DTOs.csproj" />
-    <ProjectReference Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
+    <ProjectReference
+      Include="..\..\3-Domain\GeneralWebApi.Domain.Shared\GeneralWebApi.Domain.Shared.csproj" />
   </ItemGroup>
 
 </Project>

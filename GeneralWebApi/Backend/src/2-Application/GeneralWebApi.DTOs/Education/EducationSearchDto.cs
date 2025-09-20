@@ -13,3 +13,5 @@ public class EducationSearchDto
     public bool SortDescending { get; set; } = true;
 }
 
+
+

@@ -12,3 +12,5 @@ public interface IDepartmentRepository : IBaseRepository<Department>
     Task<List<Department>> GetByParentIdAsync(int parentId, CancellationToken cancellationToken = default);
 }
 
+
+

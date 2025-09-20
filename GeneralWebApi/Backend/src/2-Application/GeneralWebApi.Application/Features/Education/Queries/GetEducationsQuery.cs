@@ -9,3 +9,5 @@ public class GetEducationsQuery : IRequest<PagedResult<EducationListDto>>
     public EducationSearchDto EducationSearchDto { get; set; } = null!;
 }
 
+
+

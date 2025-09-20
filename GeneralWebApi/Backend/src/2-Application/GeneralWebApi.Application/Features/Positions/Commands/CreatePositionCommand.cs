@@ -8,3 +8,5 @@ public class CreatePositionCommand : IRequest<PositionDto>
     public CreatePositionDto CreatePositionDto { get; set; } = null!;
 }
 
+
+

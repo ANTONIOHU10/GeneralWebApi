@@ -10,3 +10,5 @@ public class CreateDepartmentDto
     public string Path { get; set; } = string.Empty;
 }
 
+
+

@@ -15,3 +15,5 @@ public interface IContractService
     Task<List<ContractDto>> GetContractsByStatusAsync(string status, CancellationToken cancellationToken = default);
 }
 
+
+

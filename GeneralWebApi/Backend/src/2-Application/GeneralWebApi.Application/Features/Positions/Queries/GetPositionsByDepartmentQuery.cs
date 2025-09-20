@@ -8,3 +8,5 @@ public class GetPositionsByDepartmentQuery : IRequest<List<PositionDto>>
     public int DepartmentId { get; set; }
 }
 
+
+

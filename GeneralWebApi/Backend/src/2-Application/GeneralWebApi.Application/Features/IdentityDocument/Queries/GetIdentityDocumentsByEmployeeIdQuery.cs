@@ -8,3 +8,5 @@ public class GetIdentityDocumentsByEmployeeIdQuery : IRequest<IEnumerable<Identi
     public int EmployeeId { get; set; }
 }
 
+
+

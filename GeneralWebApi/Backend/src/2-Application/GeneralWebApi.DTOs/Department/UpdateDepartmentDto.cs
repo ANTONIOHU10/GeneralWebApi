@@ -11,3 +11,5 @@ public class UpdateDepartmentDto
     public string Path { get; set; } = string.Empty;
 }
 
+
+

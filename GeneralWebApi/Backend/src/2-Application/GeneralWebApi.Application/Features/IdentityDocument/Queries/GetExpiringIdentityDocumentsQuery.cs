@@ -8,3 +8,5 @@ public class GetExpiringIdentityDocumentsQuery : IRequest<IEnumerable<IdentityDo
     public int DaysFromNow { get; set; } = 30;
 }
 
+
+

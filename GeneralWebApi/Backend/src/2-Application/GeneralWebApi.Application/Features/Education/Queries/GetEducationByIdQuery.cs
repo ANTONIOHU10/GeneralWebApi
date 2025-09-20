@@ -8,3 +8,5 @@ public class GetEducationByIdQuery : IRequest<EducationDto>
     public int Id { get; set; }
 }
 
+
+

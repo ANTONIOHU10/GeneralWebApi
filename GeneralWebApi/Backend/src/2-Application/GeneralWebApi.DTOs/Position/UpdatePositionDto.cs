@@ -14,3 +14,5 @@ public class UpdatePositionDto
     public bool IsManagement { get; set; } = false;
 }
 
+
+

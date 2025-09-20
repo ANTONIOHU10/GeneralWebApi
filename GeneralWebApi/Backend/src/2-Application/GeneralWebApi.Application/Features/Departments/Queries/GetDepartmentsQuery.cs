@@ -9,3 +9,5 @@ public class GetDepartmentsQuery : IRequest<PagedResult<DepartmentListDto>>
     public DepartmentSearchDto DepartmentSearchDto { get; set; } = null!;
 }
 
+
+

@@ -20,3 +20,5 @@ public class DeleteEducationCommandHandler : IRequestHandler<DeleteEducationComm
     }
 }
 
+
+

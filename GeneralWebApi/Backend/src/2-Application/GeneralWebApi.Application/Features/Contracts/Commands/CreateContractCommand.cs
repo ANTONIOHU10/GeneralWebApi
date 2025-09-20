@@ -8,3 +8,5 @@ public class CreateContractCommand : IRequest<ContractDto>
     public CreateContractDto CreateContractDto { get; set; } = null!;
 }
 
+
+

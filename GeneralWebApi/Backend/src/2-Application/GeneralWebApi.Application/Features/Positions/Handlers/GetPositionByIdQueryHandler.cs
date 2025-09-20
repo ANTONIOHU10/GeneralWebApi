@@ -20,3 +20,5 @@ public class GetPositionByIdQueryHandler : IRequestHandler<GetPositionByIdQuery,
     }
 }
 
+
+

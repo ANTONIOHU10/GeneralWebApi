@@ -127,6 +127,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<UpdateContractDto>, UpdateContractDtoValidator>();
         services.AddScoped<IContractService, ContractService>();
 
+        // Enum Values Service
+        services.AddScoped<IEnumValueService, EnumValueService>();
+
         return services;
     }
 }

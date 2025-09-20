@@ -8,3 +8,5 @@ public class GetCertificationByIdQuery : IRequest<CertificationDto>
     public int Id { get; set; }
 }
 
+
+

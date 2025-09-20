@@ -13,3 +13,5 @@ public interface IContractRepository : IBaseRepository<Contract>
     Task<List<Contract>> GetContractsByStatusAsync(string status, CancellationToken cancellationToken = default);
 }
 
+
+

@@ -8,3 +8,5 @@ public class GetDepartmentsByParentQuery : IRequest<List<DepartmentDto>>
     public int ParentId { get; set; }
 }
 
+
+

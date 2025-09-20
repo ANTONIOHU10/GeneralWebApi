@@ -9,3 +9,5 @@ public class GetPositionsQuery : IRequest<PagedResult<PositionListDto>>
     public PositionSearchDto PositionSearchDto { get; set; } = null!;
 }
 
+
+
