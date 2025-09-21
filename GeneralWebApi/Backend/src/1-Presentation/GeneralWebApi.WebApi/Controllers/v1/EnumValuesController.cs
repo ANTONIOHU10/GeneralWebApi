@@ -2,6 +2,7 @@ using GeneralWebApi.Application.Services;
 using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Controllers.Base;
 using GeneralWebApi.DTOs.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeneralWebApi.Controllers.v1;
@@ -12,6 +13,7 @@ namespace GeneralWebApi.Controllers.v1;
 [ApiController]
 [Route("api/v1/[controller]")]
 [ApiVersion("1.0")]
+[Authorize] // Require authentication for enum values
 public class EnumValuesController : BaseController
 {
     private readonly IEnumValueService _enumValueService;
@@ -26,6 +28,7 @@ public class EnumValuesController : BaseController
     /// </summary>
     /// <returns>All enum values</returns>
     [HttpGet]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view enum values
     [ProducesResponseType(typeof(ApiResponse<EnumValuesResponse>), 200)]
     public async Task<ActionResult<ApiResponse<EnumValuesResponse>>> GetAllEnumValues()
     {

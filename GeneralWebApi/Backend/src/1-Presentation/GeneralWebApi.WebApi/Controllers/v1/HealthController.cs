@@ -1,6 +1,7 @@
 using GeneralWebApi.Caching.Services;
 using GeneralWebApi.Caching.Configuration;
 using GeneralWebApi.Integration.Repository.BasesRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -12,6 +13,7 @@ namespace GeneralWebApi.WebApi.Controllers.v1;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
+[Authorize] // Require authentication for health checks
 public class HealthController : ControllerBase
 {
     private readonly IRedisCacheService _cacheService;
@@ -42,6 +44,7 @@ public class HealthController : ControllerBase
     /// </summary>
     /// <returns>System health status</returns>
     [HttpGet]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can check system health
     public async Task<IActionResult> GetHealth()
     {
         try
@@ -77,6 +80,7 @@ public class HealthController : ControllerBase
     /// </summary>
     /// <returns>Cache health status</returns>
     [HttpGet("cache")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can check cache health
     public async Task<IActionResult> GetCacheHealth()
     {
         try

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeneralWebApi.Integration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250920221155_InitialCreate_Test")]
+    [Migration("20250921202813_InitialCreate_Test")]
     partial class InitialCreate_Test
     {
         /// <inheritdoc />

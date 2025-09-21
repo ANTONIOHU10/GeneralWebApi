@@ -5,10 +5,16 @@ using GeneralWebApi.Controllers.Base;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.DTOs.Certification;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeneralWebApi.Controllers.Business;
 
+/// <summary>
+/// Controller for managing certification data
+/// Requires appropriate authorization for different operations
+/// </summary>
+[Authorize] // Require authentication for all endpoints
 public class CertificationsController : BaseController
 {
     private readonly IMediator _mediator;
@@ -18,7 +24,13 @@ public class CertificationsController : BaseController
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Get paginated list of certifications
+    /// </summary>
+    /// <param name="searchDto">Search criteria</param>
+    /// <returns>Paginated certification list</returns>
     [HttpGet]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view certifications
     public async Task<ActionResult<ApiResponse<PagedResult<CertificationListDto>>>> GetCertifications([FromQuery] CertificationSearchDto searchDto)
     {
         return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
@@ -29,7 +41,13 @@ public class CertificationsController : BaseController
         });
     }
 
+    /// <summary>
+    /// Get certification by ID
+    /// </summary>
+    /// <param name="id">Certification ID</param>
+    /// <returns>Certification details</returns>
     [HttpGet("{id}")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view certification details
     public async Task<ActionResult<ApiResponse<CertificationDto>>> GetCertification(int id)
     {
         return await ValidateAndExecuteAsync(id, async (validatedId) =>
@@ -40,7 +58,13 @@ public class CertificationsController : BaseController
         });
     }
 
+    /// <summary>
+    /// Create new certification
+    /// </summary>
+    /// <param name="createDto">Certification creation data</param>
+    /// <returns>Created certification</returns>
     [HttpPost]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can create certifications
     public async Task<ActionResult<ApiResponse<CertificationDto>>> CreateCertification([FromBody] CreateCertificationDto createDto)
     {
         return await ValidateAndExecuteAsync(createDto, async (validatedDto) =>
@@ -52,7 +76,13 @@ public class CertificationsController : BaseController
         });
     }
 
+    /// <summary>
+    /// Update certification information
+    /// </summary>
+    /// <param name="updateDto">Certification update data</param>
+    /// <returns>Updated certification</returns>
     [HttpPut("{id}")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can update certifications
     public async Task<ActionResult<ApiResponse<CertificationDto>>> UpdateCertification([FromBody] UpdateCertificationDto updateDto)
     {
         return await ValidateAndExecuteAsync(updateDto, async (validatedDto) =>
@@ -63,7 +93,13 @@ public class CertificationsController : BaseController
         });
     }
 
+    /// <summary>
+    /// Delete certification
+    /// </summary>
+    /// <param name="id">Certification ID</param>
+    /// <returns>Deleted certification</returns>
     [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")] // Only admins can delete certifications
     public async Task<ActionResult<ApiResponse<CertificationDto>>> DeleteCertification(int id)
     {
         return await ValidateAndExecuteAsync(id, async (validatedId) =>
@@ -74,7 +110,13 @@ public class CertificationsController : BaseController
         });
     }
 
+    /// <summary>
+    /// Get certifications by employee
+    /// </summary>
+    /// <param name="employeeId">Employee ID</param>
+    /// <returns>List of employee certifications</returns>
     [HttpGet("employee/{employeeId}")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view employee certifications
     public async Task<ActionResult<ApiResponse<List<CertificationDto>>>> GetCertificationsByEmployee(int employeeId)
     {
         return await ValidateAndExecuteAsync(employeeId, async (validatedId) =>
@@ -85,7 +127,13 @@ public class CertificationsController : BaseController
         });
     }
 
+    /// <summary>
+    /// Get expiring certifications
+    /// </summary>
+    /// <param name="expiryDate">Expiry date filter</param>
+    /// <returns>List of expiring certifications</returns>
     [HttpGet("expiring")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can view expiring certifications
     public async Task<ActionResult<ApiResponse<List<CertificationDto>>>> GetExpiringCertifications([FromQuery] DateTime expiryDate)
     {
         var query = new GetExpiringCertificationsQuery { ExpiryDate = expiryDate };

@@ -68,8 +68,8 @@ public static class ServiceCollectionExtensions
                 )
                 .UseSeeding((context, _) =>
                 {
-                    ProductSeeder.SeedAsync((ApplicationDbContext)context).Wait();
-
+                    //ProductSeeder.SeedAsync((ApplicationDbContext)context).Wait();
+                    UserSeeder.SeedAsync((ApplicationDbContext)context).Wait();
                 });
 
 

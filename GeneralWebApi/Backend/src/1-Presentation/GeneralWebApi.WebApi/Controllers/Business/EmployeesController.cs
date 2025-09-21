@@ -5,10 +5,16 @@ using GeneralWebApi.Controllers.Base;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.DTOs.Employee;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeneralWebApi.Controllers.Business;
 
+/// <summary>
+/// Controller for managing employee data
+/// Requires appropriate authorization for different operations
+/// </summary>
+[Authorize] // Require authentication for all endpoints
 public class EmployeesController : BaseController
 {
     private readonly IMediator _mediator;
@@ -18,7 +24,13 @@ public class EmployeesController : BaseController
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Get paginated list of employees
+    /// </summary>
+    /// <param name="searchDto">Search criteria</param>
+    /// <returns>Paginated employee list</returns>
     [HttpGet]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view employees
     public async Task<ActionResult<ApiResponse<PagedResult<EmployeeListDto>>>> GetEmployees([FromQuery] EmployeeSearchDto searchDto)
     {
         return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
@@ -29,7 +41,13 @@ public class EmployeesController : BaseController
         });
     }
 
+    /// <summary>
+    /// Get employee by ID
+    /// </summary>
+    /// <param name="id">Employee ID</param>
+    /// <returns>Employee details</returns>
     [HttpGet("{id}")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view employee details
     public async Task<ActionResult<ApiResponse<EmployeeDto>>> GetEmployee(int id)
     {
         return await ValidateAndExecuteAsync(id, async (validatedId) =>
@@ -40,7 +58,13 @@ public class EmployeesController : BaseController
         });
     }
 
+    /// <summary>
+    /// Create new employee
+    /// </summary>
+    /// <param name="createDto">Employee creation data</param>
+    /// <returns>Created employee</returns>
     [HttpPost]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can create employees
     public async Task<ActionResult<ApiResponse<EmployeeDto>>> CreateEmployee([FromBody] CreateEmployeeDto createDto)
     {
         return await ValidateAndExecuteAsync(createDto, async (validatedDto) =>
@@ -52,7 +76,13 @@ public class EmployeesController : BaseController
         });
     }
 
+    /// <summary>
+    /// Update employee information
+    /// </summary>
+    /// <param name="updateDto">Employee update data</param>
+    /// <returns>Updated employee</returns>
     [HttpPut("{id}")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can update employees
     public async Task<ActionResult<ApiResponse<EmployeeDto>>> UpdateEmployee([FromBody] UpdateEmployeeDto updateDto)
     {
         return await ValidateAndExecuteAsync(updateDto, async (validatedDto) =>
@@ -63,7 +93,13 @@ public class EmployeesController : BaseController
         });
     }
 
+    /// <summary>
+    /// Delete employee
+    /// </summary>
+    /// <param name="id">Employee ID</param>
+    /// <returns>Deleted employee</returns>
     [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")] // Only admins can delete employees
     public async Task<ActionResult<ApiResponse<EmployeeDto>>> DeleteEmployee(int id)
     {
         return await ValidateAndExecuteAsync(id, async (validatedId) =>
@@ -74,7 +110,13 @@ public class EmployeesController : BaseController
         });
     }
 
+    /// <summary>
+    /// Get employees by department
+    /// </summary>
+    /// <param name="departmentId">Department ID</param>
+    /// <returns>List of employees in the department</returns>
     [HttpGet("department/{departmentId}")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view department employees
     public async Task<ActionResult<ApiResponse<List<EmployeeListDto>>>> GetEmployeesByDepartment(int departmentId)
     {
         return await ValidateAndExecuteAsync(departmentId, async (validatedId) =>
