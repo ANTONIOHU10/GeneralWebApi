@@ -3,4 +3,8 @@
   <PropertyGroup>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\3-Domain\GeneralWebApi.Domain\GeneralWebApi.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

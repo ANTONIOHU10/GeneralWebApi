@@ -24,6 +24,10 @@ using GeneralWebApi.DTOs.Position;
 using GeneralWebApi.DTOs.Certification;
 using GeneralWebApi.DTOs.Contract;
 using Microsoft.Extensions.DependencyInjection;
+using GeneralWebApi.DTOs.Permissions;
+using GeneralWebApi.Application.Features.Permissions.Validators;
+using GeneralWebApi.Application.Features.Permissions.Roles.Handlers;
+using GeneralWebApi.Application.Features.Permissions.Permissions.Handlers;
 
 namespace GeneralWebApi.Application.Extensions;
 
@@ -129,6 +133,18 @@ public static class ServiceCollectionExtensions
 
         // Enum Values Service
         services.AddScoped<IEnumValueService, EnumValueService>();
+
+        // Permission Services
+        services.AddAutoMapper(cfg => cfg.AddMaps(typeof(PermissionMappingProfile).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateRoleCommandHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreatePermissionCommandHandler).Assembly));
+
+        // Permission Validators
+        services.AddScoped<IValidator<CreateRoleDto>, CreateRoleDtoValidator>();
+        services.AddScoped<IValidator<UpdateRoleDto>, UpdateRoleDtoValidator>();
+        services.AddScoped<IValidator<CreatePermissionDto>, CreatePermissionDtoValidator>();
+        services.AddScoped<IValidator<UpdatePermissionDto>, UpdatePermissionDtoValidator>();
+        services.AddScoped<IValidator<AssignRoleToEmployeeDto>, AssignRoleToEmployeeDtoValidator>();
 
         return services;
     }

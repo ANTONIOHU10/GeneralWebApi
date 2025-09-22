@@ -20,6 +20,8 @@
       Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
     <ProjectReference
       Include="..\..\3-Domain\GeneralWebApi.Domain.Shared\GeneralWebApi.Domain.Shared.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
   </ItemGroup>
 
 </Project>

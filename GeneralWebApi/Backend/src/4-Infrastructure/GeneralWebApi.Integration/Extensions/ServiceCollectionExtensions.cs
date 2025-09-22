@@ -5,6 +5,7 @@ using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Integration.Repository.DocumentRepository;
 using GeneralWebApi.Integration.Repository.DocumentsRepository;
+using GeneralWebApi.Integration.Repository.Interfaces;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
 using Microsoft.EntityFrameworkCore;
@@ -136,6 +137,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IContractRepository, ContractRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IUserSessionRepository, UserSessionRepository>();
+
+        // Permission repositories
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<IEmployeeRoleRepository, EmployeeRoleRepository>();
+        services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+
         return services;
     }
 
