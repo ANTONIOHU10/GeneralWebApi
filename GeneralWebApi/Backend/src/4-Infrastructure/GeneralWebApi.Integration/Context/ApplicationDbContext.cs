@@ -1,6 +1,7 @@
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Entities.Anagraphy;
 using GeneralWebApi.Domain.Entities.Documents;
+using GeneralWebApi.Domain.Entities.Documents.Approvals;
 using GeneralWebApi.Domain.Entities.Permissions;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Contract> Contracts { get; set; }
     public DbSet<Education> Educations { get; set; }
     public DbSet<IdentityDocument> IdentityDocuments { get; set; }
+    public DbSet<ContractApproval> ContractApprovals { get; set; }
+    public DbSet<ContractApprovalStep> ContractApprovalSteps { get; set; }
     #endregion
 
     // constructor to inject the DbContextOptions in ServiceCollectionExtensions

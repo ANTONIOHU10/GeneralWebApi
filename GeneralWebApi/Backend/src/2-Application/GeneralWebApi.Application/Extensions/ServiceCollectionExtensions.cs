@@ -28,6 +28,7 @@ using GeneralWebApi.DTOs.Permissions;
 using GeneralWebApi.Application.Features.Permissions.Validators;
 using GeneralWebApi.Application.Features.Permissions.Roles.Handlers;
 using GeneralWebApi.Application.Features.Permissions.Permissions.Handlers;
+using GeneralWebApi.Application.Services.Contracts.Approvals;
 
 namespace GeneralWebApi.Application.Extensions;
 
@@ -130,6 +131,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<CreateContractDto>, CreateContractDtoValidator>();
         services.AddScoped<IValidator<UpdateContractDto>, UpdateContractDtoValidator>();
         services.AddScoped<IContractService, ContractService>();
+
+        // Contract Approvals
+        services.AddScoped<IContractApprovalService, ContractApprovalService>();
 
         // Enum Values Service
         services.AddScoped<IEnumValueService, EnumValueService>();

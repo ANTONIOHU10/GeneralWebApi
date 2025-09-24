@@ -5,6 +5,7 @@ using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Integration.Repository.DocumentRepository;
 using GeneralWebApi.Integration.Repository.DocumentsRepository;
+using GeneralWebApi.Integration.Repository.DocumentsRepository.Approvals;
 using GeneralWebApi.Integration.Repository.Interfaces;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
@@ -135,6 +136,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<ICertificationRepository, CertificationRepository>();
         services.AddScoped<IContractRepository, ContractRepository>();
+        services.AddScoped<IContractApprovalRepository, ContractApprovalRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 
