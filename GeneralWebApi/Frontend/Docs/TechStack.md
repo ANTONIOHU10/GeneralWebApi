@@ -2,18 +2,6 @@
 
 我的项目配置
 
-# Frontend project:
-
-ng new general-frontend
---routing
---style=scss
---strict
---standalone
---package-manager=npm
---minimal
---skip-git=false
---skip-tests=false
-
 ## 核心框架
 
 - Angular 19+ (最新版本) ✅
