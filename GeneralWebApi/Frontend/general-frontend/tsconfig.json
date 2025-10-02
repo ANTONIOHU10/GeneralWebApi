@@ -1,24 +1,46 @@
 /* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
+  //disable re-compiling when saving
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "strict": true,
+    // necessary usage of "override" keyword to override methods
     "noImplicitOverride": true,
+    // necessary usage of "index" keyword to access dynamic properties
     "noPropertyAccessFromIndexSignature": true,
+    // necessary usage of "return" keyword for every method to return values
     "noImplicitReturns": true,
+    // necessary usage of "switch" keyword to handle all cases
+    // to avoid fallthrough cases
     "noFallthroughCasesInSwitch": true,
+    // skip checking libraries, to accelerate compilation
     "skipLibCheck": true,
+    // use isolated modules to avoid conflicts
     "isolatedModules": true,
+    // enable ES modules interoperability
     "esModuleInterop": true,
+    // enable experimental decorators
     "experimentalDecorators": true,
+    // use bundler like VITE, webpack to resolve modules
     "moduleResolution": "bundler",
+    // enable import helpers to improve performance
     "importHelpers": true,
+    // use javascript syntax ES2022 as target
     "target": "ES2022",
-    "module": "ES2022"
+    "module": "ES2022",
+    "baseUrl": "./src",
+    "paths": {
+      "@core/*": ["app/core/*"],
+      "@shared/*": ["app/shared/*"],
+      "@features/*": ["app/features/*"],
+      "@layout/*": ["app/layout/*"],
+      "@environments/*": ["environments/*"]
+    }
   },
   "angularCompilerOptions": {
+    // disable legacy message id format, using new i18n format
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,

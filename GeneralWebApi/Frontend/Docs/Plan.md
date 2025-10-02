@@ -145,7 +145,9 @@
 
   ```bash
   npm install -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
+
   npm install -D prettier eslint-config-prettier eslint-plugin-prettier
+
   npm install -D @angular-eslint/eslint-plugin @angular-eslint/template-parser
   ```
 
@@ -211,12 +213,15 @@
   ```
 
 - [ ] **创建 .prettierignore**
+
   ```
   dist/
   node_modules/
   *.md
   *.json
   ```
+
+  ---DONE
 
 ##### 1.1.5 Husky Git hooks 配置
 

@@ -1,0 +1,17 @@
+{
+    //semicolons are required
+    "semi": true,
+    //trailing commas are required, at the end of the last item in the array or object
+    "trailingComma": "es5",
+    // single quotes for strings
+    "singleQuote": true,
+    "printWidth": 80,
+    //tab width is 2 spaces
+    "tabWidth": 2,
+    // spaces based indentation
+    "useTabs": false,
+    // add space between brackets
+    "bracketSpacing": true,
+    // avoid adding parentheses to arrow functions when possible
+    "arrowParens": "avoid"
+}
