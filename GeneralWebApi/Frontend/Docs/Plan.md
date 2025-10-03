@@ -221,8 +221,6 @@
   *.json
   ```
 
-  ---DONE
-
 ##### 1.1.5 Husky Git hooks 配置
 
 - [ ] **安装 Husky**
@@ -266,6 +264,8 @@
 
   npx --no -- commitlint --edit ${1}
   ```
+
+--- DONE
 
 ##### 1.1.6 代码质量工具配置
 

@@ -5,7 +5,19 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    // run on npm install
+    "prepare": "husky",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss,json}\""
+  },
+  "lint-staged": {
+    "*.{ts,html,scss}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "private": true,
   "dependencies": {

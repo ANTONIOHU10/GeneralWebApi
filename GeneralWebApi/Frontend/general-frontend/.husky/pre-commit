@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx lint-staged
+
+
+# this is trigged by git commit -m "commit message"
+# it will run the lint-staged script
+# and it will run the eslint and prettier
+# to fix the format and lint issues
