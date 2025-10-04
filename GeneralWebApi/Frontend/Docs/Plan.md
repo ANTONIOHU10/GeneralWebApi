@@ -529,11 +529,305 @@
 
 #### 1.2 核心依赖安装
 
-- [ ] Angular Material 19+ 安装配置
-- [ ] PrimeNG 17+ 安装配置
-- [ ] NgRx 18+ 状态管理配置
-- [ ] RxJS 7+ 响应式编程
-- [ ] Angular Signals 配置
+##### 1.2.1 Angular Material 19+ 安装配置
+
+- [ ] **安装 Angular Material**
+
+  ```bash
+  cd GeneralWebApi/Frontend/general-frontend
+  ng add @angular/material
+  ```
+
+- [ ] **安装过程选择**
+
+  - **Choose a prebuilt theme**: 选择 `Indigo/Pink` 或 `Custom`
+  - **Set up global Angular Material typography styles**: `Yes`
+  - **Set up browser animations for Angular Material**: `Yes`
+
+- [ ] **手动安装（如果 ng add 失败）**
+
+  ```bash
+  npm install @angular/material @angular/cdk
+  npm install -D @angular/material-moment-adapter
+  ```
+
+- [ ] **配置 Angular Material**
+
+  在 `src/app/app.config.ts` 中添加：
+
+  ```typescript
+  import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+  import { provideHttpClient } from "@angular/common/http";
+
+  export const appConfig: ApplicationConfig = {
+    providers: [
+      // ... existing providers
+      provideAnimationsAsync(),
+      provideHttpClient(),
+    ],
+  };
+  ```
+
+- [ ] **更新全局样式**
+
+  在 `src/styles.scss` 中添加：【如果选择了 custom 以外的主题】
+
+  ```scss
+  @import "@angular/material/prebuilt-themes/indigo-pink.css";
+  ```
+
+  DONE
+
+##### 1.2.2 PrimeNG 17+ 安装配置
+
+- [ ] **安装 PrimeNG**
+
+  // prime 17 和 ng19 兼容
+
+  ```bash
+  # 安装与 Angular 19 兼容的 PrimeNG 版本
+  npm install primeng@19.1.3 primeicons@7.0.0
+  npm install -D @types/node
+  ```
+
+- [ ] **配置 PrimeNG 样式**
+      follow the lates angular prime Ng website guiding
+      https://v19.primeng.org/installation
+
+  ```
+
+  ```
+
+- [ ] **配置 PrimeNG 服务**
+      for now added a Aura theme for components & table ecc.
+      follow the lates angular prime Ng website guiding
+
+##### 1.2.3 NgRx 18+ 状态管理配置
+
+- [ ] **安装 NgRx**
+
+  ```bash
+  npm install @ngrx/store @ngrx/effects @ngrx/store-devtools @ngrx/router-store
+  npm install -D @ngrx/schematics
+  ```
+
+- [ ] **创建应用状态文件**
+
+  创建 `src/app/store/app.state.ts`：
+
+  ```typescript
+  import { ActionReducerMap } from "@ngrx/store";
+
+  export interface AppState {
+    // 定义应用状态接口
+  }
+
+  export const reducers: ActionReducerMap<AppState> = {
+    // 定义 reducers
+  };
+  ```
+
+- [ ] **配置 NgRx Store**
+
+  在 `src/app/app.config.ts` 中添加：
+
+  ```typescript
+  import { provideStore } from "@ngrx/store";
+  import { provideEffects } from "@ngrx/effects";
+  import { provideStoreDevtools } from "@ngrx/store-devtools";
+  import { provideRouterStore } from "@ngrx/router-store";
+  import { reducers } from "./store/app.state";
+
+  export const appConfig: ApplicationConfig = {
+    providers: [
+      // ... existing providers
+      provideStore(reducers),
+      provideEffects([]),
+      provideStoreDevtools({
+        maxAge: 25,
+        logOnly: false,
+        autoPause: true,
+      }),
+      provideRouterStore(),
+    ],
+  };
+  ```
+
+##### 1.2.4 RxJS 7+ 响应式编程
+
+- [ ] **RxJS 已包含在 Angular 中**
+
+  RxJS 7+ 已经包含在 Angular 19 中，无需额外安装。
+
+- [ ] **配置 RxJS 操作符**
+
+  创建 `src/app/core/rxjs-operators.ts`：
+
+  ```typescript
+  import { Observable, of } from "rxjs";
+  import { map, catchError } from "rxjs/operators";
+
+  // 自定义 RxJS 操作符
+  export const handleError = <T>(operation = "operation", result?: T) => {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed:`, error);
+      return of(result as T);
+    };
+  };
+  ```
+
+##### 1.2.5 Angular Signals 配置
+
+- [ ] **Angular Signals 已内置**
+
+  Angular 17+ 内置了 Signals，无需额外安装。
+
+- [ ] **创建 Signal 服务示例**
+
+  创建 `src/app/core/signal.service.ts`：
+
+  ```typescript
+  import { Injectable, signal, computed } from "@angular/core";
+
+  @Injectable({
+    providedIn: "root",
+  })
+  export class SignalService {
+    // 创建 signal
+    private count = signal(0);
+
+    // 创建 computed signal
+    doubleCount = computed(() => this.count() * 2);
+
+    // 更新 signal
+    increment() {
+      this.count.update((value) => value + 1);
+    }
+
+    decrement() {
+      this.count.update((value) => value - 1);
+    }
+
+    // 获取 signal 值
+    getCount() {
+      return this.count();
+    }
+  }
+  ```
+
+##### 1.2.6 验证安装
+
+- [ ] **测试 Angular Material**
+
+  在 `src/app/app.component.ts` 中添加：
+
+  ```typescript
+  import { Component } from "@angular/core";
+  import { MatButtonModule } from "@angular/material/button";
+
+  @Component({
+    selector: "app-root",
+    standalone: true,
+    imports: [MatButtonModule],
+    template: `
+      <h1>GeneralWebApi Frontend</h1>
+      <button mat-raised-button color="primary">Material Button</button>
+    `,
+  })
+  export class AppComponent {
+    title = "general-frontend";
+  }
+  ```
+
+- [ ] **测试 PrimeNG**
+
+  在 `src/app/app.component.ts` 中添加：
+
+  ```typescript
+  import { Component } from "@angular/core";
+  import { ButtonModule } from "primeng/button";
+
+  @Component({
+    selector: "app-root",
+    standalone: true,
+    imports: [ButtonModule],
+    template: `
+      <h1>GeneralWebApi Frontend</h1>
+      <p-button label="PrimeNG Button" icon="pi pi-check"></p-button>
+    `,
+  })
+  export class AppComponent {
+    title = "general-frontend";
+  }
+  ```
+
+- [ ] **启动项目验证**
+
+  ```bash
+  npm start
+  ```
+
+  访问 `http://localhost:4200` 查看效果。
+
+##### 1.2.7 完整配置文件
+
+- [ ] **更新 `src/app/app.config.ts`**
+
+  ```typescript
+  import { ApplicationConfig } from "@angular/core";
+  import { provideRouter } from "@angular/router";
+  import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+  import { provideHttpClient } from "@angular/common/http";
+  import { provideStore } from "@ngrx/store";
+  import { provideEffects } from "@ngrx/effects";
+  import { provideStoreDevtools } from "@ngrx/store-devtools";
+  import { provideRouterStore } from "@ngrx/router-store";
+  import { MessageService } from "primeng/api";
+
+  import { routes } from "./app.routes";
+  import { reducers } from "./store/app.state";
+
+  export const appConfig: ApplicationConfig = {
+    providers: [
+      provideRouter(routes),
+      provideAnimationsAsync(),
+      provideHttpClient(),
+      provideStore(reducers),
+      provideEffects([]),
+      provideStoreDevtools({
+        maxAge: 25,
+        logOnly: false,
+        autoPause: true,
+      }),
+      provideRouterStore(),
+      MessageService,
+    ],
+  };
+  ```
+
+- [ ] **更新 `src/styles.scss`**
+
+  ```scss
+  /* Angular Material 主题 */
+  @import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+  /* PrimeNG 主题 */
+  @import "primeng/resources/themes/lara-light-blue/theme.css";
+  @import "primeng/resources/primeng.css";
+  @import "primeicons/primeicons.css";
+
+  /* 全局样式 */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Roboto", sans-serif;
+    line-height: 1.6;
+  }
+  ```
 
 #### 1.3 项目结构搭建
 

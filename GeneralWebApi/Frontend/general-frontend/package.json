@@ -29,6 +29,9 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "@primeng/themes": "^20.2.0",
+    "primeicons": "^7.0.0",
+    "primeng": "^19.1.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -39,6 +42,7 @@
     "@angular/compiler-cli": "^19.2.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@types/node": "^24.6.2",
     "angular-eslint": "20.3.0",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
