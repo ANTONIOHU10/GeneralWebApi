@@ -527,7 +527,7 @@
   commitlint.config.js ✅
   ```
 
-#### 1.2 核心依赖安装
+#### 1.2 核心依赖安装, 记得上官网使用最新适配指令，不要听 ai 的
 
 ##### 1.2.1 Angular Material 19+ 安装配置
 
@@ -602,32 +602,39 @@
       for now added a Aura theme for components & table ecc.
       follow the lates angular prime Ng website guiding
 
-##### 1.2.3 NgRx 18+ 状态管理配置
+Done
 
-- [ ] **安装 NgRx**
+##### 1.2.3 NgRx 19+ 状态管理配置
+
+- [ ] **安装 NgRx 19 基础包**
 
   ```bash
-  npm install @ngrx/store @ngrx/effects @ngrx/store-devtools @ngrx/router-store
-  npm install -D @ngrx/schematics
+  # 安装 NgRx 19 核心包
+  npm install @ngrx/store@19 @ngrx/effects@19 @ngrx/store-devtools@19 @ngrx/router-store@19
+
+  # 用于 ng cli 生成 NgRx 代码 (可选)
+  npm install -D @ngrx/schematics@19
   ```
 
-- [ ] **创建应用状态文件**
+DONE
 
-  创建 `src/app/store/app.state.ts`：
+- [ ] **创建基础状态文件**
+
+  创建 `src/app/store/app.store.ts`：
 
   ```typescript
   import { ActionReducerMap } from "@ngrx/store";
 
   export interface AppState {
-    // 定义应用状态接口
+    // 应用状态接口 - 后续根据需要添加
   }
 
   export const reducers: ActionReducerMap<AppState> = {
-    // 定义 reducers
+    // 状态 reducers - 后续根据需要添加
   };
   ```
 
-- [ ] **配置 NgRx Store**
+- [ ] **配置 NgRx Store 基础架构**
 
   在 `src/app/app.config.ts` 中添加：
 
@@ -636,21 +643,35 @@
   import { provideEffects } from "@ngrx/effects";
   import { provideStoreDevtools } from "@ngrx/store-devtools";
   import { provideRouterStore } from "@ngrx/router-store";
-  import { reducers } from "./store/app.state";
+  import { reducers } from "./store/app.store";
 
   export const appConfig: ApplicationConfig = {
     providers: [
       // ... existing providers
       provideStore(reducers),
-      provideEffects([]),
+      provideEffects([]), // 空数组，后续根据需要添加
       provideStoreDevtools({
         maxAge: 25,
         logOnly: false,
         autoPause: true,
+        trace: true,
+        traceLimit: 75,
       }),
       provideRouterStore(),
     ],
   };
+  ```
+
+- [ ] **创建 store 目录结构**
+
+  ```
+  src/app/store/
+  ├── app.store.ts          # 主状态文件
+  ├── index.ts              # 导出文件 (可选)
+  └── features/             # 功能模块状态 (后续添加)
+      ├── auth/             # 认证模块 (后续添加)
+      ├── employees/        # 员工模块 (后续添加)
+      └── departments/      # 部门模块 (后续添加)
   ```
 
 ##### 1.2.4 RxJS 7+ 响应式编程
@@ -771,7 +792,7 @@
 
 ##### 1.2.7 完整配置文件
 
-- [ ] **更新 `src/app/app.config.ts`**
+- [ ] **更新 `src/app/app.config.ts` (基础架构配置)**
 
   ```typescript
   import { ApplicationConfig } from "@angular/core";
@@ -782,25 +803,39 @@
   import { provideEffects } from "@ngrx/effects";
   import { provideStoreDevtools } from "@ngrx/store-devtools";
   import { provideRouterStore } from "@ngrx/router-store";
-  import { MessageService } from "primeng/api";
+  import { providePrimeNG } from "primeng/config";
+  import Aura from "@primeng/themes/aura";
 
   import { routes } from "./app.routes";
-  import { reducers } from "./store/app.state";
+  import { reducers } from "./store/app.store";
 
   export const appConfig: ApplicationConfig = {
     providers: [
+      // 路由配置
       provideRouter(routes),
+
+      // 动画和 HTTP 客户端
       provideAnimationsAsync(),
       provideHttpClient(),
+
+      // NgRx 19 基础状态管理
       provideStore(reducers),
-      provideEffects([]),
+      provideEffects([]), // 空数组，后续根据需要添加
       provideStoreDevtools({
         maxAge: 25,
         logOnly: false,
         autoPause: true,
+        trace: true,
+        traceLimit: 75,
       }),
       provideRouterStore(),
-      MessageService,
+
+      // PrimeNG 19 主题配置
+      providePrimeNG({
+        theme: {
+          preset: Aura,
+        },
+      }),
     ],
   };
   ```
