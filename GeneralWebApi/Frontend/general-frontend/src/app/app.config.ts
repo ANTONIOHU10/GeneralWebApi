@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 
 //import angular material
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 //import primeNG v19
 import { providePrimeNG } from 'primeng/config';
@@ -18,6 +18,7 @@ import { provideEffects } from "@ngrx/effects";
 import { provideStoreDevtools } from "@ngrx/store-devtools";
 import { provideRouterStore } from "@ngrx/router-store";
 import { reducers } from "./store/app.store";
+import { authInterceptor } from '@core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   // global dependencies injection for app.component.ts 
@@ -50,5 +51,11 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
     }),
     provideRouterStore(),
+
+
+    //interceptors
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideHttpClient(withInterceptors([authInterceptor])),
+
   ],
 };
