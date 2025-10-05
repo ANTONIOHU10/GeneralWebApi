@@ -13,10 +13,10 @@ public static class CORSExtension
                     .AllowAnyHeader()
                     .AllowAnyMethod());
 
-            options.AddPolicy("DevelopmentPolicy", builder =>
-                builder.WithOrigins("https://localhost:7297")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod());
+            // options.AddPolicy("DevelopmentPolicy", builder =>
+            //     builder.WithOrigins("https://localhost:7297")
+            //         .AllowAnyHeader()
+            //         .AllowAnyMethod());
 
             options.AddPolicy("ProductionPolicy", builder =>
                 builder.WithOrigins("https://myapp.com")
