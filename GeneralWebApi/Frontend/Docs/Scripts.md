@@ -20,6 +20,8 @@ ng new general-frontend
 
     npm install -D @angular-eslint/eslint-plugin @angular-eslint/template-parser
 
+    npm install jwt-decode
+
 # scripts
 
 npm start # 启动开发服务器

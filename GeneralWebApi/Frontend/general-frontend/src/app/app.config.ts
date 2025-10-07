@@ -19,6 +19,7 @@ import { provideStoreDevtools } from "@ngrx/store-devtools";
 import { provideRouterStore } from "@ngrx/router-store";
 import { reducers } from "./store/app.store";
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
+import { httpErrorInterceptor } from '@core/interceptors/http-error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   // global dependencies injection for app.component.ts 
@@ -30,8 +31,8 @@ export const appConfig: ApplicationConfig = {
     // provide animations for angular material, async loading
     provideAnimationsAsync(), 
     
-    // provide http client for angular
-    provideHttpClient(),
+    // provide http client for angular + interceptor
+    provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
 
     //primeNG for Ng19
     providePrimeNG({
@@ -51,11 +52,5 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
     }),
     provideRouterStore(),
-
-
-    //interceptors
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withInterceptors([authInterceptor])),
-
   ],
 };

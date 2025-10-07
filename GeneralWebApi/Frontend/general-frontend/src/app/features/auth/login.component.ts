@@ -34,12 +34,13 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set(null);
     this.auth.login({ username: this.username, password: this.password }).subscribe({
-    //   next: res => {
-    //     // if (res.roles) this.auth.setRoles(res.roles);
-    //     // this.router.navigate(['/']);
-    //   },
-      error: () => {
-        this.error.set('Login failed');
+      next: () => {
+        // Login successful, navigate to private area
+        this.router.navigate(['/private']);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.message || 'Login failed');
         this.loading.set(false);
       },
     });
