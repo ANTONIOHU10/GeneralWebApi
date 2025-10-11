@@ -1,0 +1,313 @@
+// ===========================================
+// SCSS Mixins - Reusable Style Patterns
+// ===========================================
+
+@use 'variable' as *;
+@use 'sass:color';
+
+// Responsive Breakpoints Mixins
+@mixin mobile-only {
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin large-desktop-up {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin extra-large-up {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+// Flexbox Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+// Typography Mixins
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@mixin heading-style($size: $font-size-2xl, $weight: $font-weight-semibold, $color: $gray-900) {
+  font-size: $size;
+  font-weight: $weight;
+  color: $color;
+  line-height: $line-height-tight;
+  margin: 0;
+}
+
+// Button Mixins
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: $button-border-radius;
+  font-family: $font-family-primary;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all $duration-200 $ease-in-out;
+  user-select: none;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-size($height: $button-height-base, $padding-x: $button-padding-x-base) {
+  height: $height;
+  padding: 0 $padding-x;
+  font-size: $font-size-sm;
+}
+
+@mixin button-variant($bg-color, $text-color: $white, $hover-bg: null, $border-color: null) {
+  background-color: $bg-color;
+  color: $text-color;
+  
+  @if $border-color {
+    border: 1px solid $border-color;
+  }
+  
+  &:hover:not(:disabled) {
+    // darken() deprecated: prefer color.adjust for future Sass versions
+    $computed-hover: if($hover-bg == null, color.adjust($bg-color, $lightness: -10%), $hover-bg);
+    background-color: $computed-hover;
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+}
+
+// Card Mixins
+@mixin card-base {
+  background-color: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-base;
+  overflow: hidden;
+  transition: box-shadow $duration-200 $ease-in-out;
+  
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+}
+
+@mixin card-padding($padding: $spacing-6) {
+  padding: $padding;
+}
+
+// Form Element Mixins
+@mixin input-base {
+  width: 100%;
+  height: $input-height;
+  padding: $input-padding-y $input-padding-x;
+  border: $input-border-width solid $input-border-color;
+  border-radius: $input-border-radius;
+  font-family: $font-family-primary;
+  font-size: $font-size-sm;
+  background-color: $white;
+  transition: border-color $duration-200 $ease-in-out, box-shadow $duration-200 $ease-in-out;
+  
+  &:focus {
+    outline: none;
+    border-color: $input-border-color-focus;
+    box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+  }
+  
+  &:disabled {
+    background-color: $gray-100;
+    color: $gray-500;
+    cursor: not-allowed;
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+}
+
+// Layout Mixins
+@mixin container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-4;
+  
+  @include desktop-up {
+    padding: 0 $spacing-6;
+  }
+}
+
+@mixin grid($columns: 12, $gap: $spacing-4) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+@mixin grid-col($span: 1) {
+  grid-column: span $span;
+}
+
+// Animation Mixins
+@mixin fade-in($duration: $duration-300) {
+  opacity: 0;
+  animation: fadeIn $duration $ease-out forwards;
+}
+
+@mixin slide-up($duration: $duration-300) {
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideUp $duration $ease-out forwards;
+}
+
+@mixin scale-in($duration: $duration-200) {
+  transform: scale(0.95);
+  opacity: 0;
+  animation: scaleIn $duration $ease-out forwards;
+}
+
+// Utility Mixins
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@mixin clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin aspect-ratio($width: 16, $height: 9) {
+  position: relative;
+  
+  &::before {
+    content: '';
+    display: block;
+    padding-top: percentage($height / $width);
+  }
+  
+  > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Keyframe Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Component Specific Mixins
+@mixin sidebar-transition {
+  transition: width $duration-300 $ease-in-out;
+}
+
+@mixin header-shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@mixin loading-skeleton {
+  background: linear-gradient(90deg, $gray-200 25%, $gray-100 50%, $gray-200 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
