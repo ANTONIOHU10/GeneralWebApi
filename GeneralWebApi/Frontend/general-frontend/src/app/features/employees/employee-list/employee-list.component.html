@@ -1,0 +1,41 @@
+<!-- src/app/features/employees/employee-list/employee-list.component.html -->
+<div class="employee-list">
+  <div class="list-header">
+    <h1>Employees</h1>
+    <button class="btn btn-primary" (click)="onAddEmployee()">
+      Add Employee
+    </button>
+  </div>
+
+  <!-- 加载状态 -->
+  <div *ngIf="loading()" class="loading">
+    <p>Loading employees...</p>
+  </div>
+
+  <!-- 错误状态 -->
+  <div *ngIf="error()" class="error">
+    <p>{{ error() }}</p>
+    <button class="btn btn-secondary" (click)="loadEmployees()">Retry</button>
+  </div>
+
+  <!-- 员工列表 -->
+  <div *ngIf="!loading() && !error()" class="employee-grid">
+    <app-employee-card
+      *ngFor="let employee of employees()"
+      [employee]="employee"
+      [showActions]="true"
+      (edit)="onEditEmployee($event)"
+      (delete)="onDeleteEmployee($event)"
+      (view)="onViewEmployee($event)"
+    >
+    </app-employee-card>
+
+    <!-- 空状态 -->
+    <div *ngIf="employees().length === 0" class="empty-state">
+      <p>No employees found.</p>
+      <button class="btn btn-primary" (click)="onAddEmployee()">
+        Add First Employee
+      </button>
+    </div>
+  </div>
+</div>

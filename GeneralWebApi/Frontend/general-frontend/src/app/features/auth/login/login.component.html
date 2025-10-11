@@ -1,0 +1,112 @@
+<!-- src/app/features/auth/login/login.component.html -->
+<div class="login-container">
+  <!-- 背景装饰 -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+
+  <!-- 主要内容区域 -->
+  <div class="login-content">
+    <!-- 左侧品牌区域 -->
+    <div class="brand-section">
+      <div class="brand-logo">
+        <div class="logo-icon">GW</div>
+        <h1 class="brand-title">GeneralWebApi</h1>
+        <p class="brand-subtitle">Enterprise Management System</p>
+      </div>
+
+      <div class="features-list">
+        <div class="feature-item">
+          <div class="feature-icon">👥</div>
+          <span>Employee Management</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <span>Analytics Dashboard</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔒</div>
+          <span>Secure Access</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧登录表单 -->
+    <div class="login-form-section">
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your account</p>
+        </div>
+
+        <form class="login-form" (ngSubmit)="onSubmit()">
+          <div class="input-group">
+            <div class="input-wrapper">
+              <input
+                type="text"
+                [(ngModel)]="username"
+                name="username"
+                placeholder="Username"
+                required
+                class="form-input"
+              />
+              <div class="input-icon">👤</div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-wrapper">
+              <input
+                type="password"
+                [(ngModel)]="password"
+                name="password"
+                placeholder="Password"
+                required
+                class="form-input"
+              />
+              <div class="input-icon">🔒</div>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" />
+              <span class="checkmark"></span>
+              Remember me
+            </label>
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="loading()"
+            class="login-button"
+            [class.loading]="loading()"
+          >
+            <span *ngIf="!loading()">Sign In</span>
+            <span *ngIf="loading()" class="loading-spinner">
+              <div class="spinner"></div>
+              Signing in...
+            </span>
+          </button>
+        </form>
+
+        <!-- 错误消息 -->
+        <div *ngIf="error()" class="error-message">
+          <div class="error-icon">⚠️</div>
+          <span>{{ error() }}</span>
+        </div>
+
+        <!-- 底部信息 -->
+        <div class="form-footer">
+          <p>
+            Don't have an account?
+            <a href="#" class="signup-link">Contact Administrator</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

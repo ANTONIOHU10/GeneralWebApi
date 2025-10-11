@@ -1,6 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
 
-
 export interface DecodedJwt {
   sub?: string;
   name?: string;
@@ -26,6 +25,3 @@ export function decodeJwt(token: string): DecodedJwt | null {
     return null;
   }
 }
-
-
-
