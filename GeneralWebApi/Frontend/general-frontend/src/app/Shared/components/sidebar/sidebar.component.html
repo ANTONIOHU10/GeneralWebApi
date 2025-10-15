@@ -1,0 +1,34 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/sidebar/sidebar.component.html -->
+<aside class="app-sidebar" [class.mobile-open]="isOpen">
+  <div class="sidebar-content">
+    <!-- Navigation Sections -->
+    <div class="nav-section" *ngFor="let section of navSections">
+      <div class="nav-title">{{ section.title }}</div>
+      <ul class="nav-list">
+        <li class="nav-item" *ngFor="let item of section.items">
+          <a 
+            [routerLink]="item.route" 
+            routerLinkActive="active" 
+            class="nav-link">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-text">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile Sidebar Overlay -->
+<div 
+  class="mobile-sidebar-overlay" 
+  [class.active]="isOpen" 
+  (click)="onCloseSidebar()"
+  (keydown.enter)="onCloseSidebar()"
+  (keydown.space)="onCloseSidebar()"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="'Close sidebar'">
+</div>
+
+

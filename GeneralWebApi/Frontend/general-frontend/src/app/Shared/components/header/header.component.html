@@ -1,0 +1,26 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.html -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="brand-logo">G</div>
+    <div class="brand-title">{{ brandTitle }}</div>
+  </div>
+  <div class="header-actions">
+    <button class="action-button theme-toggle" (click)="onThemeToggle()">
+      <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
+    </button>
+    <button 
+      *ngIf="showSidebarToggle" 
+      class="action-button" 
+      (click)="onSidebarToggle()">
+      <span>☰</span>
+    </button>
+    <a 
+      *ngIf="showLoginButton" 
+      routerLink="/login" 
+      class="btn btn-primary">
+      Login
+    </a>
+  </div>
+</header>
+
+
