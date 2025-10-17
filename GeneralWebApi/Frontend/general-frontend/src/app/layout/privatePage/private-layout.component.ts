@@ -4,13 +4,14 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../Shared/components/header/header.component';
 import { FooterComponent } from '../../Shared/components/footer/footer.component';
 import { SidebarComponent } from '../../Shared/components/sidebar/sidebar.component';
+import { BreadcrumbComponent } from '../../Shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   standalone: true,
   selector: 'app-private-layout',
   templateUrl: './private-layout.component.html',
   styleUrls: ['./private-layout.component.scss'],
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, SidebarComponent],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, SidebarComponent, BreadcrumbComponent],
 })
 export class PrivateLayoutComponent {
   isDarkMode = false;
@@ -70,5 +71,29 @@ export class PrivateLayoutComponent {
    */
   closeSidebar(): void {
     this.isSidebarOpen = false;
+  }
+
+  /**
+   * Handle notification click
+   */
+  onNotificationClick(): void {
+    // TODO: Implement notification panel
+    console.log('Notification clicked');
+  }
+
+  /**
+   * Handle profile click
+   */
+  onProfileClick(): void {
+    // TODO: Implement profile dropdown
+    console.log('Profile clicked');
+  }
+
+  /**
+   * Handle settings click
+   */
+  onSettingsClick(): void {
+    // TODO: Navigate to settings page
+    console.log('Settings clicked');
   }
 }

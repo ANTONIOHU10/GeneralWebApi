@@ -2,13 +2,16 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmployeeCardComponent } from '../employee-card/employee-card.component';
+import { AddEmployeeComponent } from '../add-employee/add-employee.component';
+import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
+import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
 import { EmployeeService } from '@core/services/employee.service';
 import { Employee } from 'app/contracts/employees/employee.model';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, EmployeeCardComponent],
+  imports: [CommonModule, EmployeeCardComponent, AddEmployeeComponent, EmployeeReportsComponent, EmployeeSettingsComponent],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
 })
@@ -18,6 +21,7 @@ export class EmployeeListComponent implements OnInit {
   employees = signal<Employee[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+  activeTab = signal<'list' | 'add' | 'reports' | 'settings'>('list');
 
   ngOnInit() {
     this.loadEmployees();
@@ -119,6 +123,147 @@ export class EmployeeListComponent implements OnInit {
           country: 'USA',
         },
       },
+      // 添加更多测试数据来确保滚动
+      {
+        id: '4',
+        firstName: 'Sarah',
+        lastName: 'Wilson',
+        email: 'sarah.wilson@example.com',
+        phone: '+1-555-0126',
+        department: 'HR',
+        position: 'HR Manager',
+        hireDate: '2022-08-15',
+        status: 'Active',
+        managerId: null,
+        salary: 70000,
+        address: {
+          street: '321 Elm St',
+          city: 'Boston',
+          state: 'MA',
+          zipCode: '02101',
+          country: 'USA',
+        },
+      },
+      {
+        id: '5',
+        firstName: 'David',
+        lastName: 'Brown',
+        email: 'david.brown@example.com',
+        phone: '+1-555-0127',
+        department: 'Sales',
+        position: 'Sales Director',
+        hireDate: '2021-11-20',
+        status: 'Active',
+        managerId: null,
+        salary: 85000,
+        address: {
+          street: '654 Maple Ave',
+          city: 'Seattle',
+          state: 'WA',
+          zipCode: '98101',
+          country: 'USA',
+        },
+      },
+      {
+        id: '6',
+        firstName: 'Lisa',
+        lastName: 'Davis',
+        email: 'lisa.davis@example.com',
+        phone: '+1-555-0128',
+        department: 'Finance',
+        position: 'Financial Analyst',
+        hireDate: '2023-02-28',
+        status: 'Active',
+        managerId: '7',
+        salary: 60000,
+        address: {
+          street: '987 Cedar Ln',
+          city: 'Austin',
+          state: 'TX',
+          zipCode: '73301',
+          country: 'USA',
+        },
+      },
+      {
+        id: '7',
+        firstName: 'Robert',
+        lastName: 'Miller',
+        email: 'robert.miller@example.com',
+        phone: '+1-555-0129',
+        department: 'Finance',
+        position: 'CFO',
+        hireDate: '2020-05-10',
+        status: 'Active',
+        managerId: null,
+        salary: 120000,
+        address: {
+          street: '147 Birch St',
+          city: 'Miami',
+          state: 'FL',
+          zipCode: '33101',
+          country: 'USA',
+        },
+      },
+      {
+        id: '8',
+        firstName: 'Emily',
+        lastName: 'Garcia',
+        email: 'emily.garcia@example.com',
+        phone: '+1-555-0130',
+        department: 'Engineering',
+        position: 'DevOps Engineer',
+        hireDate: '2023-04-12',
+        status: 'Active',
+        managerId: '2',
+        salary: 80000,
+        address: {
+          street: '258 Spruce Dr',
+          city: 'Denver',
+          state: 'CO',
+          zipCode: '80201',
+          country: 'USA',
+        },
+      },
+      {
+        id: '9',
+        firstName: 'James',
+        lastName: 'Martinez',
+        email: 'james.martinez@example.com',
+        phone: '+1-555-0131',
+        department: 'Marketing',
+        position: 'Content Creator',
+        hireDate: '2023-07-05',
+        status: 'Active',
+        managerId: '3',
+        salary: 55000,
+        address: {
+          street: '369 Willow Way',
+          city: 'Portland',
+          state: 'OR',
+          zipCode: '97201',
+          country: 'USA',
+        },
+      },
+      {
+        id: '10',
+        firstName: 'Amanda',
+        lastName: 'Taylor',
+        email: 'amanda.taylor@example.com',
+        phone: '+1-555-0132',
+        department: 'Sales',
+        position: 'Account Manager',
+        hireDate: '2022-12-01',
+        status: 'Active',
+        managerId: '5',
+        salary: 65000,
+        address: {
+          street: '741 Poplar Pl',
+          city: 'Phoenix',
+          state: 'AZ',
+          zipCode: '85001',
+          country: 'USA',
+        },
+      },
     ];
 
     this.employees.set(mockEmployees);
@@ -158,7 +303,13 @@ export class EmployeeListComponent implements OnInit {
   }
 
   onAddEmployee() {
-    console.log('Add new employee');
-    // TODO: 导航到添加员工页面或打开添加模态框
+    this.setActiveTab('add');
+  }
+
+  /**
+   * 设置活动标签页
+   */
+  setActiveTab(tab: 'list' | 'add' | 'reports' | 'settings'): void {
+    this.activeTab.set(tab);
   }
 }

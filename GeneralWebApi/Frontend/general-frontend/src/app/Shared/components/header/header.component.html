@@ -5,15 +5,50 @@
     <div class="brand-title">{{ brandTitle }}</div>
   </div>
   <div class="header-actions">
-    <button class="action-button theme-toggle" (click)="onThemeToggle()">
-      <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
-    </button>
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button 
+        class="action-button notification-btn" 
+        (click)="onNotificationClick()"
+        [attr.aria-label]="'Notifications (' + notificationCount + ')'">
+        <span class="action-icon material-icons">notifications</span>
+        <span class="notification-badge" *ngIf="notificationCount > 0">
+          {{ notificationCount }}
+        </span>
+      </button>
+      
+      <button 
+        class="action-button settings-btn" 
+        (click)="onSettingsClick()"
+        aria-label="Settings">
+        <span class="action-icon material-icons">settings</span>
+      </button>
+      
+      <button class="action-button theme-toggle" (click)="onThemeToggle()">
+        <span class="action-icon material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+      </button>
+    </div>
+
+    <!-- User Profile -->
+    <div class="user-profile" (click)="onProfileClick()">
+      <div class="user-avatar">
+        <span class="material-icons">person</span>
+      </div>
+      <div class="user-info">
+        <div class="user-name">{{ userProfile.name }}</div>
+        <div class="user-role">{{ userProfile.role }}</div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
     <button 
       *ngIf="showSidebarToggle" 
-      class="action-button" 
+      class="action-button mobile-menu-toggle" 
       (click)="onSidebarToggle()">
-      <span>☰</span>
+      <span class="action-icon material-icons">menu</span>
     </button>
+
+    <!-- Login Button -->
     <a 
       *ngIf="showLoginButton" 
       routerLink="/login" 

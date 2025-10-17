@@ -3,7 +3,7 @@
 
 // Sidebar Component Styles
 .app-sidebar {
-  width: 280px;
+  width: 240px; // 减少宽度，提高空间利用率
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -14,6 +14,48 @@
   .sidebar-content {
     padding: 1.5rem 0;
     flex: 1;
+
+    // Search Section
+    .sidebar-search {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+
+      .search-input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .search-icon {
+          position: absolute;
+          left: 0.75rem;
+          color: var(--text-tertiary);
+          font-size: 1.2rem;
+          z-index: 1;
+        }
+
+        .search-input {
+          width: 100%;
+          padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          background-color: var(--bg-primary);
+          color: var(--text-primary);
+          font-size: 0.875rem;
+          transition: all 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.1);
+          }
+
+          &::placeholder {
+            color: var(--text-tertiary);
+          }
+        }
+      }
+    }
 
     .nav-section {
       margin-bottom: 2rem;
@@ -26,12 +68,60 @@
         color: var(--text-secondary);
         margin-bottom: 0.75rem;
         padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: default;
+
+        &.expandable {
+          cursor: pointer;
+          padding: 0.5rem 1.5rem;
+          margin-bottom: 0.5rem;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+          background-color: transparent;
+
+          &:hover {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+          }
+
+          &.expanded {
+            background-color: var(--primary-color-light);
+            color: var(--primary-color);
+          }
+
+          .nav-title-text {
+            flex: 1;
+          }
+
+          .nav-arrow {
+            font-size: 0.7rem;
+            transition: transform 0.2s ease;
+            color: var(--text-tertiary);
+          }
+        }
       }
 
       .nav-list {
         list-style: none;
         margin: 0;
         padding: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        max-height: 0;
+        opacity: 0;
+
+        // 非展开菜单始终显示
+        &:not([class*="expanded"]) {
+          max-height: 1000px;
+          opacity: 1;
+        }
+
+        &.expanded {
+          max-height: 1000px;
+          opacity: 1;
+        }
 
         .nav-item {
           margin: 0;
@@ -59,9 +149,12 @@
             }
 
             .nav-icon {
-              font-size: 1.1rem;
-              width: 20px;
+              font-size: 1.2rem;
+              width: 24px;
               text-align: center;
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
 
             .nav-text {

@@ -8,7 +8,10 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="dashboard-container">
-      <h1>📊 Dashboard Overview</h1>
+      <h1>
+        <span class="material-icons">dashboard</span>
+        Dashboard Overview
+      </h1>
       
       <div class="stats-grid">
         <div class="stat-card">
@@ -36,7 +39,7 @@ import { CommonModule } from '@angular/common';
         <h2>Recent Activities</h2>
         <div class="activity-list">
           <div class="activity-item" *ngFor="let activity of recentActivities()">
-            <span class="activity-icon">{{ activity.icon }}</span>
+            <span class="activity-icon material-icons">{{ activity.icon }}</span>
             <span class="activity-text">{{ activity.text }}</span>
             <span class="activity-time">{{ activity.time }}</span>
           </div>
@@ -54,6 +57,14 @@ import { CommonModule } from '@angular/common';
     h1 {
       color: #333;
       margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .material-icons {
+      font-size: 1.5rem;
+      color: #2196F3;
     }
     
     .stats-grid {
@@ -115,6 +126,10 @@ import { CommonModule } from '@angular/common';
     
     .activity-icon {
       font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
     }
     
     .activity-text {
@@ -136,10 +151,10 @@ export class DashboardComponent {
   pendingApprovals = signal(8);
   
   recentActivities = signal([
-    { icon: '👤', text: 'New employee John Doe added', time: '2 hours ago' },
-    { icon: '📋', text: 'Contract for Jane Smith renewed', time: '4 hours ago' },
-    { icon: '🏢', text: 'New department "Marketing" created', time: '6 hours ago' },
-    { icon: '🔑', text: 'Role permissions updated for Admin', time: '1 day ago' },
-    { icon: '📝', text: 'Audit log entry created', time: '1 day ago' }
+    { icon: 'person', text: 'New employee John Doe added', time: '2 hours ago' },
+    { icon: 'description', text: 'Contract for Jane Smith renewed', time: '4 hours ago' },
+    { icon: 'business', text: 'New department "Marketing" created', time: '6 hours ago' },
+    { icon: 'key', text: 'Role permissions updated for Admin', time: '1 day ago' },
+    { icon: 'history', text: 'Audit log entry created', time: '1 day ago' }
   ]);
 }

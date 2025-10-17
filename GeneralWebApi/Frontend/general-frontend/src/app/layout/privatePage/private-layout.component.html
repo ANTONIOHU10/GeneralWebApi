@@ -6,7 +6,10 @@
     [showSidebarToggle]="true"
     [brandTitle]="'GeneralWebApi'"
     (themeToggle)="toggleTheme()"
-    (sidebarToggle)="toggleSidebar()">
+    (sidebarToggle)="toggleSidebar()"
+    (notificationClick)="onNotificationClick()"
+    (profileClick)="onProfileClick()"
+    (settingsClick)="onSettingsClick()">
   </app-header>
 
   <!-- Main Content Area -->
@@ -19,11 +22,11 @@
 
     <!-- Content Section -->
     <main class="app-private-layout__content">
-      <div class="content-header">
-        <h1 class="page-title">Page Title</h1>
-        <p class="page-description">Page description goes here</p>
-      </div>
-      <div class="content-body">
+      <!-- Breadcrumb Navigation -->
+      <app-breadcrumb></app-breadcrumb>
+      
+      <!-- Page Content -->
+      <div class="page-content">
         <router-outlet />
       </div>
     </main>

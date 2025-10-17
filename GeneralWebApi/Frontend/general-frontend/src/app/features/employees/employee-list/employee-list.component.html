@@ -1,41 +1,105 @@
 <!-- src/app/features/employees/employee-list/employee-list.component.html -->
 <div class="employee-list">
   <div class="list-header">
-    <h1>Employees</h1>
-    <button class="btn btn-primary" (click)="onAddEmployee()">
+    <div class="header-content">
+      <h2>
+        <span class="material-icons">people</span>
+        Employee Management
+      </h2>
+      <p>Manage and view all employees in the system</p>
+    </div>
+    <div class="header-actions">
+      <div class="search-box">
+        <input type="text" placeholder="Search employees..." class="search-input">
+        <button class="search-btn">
+          <span class="material-icons">search</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标签页导航 -->
+  <div class="tab-navigation">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'list'"
+      (click)="setActiveTab('list')">
+      <span class="material-icons">list</span>
+      Employee List
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'add'"
+      (click)="setActiveTab('add')">
+      <span class="material-icons">person_add</span>
       Add Employee
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'reports'"
+      (click)="setActiveTab('reports')">
+      <span class="material-icons">assessment</span>
+      Reports
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab() === 'settings'"
+      (click)="setActiveTab('settings')">
+      <span class="material-icons">settings</span>
+      Settings
     </button>
   </div>
 
-  <!-- 加载状态 -->
-  <div *ngIf="loading()" class="loading">
-    <p>Loading employees...</p>
-  </div>
+  <!-- 内容区域 -->
+  <div class="content-area">
+    <!-- 员工列表标签页 -->
+    <div *ngIf="activeTab() === 'list'" class="tab-content">
+      <!-- 加载状态 -->
+      <div *ngIf="loading()" class="loading">
+        <p>Loading employees...</p>
+      </div>
 
-  <!-- 错误状态 -->
-  <div *ngIf="error()" class="error">
-    <p>{{ error() }}</p>
-    <button class="btn btn-secondary" (click)="loadEmployees()">Retry</button>
-  </div>
+      <!-- 错误状态 -->
+      <div *ngIf="error()" class="error">
+        <p>{{ error() }}</p>
+        <button class="btn btn-secondary" (click)="loadEmployees()">Retry</button>
+      </div>
 
-  <!-- 员工列表 -->
-  <div *ngIf="!loading() && !error()" class="employee-grid">
-    <app-employee-card
-      *ngFor="let employee of employees()"
-      [employee]="employee"
-      [showActions]="true"
-      (edit)="onEditEmployee($event)"
-      (delete)="onDeleteEmployee($event)"
-      (view)="onViewEmployee($event)"
-    >
-    </app-employee-card>
+      <!-- 员工列表 -->
+      <div *ngIf="!loading() && !error()" class="employee-grid">
+        <app-employee-card
+          *ngFor="let employee of employees()"
+          [employee]="employee"
+          [showActions]="true"
+          (edit)="onEditEmployee($event)"
+          (delete)="onDeleteEmployee($event)"
+          (view)="onViewEmployee($event)"
+        >
+        </app-employee-card>
 
-    <!-- 空状态 -->
-    <div *ngIf="employees().length === 0" class="empty-state">
-      <p>No employees found.</p>
-      <button class="btn btn-primary" (click)="onAddEmployee()">
-        Add First Employee
-      </button>
+        <!-- 空状态 -->
+        <div *ngIf="employees().length === 0" class="empty-state">
+          <p>No employees found.</p>
+          <button class="btn btn-primary" (click)="setActiveTab('add')">
+            Add First Employee
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加员工标签页 -->
+    <div *ngIf="activeTab() === 'add'" class="tab-content">
+      <app-add-employee></app-add-employee>
+    </div>
+
+    <!-- 报告标签页 -->
+    <div *ngIf="activeTab() === 'reports'" class="tab-content">
+      <app-employee-reports></app-employee-reports>
+    </div>
+
+    <!-- 设置标签页 -->
+    <div *ngIf="activeTab() === 'settings'" class="tab-content">
+      <app-employee-settings></app-employee-settings>
     </div>
   </div>
 </div>

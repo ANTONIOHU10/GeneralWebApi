@@ -18,6 +18,16 @@ export class HeaderComponent {
   
   @Output() themeToggle = new EventEmitter<void>();
   @Output() sidebarToggle = new EventEmitter<void>();
+  @Output() notificationClick = new EventEmitter<void>();
+  @Output() profileClick = new EventEmitter<void>();
+  @Output() settingsClick = new EventEmitter<void>();
+
+  // Mock data for demonstration
+  notificationCount = 3;
+  userProfile = {
+    name: 'John Doe',
+    role: 'Administrator'
+  };
 
   /**
    * Handle theme toggle button click
@@ -31,5 +41,26 @@ export class HeaderComponent {
    */
   onSidebarToggle(): void {
     this.sidebarToggle.emit();
+  }
+
+  /**
+   * Handle notification button click
+   */
+  onNotificationClick(): void {
+    this.notificationClick.emit();
+  }
+
+  /**
+   * Handle profile button click
+   */
+  onProfileClick(): void {
+    this.profileClick.emit();
+  }
+
+  /**
+   * Handle settings button click
+   */
+  onSettingsClick(): void {
+    this.settingsClick.emit();
   }
 }

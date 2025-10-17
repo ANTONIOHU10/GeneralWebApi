@@ -8,13 +8,29 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="task-container">
-      <h1>✅ Tasks</h1>
+      <h1>
+        <span class="material-icons">task_alt</span>
+        Tasks
+      </h1>
       <p>Task management functionality coming soon...</p>
     </div>
   `,
   styles: [`
     .task-container {
       padding: 2rem;
+    }
+    
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    
+    .material-icons {
+      font-size: 1.5rem;
+      color: #4CAF50;
     }
   `]
 })
