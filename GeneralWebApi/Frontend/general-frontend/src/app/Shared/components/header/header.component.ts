@@ -15,7 +15,7 @@ export class HeaderComponent {
   @Input() showSidebarToggle = false;
   @Input() brandTitle = 'GeneralWebApi';
   @Input() showLoginButton = false;
-  
+
   @Output() themeToggle = new EventEmitter<void>();
   @Output() sidebarToggle = new EventEmitter<void>();
   @Output() notificationClick = new EventEmitter<void>();
@@ -26,7 +26,7 @@ export class HeaderComponent {
   notificationCount = 3;
   userProfile = {
     name: 'John Doe',
-    role: 'Administrator'
+    role: 'Administrator',
   };
 
   /**

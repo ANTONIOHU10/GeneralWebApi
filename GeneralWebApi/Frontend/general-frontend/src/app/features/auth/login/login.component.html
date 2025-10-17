@@ -83,7 +83,9 @@
               <span class="checkmark"></span>
               Remember me
             </label>
-            <a href="#" class="forgot-link" role="button" tabindex="0">Forgot password?</a>
+            <a href="#" class="forgot-link" role="button" tabindex="0"
+              >Forgot password?</a
+            >
           </div>
 
           <!-- Submit Button -->
@@ -103,8 +105,15 @@
         </form>
 
         <!-- Error Message -->
-        <div *ngIf="error()" class="error-message" role="alert" aria-live="polite">
-          <div class="error-icon material-icons" aria-hidden="true">warning</div>
+        <div
+          *ngIf="error()"
+          class="error-message"
+          role="alert"
+          aria-live="polite"
+        >
+          <div class="error-icon material-icons" aria-hidden="true">
+            warning
+          </div>
           <span>{{ error() }}</span>
         </div>
 
@@ -112,7 +121,9 @@
         <div class="form-footer">
           <p>
             Don't have an account?
-            <a href="#" class="signup-link" role="button" tabindex="0">Contact Administrator</a>
+            <a href="#" class="signup-link" role="button" tabindex="0"
+              >Contact Administrator</a
+            >
           </p>
         </div>
       </div>

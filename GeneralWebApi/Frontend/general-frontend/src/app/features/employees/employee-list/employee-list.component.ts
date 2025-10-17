@@ -11,7 +11,13 @@ import { Employee } from 'app/contracts/employees/employee.model';
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, EmployeeCardComponent, AddEmployeeComponent, EmployeeReportsComponent, EmployeeSettingsComponent],
+  imports: [
+    CommonModule,
+    EmployeeCardComponent,
+    AddEmployeeComponent,
+    EmployeeReportsComponent,
+    EmployeeSettingsComponent,
+  ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
 })

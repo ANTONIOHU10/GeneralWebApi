@@ -357,7 +357,8 @@
 
 // Animations
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -377,7 +378,11 @@
 // Dark Theme Support
 .dark-theme {
   .login-container {
-    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-500) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500) 0%,
+      var(--color-secondary-500) 100%
+    );
   }
 
   .login-content {
@@ -385,7 +390,11 @@
   }
 
   .brand-section {
-    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-500) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500) 0%,
+      var(--color-secondary-500) 100%
+    );
   }
 
   .form-header h2 {
@@ -428,7 +437,11 @@
   }
 
   .login-button {
-    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-500) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500) 0%,
+      var(--color-secondary-500) 100%
+    );
   }
 
   .error-message {

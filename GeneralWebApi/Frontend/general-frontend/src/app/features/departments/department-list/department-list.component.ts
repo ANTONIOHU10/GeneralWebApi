@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Department management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .department-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .department-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class DepartmentListComponent {}

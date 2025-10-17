@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Position management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .position-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .position-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class PositionListComponent {}

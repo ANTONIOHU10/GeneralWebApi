@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Contract expiry reminder functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .contract-reminder-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .contract-reminder-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class ContractReminderListComponent {}

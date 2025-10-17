@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>User management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .user-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .user-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class UserListComponent {}

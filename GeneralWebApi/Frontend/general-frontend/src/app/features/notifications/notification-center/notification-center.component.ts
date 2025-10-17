@@ -15,23 +15,25 @@ import { CommonModule } from '@angular/common';
       <p>Notification center functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .notification-container {
-      padding: 2rem;
-    }
-    
-    h1 {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #333;
-      margin-bottom: 1rem;
-    }
-    
-    .material-icons {
-      font-size: 1.5rem;
-      color: #2196F3;
-    }
-  `]
+  styles: [
+    `
+      .notification-container {
+        padding: 2rem;
+      }
+
+      h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .material-icons {
+        font-size: 1.5rem;
+        color: #2196f3;
+      }
+    `,
+  ],
 })
 export class NotificationCenterComponent {}

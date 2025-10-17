@@ -10,7 +10,7 @@
   flex-direction: column;
   transition: transform 0.3s ease;
   overflow-y: auto;
-  
+
   .sidebar-content {
     padding: 1.5rem 0;
     flex: 1;
@@ -113,7 +113,7 @@
         opacity: 0;
 
         // 非展开菜单始终显示
-        &:not([class*="expanded"]) {
+        &:not([class*='expanded']) {
           max-height: 1000px;
           opacity: 1;
         }
@@ -209,5 +209,3 @@
     display: none;
   }
 }
-
-

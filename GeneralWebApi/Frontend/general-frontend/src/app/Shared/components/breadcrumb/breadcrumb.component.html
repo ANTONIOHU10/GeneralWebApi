@@ -1,28 +1,36 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/breadcrumb/breadcrumb.component.html -->
 <nav class="breadcrumb-nav" aria-label="Breadcrumb">
   <ol class="breadcrumb-list">
-    <li class="breadcrumb-item" *ngFor="let item of breadcrumbs; let last = last">
+    <li
+      class="breadcrumb-item"
+      *ngFor="let item of breadcrumbs; let last = last"
+    >
       <ng-container *ngIf="!last">
-        <a 
+        <a
           *ngIf="isClickable(item)"
           [routerLink]="item.route"
           class="breadcrumb-link"
-          [attr.aria-label]="'Navigate to ' + item.label">
-          <span class="breadcrumb-icon material-icons" *ngIf="item.icon">{{ item.icon }}</span>
+          [attr.aria-label]="'Navigate to ' + item.label"
+        >
+          <span class="breadcrumb-icon material-icons" *ngIf="item.icon">{{
+            item.icon
+          }}</span>
           <span class="breadcrumb-text">{{ item.label }}</span>
         </a>
-        <span 
-          *ngIf="!isClickable(item)"
-          class="breadcrumb-text">
-          <span class="breadcrumb-icon material-icons" *ngIf="item.icon">{{ item.icon }}</span>
+        <span *ngIf="!isClickable(item)" class="breadcrumb-text">
+          <span class="breadcrumb-icon material-icons" *ngIf="item.icon">{{
+            item.icon
+          }}</span>
           {{ item.label }}
         </span>
         <span class="breadcrumb-separator" aria-hidden="true">›</span>
       </ng-container>
-      
+
       <ng-container *ngIf="last">
         <span class="breadcrumb-current">
-          <span class="breadcrumb-icon material-icons" *ngIf="item.icon">{{ item.icon }}</span>
+          <span class="breadcrumb-icon material-icons" *ngIf="item.icon">{{
+            item.icon
+          }}</span>
           <span class="breadcrumb-text">{{ item.label }}</span>
         </span>
       </ng-container>

@@ -6,7 +6,7 @@
   padding: 1rem 2rem;
   background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
-  
+
   .breadcrumb-list {
     display: flex;
     align-items: center;
@@ -92,17 +92,17 @@
 @media (max-width: 768px) {
   .breadcrumb-nav {
     padding: 0.75rem 1rem;
-    
+
     .breadcrumb-list {
       .breadcrumb-item {
         font-size: 0.8rem;
-        
+
         .breadcrumb-link,
         .breadcrumb-text,
         .breadcrumb-current {
           padding: 0.375rem 0.5rem;
         }
-        
+
         .breadcrumb-separator {
           margin: 0 0.125rem;
         }

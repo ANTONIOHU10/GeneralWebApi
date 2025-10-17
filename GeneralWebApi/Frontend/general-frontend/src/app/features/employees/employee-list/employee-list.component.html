@@ -10,7 +10,11 @@
     </div>
     <div class="header-actions">
       <div class="search-box">
-        <input type="text" placeholder="Search employees..." class="search-input">
+        <input
+          type="text"
+          placeholder="Search employees..."
+          class="search-input"
+        />
         <button class="search-btn">
           <span class="material-icons">search</span>
         </button>
@@ -20,31 +24,35 @@
 
   <!-- 标签页导航 -->
   <div class="tab-navigation">
-    <button 
-      class="tab-button" 
+    <button
+      class="tab-button"
       [class.active]="activeTab() === 'list'"
-      (click)="setActiveTab('list')">
+      (click)="setActiveTab('list')"
+    >
       <span class="material-icons">list</span>
       Employee List
     </button>
-    <button 
-      class="tab-button" 
+    <button
+      class="tab-button"
       [class.active]="activeTab() === 'add'"
-      (click)="setActiveTab('add')">
+      (click)="setActiveTab('add')"
+    >
       <span class="material-icons">person_add</span>
       Add Employee
     </button>
-    <button 
-      class="tab-button" 
+    <button
+      class="tab-button"
       [class.active]="activeTab() === 'reports'"
-      (click)="setActiveTab('reports')">
+      (click)="setActiveTab('reports')"
+    >
       <span class="material-icons">assessment</span>
       Reports
     </button>
-    <button 
-      class="tab-button" 
+    <button
+      class="tab-button"
       [class.active]="activeTab() === 'settings'"
-      (click)="setActiveTab('settings')">
+      (click)="setActiveTab('settings')"
+    >
       <span class="material-icons">settings</span>
       Settings
     </button>
@@ -62,7 +70,9 @@
       <!-- 错误状态 -->
       <div *ngIf="error()" class="error">
         <p>{{ error() }}</p>
-        <button class="btn btn-secondary" (click)="loadEmployees()">Retry</button>
+        <button class="btn btn-secondary" (click)="loadEmployees()">
+          Retry
+        </button>
       </div>
 
       <!-- 员工列表 -->

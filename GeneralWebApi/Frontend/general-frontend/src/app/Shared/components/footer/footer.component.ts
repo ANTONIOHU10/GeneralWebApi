@@ -16,5 +16,3 @@ export class FooterComponent {
   @Input() year = new Date().getFullYear();
   @Input() isPublicLayout = false;
 }
-
-

@@ -14,21 +14,23 @@ import { RouterOutlet } from '@angular/router';
       </div>
     </div>
   `,
-  styles: [`
-    .employee-module {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg-primary);
-    }
+  styles: [
+    `
+      .employee-module {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-primary);
+      }
 
-    .content-area {
-      flex: 1;
-      padding: 0;
-      overflow-y: auto;
-      background: var(--bg-primary);
-      position: relative;
-    }
-  `]
+      .content-area {
+        flex: 1;
+        padding: 0;
+        overflow-y: auto;
+        background: var(--bg-primary);
+        position: relative;
+      }
+    `,
+  ],
 })
 export class EmployeeModuleComponent {}

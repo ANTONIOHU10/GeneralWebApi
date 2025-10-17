@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Identity document management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .identity-document-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .identity-document-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class IdentityDocumentListComponent {}

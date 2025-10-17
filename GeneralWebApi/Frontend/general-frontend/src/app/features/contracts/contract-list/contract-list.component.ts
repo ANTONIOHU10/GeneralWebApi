@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Contract management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .contract-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .contract-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class ContractListComponent {}

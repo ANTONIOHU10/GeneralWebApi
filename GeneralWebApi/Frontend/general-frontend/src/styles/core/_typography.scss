@@ -22,7 +22,12 @@ body {
 }
 
 // Headings
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: $font-family-primary;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
@@ -33,7 +38,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   @include heading-style($font-size-4xl, $font-weight-bold);
   margin-bottom: $spacing-6;
-  
+
   @include mobile-only {
     font-size: $font-size-3xl;
   }
@@ -42,7 +47,7 @@ h1 {
 h2 {
   @include heading-style($font-size-3xl, $font-weight-semibold);
   margin-bottom: $spacing-5;
-  
+
   @include mobile-only {
     font-size: $font-size-2xl;
   }
@@ -51,7 +56,7 @@ h2 {
 h3 {
   @include heading-style($font-size-2xl, $font-weight-semibold);
   margin-bottom: $spacing-4;
-  
+
   @include mobile-only {
     font-size: $font-size-xl;
   }
@@ -78,7 +83,7 @@ p {
   font-size: $font-size-base;
   line-height: $line-height-relaxed;
   color: $gray-700;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -306,27 +311,28 @@ a {
   color: $primary-500;
   text-decoration: none;
   transition: color $duration-200 $ease-in-out;
-  
+
   &:hover {
     color: $primary-600;
     text-decoration: underline;
   }
-  
+
   &:focus {
     outline: 2px solid $primary-500;
     outline-offset: 2px;
   }
-  
+
   &:visited {
     color: $primary-700;
   }
 }
 
 // Lists
-ul, ol {
+ul,
+ol {
   margin: 0 0 $spacing-4 0;
   padding-left: $spacing-6;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -337,7 +343,7 @@ li {
   font-size: $font-size-base;
   line-height: $line-height-normal;
   color: $gray-700;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -357,7 +363,7 @@ dt {
 dd {
   margin: 0 0 $spacing-3 $spacing-4;
   color: $gray-700;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -382,7 +388,7 @@ pre {
   border-radius: $border-radius-base;
   overflow-x: auto;
   margin: 0 0 $spacing-4 0;
-  
+
   code {
     background-color: transparent;
     color: inherit;
@@ -399,7 +405,7 @@ blockquote {
   background-color: $gray-50;
   font-style: italic;
   color: $gray-700;
-  
+
   p:last-child {
     margin-bottom: 0;
   }
@@ -437,15 +443,15 @@ time {
   html {
     font-size: 14px;
   }
-  
+
   h1 {
     font-size: $font-size-3xl;
   }
-  
+
   h2 {
     font-size: $font-size-2xl;
   }
-  
+
   h3 {
     font-size: $font-size-xl;
   }
@@ -458,22 +464,28 @@ time {
     line-height: 1.4;
     color: $black;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: $black;
     page-break-after: avoid;
   }
-  
-  p, li {
+
+  p,
+  li {
     orphans: 3;
     widows: 3;
   }
-  
+
   a {
     color: $black;
     text-decoration: underline;
   }
-  
+
   code {
     background-color: transparent;
     color: $black;

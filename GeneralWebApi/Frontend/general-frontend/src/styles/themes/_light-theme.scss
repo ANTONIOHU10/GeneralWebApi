@@ -18,7 +18,7 @@
   --color-primary-700: #{$primary-700};
   --color-primary-800: #{$primary-800};
   --color-primary-900: #{$primary-900};
-  
+
   // Secondary Colors
   --color-secondary-50: #{$secondary-50};
   --color-secondary-100: #{$secondary-100};
@@ -30,7 +30,7 @@
   --color-secondary-700: #{$secondary-700};
   --color-secondary-800: #{$secondary-800};
   --color-secondary-900: #{$secondary-900};
-  
+
   // Neutral Colors
   --color-white: #{$white};
   --color-gray-50: #{$gray-50};
@@ -44,51 +44,51 @@
   --color-gray-800: #{$gray-800};
   --color-gray-900: #{$gray-900};
   --color-black: #{$black};
-  
+
   // Semantic Colors
   --color-success: #{$success-500};
   --color-success-light: #{$success-50};
   --color-success-dark: #{$success-700};
-  
+
   --color-warning: #{$warning-500};
   --color-warning-light: #{$warning-50};
   --color-warning-dark: #{$warning-700};
-  
+
   --color-error: #{$error-500};
   --color-error-light: #{$error-50};
   --color-error-dark: #{$error-700};
-  
+
   --color-info: #{$info-500};
   --color-info-light: #{$info-50};
   --color-info-dark: #{$info-700};
-  
+
   // Background Colors
   --bg-primary: #{$white};
   --bg-secondary: #{$gray-50};
   --bg-tertiary: #{$gray-100};
   --bg-surface: #{$white};
   --bg-overlay: rgba(0, 0, 0, 0.5);
-  
+
   // Text Colors
   --text-primary: #{$gray-900};
   --text-secondary: #{$gray-700};
   --text-tertiary: #{$gray-500};
   --text-disabled: #{$gray-400};
   --text-inverse: #{$white};
-  
+
   // Border Colors
   --border-primary: #{$gray-200};
   --border-secondary: #{$gray-300};
   --border-focus: #{$primary-500};
   --border-error: #{$error-500};
-  
+
   // Shadow Colors
   --shadow-sm: #{$shadow-sm};
   --shadow-base: #{$shadow-base};
   --shadow-md: #{$shadow-md};
   --shadow-lg: #{$shadow-lg};
   --shadow-xl: #{$shadow-xl};
-  
+
   // Component Colors
   --header-bg: #{$white};
   --sidebar-bg: #{$gray-50};
@@ -103,126 +103,126 @@
 .light-theme {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  
+
   // Header Styles
   .app-header {
     background-color: var(--header-bg);
     border-bottom: 1px solid var(--border-primary);
     @include header-shadow;
   }
-  
+
   // Sidebar Styles
   .app-sidebar {
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-primary);
   }
-  
+
   // Footer Styles
   .app-footer {
     background-color: var(--footer-bg);
     border-top: 1px solid var(--border-primary);
   }
-  
+
   // Card Styles
   .card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-primary);
     box-shadow: var(--shadow-base);
-    
+
     &:hover {
       box-shadow: var(--shadow-md);
     }
   }
-  
+
   // Input Styles
   .form-input {
     background-color: var(--input-bg);
     border: 1px solid var(--border-primary);
     color: var(--text-primary);
-    
+
     &:focus {
       border-color: var(--border-focus);
       box-shadow: 0 0 0 3px rgba(var(--color-primary-500), 0.1);
     }
-    
+
     &::placeholder {
       color: var(--text-tertiary);
     }
   }
-  
+
   // Button Styles
   .btn-primary {
     background-color: var(--button-bg);
     color: var(--button-text);
     border: none;
-    
+
     &:hover {
       background-color: var(--color-primary-600);
     }
   }
-  
+
   // Table Styles
   .table {
     background-color: var(--bg-primary);
-    
+
     th {
       background-color: var(--bg-secondary);
       color: var(--text-primary);
       border-bottom: 2px solid var(--border-primary);
     }
-    
+
     td {
       border-bottom: 1px solid var(--border-primary);
       color: var(--text-secondary);
     }
-    
+
     tr:hover {
       background-color: var(--bg-secondary);
     }
   }
-  
+
   // Modal Styles
   .modal {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-primary);
     box-shadow: var(--shadow-xl);
   }
-  
+
   .modal-backdrop {
     background-color: var(--bg-overlay);
   }
-  
+
   // Navigation Styles
   .nav-link {
     color: var(--text-secondary);
-    
+
     &:hover {
       color: var(--text-primary);
       background-color: var(--bg-secondary);
     }
-    
+
     &.active {
       color: var(--color-primary-500);
       background-color: var(--color-primary-50);
     }
   }
-  
+
   // Status Indicators
   .status-success {
     color: var(--color-success);
     background-color: var(--color-success-light);
   }
-  
+
   .status-warning {
     color: var(--color-warning);
     background-color: var(--color-warning-light);
   }
-  
+
   .status-error {
     color: var(--color-error);
     background-color: var(--color-error-light);
   }
-  
+
   .status-info {
     color: var(--color-info);
     background-color: var(--color-info-light);
@@ -231,19 +231,45 @@
 
 // Light Theme Specific Utilities
 .light-theme {
-  .bg-primary { background-color: var(--bg-primary); }
-  .bg-secondary { background-color: var(--bg-secondary); }
-  .bg-tertiary { background-color: var(--bg-tertiary); }
-  .bg-surface { background-color: var(--bg-surface); }
-  
-  .text-primary { color: var(--text-primary); }
-  .text-secondary { color: var(--text-secondary); }
-  .text-tertiary { color: var(--text-tertiary); }
-  .text-disabled { color: var(--text-disabled); }
-  .text-inverse { color: var(--text-inverse); }
-  
-  .border-primary { border-color: var(--border-primary); }
-  .border-secondary { border-color: var(--border-secondary); }
-  .border-focus { border-color: var(--border-focus); }
-  .border-error { border-color: var(--border-error); }
+  .bg-primary {
+    background-color: var(--bg-primary);
+  }
+  .bg-secondary {
+    background-color: var(--bg-secondary);
+  }
+  .bg-tertiary {
+    background-color: var(--bg-tertiary);
+  }
+  .bg-surface {
+    background-color: var(--bg-surface);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+  .text-tertiary {
+    color: var(--text-tertiary);
+  }
+  .text-disabled {
+    color: var(--text-disabled);
+  }
+  .text-inverse {
+    color: var(--text-inverse);
+  }
+
+  .border-primary {
+    border-color: var(--border-primary);
+  }
+  .border-secondary {
+    border-color: var(--border-secondary);
+  }
+  .border-focus {
+    border-color: var(--border-focus);
+  }
+  .border-error {
+    border-color: var(--border-error);
+  }
 }

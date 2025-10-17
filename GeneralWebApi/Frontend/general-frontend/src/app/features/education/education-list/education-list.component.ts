@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Education background management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .education-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .education-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class EducationListComponent {}

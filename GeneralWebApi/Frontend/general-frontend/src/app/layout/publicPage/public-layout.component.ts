@@ -24,8 +24,10 @@ export class PublicLayoutComponent {
    */
   private initializeTheme(): void {
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
+
     this.isDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
     this.applyTheme();
   }

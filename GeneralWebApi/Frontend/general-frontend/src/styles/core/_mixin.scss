@@ -75,7 +75,11 @@
   overflow: hidden;
 }
 
-@mixin heading-style($size: $font-size-2xl, $weight: $font-weight-semibold, $color: $gray-900) {
+@mixin heading-style(
+  $size: $font-size-2xl,
+  $weight: $font-weight-semibold,
+  $color: $gray-900
+) {
   font-size: $size;
   font-weight: $weight;
   color: $color;
@@ -96,35 +100,47 @@
   cursor: pointer;
   transition: all $duration-200 $ease-in-out;
   user-select: none;
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
 }
 
-@mixin button-size($height: $button-height-base, $padding-x: $button-padding-x-base) {
+@mixin button-size(
+  $height: $button-height-base,
+  $padding-x: $button-padding-x-base
+) {
   height: $height;
   padding: 0 $padding-x;
   font-size: $font-size-sm;
 }
 
-@mixin button-variant($bg-color, $text-color: $white, $hover-bg: null, $border-color: null) {
+@mixin button-variant(
+  $bg-color,
+  $text-color: $white,
+  $hover-bg: null,
+  $border-color: null
+) {
   background-color: $bg-color;
   color: $text-color;
-  
+
   @if $border-color {
     border: 1px solid $border-color;
   }
-  
+
   &:hover:not(:disabled) {
     // darken() deprecated: prefer color.adjust for future Sass versions
-    $computed-hover: if($hover-bg == null, color.adjust($bg-color, $lightness: -10%), $hover-bg);
+    $computed-hover: if(
+      $hover-bg == null,
+      color.adjust($bg-color, $lightness: -10%),
+      $hover-bg
+    );
     background-color: $computed-hover;
     transform: translateY(-1px);
     box-shadow: $shadow-md;
   }
-  
+
   &:active:not(:disabled) {
     transform: translateY(0);
     box-shadow: $shadow-sm;
@@ -138,7 +154,7 @@
   box-shadow: $shadow-base;
   overflow: hidden;
   transition: box-shadow $duration-200 $ease-in-out;
-  
+
   &:hover {
     box-shadow: $shadow-lg;
   }
@@ -158,20 +174,22 @@
   font-family: $font-family-primary;
   font-size: $font-size-sm;
   background-color: $white;
-  transition: border-color $duration-200 $ease-in-out, box-shadow $duration-200 $ease-in-out;
-  
+  transition:
+    border-color $duration-200 $ease-in-out,
+    box-shadow $duration-200 $ease-in-out;
+
   &:focus {
     outline: none;
     border-color: $input-border-color-focus;
     box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
   }
-  
+
   &:disabled {
     background-color: $gray-100;
     color: $gray-500;
     cursor: not-allowed;
   }
-  
+
   &::placeholder {
     color: $gray-400;
   }
@@ -183,7 +201,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 $spacing-4;
-  
+
   @include desktop-up {
     padding: 0 $spacing-6;
   }
@@ -240,13 +258,13 @@
 
 @mixin aspect-ratio($width: 16, $height: 9) {
   position: relative;
-  
+
   &::before {
     content: '';
     display: block;
     padding-top: percentage($height / $width);
   }
-  
+
   > * {
     position: absolute;
     top: 0;
@@ -298,7 +316,12 @@
 }
 
 @mixin loading-skeleton {
-  background: linear-gradient(90deg, $gray-200 25%, $gray-100 50%, $gray-200 75%);
+  background: linear-gradient(
+    90deg,
+    $gray-200 25%,
+    $gray-100 50%,
+    $gray-200 75%
+  );
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }

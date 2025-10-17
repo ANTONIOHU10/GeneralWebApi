@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Audit log management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .audit-log-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .audit-log-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class AuditLogListComponent {}

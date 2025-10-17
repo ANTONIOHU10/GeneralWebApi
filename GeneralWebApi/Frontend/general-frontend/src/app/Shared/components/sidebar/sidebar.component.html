@@ -5,19 +5,20 @@
     <div class="sidebar-search">
       <div class="search-input-container">
         <span class="search-icon material-icons">search</span>
-        <input 
-          type="text" 
-          placeholder="Search..." 
+        <input
+          type="text"
+          placeholder="Search..."
           class="search-input"
           [(ngModel)]="searchQuery"
-          (input)="onSearchChange()">
+          (input)="onSearchChange()"
+        />
       </div>
     </div>
-    
+
     <!-- Navigation Sections -->
     <div class="nav-section" *ngFor="let section of filteredSections">
-      <div 
-        class="nav-title" 
+      <div
+        class="nav-title"
         [class.expandable]="section.expandable"
         [class.expanded]="section.expanded"
         (click)="toggleSection(section)"
@@ -26,18 +27,28 @@
         tabindex="0"
         role="button"
         [attr.aria-expanded]="section.expandable ? section.expanded : null"
-        [attr.aria-label]="section.expandable ? 'Toggle ' + section.title + ' section' : section.title">
+        [attr.aria-label]="
+          section.expandable
+            ? 'Toggle ' + section.title + ' section'
+            : section.title
+        "
+      >
         <span class="nav-title-text">{{ section.title }}</span>
         <span class="nav-arrow" *ngIf="section.expandable">
           {{ section.expanded ? '▼' : '▶' }}
         </span>
       </div>
-      <ul class="nav-list" [class.expanded]="section.expanded" *ngIf="!section.expandable || section.expanded">
+      <ul
+        class="nav-list"
+        [class.expanded]="section.expanded"
+        *ngIf="!section.expandable || section.expanded"
+      >
         <li class="nav-item" *ngFor="let item of section.items">
-          <a 
-            [routerLink]="item.route" 
-            routerLinkActive="active" 
-            class="nav-link">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            class="nav-link"
+          >
             <span class="nav-icon material-icons">{{ item.icon }}</span>
             <span class="nav-text">{{ item.label }}</span>
           </a>
@@ -48,15 +59,13 @@
 </aside>
 
 <!-- Mobile Sidebar Overlay -->
-<div 
-  class="mobile-sidebar-overlay" 
-  [class.active]="isOpen" 
+<div
+  class="mobile-sidebar-overlay"
+  [class.active]="isOpen"
   (click)="onCloseSidebar()"
   (keydown.enter)="onCloseSidebar()"
   (keydown.space)="onCloseSidebar()"
   tabindex="0"
   role="button"
-  [attr.aria-label]="'Close sidebar'">
-</div>
-
-
+  [attr.aria-label]="'Close sidebar'"
+></div>

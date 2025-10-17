@@ -11,7 +11,13 @@ import { BreadcrumbComponent } from '../../Shared/components/breadcrumb/breadcru
   selector: 'app-private-layout',
   templateUrl: './private-layout.component.html',
   styleUrls: ['./private-layout.component.scss'],
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, SidebarComponent, BreadcrumbComponent],
+  imports: [
+    RouterOutlet,
+    HeaderComponent,
+    FooterComponent,
+    SidebarComponent,
+    BreadcrumbComponent,
+  ],
 })
 export class PrivateLayoutComponent {
   isDarkMode = false;
@@ -35,8 +41,10 @@ export class PrivateLayoutComponent {
    */
   private initializeTheme(): void {
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
+
     this.isDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
     this.applyTheme();
   }

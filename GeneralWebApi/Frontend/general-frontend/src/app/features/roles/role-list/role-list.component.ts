@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Role management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .role-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .role-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class RoleListComponent {}

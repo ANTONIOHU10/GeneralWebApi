@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Permission management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .permission-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .permission-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class PermissionListComponent {}

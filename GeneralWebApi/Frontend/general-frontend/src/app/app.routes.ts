@@ -9,11 +9,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { TaskListComponent } from './features/tasks/task-list/task-list.component';
 import { NotificationCenterComponent } from './features/notifications/notification-center/notification-center.component';
 import { ApprovalListComponent } from './features/approvals/approval-list/approval-list.component';
-import { EmployeeModuleComponent } from './features/employees/employee-module/employee-module.component';
 import { EmployeeListComponent } from './features/employees/employee-list/employee-list.component';
-import { AddEmployeeComponent } from './features/employees/add-employee/add-employee.component';
-import { EmployeeReportsComponent } from './features/employees/employee-reports/employee-reports.component';
-import { EmployeeSettingsComponent } from './features/employees/employee-settings/employee-settings.component';
 import { DepartmentListComponent } from './features/departments/department-list/department-list.component';
 import { PositionListComponent } from './features/positions/position-list/position-list.component';
 import { OnboardingListComponent } from './features/onboarding/onboarding-list/onboarding-list.component';
@@ -50,37 +46,37 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      
+
       // 🏠 Workspace
       { path: 'dashboard', component: DashboardComponent },
       { path: 'tasks', component: TaskListComponent },
       { path: 'notifications', component: NotificationCenterComponent },
       { path: 'approvals', component: ApprovalListComponent },
-      
+
       // 👥 HR Management
       { path: 'employees', component: EmployeeListComponent },
       { path: 'departments', component: DepartmentListComponent },
       { path: 'positions', component: PositionListComponent },
       { path: 'onboarding', component: OnboardingListComponent },
-      
+
       // 📄 Contract Management
       { path: 'contracts', component: ContractListComponent },
       { path: 'contract-approvals', component: ContractApprovalListComponent },
       { path: 'contract-templates', component: ContractTemplateListComponent },
       { path: 'contract-reminders', component: ContractReminderListComponent },
-      
+
       // 📁 Document Center
       { path: 'identity-documents', component: IdentityDocumentListComponent },
       { path: 'education', component: EducationListComponent },
       { path: 'certifications', component: CertificationListComponent },
       { path: 'company-documents', component: CompanyDocumentListComponent },
-      
+
       // ⚙️ System Management
       { path: 'users', component: UserListComponent },
       { path: 'roles', component: RoleListComponent },
       { path: 'permissions', component: PermissionListComponent },
       { path: 'settings', component: SettingsComponent },
-      
+
       // 📊 Monitoring & Audit
       { path: 'audit-logs', component: AuditLogListComponent },
       { path: 'system-monitor', component: SystemMonitorComponent },

@@ -14,7 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-login',
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
     MatButtonModule,
     MatInputModule,
@@ -22,7 +22,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatCheckboxModule,
     MatCardModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -84,7 +84,9 @@ export class LoginComponent {
         },
         error: err => {
           console.error('❌ Login failed:', err);
-          this.error.set(err.message || 'Login failed. Please check your credentials.');
+          this.error.set(
+            err.message || 'Login failed. Please check your credentials.'
+          );
           this.loading.set(false);
         },
       });

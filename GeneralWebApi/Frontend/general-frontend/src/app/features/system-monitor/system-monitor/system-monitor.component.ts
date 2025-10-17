@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>System monitoring functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .system-monitor-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .system-monitor-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class SystemMonitorComponent {}

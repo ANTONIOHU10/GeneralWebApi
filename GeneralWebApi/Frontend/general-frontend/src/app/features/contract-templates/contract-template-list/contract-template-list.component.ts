@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Contract template management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .contract-template-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .contract-template-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class ContractTemplateListComponent {}

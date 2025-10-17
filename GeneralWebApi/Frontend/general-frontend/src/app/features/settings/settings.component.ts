@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>System settings functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .settings-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .settings-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class SettingsComponent {}

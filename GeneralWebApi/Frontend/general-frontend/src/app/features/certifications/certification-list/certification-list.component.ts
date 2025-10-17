@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Professional certification management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .certification-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .certification-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class CertificationListComponent {}

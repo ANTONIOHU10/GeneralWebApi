@@ -3,6 +3,3 @@
 // into
 // import { PrivateLayoutComponent } from '@layout/privatePage';
 export { PrivateLayoutComponent } from './private-layout.component';
-
-
-

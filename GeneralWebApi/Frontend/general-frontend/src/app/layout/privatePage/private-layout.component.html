@@ -9,22 +9,21 @@
     (sidebarToggle)="toggleSidebar()"
     (notificationClick)="onNotificationClick()"
     (profileClick)="onProfileClick()"
-    (settingsClick)="onSettingsClick()">
+    (settingsClick)="onSettingsClick()"
+  >
   </app-header>
 
   <!-- Main Content Area -->
   <div class="app-private-layout__main">
     <!-- Sidebar Section -->
-    <app-sidebar
-      [isOpen]="isSidebarOpen"
-      (closeSidebar)="closeSidebar()">
+    <app-sidebar [isOpen]="isSidebarOpen" (closeSidebar)="closeSidebar()">
     </app-sidebar>
 
     <!-- Content Section -->
     <main class="app-private-layout__content">
       <!-- Breadcrumb Navigation -->
       <app-breadcrumb></app-breadcrumb>
-      
+
       <!-- Page Content -->
       <div class="page-content">
         <router-outlet />
@@ -36,6 +35,7 @@
   <app-footer
     [showVersion]="true"
     [version]="'1.0.0'"
-    [copyrightText]="'GeneralWebApi'">
+    [copyrightText]="'GeneralWebApi'"
+  >
   </app-footer>
 </div>

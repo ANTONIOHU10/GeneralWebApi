@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Security audit functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .security-audit-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .security-audit-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class SecurityAuditComponent {}

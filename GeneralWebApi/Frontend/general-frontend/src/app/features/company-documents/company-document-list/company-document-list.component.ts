@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
       <p>Company document management functionality coming soon...</p>
     </div>
   `,
-  styles: [`
-    .company-document-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .company-document-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class CompanyDocumentListComponent {}

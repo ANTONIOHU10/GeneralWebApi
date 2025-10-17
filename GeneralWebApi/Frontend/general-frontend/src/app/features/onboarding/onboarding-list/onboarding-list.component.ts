@@ -9,13 +9,18 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="onboarding-container">
       <h1>📝 Onboarding</h1>
-      <p>Employee onboarding and offboarding management functionality coming soon...</p>
+      <p>
+        Employee onboarding and offboarding management functionality coming
+        soon...
+      </p>
     </div>
   `,
-  styles: [`
-    .onboarding-container {
-      padding: 2rem;
-    }
-  `]
+  styles: [
+    `
+      .onboarding-container {
+        padding: 2rem;
+      }
+    `,
+  ],
 })
 export class OnboardingListComponent {}
