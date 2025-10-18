@@ -63,22 +63,22 @@
     <!-- 员工列表标签页 -->
     <div *ngIf="activeTab() === 'list'" class="tab-content">
       <!-- 加载状态 -->
-      <div *ngIf="loading()" class="loading">
+      <div *ngIf="loading$ | async" class="loading">
         <p>Loading employees...</p>
       </div>
 
       <!-- 错误状态 -->
-      <div *ngIf="error()" class="error">
-        <p>{{ error() }}</p>
+      <div *ngIf="error$ | async as error" class="error">
+        <p>{{ error }}</p>
         <button class="btn btn-secondary" (click)="loadEmployees()">
           Retry
         </button>
       </div>
 
       <!-- 员工列表 -->
-      <div *ngIf="!loading() && !error()" class="employee-grid">
+      <div *ngIf="(loading$ | async) === false && (error$ | async) === null" class="employee-grid">
         <app-employee-card
-          *ngFor="let employee of employees()"
+          *ngFor="let employee of employees$ | async"
           [employee]="employee"
           [showActions]="true"
           (edit)="onEditEmployee($event)"
@@ -88,7 +88,7 @@
         </app-employee-card>
 
         <!-- 空状态 -->
-        <div *ngIf="employees().length === 0" class="empty-state">
+        <div *ngIf="(employees$ | async)?.length === 0" class="empty-state">
           <p>No employees found.</p>
           <button class="btn btn-primary" (click)="setActiveTab('add')">
             Add First Employee

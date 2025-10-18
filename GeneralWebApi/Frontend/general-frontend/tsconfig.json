@@ -36,7 +36,8 @@
       "@shared/*": ["app/shared/*"],
       "@features/*": ["app/features/*"],
       "@layout/*": ["app/layout/*"],
-      "@environments/*": ["environments/*"]
+      "@environments/*": ["environments/*"],
+      "@store/*": ["app/store/*"]
     }
   },
   "angularCompilerOptions": {

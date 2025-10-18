@@ -46,35 +46,70 @@ export class EmployeeService {
   }
 
   // 获取所有员工
-  getEmployees(): Observable<ApiResponse<Employee[]>> {
+  getEmployees(params?: {
+    page?: number;
+    pageSize?: number;
+    searchTerm?: string;
+    department?: string;
+    status?: string;
+    sortBy?: string;
+    sortDirection?: 'asc' | 'desc';
+  }): Observable<ApiResponse<Employee[]>> {
+    let url = `${this.baseUrl}/employees`;
+    const queryParams = new URLSearchParams();
+    
+    if (params) {
+      if (params.page) queryParams.append('page', params.page.toString());
+      if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());
+      if (params.searchTerm) queryParams.append('searchTerm', params.searchTerm);
+      if (params.department) queryParams.append('department', params.department);
+      if (params.status) queryParams.append('status', params.status);
+      if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+      if (params.sortDirection) queryParams.append('sortDirection', params.sortDirection);
+    }
+    
+    if (queryParams.toString()) {
+      url += `?${queryParams.toString()}`;
+    }
+
     return this.http
       .get<
         ApiResponse<PaginatedResponse<BackendEmployee>>
-      >(`${this.baseUrl}/employees`)
+      >(url)
       .pipe(
         map(response => ({
           ...response,
           data: response.data.items.map(item =>
             this.transformBackendEmployee(item)
           ),
+          pagination: {
+            totalItems: response.data.totalCount,
+            currentPage: response.data.pageNumber,
+            pageSize: response.data.pageSize,
+            totalPages: response.data.totalPages,
+          },
         }))
       );
   }
 
   // 根据ID获取员工
-  getEmployeeById(id: string): Observable<ApiResponse<Employee>> {
-    return this.http.get<ApiResponse<Employee>>(
+  getEmployeeById(id: string): Observable<Employee> {
+    return this.http.get<ApiResponse<BackendEmployee>>(
       `${this.baseUrl}/employees/${id}`
+    ).pipe(
+      map(response => this.transformBackendEmployee(response.data))
     );
   }
 
   // 创建员工
   createEmployee(
     employee: Omit<Employee, 'id'>
-  ): Observable<ApiResponse<Employee>> {
-    return this.http.post<ApiResponse<Employee>>(
+  ): Observable<Employee> {
+    return this.http.post<ApiResponse<BackendEmployee>>(
       `${this.baseUrl}/employees`,
       employee
+    ).pipe(
+      map(response => this.transformBackendEmployee(response.data))
     );
   }
 
@@ -82,16 +117,18 @@ export class EmployeeService {
   updateEmployee(
     id: string,
     employee: Partial<Employee>
-  ): Observable<ApiResponse<Employee>> {
-    return this.http.put<ApiResponse<Employee>>(
+  ): Observable<Employee> {
+    return this.http.put<ApiResponse<BackendEmployee>>(
       `${this.baseUrl}/employees/${id}`,
       employee
+    ).pipe(
+      map(response => this.transformBackendEmployee(response.data))
     );
   }
 
   // 删除员工
-  deleteEmployee(id: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(
+  deleteEmployee(id: string): Observable<void> {
+    return this.http.delete<void>(
       `${this.baseUrl}/employees/${id}`
     );
   }
