@@ -1,44 +1,42 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
 @use '../../../../styles/components/layout' as layout;
 
 // Header Component Styles
 .app-header {
   background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border-primary);
+  padding: $spacing-4 $spacing-8;
+  @include flex-between;
+  @include header-shadow;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: $z-index-header;
 
   .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    @include flex-center;
+    justify-content: flex-start;
+    gap: $spacing-3;
 
     .brand-logo {
       width: 40px;
       height: 40px;
       background: linear-gradient(
         135deg,
-        var(--primary-color),
-        var(--secondary-color)
+        var(--color-primary-500),
+        var(--color-secondary-500)
       );
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: white;
+      border-radius: $border-radius-lg;
+      @include flex-center;
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: var(--color-white);
     }
 
     .brand-title {
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
       color: var(--text-primary);
     }
   }

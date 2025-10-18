@@ -61,19 +61,19 @@ export interface ContainerConfig {
         }
 
         &.padding-sm {
-          padding: 0.5rem;
+          padding: var(--spacing-2);
         }
 
         &.padding-md {
-          padding: 1rem;
+          padding: var(--spacing-4);
         }
 
         &.padding-lg {
-          padding: 1.5rem;
+          padding: var(--spacing-6);
         }
 
         &.padding-xl {
-          padding: 2rem;
+          padding: var(--spacing-8);
         }
 
         /* Margin variants */
@@ -82,19 +82,19 @@ export interface ContainerConfig {
         }
 
         &.margin-sm {
-          margin: 0.5rem;
+          margin: var(--spacing-2);
         }
 
         &.margin-md {
-          margin: 1rem;
+          margin: var(--spacing-4);
         }
 
         &.margin-lg {
-          margin: 1.5rem;
+          margin: var(--spacing-6);
         }
 
         &.margin-xl {
-          margin: 2rem;
+          margin: var(--spacing-8);
         }
 
         &.margin-auto {

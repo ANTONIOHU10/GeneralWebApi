@@ -1,6 +1,6 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/store/employee/employee.reducer.ts
 import { createReducer, on } from '@ngrx/store';
-import { EmployeeState, initialEmployeeState } from './employee.state';
+import { initialEmployeeState } from './employee.state';
 import * as EmployeeActions from './employee.actions';
 
 export const employeeReducer = createReducer(

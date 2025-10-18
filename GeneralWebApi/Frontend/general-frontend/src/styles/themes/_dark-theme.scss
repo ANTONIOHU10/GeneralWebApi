@@ -62,44 +62,59 @@
   --color-info-light: rgba(33, 150, 243, 0.2);
   --color-info-dark: #{$info-600};
 
-  // Background Colors
+  // Background Colors (inverted for dark mode)
   --bg-primary: #{$gray-900};
   --bg-secondary: #{$gray-800};
   --bg-tertiary: #{$gray-700};
   --bg-surface: #{$gray-800};
-  --bg-overlay: rgba(0, 0, 0, 0.7);
 
-  // Text Colors
-  --text-primary: #{$gray-100};
+  // Text Colors (inverted for dark mode)
+  --text-primary: #{$white};
   --text-secondary: #{$gray-300};
   --text-tertiary: #{$gray-400};
   --text-disabled: #{$gray-500};
-  --text-inverse: #{$gray-900};
 
   // Border Colors
   --border-primary: #{$gray-600};
   --border-secondary: #{$gray-500};
-  --border-focus: #{$primary-400};
-  --border-error: #{$error-400};
+  --border-focus: var(--color-primary-400);
+  --border-error: var(--color-error);
 
-  // Shadow Colors (enhanced for dark mode)
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-  --shadow-md:
-    0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg:
-    0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-  --shadow-xl:
-    0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  // Input Colors
+  --input-bg: var(--bg-surface);
+  --input-border: var(--border-primary);
+  --input-focus: var(--border-focus);
 
-  // Component Colors
-  --header-bg: #{$gray-800};
-  --sidebar-bg: #{$gray-900};
-  --footer-bg: #{$gray-800};
-  --card-bg: #{$gray-800};
-  --input-bg: #{$gray-700};
-  --button-bg: #{$primary-500};
-  --button-text: #{$gray-900};
+  // Spacing Variables (same as light theme)
+  --spacing-1: #{$spacing-1};
+  --spacing-2: #{$spacing-2};
+  --spacing-3: #{$spacing-3};
+  --spacing-4: #{$spacing-4};
+  --spacing-5: #{$spacing-5};
+  --spacing-6: #{$spacing-6};
+  --spacing-8: #{$spacing-8};
+  --spacing-10: #{$spacing-10};
+  --spacing-12: #{$spacing-12};
+  --spacing-16: #{$spacing-16};
+  --spacing-20: #{$spacing-20};
+  --spacing-24: #{$spacing-24};
+
+  // Border Radius Variables (same as light theme)
+  --border-radius-sm: #{$border-radius-sm};
+  --border-radius-base: #{$border-radius-base};
+  --border-radius-md: #{$border-radius-md};
+  --border-radius-lg: #{$border-radius-lg};
+  --border-radius-xl: #{$border-radius-xl};
+  --border-radius-2xl: #{$border-radius-2xl};
+  --border-radius-full: #{$border-radius-full};
+
+  // Shadow Variables (same as light theme)
+  --shadow-sm: #{$shadow-sm};
+  --shadow-base: #{$shadow-base};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
+  --bg-overlay: rgba(0, 0, 0, 0.7);
 }
 
 // Dark Theme Base Styles

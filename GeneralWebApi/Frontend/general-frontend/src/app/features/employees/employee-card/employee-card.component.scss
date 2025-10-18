@@ -1,43 +1,36 @@
 /* src/app/features/employees/employee-card/employee-card.component.scss */
-.employee-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  height: fit-content; // 确保卡片高度适应内容
-  min-height: 200px; // 设置最小高度确保一致性
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  }
+.employee-card {
+  @include card-elevated;
+  padding: $spacing-6;
+  height: fit-content;
+  min-height: 200px;
+  position: relative;
 
   &.status-active {
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--color-success);
   }
 
   &.status-inactive {
-    border-left: 4px solid #ffc107;
+    border-left: 4px solid var(--color-warning);
   }
 
   &.status-terminated {
-    border-left: 4px solid #dc3545;
+    border-left: 4px solid var(--color-error);
   }
 }
 
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  @include flex-between;
+  margin-bottom: $spacing-4;
 }
 
 .avatar {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
+  border-radius: $border-radius-full;
   overflow: hidden;
 
   img {
@@ -47,124 +40,103 @@
   }
 
   .avatar-placeholder {
+    @include flex-center;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-500) 100%);
+    color: var(--color-white);
+    font-weight: $font-weight-bold;
+    font-size: $font-size-xl;
   }
 }
 
 .status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-
+  @include status-badge(--color-gray-100, --color-gray-700);
+  
   &.status-active {
-    background: #d4edda;
-    color: #155724;
+    @include status-active;
   }
-
+  
   &.status-inactive {
-    background: #fff3cd;
-    color: #856404;
+    @include status-inactive;
   }
-
+  
   &.status-terminated {
-    background: #f8d7da;
-    color: #721c24;
+    @include status-terminated;
   }
 }
 
 .card-body {
-  margin-bottom: 1rem;
+  margin-bottom: $spacing-4;
 
   .employee-name {
-    margin: 0 0 0.5rem 0;
-    color: #333;
-    font-size: 1.25rem;
-    font-weight: 600;
+    margin: 0 0 $spacing-2 0;
+    color: var(--text-primary);
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
   }
 
   .employee-position {
-    margin: 0 0 0.25rem 0;
-    color: #666;
-    font-size: 0.9rem;
+    margin: 0 0 $spacing-1 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
   }
 
   .employee-department {
-    margin: 0 0 1rem 0;
-    color: #888;
-    font-size: 0.85rem;
+    margin: 0 0 $spacing-4 0;
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
   }
 }
 
 .contact-info {
   .contact-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
-    color: #666;
+    @include flex-center;
+    justify-content: flex-start;
+    margin-bottom: $spacing-2;
+    font-size: $font-size-xs;
+    color: var(--text-secondary);
 
     i {
-      margin-right: 0.5rem;
+      margin-right: $spacing-2;
       width: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
+      @include flex-center;
+      font-size: $font-size-base;
       color: var(--text-tertiary);
     }
   }
 }
 
 .card-footer {
-  display: flex;
-  gap: 0.5rem;
+  @include flex-between;
   justify-content: flex-end;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
+  gap: $spacing-2;
+  padding-top: $spacing-4;
+  border-top: 1px solid var(--border-primary);
 
   .btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    @include button-base;
+    padding: $spacing-2 $spacing-4;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
 
     &.btn-primary {
-      background: #007bff;
-      color: white;
-
-      &:hover {
-        background: #0056b3;
-      }
+      @include button-primary;
     }
 
     &.btn-secondary {
-      background: #6c757d;
-      color: white;
-
-      &:hover {
-        background: #545b62;
-      }
+      @include button-secondary;
     }
 
     &.btn-danger {
-      background: #dc3545;
-      color: white;
+      @include button-base;
+      background: var(--color-error);
+      color: var(--color-white);
+      border-color: var(--color-error);
 
-      &:hover {
-        background: #c82333;
+      &:hover:not(:disabled) {
+        background: var(--color-error-dark);
+        border-color: var(--color-error-dark);
       }
     }
   }

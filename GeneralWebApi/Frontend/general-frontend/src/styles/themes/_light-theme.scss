@@ -67,6 +67,53 @@
   --bg-secondary: #{$gray-50};
   --bg-tertiary: #{$gray-100};
   --bg-surface: #{$white};
+
+  // Text Colors
+  --text-primary: #{$gray-900};
+  --text-secondary: #{$gray-600};
+  --text-tertiary: #{$gray-500};
+  --text-disabled: #{$gray-400};
+
+  // Border Colors
+  --border-primary: #{$gray-200};
+  --border-secondary: #{$gray-300};
+  --border-focus: var(--color-primary-500);
+  --border-error: var(--color-error);
+
+  // Input Colors
+  --input-bg: var(--bg-surface);
+  --input-border: var(--border-primary);
+  --input-focus: var(--border-focus);
+
+  // Spacing Variables
+  --spacing-1: #{$spacing-1};
+  --spacing-2: #{$spacing-2};
+  --spacing-3: #{$spacing-3};
+  --spacing-4: #{$spacing-4};
+  --spacing-5: #{$spacing-5};
+  --spacing-6: #{$spacing-6};
+  --spacing-8: #{$spacing-8};
+  --spacing-10: #{$spacing-10};
+  --spacing-12: #{$spacing-12};
+  --spacing-16: #{$spacing-16};
+  --spacing-20: #{$spacing-20};
+  --spacing-24: #{$spacing-24};
+
+  // Border Radius Variables
+  --border-radius-sm: #{$border-radius-sm};
+  --border-radius-base: #{$border-radius-base};
+  --border-radius-md: #{$border-radius-md};
+  --border-radius-lg: #{$border-radius-lg};
+  --border-radius-xl: #{$border-radius-xl};
+  --border-radius-2xl: #{$border-radius-2xl};
+  --border-radius-full: #{$border-radius-full};
+
+  // Shadow Variables
+  --shadow-sm: #{$shadow-sm};
+  --shadow-base: #{$shadow-base};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
   --bg-overlay: rgba(0, 0, 0, 0.5);
 
   // Text Colors

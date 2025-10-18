@@ -1,53 +1,52 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/sidebar/sidebar.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
 @use '../../../../styles/components/layout' as layout;
 
 // Sidebar Component Styles
 .app-sidebar {
-  width: 240px; // 减少宽度，提高空间利用率
+  width: 240px;
   background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+  @include sidebar-transition;
   overflow-y: auto;
 
   .sidebar-content {
-    padding: 1.5rem 0;
+    padding: $spacing-6 0;
     flex: 1;
 
     // Search Section
     .sidebar-search {
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 1.5rem;
+      padding: 0 $spacing-6 $spacing-6;
+      border-bottom: 1px solid var(--border-primary);
+      margin-bottom: $spacing-6;
 
       .search-input-container {
         position: relative;
-        display: flex;
-        align-items: center;
+        @include flex-center;
+        justify-content: flex-start;
 
         .search-icon {
           position: absolute;
-          left: 0.75rem;
+          left: $spacing-3;
           color: var(--text-tertiary);
-          font-size: 1.2rem;
+          font-size: $font-size-xl;
           z-index: 1;
         }
 
         .search-input {
-          width: 100%;
-          padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-          border: 1px solid var(--border-color);
-          border-radius: 6px;
-          background-color: var(--bg-primary);
-          color: var(--text-primary);
-          font-size: 0.875rem;
-          transition: all 0.2s ease;
+          @include input-base;
+          padding: $spacing-3 $spacing-3 $spacing-3 2.5rem;
+          border-radius: $border-radius-md;
+          background-color: var(--bg-surface);
+          font-size: $font-size-sm;
 
           &:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.1);
+            border-color: var(--color-primary-500);
+            box-shadow: 0 0 0 2px var(--color-primary-100);
           }
 
           &::placeholder {
