@@ -22,6 +22,10 @@ export interface ModalConfig {
       [class.show]="isOpen"
       [class.fade]="config.animation"
       (click)="onBackdropClick()"
+      (keydown.escape)="onBackdropClick()"
+      tabindex="0"
+      role="button"
+      [attr.aria-label]="'Close modal'"
       *ngIf="isOpen"
     >
       <div
@@ -33,6 +37,7 @@ export interface ModalConfig {
         [attr.aria-labelledby]="titleId"
         [attr.aria-describedby]="contentId"
         (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()"
       >
         <!-- Modal Header -->
         <div class="modal-header" *ngIf="showHeader">

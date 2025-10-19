@@ -288,8 +288,13 @@ export class BaseInputComponent implements ControlValueAccessor {
   @Output() inputClear = new EventEmitter<void>();
 
   value = '';
-  private onChange = (value: string) => {};
-  private onTouched = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private onChange = (_value: string) => {
+    // ControlValueAccessor implementation
+  };
+  private onTouched = () => {
+    // ControlValueAccessor implementation
+  };
 
   get containerClass(): string {
     const classes = [

@@ -1,0 +1,96 @@
+// ===========================================
+// Form Components - Unified Form Styling
+// ===========================================
+
+@use '../core/variable' as *;
+@use '../core/mixin' as *;
+
+// Form Container
+.form-container {
+  flex: 1;
+  background: var(--bg-surface);
+  overflow: hidden;
+}
+
+// Form Layout
+.employee-form {
+  padding: $spacing-6;
+  height: 100%;
+  overflow-y: auto;
+}
+
+// Form Sections
+.form-section {
+  margin-bottom: $spacing-6;
+
+  h3 {
+    @include heading-style($font-size-lg, $font-weight-semibold);
+    margin-bottom: $spacing-4;
+    border-bottom: 2px solid var(--border-primary);
+    padding-bottom: $spacing-2;
+  }
+}
+
+// Form Rows
+.form-row {
+  @include grid(2, $spacing-4);
+  margin-bottom: $spacing-4;
+
+  @include mobile-only {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Form Groups
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    margin-bottom: $spacing-2;
+    font-weight: $font-weight-medium;
+    color: var(--text-primary);
+  }
+}
+
+// Form Controls
+.form-control {
+  @include input-base;
+  padding: $spacing-3;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-base);
+  font-size: $font-size-base;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  transition: all $duration-200 $ease-in-out;
+
+  &:focus {
+    outline: 0;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-500), 0.1);
+  }
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+}
+
+// Form Actions
+.form-actions {
+  @include flex-between;
+  justify-content: flex-end;
+  gap: $spacing-4;
+  padding-top: $spacing-4;
+  border-top: 1px solid var(--border-primary);
+
+  @include mobile-only {
+    flex-direction: column;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+
+

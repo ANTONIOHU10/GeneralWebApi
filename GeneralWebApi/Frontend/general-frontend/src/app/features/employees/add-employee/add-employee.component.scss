@@ -1,0 +1,24 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/add-employee/add-employee.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+// 使用全局样式类作为基础，添加自定义样式
+.page-container {
+  .page-header {
+    h2 {
+      .material-icons {
+        color: var(--color-success); // 自定义图标颜色
+      }
+    }
+  }
+}
+
+// 响应式设计
+@include mobile-only {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+

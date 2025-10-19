@@ -47,6 +47,8 @@ Todo:
 
 4. 还需要refactor
 
+5. 性能问题，以及我临时吧angular.json的bundle的warning 和 error大小修改为15，20kb了, lazyloading
+
 ### 第二阶段：认证与安全系统 (1-2 周)
 
 #### 2.1 认证服务实现
@@ -148,79 +150,6 @@ Todo:
 ## 🛠️ 技术实现细节
 
 ### 状态管理策略
-
-```typescript
-// 复杂状态使用NgRx
-@Injectable()
-export class EmployeeEffects {
-  loadEmployees$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(loadEmployees),
-      switchMap((action) => this.employeeService.getEmployees(action.params))
-    )
-  );
-}
-
-// 简单状态使用Signals
-@Component({
-  template: `
-    <div>
-      <h1>{{ title() }}</h1>
-      <p>Count: {{ count() }}</p>
-    </div>
-  `,
-})
-export class SimpleComponent {
-  count = signal(0);
-  title = computed(() => `Count is ${this.count()}`);
-}
-```
-
-### 组件设计模式
-
-```typescript
-// 智能组件 (Smart Components)
-@Component({
-  selector: "app-employee-list",
-  template: `...`,
-  providers: [EmployeeService],
-})
-export class EmployeeListComponent {
-  // 业务逻辑和状态管理
-}
-
-// 展示组件 (Dumb Components)
-@Component({
-  selector: "app-employee-card",
-  template: `...`,
-  inputs: ["employee"],
-})
-export class EmployeeCardComponent {
-  @Input() employee!: Employee;
-  @Output() edit = new EventEmitter<Employee>();
-}
-```
-
-### 服务层设计
-
-```typescript
-@Injectable({
-  providedIn: "root",
-})
-export class EmployeeService {
-  private apiUrl = environment.apiUrl;
-
-  constructor(private http: HttpClient) {}
-
-  getEmployees(
-    params?: EmployeeSearchParams
-  ): Observable<PagedResult<Employee>> {
-    return this.http.get<PagedResult<Employee>>(`${this.apiUrl}/employees`, {
-      params,
-    });
-  }
-}
-```
 
 ---
 

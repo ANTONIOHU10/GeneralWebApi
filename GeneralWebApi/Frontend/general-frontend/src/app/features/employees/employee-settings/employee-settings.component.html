@@ -1,0 +1,146 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-settings/employee-settings.component.html -->
+<div class="page-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">settings</span>
+      Employee Settings
+    </h2>
+    <p>Configure employee management preferences and system settings</p>
+  </div>
+
+  <div class="page-content">
+    <div class="settings-sections">
+      <div class="settings-section">
+        <h3>General Settings</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" checked />
+              <span class="checkmark"></span>
+              Auto-generate employee ID
+            </label>
+            <p class="setting-description">
+              Automatically generate unique employee IDs for new employees
+            </p>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" checked />
+              <span class="checkmark"></span>
+              Send welcome email
+            </label>
+            <p class="setting-description">
+              Send welcome email to new employees upon creation
+            </p>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" />
+              <span class="checkmark"></span>
+              Require manager approval
+            </label>
+            <p class="setting-description">
+              Require manager approval for new employee additions
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Notification Settings</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" checked />
+              <span class="checkmark"></span>
+              Email notifications
+            </label>
+            <p class="setting-description">
+              Send email notifications for employee events
+            </p>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" checked />
+              <span class="checkmark"></span>
+              Birthday reminders
+            </label>
+            <p class="setting-description">
+              Send birthday reminders to managers
+            </p>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" />
+              <span class="checkmark"></span>
+              Contract expiry alerts
+            </label>
+            <p class="setting-description">
+              Alert when employee contracts are about to expire
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Data Management</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" checked />
+              <span class="checkmark"></span>
+              Auto-backup employee data
+            </label>
+            <p class="setting-description">
+              Automatically backup employee data daily
+            </p>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" />
+              <span class="checkmark"></span>
+              Archive inactive employees
+            </label>
+            <p class="setting-description">
+              Move inactive employees to archive after 1 year
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Access Control</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" checked />
+              <span class="checkmark"></span>
+              Restrict personal data access
+            </label>
+            <p class="setting-description">
+              Only HR and managers can view personal employee data
+            </p>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">
+              <input type="checkbox" />
+              <span class="checkmark"></span>
+              Require two-factor authentication
+            </label>
+            <p class="setting-description">
+              Require 2FA for accessing employee data
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn btn-secondary">Reset to Default</button>
+      <button class="btn btn-primary">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+
+

@@ -1,10 +1,10 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-select/base-select.component.ts
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 
 export interface SelectOption {
-  value: any;
+  value: unknown;
   label: string;
   disabled?: boolean;
   icon?: string;
@@ -17,12 +17,23 @@ export interface SelectOption {
   imports: [CommonModule, FormsModule],
   template: `
     <div class="base-select-container" [class]="containerClass">
-      <label *ngIf="label" class="select-label" [for]="selectId">
+      <label *ngIf="label" class="select-label" [id]="selectId + '-label'" [for]="selectId">
         {{ label }}
         <span *ngIf="required" class="required-asterisk">*</span>
       </label>
       
-      <div class="select-wrapper" [class]="wrapperClass" (click)="toggleDropdown()">
+      <div 
+        class="select-wrapper" 
+        [class]="wrapperClass" 
+        (click)="toggleDropdown()"
+        (keydown.enter)="toggleDropdown()"
+        (keydown.space)="toggleDropdown()"
+        tabindex="0"
+        role="button"
+        [attr.aria-expanded]="isOpen"
+        [attr.aria-haspopup]="'listbox'"
+        [attr.aria-labelledby]="label ? selectId + '-label' : null"
+      >
         <div class="select-display">
           <span *ngIf="selectedOption?.icon" class="option-icon material-icons">
             {{ selectedOption?.icon }}
@@ -44,7 +55,12 @@ export interface SelectOption {
             placeholder="Search..."
             [(ngModel)]="searchQuery"
             (input)="onSearchChange()"
+            (keydown.enter)="onSearchChange()"
+            (keydown.space)="onSearchChange()"
             class="search-input"
+            tabindex="0"
+            role="searchbox"
+            [attr.aria-label]="'Search options'"
           />
         </div>
         
@@ -57,6 +73,11 @@ export interface SelectOption {
               [class.selected]="isSelected(option)"
               [class.disabled]="option.disabled"
               (click)="selectOption(option)"
+              (keydown.enter)="selectOption(option)"
+              (keydown.space)="selectOption(option)"
+              tabindex="0"
+              role="option"
+              [attr.aria-selected]="isSelected(option)"
             >
               <span *ngIf="option.icon" class="option-icon material-icons">
                 {{ option.icon }}
@@ -333,7 +354,7 @@ export interface SelectOption {
     },
   ],
 })
-export class BaseSelectComponent implements ControlValueAccessor {
+export class BaseSelectComponent implements ControlValueAccessor, OnInit {
   @Input() label = '';
   @Input() placeholder = 'Select an option';
   @Input() options: SelectOption[] = [];
@@ -357,8 +378,13 @@ export class BaseSelectComponent implements ControlValueAccessor {
   filteredOptions: SelectOption[] = [];
   groupedOptions: { name: string; options: SelectOption[] }[] = [];
 
-  private onChange = (value: any) => {};
-  private onTouched = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private onChange = (_value: unknown) => {
+    // ControlValueAccessor implementation
+  };
+  private onTouched = () => {
+    // ControlValueAccessor implementation
+  };
 
   get containerClass(): string {
     const classes = [
@@ -459,12 +485,12 @@ export class BaseSelectComponent implements ControlValueAccessor {
   }
 
   // ControlValueAccessor implementation
-  writeValue(value: any): void {
+  writeValue(value: unknown): void {
     const option = this.options.find(opt => opt.value === value);
     this.selectedOption = option || null;
   }
 
-  registerOnChange(fn: (value: any) => void): void {
+  registerOnChange(fn: (value: unknown) => void): void {
     this.onChange = fn;
   }
 

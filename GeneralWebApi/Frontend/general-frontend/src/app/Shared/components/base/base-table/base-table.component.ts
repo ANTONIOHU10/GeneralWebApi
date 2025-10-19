@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-table/base-table.component.ts
-import { Component, Input, Output, EventEmitter, TemplateRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, TemplateRef, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -10,16 +10,16 @@ export interface TableColumn {
   width?: string;
   align?: 'left' | 'center' | 'right';
   type?: 'text' | 'number' | 'date' | 'boolean' | 'custom';
-  template?: TemplateRef<any>;
+  template?: TemplateRef<unknown>;
 }
 
 export interface TableAction {
   label: string;
   icon?: string;
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost';
-  disabled?: (item: any) => boolean;
-  visible?: (item: any) => boolean;
-  onClick: (item: any) => void;
+  disabled?: (item: unknown) => boolean;
+  visible?: (item: unknown) => boolean;
+  onClick: (item: unknown) => void;
 }
 
 export interface TableConfig {
@@ -563,10 +563,10 @@ export interface TableConfig {
     `,
   ],
 })
-export class BaseTableComponent {
+export class BaseTableComponent implements OnInit, OnChanges {
   @Input() title = '';
   @Input() subtitle = '';
-  @Input() data: any[] = [];
+  @Input() data: unknown[] = [];
   @Input() columns: TableColumn[] = [];
   @Input() actions: TableAction[] = [];
   @Input() config: TableConfig = {
@@ -585,7 +585,7 @@ export class BaseTableComponent {
   @Input() pageSize = 10;
   @Input() customClass = '';
 
-  @Output() rowClick = new EventEmitter<any>();
+  @Output() rowClick = new EventEmitter<unknown>();
   @Output() sortChange = new EventEmitter<{ column: string; direction: 'asc' | 'desc' }>();
   @Output() pageChange = new EventEmitter<number>();
 
@@ -593,8 +593,8 @@ export class BaseTableComponent {
   sortColumn = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   currentPage = 1;
-  filteredData: any[] = [];
-  paginatedData: any[] = [];
+  filteredData: unknown[] = [];
+  paginatedData: unknown[] = [];
 
   get containerClass(): string {
     const classes = [
@@ -689,16 +689,19 @@ export class BaseTableComponent {
     this.updateData();
   }
 
-  getValue(item: any, key: string): any {
-    return key.split('.').reduce((obj, k) => obj?.[k], item);
+  getValue(item: unknown, key: string): unknown {
+    return key.split('.').reduce((obj: unknown, k) => (obj as Record<string, unknown>)?.[k], item);
   }
 
-  formatDate(value: any): string {
+  formatDate(value: unknown): string {
     if (!value) return '';
-    return new Date(value).toLocaleDateString();
+    if (typeof value === 'string' || typeof value === 'number' || value instanceof Date) {
+      return new Date(value).toLocaleDateString();
+    }
+    return '';
   }
 
-  formatNumber(value: any): string {
+  formatNumber(value: unknown): string {
     if (value == null) return '';
     return Number(value).toLocaleString();
   }
@@ -708,13 +711,13 @@ export class BaseTableComponent {
     return this.sortDirection === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
   }
 
-  getRowClass(item: any, index: number): string {
+  getRowClass(item: unknown, index: number): string {
     const classes = [];
     if (this.config.striped && index % 2 === 1) classes.push('striped');
     return classes.join(' ');
   }
 
-  getVisibleActions(item: any): TableAction[] {
+  getVisibleActions(item: unknown): TableAction[] {
     return this.actions.filter(action => action.visible?.(item) !== false);
   }
 
@@ -741,9 +744,28 @@ export class BaseTableComponent {
         const aValue = this.getValue(a, this.sortColumn);
         const bValue = this.getValue(b, this.sortColumn);
         
-        if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
-        if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
-        return 0;
+        // Handle null/undefined values
+        if (aValue == null && bValue == null) return 0;
+        if (aValue == null) return this.sortDirection === 'asc' ? -1 : 1;
+        if (bValue == null) return this.sortDirection === 'asc' ? 1 : -1;
+        
+        // Type-safe comparison
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          const comparison = aValue.localeCompare(bValue);
+          return this.sortDirection === 'asc' ? comparison : -comparison;
+        }
+        
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+          if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+          return 0;
+        }
+        
+        // Fallback to string comparison
+        const aStr = String(aValue);
+        const bStr = String(bValue);
+        const comparison = aStr.localeCompare(bStr);
+        return this.sortDirection === 'asc' ? comparison : -comparison;
       });
     }
 

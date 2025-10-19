@@ -1,0 +1,127 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/add-employee/add-employee.component.html -->
+<div class="page-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">person_add</span>
+      Add New Employee
+    </h2>
+    <p>Create a new employee record in the system</p>
+  </div>
+
+  <div class="page-content">
+    <form class="employee-form">
+      <div class="form-section">
+        <h3>Personal Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Work Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="department">Department *</label>
+            <select
+              id="department"
+              name="department"
+              class="form-control"
+              required
+            >
+              <option value="">Select Department</option>
+              <option value="it">Information Technology</option>
+              <option value="hr">Human Resources</option>
+              <option value="finance">Finance</option>
+              <option value="marketing">Marketing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="position">Position *</label>
+            <select
+              id="position"
+              name="position"
+              class="form-control"
+              required
+            >
+              <option value="">Select Position</option>
+              <option value="developer">Developer</option>
+              <option value="manager">Manager</option>
+              <option value="analyst">Analyst</option>
+              <option value="specialist">Specialist</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="startDate">Start Date *</label>
+            <input
+              type="date"
+              id="startDate"
+              name="startDate"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="salary">Salary</label>
+            <input
+              type="number"
+              id="salary"
+              name="salary"
+              class="form-control"
+              step="0.01"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Employee</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+

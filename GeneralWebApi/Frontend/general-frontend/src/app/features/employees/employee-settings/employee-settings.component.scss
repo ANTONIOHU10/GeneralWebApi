@@ -1,0 +1,126 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-settings/employee-settings.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+// 使用全局样式类作为基础，添加自定义样式
+.page-container {
+  .page-header {
+    h2 {
+      .material-icons {
+        color: var(--color-warning); // 使用CSS变量
+      }
+    }
+  }
+
+  .page-content {
+    .settings-sections {
+      flex: 1;
+      background: var(--bg-surface);
+      overflow-y: auto;
+
+      .settings-section {
+        padding: $spacing-6;
+        border-bottom: 1px solid var(--border-primary);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        h3 {
+          margin: 0 0 $spacing-6 0;
+          color: var(--text-primary);
+          font-size: $font-size-lg;
+        }
+
+        .settings-group {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-6;
+        }
+
+        .setting-item {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-2;
+
+          .setting-label {
+            display: flex;
+            align-items: center;
+            gap: $spacing-3;
+            cursor: pointer;
+            font-weight: $font-weight-medium;
+            color: var(--text-primary);
+
+            input[type='checkbox'] {
+              display: none;
+            }
+
+            .checkmark {
+              width: 20px;
+              height: 20px;
+              border: 2px solid var(--border-primary);
+              border-radius: var(--border-radius-base);
+              position: relative;
+              transition: all $duration-200 $ease-in-out;
+            }
+
+            input[type='checkbox']:checked + .checkmark {
+              background: var(--color-primary-500);
+              border-color: var(--color-primary-500);
+            }
+
+            input[type='checkbox']:checked + .checkmark::after {
+              content: '✓';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              color: var(--color-white);
+              font-size: $font-size-xs;
+              font-weight: $font-weight-bold;
+            }
+          }
+
+          .setting-description {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: $font-size-sm;
+            margin-left: 2rem;
+          }
+        }
+      }
+
+      .settings-actions {
+        @include flex-between;
+        justify-content: flex-end;
+        gap: $spacing-4;
+        padding: $spacing-6;
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-primary);
+        margin-top: auto;
+
+        .btn {
+          @extend .btn;
+
+          &.btn-primary {
+            @extend .btn-primary;
+          }
+
+          &.btn-secondary {
+            @extend .btn-secondary;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式设计
+@include mobile-only {
+  .settings-actions {
+    flex-direction: column;
+  }
+}
+
+
+

@@ -1,0 +1,211 @@
+// ===========================================
+// Page Layout Components - Unified Page Styling
+// ===========================================
+
+@use '../core/variable' as *;
+@use '../core/mixin' as *;
+
+// Page Container
+.page-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+}
+
+// Page Header
+.page-header {
+  padding: $spacing-6 $spacing-6 $spacing-4 $spacing-6;
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+
+  h2 {
+    @include heading-style($font-size-2xl, $font-weight-semibold);
+    margin: 0 0 $spacing-2 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    .material-icons {
+      font-size: $font-size-2xl;
+      color: var(--color-primary-500);
+    }
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+}
+
+// Page Content
+.page-content {
+  flex: 1;
+  background: var(--bg-surface);
+  overflow: hidden;
+}
+
+// Content Area
+.content-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+// Tab Navigation
+.tab-navigation {
+  display: flex;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+  padding: 0 $spacing-6;
+  gap: $spacing-2;
+
+  .tab-button {
+    @include button-base;
+    padding: $spacing-4 $spacing-6;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    transition: all $duration-200 $ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    &.active {
+      color: var(--color-primary-500);
+      border-bottom-color: var(--color-primary-500);
+      background: var(--color-primary-50);
+    }
+
+    .material-icons {
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+// Tab Content
+.tab-content {
+  height: 100%;
+  padding: 0;
+}
+
+// Grid Layouts
+.grid {
+  @include grid;
+  gap: $spacing-6;
+  padding: $spacing-6;
+  flex: 1;
+  overflow-y: auto;
+
+  &--auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  &--auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+
+  &--cols-1 {
+    grid-template-columns: 1fr;
+  }
+
+  &--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include mobile-only {
+    grid-template-columns: 1fr;
+    padding: $spacing-4;
+  }
+}
+
+// Loading States
+.loading,
+.error,
+.empty-state {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-12;
+  color: var(--text-secondary);
+  flex: 1;
+
+  p {
+    margin-bottom: $spacing-4;
+    font-size: $font-size-lg;
+  }
+
+  .btn {
+    margin-top: $spacing-4;
+  }
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.empty-state {
+  p {
+    margin-bottom: $spacing-4;
+    font-size: $font-size-lg;
+  }
+}
+
+// Search Box
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+
+  .search-input {
+    padding: $spacing-3 $spacing-4;
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 200px;
+    color: var(--text-primary);
+
+    &::placeholder {
+      color: var(--text-tertiary);
+    }
+  }
+
+  .search-btn {
+    @include button-base;
+    padding: $spacing-3;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+
+    .material-icons {
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+
+

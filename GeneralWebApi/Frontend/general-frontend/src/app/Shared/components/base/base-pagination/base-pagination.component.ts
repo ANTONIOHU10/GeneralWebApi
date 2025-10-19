@@ -29,8 +29,9 @@ export interface PaginationConfig {
 
       <!-- Page Size Selector -->
       <div class="page-size-selector" *ngIf="config.showPageSize">
-        <label class="page-size-label">Show:</label>
+        <label class="page-size-label" for="page-size-select">Show:</label>
         <select
+          id="page-size-select"
           [value]="pageSize"
           (change)="onPageSizeChange($event)"
           class="page-size-select"
@@ -106,8 +107,9 @@ export interface PaginationConfig {
 
       <!-- Quick Jump -->
       <div class="quick-jump" *ngIf="showQuickJump">
-        <label class="jump-label">Go to:</label>
+        <label class="jump-label" for="jump-input">Go to:</label>
         <input
+          id="jump-input"
           type="number"
           [min]="1"
           [max]="totalPages"
@@ -472,7 +474,7 @@ export class BasePaginationComponent implements OnChanges {
     } else {
       // Calculate start and end pages
       let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
-      let end = Math.min(this.totalPages, start + maxVisible - 1);
+      const end = Math.min(this.totalPages, start + maxVisible - 1);
 
       // Adjust start if we're near the end
       if (end - start + 1 < maxVisible) {

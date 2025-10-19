@@ -395,7 +395,7 @@ export class BaseToastComponent implements OnInit, OnDestroy {
   @Output() toastRemoved = new EventEmitter<string>();
 
   toasts: ToastData[] = [];
-  private timers = new Map<string, any>();
+  private timers = new Map<string, number>();
 
   get containerClass(): string {
     const classes = [
@@ -408,6 +408,11 @@ export class BaseToastComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Initialize toast service if needed
+    this.setupToastService();
+  }
+
+  private setupToastService(): void {
+    // Toast service initialization logic
   }
 
   ngOnDestroy(): void {
