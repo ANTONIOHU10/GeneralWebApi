@@ -9,119 +9,102 @@
   </div>
 
   <div class="page-content">
-    <form class="employee-form">
+    <form class="employee-form" (ngSubmit)="onSubmit()">
       <div class="form-section">
         <h3>Personal Information</h3>
         <div class="form-row">
-          <div class="form-group">
-            <label for="firstName">First Name *</label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="lastName">Last Name *</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              class="form-control"
-              required
-            />
-          </div>
+          <app-base-input
+            [label]="'First Name'"
+            [required]="true"
+            [placeholder]="'Enter first name'"
+            [(ngModel)]="employeeForm.firstName"
+            name="firstName">
+          </app-base-input>
+          
+          <app-base-input
+            [label]="'Last Name'"
+            [required]="true"
+            [placeholder]="'Enter last name'"
+            [(ngModel)]="employeeForm.lastName"
+            name="lastName">
+          </app-base-input>
         </div>
+        
         <div class="form-row">
-          <div class="form-group">
-            <label for="email">Email *</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              class="form-control"
-            />
-          </div>
+          <app-base-input
+            [label]="'Email'"
+            [type]="'email'"
+            [required]="true"
+            [placeholder]="'Enter email address'"
+            [(ngModel)]="employeeForm.email"
+            name="email">
+          </app-base-input>
+          
+          <app-base-input
+            [label]="'Phone'"
+            [type]="'tel'"
+            [placeholder]="'Enter phone number'"
+            [(ngModel)]="employeeForm.phone"
+            name="phone">
+          </app-base-input>
         </div>
       </div>
 
       <div class="form-section">
         <h3>Work Information</h3>
         <div class="form-row">
-          <div class="form-group">
-            <label for="department">Department *</label>
-            <select
-              id="department"
-              name="department"
-              class="form-control"
-              required
-            >
-              <option value="">Select Department</option>
-              <option value="it">Information Technology</option>
-              <option value="hr">Human Resources</option>
-              <option value="finance">Finance</option>
-              <option value="marketing">Marketing</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="position">Position *</label>
-            <select
-              id="position"
-              name="position"
-              class="form-control"
-              required
-            >
-              <option value="">Select Position</option>
-              <option value="developer">Developer</option>
-              <option value="manager">Manager</option>
-              <option value="analyst">Analyst</option>
-              <option value="specialist">Specialist</option>
-            </select>
-          </div>
+          <app-base-select
+            [label]="'Department'"
+            [required]="true"
+            [placeholder]="'Select Department'"
+            [options]="departments"
+            [(ngModel)]="employeeForm.department"
+            name="department">
+          </app-base-select>
+          
+          <app-base-input
+            [label]="'Position'"
+            [required]="true"
+            [placeholder]="'Enter job position'"
+            [(ngModel)]="employeeForm.position"
+            name="position">
+          </app-base-input>
         </div>
+        
         <div class="form-row">
-          <div class="form-group">
-            <label for="startDate">Start Date *</label>
-            <input
-              type="date"
-              id="startDate"
-              name="startDate"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="salary">Salary</label>
-            <input
-              type="number"
-              id="salary"
-              name="salary"
-              class="form-control"
-              step="0.01"
-            />
-          </div>
+          <app-base-input
+            [label]="'Start Date'"
+            [type]="'date'"
+            [required]="true"
+            [(ngModel)]="employeeForm.startDate"
+            name="startDate">
+          </app-base-input>
+          
+          <app-base-input
+            [label]="'Salary'"
+            [type]="'number'"
+            [placeholder]="'Enter salary amount'"
+            [step]="0.01"
+            [(ngModel)]="employeeForm.salary"
+            name="salary">
+          </app-base-input>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn btn-secondary">Cancel</button>
-        <button type="submit" class="btn btn-primary">Add Employee</button>
+        <app-base-button
+          [variant]="'secondary'"
+          [text]="'Cancel'"
+          [type]="'button'"
+          (click)="onCancel()">
+        </app-base-button>
+        
+        <app-base-button
+          [variant]="'primary'"
+          [text]="'Add Employee'"
+          [type]="'submit'">
+        </app-base-button>
       </div>
     </form>
   </div>
 </div>
-
-
-

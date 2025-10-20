@@ -25,6 +25,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/f
           [placeholder]="placeholder"
           [disabled]="disabled"
           [readonly]="readonly"
+          [step]="step"
           [ngModel]="value"
           [class]="inputClass"
           (ngModelChange)="onInput($event)"
@@ -267,7 +268,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/f
 export class BaseInputComponent implements ControlValueAccessor {
   @Input() label = '';
   @Input() placeholder = '';
-  @Input() type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' = 'text';
+  @Input() type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'datetime-local' | 'time' = 'text';
+  @Input() step: string | number = '';
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() variant: 'outlined' | 'filled' | 'underlined' = 'outlined';
   @Input() disabled = false;
