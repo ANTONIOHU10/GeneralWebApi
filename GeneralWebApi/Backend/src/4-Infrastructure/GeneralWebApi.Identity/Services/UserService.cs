@@ -4,7 +4,9 @@ using System.Security.Cryptography;
 using GeneralWebApi.Caching.Services;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Enums;
-using GeneralWebApi.Integration.Repository;
+using GeneralWebApi.Domain.Entities.Anagraphy;
+using GeneralWebApi.Integration.Repository.BasesRepository;
+using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.Logging.Templates;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -17,7 +19,9 @@ public class UserService : IUserService
     private readonly ILoggingService _logger;
 
     private readonly IUserRepository _userRepository;
+    private readonly IEmployeeRepository _employeeRepository;
     private readonly IRedisCacheService _cacheService;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
 
     // need to save the refresh token in static, because it's a random byte array
     // but access token is a decoded string, it contains all users' information to be validated
@@ -27,12 +31,14 @@ public class UserService : IUserService
     private static readonly ConcurrentDictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
     // the registration of the UserService is in the ServiceCollectionExtensions.cs file
-    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository, IRedisCacheService cacheService)
+    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository, IEmployeeRepository employeeRepository, IRedisCacheService cacheService, IRefreshTokenRepository refreshTokenRepository)
     {
         _jwtService = jwtService;
         _logger = logger;
         _userRepository = userRepository;
+        _employeeRepository = employeeRepository;
         _cacheService = cacheService;
+        _refreshTokenRepository = refreshTokenRepository;
     }
 
     public async Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password)
@@ -54,10 +60,8 @@ public class UserService : IUserService
             var accessToken = _jwtService.GenerateAccessToken(claims.Claims);
             var refreshToken = _jwtService.GenerateRefreshToken();
 
-            // store the refresh token
-            //_refreshTokens.TryAdd(refreshToken, (username, DateTime.UtcNow.AddDays(7)));
-
-            await _cacheService.SetAsync($"refreshToken:{refreshToken}", username, TimeSpan.FromDays(7));
+            // Store refresh token in both cache and database for redundancy
+            await StoreRefreshTokenAsync(refreshToken, username, claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty);
 
             _logger.LogInformation(LogTemplates.Identity.UserLoginSuccess, username);
             return (true, accessToken, refreshToken);
@@ -75,32 +79,29 @@ public class UserService : IUserService
         {
             _logger.LogInformation(LogTemplates.Identity.TokenRefreshAttempt);
 
-            // 从 Redis 获取 refresh token 信息
-            var userId = await _cacheService.GetAsync<string>($"refreshToken:{refreshToken}");
-            if (string.IsNullOrEmpty(userId))
+            // Try to validate refresh token from cache first, then database
+            var tokenInfo = await GetRefreshTokenInfoAsync(refreshToken);
+            if (tokenInfo == null)
             {
                 _logger.LogWarning(LogTemplates.Identity.InvalidRefreshToken);
                 return (false, null, null);
             }
 
-            var claims = await GetUserClaimsAsync(userId);
+            var claims = await GetUserClaimsAsync(tokenInfo.Value.Username);
             if (claims == null)
             {
                 return (false, null, null);
             }
 
-            // generate a new access token
+            // Generate a new access token
             var accessToken = _jwtService.GenerateAccessToken(claims.Claims);
-            _logger.LogInformation(LogTemplates.Identity.TokenRefreshSuccess, userId);
+            _logger.LogInformation(LogTemplates.Identity.TokenRefreshSuccess, tokenInfo.Value.Username);
 
-            // update the refresh token
+            // Generate a new refresh token
             var newRefreshToken = _jwtService.GenerateRefreshToken();
 
-            // remove the old refresh token
-            await _cacheService.RemoveAsync($"refreshToken:{refreshToken}");
-
-            // store the new refresh token
-            await _cacheService.SetAsync($"refreshToken:{newRefreshToken}", userId, TimeSpan.FromDays(7));
+            // Store the new refresh token and remove the old one
+            await ReplaceRefreshTokenAsync(refreshToken, newRefreshToken, tokenInfo.Value.Username, tokenInfo.Value.UserId);
 
             return (true, accessToken, newRefreshToken);
         }
@@ -115,15 +116,30 @@ public class UserService : IUserService
     {
         try
         {
-            // first check if the refresh token is in the cache
-            var userId = await _cacheService.GetAsync<string>($"refreshToken:{refreshToken}");
-            if (userId != null)
+            // Try to revoke refresh token from both cache and database
+            var tokenInfo = await GetRefreshTokenInfoAsync(refreshToken);
+            if (tokenInfo != null)
             {
-                // remove the refresh token from the cache
-                await _cacheService.RemoveAsync($"refreshToken:{refreshToken}");
-                _logger.LogInformation(LogTemplates.Identity.UserLogout, userId);
+                // Remove from cache if available
+                if (_cacheService.IsCacheAvailable())
+                {
+                    try
+                    {
+                        await _cacheService.RemoveAsync($"refreshToken:{refreshToken}");
+                    }
+                    catch (Exception cacheEx)
+                    {
+                        _logger.LogWarning("Failed to remove refresh token from cache: {Error}", cacheEx.Message);
+                    }
+                }
+
+                // Revoke from database
+                await _refreshTokenRepository.RevokeTokenAsync(refreshToken);
+                _logger.LogInformation(LogTemplates.Identity.UserLogout, tokenInfo.Value.Username);
                 return true;
             }
+
+            _logger.LogWarning("Refresh token not found for logout: {Token}", refreshToken);
             return false;
         }
         catch (Exception ex)
@@ -140,31 +156,39 @@ public class UserService : IUserService
         {
             _logger.LogInformation(LogTemplates.Identity.GetUserClaimsAttempt, userName);
 
-            // Try to get cached user info first
-            var cachedUserInfo = await _cacheService.GetAsync<CachedUserInfo>($"user_info:{userName}");
-            if (cachedUserInfo != null)
+            // Try to get cached user info first (only if cache is available)
+            if (_cacheService.IsCacheAvailable())
             {
-                _logger.LogInformation(LogTemplates.Identity.GetUserClaimsFromCache, userName);
-
-                // Rebuild ClaimsPrincipal from cached info
-                var cachedClaims = new List<Claim>
+                var cachedUserInfo = await _cacheService.GetAsync<CachedUserInfo>($"user_info:{userName}");
+                if (cachedUserInfo != null)
                 {
-                    new(ClaimTypes.NameIdentifier, cachedUserInfo.UserId),
-                    new(ClaimTypes.Name, cachedUserInfo.Username),
-                    new(ClaimTypes.Email, cachedUserInfo.Email),
-                    new(ClaimTypes.AuthenticationMethod, "JWT"),
-                    new(ClaimTypes.Role, cachedUserInfo.Role)
-                };
+                    _logger.LogInformation(LogTemplates.Identity.GetUserClaimsFromCache, userName);
 
-                var cachedIdentity = new ClaimsIdentity(cachedClaims, "JWT");
-                return new ClaimsPrincipal(cachedIdentity);
+                    // Rebuild ClaimsPrincipal from cached info
+                    var cachedClaims = new List<Claim>
+                    {
+                        new(ClaimTypes.NameIdentifier, cachedUserInfo.UserId),
+                        new(ClaimTypes.Name, cachedUserInfo.Username),
+                        new(ClaimTypes.Email, cachedUserInfo.Email),
+                        new(ClaimTypes.AuthenticationMethod, "JWT"),
+                        new(ClaimTypes.Role, cachedUserInfo.Role)
+                    };
+
+                    var cachedIdentity = new ClaimsIdentity(cachedClaims, "JWT");
+                    return new ClaimsPrincipal(cachedIdentity);
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Cache is not available, falling back to database for user claims: {UserName}", userName);
             }
 
-            // Get user from database
+            // Get user from database (fallback when cache is unavailable or cache miss)
             _logger.LogInformation(LogTemplates.Identity.GetUserClaimsFromDatabase, userName);
             var user = await _userRepository.GetByNameAsync(userName);
             if (user == null)
             {
+                _logger.LogWarning("User not found in database: {UserName}", userName);
                 return null;
             }
 
@@ -181,24 +205,34 @@ public class UserService : IUserService
             var identity = new ClaimsIdentity(claims, "JWT");
             var claimsPrincipal = new ClaimsPrincipal(identity);
 
-            // Cache simplified user info (not ClaimsPrincipal to avoid circular reference)
-            var userInfoToCache = new CachedUserInfo
+            // Try to cache the user info (only if cache is available)
+            if (_cacheService.IsCacheAvailable())
             {
-                UserId = user.Id.ToString(),
-                Username = user.Name,
-                Email = user.Email,
-                Role = user.Role
-            };
+                try
+                {
+                    var userInfoToCache = new CachedUserInfo
+                    {
+                        UserId = user.Id.ToString(),
+                        Username = user.Name,
+                        Email = user.Email,
+                        Role = user.Role
+                    };
 
-            const int cacheExpiryMinutes = 60;
-            await _cacheService.SetAsync($"user_info:{userName}", userInfoToCache, TimeSpan.FromMinutes(cacheExpiryMinutes));
-            _logger.LogInformation(LogTemplates.Identity.UserClaimsCached, userName, cacheExpiryMinutes);
+                    const int cacheExpiryMinutes = 60;
+                    await _cacheService.SetAsync($"user_info:{userName}", userInfoToCache, TimeSpan.FromMinutes(cacheExpiryMinutes));
+                    _logger.LogInformation(LogTemplates.Identity.UserClaimsCached, userName, cacheExpiryMinutes);
+                }
+                catch (Exception cacheEx)
+                {
+                    _logger.LogWarning("Failed to cache user claims for {UserName}: {Error}", userName, cacheEx.Message);
+                    // Continue without caching - this is not a critical failure
+                }
+            }
 
             return claimsPrincipal;
         }
         catch (Exception ex)
         {
-            // Check the cache service first
             _logger.LogError(LogTemplates.Identity.GetUserClaimsError, userName, ex.Message);
             return null;
         }
@@ -259,15 +293,22 @@ public class UserService : IUserService
             // Log registration attempt
             _logger.LogInformation(LogTemplates.Identity.UserRegistrationAttempt, username, email);
 
-            // Check if email already exists
+            // Check if email already exists in User table
             _logger.LogInformation(LogTemplates.Identity.CheckingEmailExists, email);
-            var emailExists = await _userRepository.ExistsByEmailAsync(email);
-            _logger.LogInformation(LogTemplates.Identity.EmailExistsResult, email, emailExists);
+            var userEmailExists = await _userRepository.ExistsByEmailAsync(email);
+            _logger.LogInformation(LogTemplates.Identity.EmailExistsResult, email, userEmailExists);
+
+            // Check if email already exists in Employee table
+            var employeeEmailExists = await _employeeRepository.ExistsByEmailAsync(email);
+            _logger.LogInformation("Checking if email exists in Employee table: {Email}, Exists: {Exists}", email, employeeEmailExists);
 
             // Check if username already exists
             _logger.LogInformation(LogTemplates.Identity.CheckingUsernameExists, username);
             var usernameExists = await _userRepository.ExistsByNameAsync(username);
             _logger.LogInformation(LogTemplates.Identity.UsernameExistsResult, username, usernameExists);
+
+            // Check if email exists in either User or Employee table
+            var emailExists = userEmailExists || employeeEmailExists;
 
             // Handle different existence scenarios with specific logging and error messages
             if (emailExists && usernameExists)
@@ -295,6 +336,9 @@ public class UserService : IUserService
             _logger.LogInformation(LogTemplates.Identity.PasswordHashGenerated, username);
             var passwordHash = GeneratePasswordHash(password);
 
+            // Generate unique employee number
+            var employeeNumber = await GenerateUniqueEmployeeNumberAsync();
+
             // Create user object
             var user = new User
             {
@@ -308,14 +352,34 @@ public class UserService : IUserService
             // Log user creation start
             _logger.LogInformation(LogTemplates.Identity.UserCreationStarted, username, email, user.Role);
 
-            // Save to database
+            // Save user to database
             await _userRepository.RegisterUserAsync(user);
+
+            // Create basic Employee record
+            var employee = new Employee
+            {
+                FirstName = username, // Use username as default first name
+                LastName = "", // Can be updated later
+                Email = email,
+                EmployeeNumber = employeeNumber,
+                HireDate = DateTime.UtcNow,
+                EmploymentStatus = "Active",
+                EmploymentType = "FullTime",
+                CreatedBy = "System"
+            };
+
+            // Save Employee to database
+            await _employeeRepository.AddAsync(employee);
+
+            // Update User with EmployeeId
+            user.EmployeeId = employee.Id;
+            await _userRepository.UpdateAsync(user);
 
             // Log successful completion
             _logger.LogInformation(LogTemplates.Identity.UserCreationCompleted, username, user.Id);
             _logger.LogInformation(LogTemplates.Identity.UserRegistration, username);
 
-            return (true, "User registered successfully");
+            return (true, "User registered successfully with basic employee information");
         }
         catch (Exception ex)
         {
@@ -340,6 +404,43 @@ public class UserService : IUserService
 
         // return the salt and the hashed password together
         return $"{Convert.ToBase64String(salt)}:{hashed}";
+    }
+
+    /// <summary>
+    /// Generate unique employee number using fixed prefix + GUID
+    /// </summary>
+    private string GenerateEmployeeNumber()
+    {
+        // Use fixed prefix "EMP" + first 8 characters of GUID (uppercase)
+        return $"EMP{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+    }
+
+    /// <summary>
+    /// Generate unique employee number with collision checking
+    /// Using GUID-based generation, collisions are extremely unlikely but we keep the check as safety measure
+    /// </summary>
+    private async Task<string> GenerateUniqueEmployeeNumberAsync()
+    {
+        string employeeNumber;
+        bool exists;
+        int attempts = 0;
+        const int maxAttempts = 5; // Reduced attempts since GUID collision is extremely rare
+
+        do
+        {
+            employeeNumber = GenerateEmployeeNumber();
+            exists = await _employeeRepository.ExistsByEmployeeNumberAsync(employeeNumber);
+            attempts++;
+
+            if (attempts >= maxAttempts)
+            {
+                throw new InvalidOperationException("Unable to generate unique employee number after maximum attempts");
+            }
+
+            // No delay needed with GUID-based generation
+        } while (exists);
+
+        return employeeNumber;
     }
 
     public async Task<bool> UpdatePasswordAsync(string username, string newPassword)
@@ -370,7 +471,127 @@ public class UserService : IUserService
         }
     }
 
+    /// <summary>
+    /// Store refresh token in both cache and database for redundancy
+    /// </summary>
+    private async Task StoreRefreshTokenAsync(string refreshToken, string username, string userId)
+    {
+        var expiresAt = DateTime.UtcNow.AddDays(7);
 
+        // Store in database
+        var refreshTokenEntity = new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            Token = refreshToken,
+            UserId = int.Parse(userId),
+            Username = username,
+            ExpiresAt = expiresAt,
+            CreatedAt = DateTime.UtcNow,
+            LastUsedAt = DateTime.UtcNow
+        };
+
+        await _refreshTokenRepository.AddAsync(refreshTokenEntity);
+
+        // Store in cache if available
+        if (_cacheService.IsCacheAvailable())
+        {
+            try
+            {
+                await _cacheService.SetAsync($"refreshToken:{refreshToken}", username, TimeSpan.FromDays(7));
+            }
+            catch (Exception cacheEx)
+            {
+                _logger.LogWarning("Failed to store refresh token in cache: {Error}", cacheEx.Message);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Get refresh token information from cache or database
+    /// </summary>
+    private async Task<(string Username, string UserId)?> GetRefreshTokenInfoAsync(string refreshToken)
+    {
+        // Try cache first if available
+        if (_cacheService.IsCacheAvailable())
+        {
+            try
+            {
+                var username = await _cacheService.GetAsync<string>($"refreshToken:{refreshToken}");
+                if (!string.IsNullOrEmpty(username))
+                {
+                    // Get user ID from database
+                    var user = await _userRepository.GetByNameAsync(username);
+                    if (user != null)
+                    {
+                        return (username, user.Id.ToString());
+                    }
+                }
+            }
+            catch (Exception cacheEx)
+            {
+                _logger.LogWarning("Failed to get refresh token from cache: {Error}", cacheEx.Message);
+            }
+        }
+
+        // Fallback to database
+        var tokenEntity = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+        if (tokenEntity != null && tokenEntity.ExpiresAt > DateTime.UtcNow && !tokenEntity.IsRevoked)
+        {
+            // Update last used time
+            tokenEntity.LastUsedAt = DateTime.UtcNow;
+            await _refreshTokenRepository.UpdateAsync(tokenEntity);
+
+            return (tokenEntity.Username, tokenEntity.UserId.ToString());
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Replace old refresh token with new one in both cache and database
+    /// </summary>
+    private async Task ReplaceRefreshTokenAsync(string oldToken, string newToken, string username, string userId)
+    {
+        var expiresAt = DateTime.UtcNow.AddDays(7);
+
+        // Update database
+        var oldTokenEntity = await _refreshTokenRepository.GetByTokenAsync(oldToken);
+        if (oldTokenEntity != null)
+        {
+            // Revoke old token
+            await _refreshTokenRepository.RevokeTokenAsync(oldToken);
+
+            // Add new token
+            var newTokenEntity = new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                Token = newToken,
+                UserId = int.Parse(userId),
+                Username = username,
+                ExpiresAt = expiresAt,
+                CreatedAt = DateTime.UtcNow,
+                LastUsedAt = DateTime.UtcNow
+            };
+
+            await _refreshTokenRepository.AddAsync(newTokenEntity);
+        }
+
+        // Update cache if available
+        if (_cacheService.IsCacheAvailable())
+        {
+            try
+            {
+                // Remove old token from cache
+                await _cacheService.RemoveAsync($"refreshToken:{oldToken}");
+                // Add new token to cache
+                await _cacheService.SetAsync($"refreshToken:{newToken}", username, TimeSpan.FromDays(7));
+            }
+            catch (Exception cacheEx)
+            {
+                _logger.LogWarning("Failed to update refresh token in cache: {Error}", cacheEx.Message);
+            }
+        }
+    }
 }
 
 // 新增简化的用户信息类

@@ -1,0 +1,522 @@
+// ===========================================
+// Login Component Styles - Using Design System
+// ===========================================
+
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+// Login Container
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $primary-500 0%, $secondary-500 100%);
+  @include flex-center;
+  position: relative;
+  overflow: hidden;
+  padding: $spacing-4;
+}
+
+// Background Decoration
+.background-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba($white, 0.1);
+    animation: float 6s ease-in-out infinite;
+
+    &.circle-1 {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    &.circle-2 {
+      width: 150px;
+      height: 150px;
+      top: 60%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+
+    &.circle-3 {
+      width: 100px;
+      height: 100px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 4s;
+    }
+  }
+}
+
+// Main Content Area
+.login-content {
+  @include grid(2, $spacing-0);
+  max-width: 1200px;
+  width: 100%;
+  background: rgba($white, 0.95);
+  border-radius: $border-radius-2xl;
+  box-shadow: $shadow-xl;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  min-height: 600px;
+  position: relative;
+  z-index: 2;
+
+  @include mobile-only {
+    @include grid(1, $spacing-0);
+    margin: $spacing-2;
+    min-height: auto;
+  }
+}
+
+// Brand Section
+.brand-section {
+  background: linear-gradient(135deg, $primary-500 0%, $secondary-500 100%);
+  padding: $spacing-12;
+  @include flex-column-center;
+  text-align: center;
+  color: $white;
+  position: relative;
+
+  @include mobile-only {
+    padding: $spacing-8;
+    min-height: 300px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+  }
+}
+
+.brand-logo {
+  position: relative;
+  z-index: 1;
+  margin-bottom: $spacing-8;
+
+  .logo-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba($white, 0.2);
+    border-radius: $border-radius-xl;
+    @include flex-center;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    margin: 0 auto $spacing-4;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba($white, 0.3);
+  }
+
+  .brand-title {
+    @include heading-style($font-size-4xl, $font-weight-bold, $white);
+    margin-bottom: $spacing-2;
+    letter-spacing: -1px;
+
+    @include mobile-only {
+      font-size: $font-size-3xl;
+    }
+  }
+
+  .brand-subtitle {
+    font-size: $font-size-lg;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: $font-weight-light;
+  }
+}
+
+.features-list {
+  position: relative;
+  z-index: 1;
+  margin-top: $spacing-8;
+
+  .feature-item {
+    @include flex-center;
+    justify-content: flex-start;
+    margin-bottom: $spacing-4;
+    font-size: $font-size-base;
+    opacity: 0.9;
+
+    .feature-icon {
+      font-size: $font-size-xl;
+      margin-right: $spacing-4;
+      width: 40px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// Login Form Section
+.login-form-section {
+  padding: $spacing-12;
+  @include flex-center;
+
+  @include mobile-only {
+    padding: $spacing-8;
+  }
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: $spacing-8;
+
+  h2 {
+    @include heading-style($font-size-3xl, $font-weight-semibold, $gray-900);
+    margin-bottom: $spacing-2;
+  }
+
+  p {
+    color: $gray-600;
+    margin: 0;
+    font-size: $font-size-base;
+  }
+}
+
+// Form Styles using Design System
+.login-form {
+  .form-example__group {
+    margin-bottom: $spacing-6;
+  }
+
+  .form-example__input {
+    @include input-base;
+    padding-left: $spacing-12;
+    background-color: $gray-50;
+    border: 2px solid $gray-200;
+    border-radius: $border-radius-xl;
+    font-size: $font-size-base;
+    transition: all $duration-300 $ease-in-out;
+
+    &:focus {
+      border-color: $primary-500;
+      background-color: $white;
+      box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+    }
+
+    &::placeholder {
+      color: $gray-400;
+    }
+  }
+
+  .input-icon {
+    position: absolute;
+    left: $spacing-4;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: $font-size-lg;
+    color: $gray-400;
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.form-options {
+  @include flex-between;
+  margin-bottom: $spacing-8;
+
+  .checkbox-wrapper {
+    @include flex-center;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    color: $gray-600;
+
+    input[type='checkbox'] {
+      margin-right: $spacing-2;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .forgot-link {
+    color: $primary-500;
+    text-decoration: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    transition: color $duration-200 $ease-in-out;
+
+    &:hover {
+      color: $primary-600;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Button using Design System
+.login-button {
+  @include button-base;
+  @include button-size($button-height-lg, $spacing-6);
+  width: 100%;
+  background: linear-gradient(135deg, $primary-500 0%, $secondary-500 100%);
+  color: $white;
+  border: none;
+  border-radius: $border-radius-xl;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  position: relative;
+  overflow: hidden;
+  transition: all $duration-300 $ease-in-out;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &.loading {
+    .loading-spinner {
+      @include flex-center;
+      gap: $spacing-2;
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba($white, 0.3);
+        border-top: 2px solid $white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+}
+
+// Error Message using Design System
+.error-message {
+  @include flex-center;
+  justify-content: flex-start;
+  gap: $spacing-2;
+  padding: $spacing-4;
+  background-color: $error-50;
+  border: 1px solid $error-200;
+  border-radius: $border-radius-lg;
+  color: $error-700;
+  margin-top: $spacing-4;
+  font-size: $font-size-sm;
+  @include slide-up;
+
+  .error-icon {
+    font-size: $font-size-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: $spacing-8;
+  padding-top: $spacing-4;
+  border-top: 1px solid $gray-200;
+
+  p {
+    margin: 0;
+    color: $gray-600;
+    font-size: $font-size-sm;
+  }
+
+  .signup-link {
+    color: $primary-500;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    transition: color $duration-200 $ease-in-out;
+
+    &:hover {
+      color: $primary-600;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Animations
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Dark Theme Support
+.dark-theme {
+  .login-container {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500) 0%,
+      var(--color-secondary-500) 100%
+    );
+  }
+
+  .login-content {
+    background: rgba(var(--bg-surface), 0.95);
+  }
+
+  .brand-section {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500) 0%,
+      var(--color-secondary-500) 100%
+    );
+  }
+
+  .form-header h2 {
+    color: var(--text-primary);
+  }
+
+  .form-header p {
+    color: var(--text-secondary);
+  }
+
+  .form-example__input {
+    background-color: var(--input-bg);
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+
+    &:focus {
+      border-color: var(--border-focus);
+      background-color: var(--bg-surface);
+    }
+
+    &::placeholder {
+      color: var(--text-tertiary);
+    }
+  }
+
+  .input-icon {
+    color: var(--text-tertiary);
+  }
+
+  .form-options .checkbox-wrapper {
+    color: var(--text-secondary);
+  }
+
+  .form-options .forgot-link {
+    color: var(--color-primary-500);
+
+    &:hover {
+      color: var(--color-primary-600);
+    }
+  }
+
+  .login-button {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500) 0%,
+      var(--color-secondary-500) 100%
+    );
+  }
+
+  .error-message {
+    background-color: var(--color-error-light);
+    border-color: var(--color-error);
+    color: var(--color-error);
+  }
+
+  .form-footer {
+    border-top-color: var(--border-primary);
+
+    p {
+      color: var(--text-secondary);
+    }
+
+    .signup-link {
+      color: var(--color-primary-500);
+
+      &:hover {
+        color: var(--color-primary-600);
+      }
+    }
+  }
+}
+
+// Responsive Design
+@include mobile-only {
+  .login-content {
+    grid-template-columns: 1fr;
+    margin: $spacing-2;
+    min-height: auto;
+  }
+
+  .brand-section {
+    padding: $spacing-8;
+    min-height: 300px;
+  }
+
+  .login-form-section {
+    padding: $spacing-8;
+  }
+
+  .brand-title {
+    font-size: $font-size-3xl;
+  }
+}
+
+// Accessibility Improvements
+.login-button:focus-visible {
+  outline: 2px solid $primary-500;
+  outline-offset: 2px;
+}
+
+.form-example__input:focus-visible {
+  outline: 2px solid $primary-500;
+  outline-offset: 2px;
+}
+
+// Print Styles
+@media print {
+  .login-container {
+    background: none !important;
+  }
+
+  .background-decoration {
+    display: none;
+  }
+
+  .login-content {
+    box-shadow: none;
+    border: 1px solid $gray-300;
+  }
+
+  .brand-section {
+    background: none !important;
+    color: $gray-900 !important;
+  }
+}

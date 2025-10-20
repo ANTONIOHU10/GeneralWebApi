@@ -1,4 +1,4 @@
-using GeneralWebApi.Application.Mappings;
+using GeneralWebApi.Contracts.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GeneralWebApi.Contracts.Extensions;

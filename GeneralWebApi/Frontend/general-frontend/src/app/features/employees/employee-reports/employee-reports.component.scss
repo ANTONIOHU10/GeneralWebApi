@@ -1,0 +1,161 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-reports/employee-reports.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+// 使用全局样式类作为基础，添加自定义样式
+.page-container {
+  .page-header {
+    h2 {
+      .material-icons {
+        color: var(--color-primary-500); // 使用CSS变量
+      }
+    }
+  }
+
+  .page-content {
+    .grid {
+      
+      .report-card {
+        @include card-base; // 使用全局卡片混入
+        text-align: center;
+        transition: all $duration-200 $ease-in-out;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-lg);
+        }
+
+        .report-icon {
+          font-size: 2.5rem;
+          margin-bottom: $spacing-4;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-tertiary);
+        }
+
+        h3 {
+          margin: 0 0 $spacing-2 0;
+          color: var(--text-primary);
+          font-size: $font-size-lg;
+        }
+
+        p {
+          margin: 0 0 $spacing-6 0;
+          color: var(--text-secondary);
+          font-size: $font-size-sm;
+        }
+
+        .btn {
+          padding: $spacing-2 $spacing-4;
+          background: var(--color-primary-500);
+          color: var(--color-white);
+          border: 1px solid var(--color-primary-500);
+          border-radius: var(--border-radius-base);
+          font-size: $font-size-sm;
+          font-weight: $font-weight-medium;
+          cursor: pointer;
+          transition: all $duration-200 $ease-in-out;
+
+          &:hover:not(:disabled) {
+            background: var(--color-primary-600);
+            border-color: var(--color-primary-600);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .recent-reports {
+      margin: 0 $spacing-6 $spacing-6 $spacing-6;
+
+      h3 {
+        margin: 0 0 $spacing-4 0;
+        color: var(--text-primary);
+        padding: 0 $spacing-4;
+      }
+
+      .report-list {
+        @include card-base; // 使用全局卡片混入
+        overflow: hidden;
+
+        .report-item {
+          @include flex-between;
+          padding: $spacing-4 $spacing-6;
+          border-bottom: 1px solid var(--border-primary);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .report-info {
+            h4 {
+              margin: 0 0 $spacing-1 0;
+              color: var(--text-primary);
+              font-size: $font-size-base;
+            }
+
+            p {
+              margin: 0;
+              color: var(--text-secondary);
+              font-size: $font-size-sm;
+            }
+          }
+
+          .report-actions {
+            display: flex;
+            gap: $spacing-2;
+
+            .btn {
+              padding: $spacing-1 $spacing-3;
+              background: transparent;
+              color: var(--color-primary-500);
+              border: 1px solid var(--color-primary-500);
+              border-radius: var(--border-radius-base);
+              font-size: $font-size-xs;
+              font-weight: $font-weight-medium;
+              cursor: pointer;
+              transition: all $duration-200 $ease-in-out;
+
+              &:hover:not(:disabled) {
+                background: var(--color-primary-500);
+                color: var(--color-white);
+              }
+
+              &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式设计
+@include mobile-only {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recent-reports {
+    margin: 0 $spacing-4 $spacing-4 $spacing-4;
+
+    .report-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-4;
+
+      .report-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  }
+}

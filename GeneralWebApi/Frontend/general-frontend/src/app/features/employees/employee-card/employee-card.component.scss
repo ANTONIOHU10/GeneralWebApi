@@ -1,0 +1,143 @@
+/* src/app/features/employees/employee-card/employee-card.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+.employee-card {
+  @include card-elevated;
+  padding: $spacing-6;
+  height: fit-content;
+  min-height: 200px;
+  position: relative;
+
+  &.status-active {
+    border-left: 4px solid var(--color-success);
+  }
+
+  &.status-inactive {
+    border-left: 4px solid var(--color-warning);
+  }
+
+  &.status-terminated {
+    border-left: 4px solid var(--color-error);
+  }
+}
+
+.card-header {
+  @include flex-between;
+  margin-bottom: $spacing-4;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: $border-radius-full;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-placeholder {
+    @include flex-center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-500) 100%);
+    color: var(--color-white);
+    font-weight: $font-weight-bold;
+    font-size: $font-size-xl;
+  }
+}
+
+.status-badge {
+  @include status-badge(--color-gray-100, --color-gray-700);
+  
+  &.status-active {
+    @include status-active;
+  }
+  
+  &.status-inactive {
+    @include status-inactive;
+  }
+  
+  &.status-terminated {
+    @include status-terminated;
+  }
+}
+
+.card-body {
+  margin-bottom: $spacing-4;
+
+  .employee-name {
+    margin: 0 0 $spacing-2 0;
+    color: var(--text-primary);
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+  }
+
+  .employee-position {
+    margin: 0 0 $spacing-1 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+
+  .employee-department {
+    margin: 0 0 $spacing-4 0;
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
+  }
+}
+
+.contact-info {
+  .contact-item {
+    @include flex-center;
+    justify-content: flex-start;
+    margin-bottom: $spacing-2;
+    font-size: $font-size-xs;
+    color: var(--text-secondary);
+
+    i {
+      margin-right: $spacing-2;
+      width: 16px;
+      @include flex-center;
+      font-size: $font-size-base;
+      color: var(--text-tertiary);
+    }
+  }
+}
+
+.card-footer {
+  @include flex-between;
+  justify-content: flex-end;
+  gap: $spacing-2;
+  padding-top: $spacing-4;
+  border-top: 1px solid var(--border-primary);
+
+  .btn {
+    @include button-base;
+    padding: $spacing-2 $spacing-4;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+
+    &.btn-primary {
+      @include button-primary;
+    }
+
+    &.btn-secondary {
+      @include button-secondary;
+    }
+
+    &.btn-danger {
+      @include button-base;
+      background: var(--color-error);
+      color: var(--color-white);
+      border-color: var(--color-error);
+
+      &:hover:not(:disabled) {
+        background: var(--color-error-dark);
+        border-color: var(--color-error-dark);
+      }
+    }
+  }
+}

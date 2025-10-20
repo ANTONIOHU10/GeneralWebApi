@@ -1,0 +1,132 @@
+<!-- src/app/features/auth/login/login.component.html -->
+<div class="login-container theme-transition">
+  <!-- Background Decoration -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="login-content">
+    <!-- Left Brand Section -->
+    <div class="brand-section">
+      <div class="brand-logo">
+        <div class="logo-icon">GW</div>
+        <h1 class="brand-title">GeneralWebApi</h1>
+        <p class="brand-subtitle">Enterprise Management System</p>
+      </div>
+
+      <div class="features-list">
+        <div class="feature-item">
+          <div class="feature-icon material-icons">people</div>
+          <span>Employee Management</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon material-icons">dashboard</div>
+          <span>Analytics Dashboard</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon material-icons">security</div>
+          <span>Secure Access</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Login Form Section -->
+    <div class="login-form-section">
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your account</p>
+        </div>
+
+        <form class="login-form" (ngSubmit)="onSubmit()" novalidate>
+          <!-- Username Input -->
+          <div class="form-example__group">
+            <div class="input-wrapper">
+              <input
+                type="text"
+                [(ngModel)]="username"
+                name="username"
+                placeholder="Username"
+                required
+                class="form-example__input"
+                autocomplete="username"
+                aria-label="Username"
+              />
+              <div class="input-icon material-icons">person</div>
+            </div>
+          </div>
+
+          <!-- Password Input -->
+          <div class="form-example__group">
+            <div class="input-wrapper">
+              <input
+                type="password"
+                [(ngModel)]="password"
+                name="password"
+                placeholder="Password"
+                required
+                class="form-example__input"
+                autocomplete="current-password"
+                aria-label="Password"
+              />
+              <div class="input-icon material-icons">lock</div>
+            </div>
+          </div>
+
+          <!-- Form Options -->
+          <div class="form-options">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" name="remember" />
+              <span class="checkmark"></span>
+              Remember me
+            </label>
+            <a href="#" class="forgot-link" role="button" tabindex="0"
+              >Forgot password?</a
+            >
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            [disabled]="loading()"
+            class="login-button"
+            [class.loading]="loading()"
+            aria-label="Sign in to your account"
+          >
+            <span *ngIf="!loading()">Sign In</span>
+            <span *ngIf="loading()" class="loading-spinner">
+              <div class="spinner" aria-hidden="true"></div>
+              Signing in...
+            </span>
+          </button>
+        </form>
+
+        <!-- Error Message -->
+        <div
+          *ngIf="error()"
+          class="error-message"
+          role="alert"
+          aria-live="polite"
+        >
+          <div class="error-icon material-icons" aria-hidden="true">
+            warning
+          </div>
+          <span>{{ error() }}</span>
+        </div>
+
+        <!-- Footer Information -->
+        <div class="form-footer">
+          <p>
+            Don't have an account?
+            <a href="#" class="signup-link" role="button" tabindex="0"
+              >Contact Administrator</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

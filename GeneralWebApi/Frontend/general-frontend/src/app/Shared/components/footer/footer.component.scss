@@ -1,0 +1,60 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/footer/footer.component.scss
+@use '../../../../styles/components/layout' as layout;
+
+// Footer Component Styles
+.app-footer {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 1rem 2rem;
+  margin-top: auto;
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+
+    .footer-left,
+    .footer-right {
+      margin: 0;
+    }
+  }
+
+  // Public layout footer style
+  &.public-footer {
+    text-align: center;
+    padding: 2rem;
+
+    .footer-content {
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .footer-right {
+        display: none;
+      }
+    }
+  }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .app-footer {
+    padding: 1rem;
+
+    .footer-content {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    &.public-footer {
+      padding: 1.5rem 1rem;
+
+      .footer-content p {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

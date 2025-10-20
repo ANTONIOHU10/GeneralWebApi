@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx --no -- commitlint --edit ${1}
+
+
+# this is trigged by git commit -m "commit message"
+# it will run the commitlint script
+# to check the commit message

@@ -1,6 +1,12 @@
 using GeneralWebApi.Integration.Configuration;
 using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository;
+using GeneralWebApi.Integration.Repository.AnagraphyRepository;
+using GeneralWebApi.Integration.Repository.BasesRepository;
+using GeneralWebApi.Integration.Repository.DocumentRepository;
+using GeneralWebApi.Integration.Repository.DocumentsRepository;
+using GeneralWebApi.Integration.Repository.DocumentsRepository.Approvals;
+using GeneralWebApi.Integration.Repository.Interfaces;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
 using Microsoft.EntityFrameworkCore;
@@ -64,8 +70,8 @@ public static class ServiceCollectionExtensions
                 )
                 .UseSeeding((context, _) =>
                 {
-                    ProductSeeder.SeedAsync((ApplicationDbContext)context).Wait();
-
+                    //ProductSeeder.SeedAsync((ApplicationDbContext)context).Wait();
+                    UserSeeder.SeedAsync((ApplicationDbContext)context).Wait();
                 });
 
 
@@ -123,6 +129,23 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IFileDocumentRepository, FileRepository>();
         services.AddScoped<IExternalApiConfigRepository, ExternalApiConfigRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IEducationRepository, EducationRepository>();
+        services.AddScoped<IIdentityDocumentRepository, IdentityDocumentRepository>();
+        services.AddScoped<IPositionRepository, PositionRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        services.AddScoped<ICertificationRepository, CertificationRepository>();
+        services.AddScoped<IContractRepository, ContractRepository>();
+        services.AddScoped<IContractApprovalRepository, ContractApprovalRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IUserSessionRepository, UserSessionRepository>();
+
+        // Permission repositories
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<IEmployeeRoleRepository, EmployeeRoleRepository>();
+        services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+
         return services;
     }
 

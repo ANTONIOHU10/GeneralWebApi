@@ -1,0 +1,237 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+@use '../../../../styles/components/layout' as layout;
+
+// Header Component Styles
+.app-header {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: $spacing-4 $spacing-8;
+  @include flex-between;
+  @include header-shadow;
+  position: sticky;
+  top: 0;
+  z-index: $z-index-header;
+
+  .header-brand {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: $spacing-3;
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-500),
+        var(--color-secondary-500)
+      );
+      border-radius: $border-radius-lg;
+      @include flex-center;
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: var(--color-white);
+    }
+
+    .brand-title {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: var(--text-primary);
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .action-button {
+      position: relative;
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background-color: var(--bg-hover);
+        border-color: var(--primary-color);
+      }
+
+      .action-icon {
+        font-size: 1.2rem;
+      }
+
+      &.notification-btn {
+        .notification-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          background-color: var(--danger-color);
+          color: white;
+          font-size: 0.7rem;
+          font-weight: 600;
+          padding: 0.2rem 0.4rem;
+          border-radius: 10px;
+          min-width: 18px;
+          text-align: center;
+          line-height: 1;
+        }
+      }
+
+      &.mobile-menu-toggle {
+        display: none;
+      }
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: var(--bg-hover);
+        border-color: var(--border-color);
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        background-color: var(--primary-color-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: var(--primary-color);
+
+        .material-icons {
+          font-size: 1.2rem;
+        }
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .user-name {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          line-height: 1.2;
+        }
+
+        .user-role {
+          font-size: 0.75rem;
+          color: var(--text-secondary);
+          line-height: 1.2;
+        }
+      }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+
+      &.btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+
+        &:hover {
+          background-color: var(--primary-color-dark);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem;
+
+    .header-brand .brand-title {
+      display: none;
+    }
+
+    .header-actions {
+      gap: 0.5rem;
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Desktop: show mobile menu toggle
+@media (min-width: 769px) {
+  .app-header {
+    .header-actions {
+      .action-button.mobile-menu-toggle {
+        display: none;
+      }
+    }
+  }
+}
+
+// Mobile: show mobile menu toggle
+@media (max-width: 768px) {
+  .app-header {
+    .header-actions {
+      .action-button.mobile-menu-toggle {
+        display: flex;
+      }
+
+      .user-profile .user-info {
+        display: none;
+      }
+    }
+  }
+}
+
+// Extra small screens
+@media (max-width: 480px) {
+  .app-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+
+    .header-brand {
+      justify-content: center;
+    }
+
+    .header-actions {
+      justify-content: center;
+    }
+  }
+}

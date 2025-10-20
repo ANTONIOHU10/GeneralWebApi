@@ -6,6 +6,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.0.1" />
     <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="MediatR" Version="13.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,6 +18,10 @@
     <ProjectReference Include="..\GeneralWebApi.DTOs\GeneralWebApi.DTOs.csproj" />
     <ProjectReference
       Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
+    <ProjectReference
+      Include="..\..\3-Domain\GeneralWebApi.Domain.Shared\GeneralWebApi.Domain.Shared.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Identity\GeneralWebApi.Identity.csproj" />
   </ItemGroup>
 
 </Project>

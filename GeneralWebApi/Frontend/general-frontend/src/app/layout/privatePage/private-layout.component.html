@@ -1,0 +1,41 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/layout/private-layout.component.html -->
+<div class="app-private-layout">
+  <!-- Header Section -->
+  <app-header
+    [isDarkMode]="isDarkMode"
+    [showSidebarToggle]="true"
+    [brandTitle]="'GeneralWebApi'"
+    (themeToggle)="toggleTheme()"
+    (sidebarToggle)="toggleSidebar()"
+    (notificationClick)="onNotificationClick()"
+    (profileClick)="onProfileClick()"
+    (settingsClick)="onSettingsClick()"
+  >
+  </app-header>
+
+  <!-- Main Content Area -->
+  <div class="app-private-layout__main">
+    <!-- Sidebar Section -->
+    <app-sidebar [isOpen]="isSidebarOpen" (closeSidebar)="closeSidebar()">
+    </app-sidebar>
+
+    <!-- Content Section -->
+    <main class="app-private-layout__content">
+      <!-- Breadcrumb Navigation -->
+      <app-breadcrumb></app-breadcrumb>
+
+      <!-- Page Content -->
+      <div class="page-content">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer Section -->
+  <app-footer
+    [showVersion]="true"
+    [version]="'1.0.0'"
+    [copyrightText]="'GeneralWebApi'"
+  >
+  </app-footer>
+</div>

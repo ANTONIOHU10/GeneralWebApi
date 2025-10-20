@@ -82,8 +82,15 @@ public static class ServiceCollectionExtensions
         // Role based authorization 
         services.AddAuthorization(options =>
         {
+            // Single role policies
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("ManagerOnly", policy => policy.RequireRole("Manager"));
+            options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+
+            // Combined role policies
             options.AddPolicy("UserOrAdmin", policy => policy.RequireRole("User", "Admin"));
+            options.AddPolicy("ManagerOrAdmin", policy => policy.RequireRole("Manager", "Admin"));
+            options.AddPolicy("AllRoles", policy => policy.RequireRole("User", "Manager", "Admin"));
         });
 
         return services;

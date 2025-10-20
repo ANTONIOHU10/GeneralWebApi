@@ -1,0 +1,210 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/sidebar/sidebar.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+@use '../../../../styles/components/layout' as layout;
+
+// Sidebar Component Styles
+.app-sidebar {
+  width: 240px;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  @include sidebar-transition;
+  overflow-y: auto;
+
+  .sidebar-content {
+    padding: $spacing-6 0;
+    flex: 1;
+
+    // Search Section
+    .sidebar-search {
+      padding: 0 $spacing-6 $spacing-6;
+      border-bottom: 1px solid var(--border-primary);
+      margin-bottom: $spacing-6;
+
+      .search-input-container {
+        position: relative;
+        @include flex-center;
+        justify-content: flex-start;
+
+        .search-icon {
+          position: absolute;
+          left: $spacing-3;
+          color: var(--text-tertiary);
+          font-size: $font-size-xl;
+          z-index: 1;
+        }
+
+        .search-input {
+          @include input-base;
+          padding: $spacing-3 $spacing-3 $spacing-3 2.5rem;
+          border-radius: $border-radius-md;
+          background-color: var(--bg-surface);
+          font-size: $font-size-sm;
+
+          &:focus {
+            outline: none;
+            border-color: var(--color-primary-500);
+            box-shadow: 0 0 0 2px var(--color-primary-100);
+          }
+
+          &::placeholder {
+            color: var(--text-tertiary);
+          }
+        }
+      }
+    }
+
+    .nav-section {
+      margin-bottom: 2rem;
+
+      .nav-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+        padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: default;
+
+        &.expandable {
+          cursor: pointer;
+          padding: 0.5rem 1.5rem;
+          margin-bottom: 0.5rem;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+          background-color: transparent;
+
+          &:hover {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+          }
+
+          &.expanded {
+            background-color: var(--primary-color-light);
+            color: var(--primary-color);
+          }
+
+          .nav-title-text {
+            flex: 1;
+          }
+
+          .nav-arrow {
+            font-size: 0.7rem;
+            transition: transform 0.2s ease;
+            color: var(--text-tertiary);
+          }
+        }
+      }
+
+      .nav-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        max-height: 0;
+        opacity: 0;
+
+        // 非展开菜单始终显示
+        &:not([class*='expanded']) {
+          max-height: 1000px;
+          opacity: 1;
+        }
+
+        &.expanded {
+          max-height: 1000px;
+          opacity: 1;
+        }
+
+        .nav-item {
+          margin: 0;
+
+          .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+
+            &:hover {
+              background-color: var(--bg-hover);
+              color: var(--primary-color);
+            }
+
+            &.active {
+              background-color: var(--primary-color-light);
+              color: var(--primary-color);
+              border-left-color: var(--primary-color);
+              font-weight: 500;
+            }
+
+            .nav-icon {
+              font-size: 1.2rem;
+              width: 24px;
+              text-align: center;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .nav-text {
+              font-size: 0.9rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Desktop: always visible, ignore isOpen state
+  @media (min-width: 769px) {
+    position: relative;
+    transform: translateX(0) !important;
+  }
+
+  // Mobile responsive
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 200;
+    display: none; // 默认隐藏
+
+    &.mobile-open {
+      display: flex; // 显示时恢复 flex 布局
+    }
+  }
+}
+
+// Mobile Sidebar Overlay
+.mobile-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 150;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+}

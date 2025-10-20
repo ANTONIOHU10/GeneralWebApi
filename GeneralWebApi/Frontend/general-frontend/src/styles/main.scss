@@ -1,0 +1,760 @@
+// ===========================================
+// Main SCSS Entry Point - GeneralWebApi Frontend
+// ===========================================
+
+// Import Core Styles
+@use 'core/variable' as *;
+@use 'core/mixin' as *;
+@use 'core/typography';
+
+// Import Theme Styles
+@use 'themes/light-theme';
+@use 'themes/dark-theme';
+
+// Import Component Examples
+@use 'components/buttonExample';
+
+// Import Layout Components
+@use 'components/layout';
+
+// Import Form Components
+@use 'components/forms';
+
+// Import Button Components
+@use 'components/buttons';
+
+// Import Page Layout Components
+@use 'components/page-layout';
+
+// Import Status System
+@use 'components/status';
+
+// Import Utilities
+@use 'utilities/utilities';
+
+// ===========================================
+// Global Styles and Resets
+// ===========================================
+
+// CSS Reset and Base Styles
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: $font-family-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: $gray-900;
+  background-color: $white;
+  min-height: 100vh;
+  transition:
+    background-color $duration-300 $ease-in-out,
+    color $duration-300 $ease-in-out;
+}
+
+// ===========================================
+// Layout Components
+// ===========================================
+
+// App Layout
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: $z-index-sticky;
+    height: $header-height;
+    @include header-shadow;
+  }
+
+  &__main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__sidebar {
+    width: $sidebar-width;
+    @include sidebar-transition;
+
+    &--collapsed {
+      width: $sidebar-width-collapsed;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    padding: $spacing-6;
+    overflow-y: auto;
+  }
+
+  &__footer {
+    height: $footer-height;
+    margin-top: auto;
+  }
+}
+
+// Container
+.container {
+  @include container;
+}
+
+// Grid System
+.grid {
+  @include grid;
+
+  &--cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  &--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  &--cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  &--cols-6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  &--cols-12 {
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  @include mobile-only {
+    grid-template-columns: 1fr;
+    gap: $spacing-3;
+  }
+}
+
+.col {
+  &--span-1 {
+    @include grid-col(1);
+  }
+  &--span-2 {
+    @include grid-col(2);
+  }
+  &--span-3 {
+    @include grid-col(3);
+  }
+  &--span-4 {
+    @include grid-col(4);
+  }
+  &--span-6 {
+    @include grid-col(6);
+  }
+  &--span-8 {
+    @include grid-col(8);
+  }
+  &--span-12 {
+    @include grid-col(12);
+  }
+}
+
+// ===========================================
+// Utility Classes
+// ===========================================
+
+// Display Utilities
+.d-none {
+  display: none !important;
+}
+.d-block {
+  display: block !important;
+}
+.d-inline {
+  display: inline !important;
+}
+.d-inline-block {
+  display: inline-block !important;
+}
+.d-flex {
+  display: flex !important;
+}
+.d-inline-flex {
+  display: inline-flex !important;
+}
+.d-grid {
+  display: grid !important;
+}
+
+// Flexbox Utilities
+.flex-row {
+  flex-direction: row !important;
+}
+.flex-column {
+  flex-direction: column !important;
+}
+.flex-wrap {
+  flex-wrap: wrap !important;
+}
+.flex-nowrap {
+  flex-wrap: nowrap !important;
+}
+
+.justify-start {
+  justify-content: flex-start !important;
+}
+.justify-center {
+  justify-content: center !important;
+}
+.justify-end {
+  justify-content: flex-end !important;
+}
+.justify-between {
+  justify-content: space-between !important;
+}
+.justify-around {
+  justify-content: space-around !important;
+}
+
+.items-start {
+  align-items: flex-start !important;
+}
+.items-center {
+  align-items: center !important;
+}
+.items-end {
+  align-items: flex-end !important;
+}
+.items-stretch {
+  align-items: stretch !important;
+}
+
+// Spacing Utilities
+.m-0 {
+  margin: 0 !important;
+}
+.m-1 {
+  margin: $spacing-1 !important;
+}
+.m-2 {
+  margin: $spacing-2 !important;
+}
+.m-3 {
+  margin: $spacing-3 !important;
+}
+.m-4 {
+  margin: $spacing-4 !important;
+}
+.m-5 {
+  margin: $spacing-5 !important;
+}
+.m-6 {
+  margin: $spacing-6 !important;
+}
+.m-8 {
+  margin: $spacing-8 !important;
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+.mt-1 {
+  margin-top: $spacing-1 !important;
+}
+.mt-2 {
+  margin-top: $spacing-2 !important;
+}
+.mt-3 {
+  margin-top: $spacing-3 !important;
+}
+.mt-4 {
+  margin-top: $spacing-4 !important;
+}
+.mt-5 {
+  margin-top: $spacing-5 !important;
+}
+.mt-6 {
+  margin-top: $spacing-6 !important;
+}
+.mt-8 {
+  margin-top: $spacing-8 !important;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+.mb-1 {
+  margin-bottom: $spacing-1 !important;
+}
+.mb-2 {
+  margin-bottom: $spacing-2 !important;
+}
+.mb-3 {
+  margin-bottom: $spacing-3 !important;
+}
+.mb-4 {
+  margin-bottom: $spacing-4 !important;
+}
+.mb-5 {
+  margin-bottom: $spacing-5 !important;
+}
+.mb-6 {
+  margin-bottom: $spacing-6 !important;
+}
+.mb-8 {
+  margin-bottom: $spacing-8 !important;
+}
+
+.ml-0 {
+  margin-left: 0 !important;
+}
+.ml-1 {
+  margin-left: $spacing-1 !important;
+}
+.ml-2 {
+  margin-left: $spacing-2 !important;
+}
+.ml-3 {
+  margin-left: $spacing-3 !important;
+}
+.ml-4 {
+  margin-left: $spacing-4 !important;
+}
+.ml-5 {
+  margin-left: $spacing-5 !important;
+}
+.ml-6 {
+  margin-left: $spacing-6 !important;
+}
+.ml-8 {
+  margin-left: $spacing-8 !important;
+}
+
+.mr-0 {
+  margin-right: 0 !important;
+}
+.mr-1 {
+  margin-right: $spacing-1 !important;
+}
+.mr-2 {
+  margin-right: $spacing-2 !important;
+}
+.mr-3 {
+  margin-right: $spacing-3 !important;
+}
+.mr-4 {
+  margin-right: $spacing-4 !important;
+}
+.mr-5 {
+  margin-right: $spacing-5 !important;
+}
+.mr-6 {
+  margin-right: $spacing-6 !important;
+}
+.mr-8 {
+  margin-right: $spacing-8 !important;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
+.p-1 {
+  padding: $spacing-1 !important;
+}
+.p-2 {
+  padding: $spacing-2 !important;
+}
+.p-3 {
+  padding: $spacing-3 !important;
+}
+.p-4 {
+  padding: $spacing-4 !important;
+}
+.p-5 {
+  padding: $spacing-5 !important;
+}
+.p-6 {
+  padding: $spacing-6 !important;
+}
+.p-8 {
+  padding: $spacing-8 !important;
+}
+
+.pt-0 {
+  padding-top: 0 !important;
+}
+.pt-1 {
+  padding-top: $spacing-1 !important;
+}
+.pt-2 {
+  padding-top: $spacing-2 !important;
+}
+.pt-3 {
+  padding-top: $spacing-3 !important;
+}
+.pt-4 {
+  padding-top: $spacing-4 !important;
+}
+.pt-5 {
+  padding-top: $spacing-5 !important;
+}
+.pt-6 {
+  padding-top: $spacing-6 !important;
+}
+.pt-8 {
+  padding-top: $spacing-8 !important;
+}
+
+.pb-0 {
+  padding-bottom: 0 !important;
+}
+.pb-1 {
+  padding-bottom: $spacing-1 !important;
+}
+.pb-2 {
+  padding-bottom: $spacing-2 !important;
+}
+.pb-3 {
+  padding-bottom: $spacing-3 !important;
+}
+.pb-4 {
+  padding-bottom: $spacing-4 !important;
+}
+.pb-5 {
+  padding-bottom: $spacing-5 !important;
+}
+.pb-6 {
+  padding-bottom: $spacing-6 !important;
+}
+.pb-8 {
+  padding-bottom: $spacing-8 !important;
+}
+
+.pl-0 {
+  padding-left: 0 !important;
+}
+.pl-1 {
+  padding-left: $spacing-1 !important;
+}
+.pl-2 {
+  padding-left: $spacing-2 !important;
+}
+.pl-3 {
+  padding-left: $spacing-3 !important;
+}
+.pl-4 {
+  padding-left: $spacing-4 !important;
+}
+.pl-5 {
+  padding-left: $spacing-5 !important;
+}
+.pl-6 {
+  padding-left: $spacing-6 !important;
+}
+.pl-8 {
+  padding-left: $spacing-8 !important;
+}
+
+.pr-0 {
+  padding-right: 0 !important;
+}
+.pr-1 {
+  padding-right: $spacing-1 !important;
+}
+.pr-2 {
+  padding-right: $spacing-2 !important;
+}
+.pr-3 {
+  padding-right: $spacing-3 !important;
+}
+.pr-4 {
+  padding-right: $spacing-4 !important;
+}
+.pr-5 {
+  padding-right: $spacing-5 !important;
+}
+.pr-6 {
+  padding-right: $spacing-6 !important;
+}
+.pr-8 {
+  padding-right: $spacing-8 !important;
+}
+
+// Border Utilities
+.border {
+  border: 1px solid $gray-300 !important;
+}
+.border-0 {
+  border: 0 !important;
+}
+.border-top {
+  border-top: 1px solid $gray-300 !important;
+}
+.border-bottom {
+  border-bottom: 1px solid $gray-300 !important;
+}
+.border-left {
+  border-left: 1px solid $gray-300 !important;
+}
+.border-right {
+  border-right: 1px solid $gray-300 !important;
+}
+
+.rounded {
+  border-radius: $border-radius-base !important;
+}
+.rounded-sm {
+  border-radius: $border-radius-sm !important;
+}
+.rounded-lg {
+  border-radius: $border-radius-lg !important;
+}
+.rounded-xl {
+  border-radius: $border-radius-xl !important;
+}
+.rounded-full {
+  border-radius: $border-radius-full !important;
+}
+
+// Shadow Utilities
+.shadow-sm {
+  box-shadow: $shadow-sm !important;
+}
+.shadow {
+  box-shadow: $shadow-base !important;
+}
+.shadow-md {
+  box-shadow: $shadow-md !important;
+}
+.shadow-lg {
+  box-shadow: $shadow-lg !important;
+}
+.shadow-xl {
+  box-shadow: $shadow-xl !important;
+}
+.shadow-none {
+  box-shadow: none !important;
+}
+
+// Position Utilities
+.position-static {
+  position: static !important;
+}
+.position-relative {
+  position: relative !important;
+}
+.position-absolute {
+  position: absolute !important;
+}
+.position-fixed {
+  position: fixed !important;
+}
+.position-sticky {
+  position: sticky !important;
+}
+
+// Width and Height Utilities
+.w-full {
+  width: 100% !important;
+}
+.w-auto {
+  width: auto !important;
+}
+.w-fit {
+  width: fit-content !important;
+}
+
+.h-full {
+  height: 100% !important;
+}
+.h-auto {
+  height: auto !important;
+}
+.h-fit {
+  height: fit-content !important;
+}
+
+// Overflow Utilities
+.overflow-hidden {
+  overflow: hidden !important;
+}
+.overflow-auto {
+  overflow: auto !important;
+}
+.overflow-scroll {
+  overflow: scroll !important;
+}
+.overflow-visible {
+  overflow: visible !important;
+}
+
+// Cursor Utilities
+.cursor-pointer {
+  cursor: pointer !important;
+}
+.cursor-not-allowed {
+  cursor: not-allowed !important;
+}
+.cursor-default {
+  cursor: default !important;
+}
+
+// ===========================================
+// Animation Utilities
+// ===========================================
+
+.fade-in {
+  @include fade-in;
+}
+
+.slide-up {
+  @include slide-up;
+}
+
+.scale-in {
+  @include scale-in;
+}
+
+// ===========================================
+// Responsive Utilities
+// ===========================================
+
+@include mobile-only {
+  .mobile-hidden {
+    display: none !important;
+  }
+  .mobile-block {
+    display: block !important;
+  }
+  .mobile-flex {
+    display: flex !important;
+  }
+}
+
+@include tablet-up {
+  .tablet-hidden {
+    display: none !important;
+  }
+  .tablet-block {
+    display: block !important;
+  }
+  .tablet-flex {
+    display: flex !important;
+  }
+}
+
+@include desktop-up {
+  .desktop-hidden {
+    display: none !important;
+  }
+  .desktop-block {
+    display: block !important;
+  }
+  .desktop-flex {
+    display: flex !important;
+  }
+}
+
+// ===========================================
+// Print Styles
+// ===========================================
+
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: ' (' attr(href) ')';
+  }
+
+  abbr[title]:after {
+    content: ' (' attr(title) ')';
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-break-before {
+    page-break-before: always;
+  }
+
+  .print-break-after {
+    page-break-after: always;
+  }
+
+  .print-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+}
+
+// ===========================================
+// Accessibility Utilities
+// ===========================================
+
+.sr-only {
+  @include visually-hidden;
+}
+
+.focus-visible:focus {
+  outline: 2px solid $primary-500;
+  outline-offset: 2px;
+}
+
+// ===========================================
+// Theme Toggle Support
+// ===========================================
+
+.theme-transition {
+  transition:
+    background-color $duration-300 $ease-in-out,
+    color $duration-300 $ease-in-out,
+    border-color $duration-300 $ease-in-out,
+    box-shadow $duration-300 $ease-in-out;
+}
+
+// ===========================================
+// Custom Scrollbar
+// ===========================================
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $gray-300;
+  border-radius: $border-radius-full;
+
+  &:hover {
+    background: $gray-400;
+  }
+}
+
+::-webkit-scrollbar-corner {
+  background: $gray-100;
+}

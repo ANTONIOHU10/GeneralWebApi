@@ -1,0 +1,67 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.html -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="brand-logo">G</div>
+    <div class="brand-title">{{ brandTitle }}</div>
+  </div>
+  <div class="header-actions">
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button
+        class="action-button notification-btn"
+        (click)="onNotificationClick()"
+        [attr.aria-label]="'Notifications (' + notificationCount + ')'"
+      >
+        <span class="action-icon material-icons">notifications</span>
+        <span class="notification-badge" *ngIf="notificationCount > 0">
+          {{ notificationCount }}
+        </span>
+      </button>
+
+      <button
+        class="action-button settings-btn"
+        (click)="onSettingsClick()"
+        aria-label="Settings"
+      >
+        <span class="action-icon material-icons">settings</span>
+      </button>
+
+      <button class="action-button theme-toggle" (click)="onThemeToggle()">
+        <span class="action-icon material-icons">{{
+          isDarkMode ? 'light_mode' : 'dark_mode'
+        }}</span>
+      </button>
+    </div>
+
+    <!-- User Profile -->
+    <button
+      class="user-profile"
+      (click)="onProfileClick()"
+      (keyup.enter)="onProfileClick()"
+      (keyup.space)="onProfileClick()"
+      aria-label="User profile menu"
+    >
+      <div class="user-avatar">
+        <span class="material-icons">person</span>
+      </div>
+      <div class="user-info">
+        <div class="user-name">{{ userProfile.name }}</div>
+        <div class="user-role">{{ userProfile.role }}</div>
+      </div>
+    </button>
+
+    <!-- Mobile Menu Toggle -->
+    <button
+      *ngIf="showSidebarToggle"
+      class="action-button mobile-menu-toggle"
+      (click)="onSidebarToggle()"
+    >
+      <span class="action-icon material-icons">menu</span>
+    </button>
+
+    <!-- Login Button -->
+    <a *ngIf="showLoginButton" routerLink="/login" class="btn btn-primary">
+      Login
+    </a>
+  </div>
+</header>

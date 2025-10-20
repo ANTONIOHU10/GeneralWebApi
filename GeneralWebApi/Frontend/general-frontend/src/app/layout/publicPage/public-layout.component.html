@@ -1,0 +1,27 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/layout/public-layout.component.html -->
+<div class="app-public-layout">
+  <div class="app-public-layout__content">
+    <!-- Public Header -->
+    <app-header
+      [isDarkMode]="isDarkMode"
+      [showSidebarToggle]="false"
+      [showLoginButton]="true"
+      [brandTitle]="'GeneralWebApi'"
+      (themeToggle)="toggleTheme()"
+    >
+    </app-header>
+
+    <!-- Public Main Content -->
+    <main class="public-main">
+      <router-outlet />
+    </main>
+
+    <!-- Public Footer -->
+    <app-footer
+      [isPublicLayout]="true"
+      [showVersion]="false"
+      [copyrightText]="'GeneralWebApi. All rights reserved.'"
+    >
+    </app-footer>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-using GeneralWebApi.Scheduler.Jobs.Base;
 using GeneralWebApi.Integration.Services;
 using GeneralWebApi.Scheduler.Configuration;
 using Microsoft.Extensions.Options;

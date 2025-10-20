@@ -108,6 +108,9 @@ builder.Services.AddExternalHttpClient(builder.Configuration);
 // add scheduler services
 builder.Services.AddSchedulerServices(builder.Configuration);
 
+// add global exception handling
+builder.Services.AddGlobalExceptionHandling();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -127,6 +130,9 @@ else
 }
 
 app.UseMiddleware<LoggingMiddleware>();
+
+// Add global exception handling middleware (should be early in the pipeline)
+app.UseGlobalExceptionHandling();
 
 app.UseHttpsRedirection();
 

@@ -17,6 +17,7 @@ namespace GeneralWebApi.Controllers.v1;
 [ApiController]
 [Route("api/v1/[controller]")]
 [ApiVersion("1.0")]
+[Authorize] // Require authentication for document operations
 public class DocumentController : BaseController
 {
     private readonly ILoggingService _log;

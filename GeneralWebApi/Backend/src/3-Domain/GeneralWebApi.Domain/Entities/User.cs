@@ -1,5 +1,6 @@
 using GeneralWebApi.Domain.Entities.Base;
 using GeneralWebApi.Domain.Enums;
+using GeneralWebApi.Domain.Entities.Anagraphy;
 
 namespace GeneralWebApi.Domain.Entities;
 
@@ -11,8 +12,10 @@ public class User : BaseEntity
     public string? PhoneNumber { get; set; }
     public string Role { get; set; } = string.Empty;
 
-    // navigation property
+    // 新增：关联到 Employee
+    public int? EmployeeId { get; set; }
+    public Employee? Employee { get; set; }
+
+    // 保留原有的导航属性
     public ICollection<Product> Products { get; set; } = new List<Product>();
-
-
 }

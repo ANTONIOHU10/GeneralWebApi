@@ -1,0 +1,193 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-settings/employee-settings.component.html -->
+<div class="page-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">settings</span>
+      Employee Settings
+    </h2>
+    <p>Configure employee management preferences and system settings</p>
+  </div>
+
+  <div class="page-content">
+    <div class="settings-sections">
+      <!-- 通用设置 -->
+      <div class="settings-section">
+        <h3>General Settings</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.autoGenerateId"
+                name="autoGenerateId" />
+              <span class="checkmark"></span>
+              Auto-generate employee ID
+            </label>
+            <p class="setting-description">
+              Automatically generate unique employee IDs for new employees
+            </p>
+          </div>
+          
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.sendWelcomeEmail"
+                name="sendWelcomeEmail" />
+              <span class="checkmark"></span>
+              Send welcome email
+            </label>
+            <p class="setting-description">
+              Send welcome email to new employees upon creation
+            </p>
+          </div>
+          
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.requireManagerApproval"
+                name="requireManagerApproval" />
+              <span class="checkmark"></span>
+              Require manager approval
+            </label>
+            <p class="setting-description">
+              Require manager approval for new employee additions
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 通知设置 -->
+      <div class="settings-section">
+        <h3>Notification Settings</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableNotifications"
+                name="enableNotifications" />
+              <span class="checkmark"></span>
+              Enable notifications
+            </label>
+            <p class="setting-description">
+              Receive notifications for important employee events
+            </p>
+          </div>
+          
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.emailNotifications"
+                name="emailNotifications" />
+              <span class="checkmark"></span>
+              Email notifications
+            </label>
+            <p class="setting-description">
+              Send notifications via email
+            </p>
+          </div>
+          
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.smsNotifications"
+                name="smsNotifications" />
+              <span class="checkmark"></span>
+              SMS notifications
+            </label>
+            <p class="setting-description">
+              Send notifications via SMS
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 数据管理 -->
+      <div class="settings-section">
+        <h3>Data Management</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.autoBackup"
+                name="autoBackup" />
+              <span class="checkmark"></span>
+              Auto-backup employee data
+            </label>
+            <p class="setting-description">
+              Automatically backup employee data daily
+            </p>
+          </div>
+          
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.archiveInactive"
+                name="archiveInactive" />
+              <span class="checkmark"></span>
+              Archive inactive employees
+            </label>
+            <p class="setting-description">
+              Move inactive employees to archive after 1 year
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 访问控制 -->
+      <div class="settings-section">
+        <h3>Access Control</h3>
+        <div class="settings-group">
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.restrictPersonalData"
+                name="restrictPersonalData" />
+              <span class="checkmark"></span>
+              Restrict personal data access
+            </label>
+            <p class="setting-description">
+              Only HR and managers can view personal employee data
+            </p>
+          </div>
+          
+          <div class="setting-item">
+            <label class="setting-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.requireTwoFactor"
+                name="requireTwoFactor" />
+              <span class="checkmark"></span>
+              Require two-factor authentication
+            </label>
+            <p class="setting-description">
+              Require 2FA for accessing employee data
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="settings-actions">
+      <app-base-button
+        [variant]="'secondary'"
+        [text]="'Reset to Default'"
+        (click)="resetToDefault()">
+      </app-base-button>
+      
+      <app-base-button
+        [variant]="'primary'"
+        [text]="'Save Settings'"
+        (click)="saveSettings()">
+      </app-base-button>
+    </div>
+  </div>
+</div>

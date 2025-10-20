@@ -1,0 +1,11 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/footer/footer.component.html -->
+<footer class="app-footer" [class.public-footer]="isPublicLayout">
+  <div class="footer-content">
+    <div class="footer-left">
+      <span>&copy; {{ year }} {{ copyrightText }}</span>
+    </div>
+    <div class="footer-right" *ngIf="showVersion">
+      <span>Version {{ version }}</span>
+    </div>
+  </div>
+</footer>
