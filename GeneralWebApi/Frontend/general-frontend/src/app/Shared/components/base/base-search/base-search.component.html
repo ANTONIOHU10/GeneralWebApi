@@ -1,0 +1,44 @@
+<!-- src/app/Shared/components/base/base-search/base-search.component.html -->
+<div class="search-container" [class.focused]="isFocused()" [class.disabled]="config.disabled">
+  <div class="search-input-wrapper">
+    <input
+      [id]="inputId"
+      type="text"
+      [placeholder]="config.placeholder"
+      [disabled]="config.disabled || false"
+      [ngModel]="internalValue()"
+      (ngModelChange)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+      class="search-input"
+      autocomplete="off"
+      spellcheck="false"
+      aria-label="Search input"
+    />
+    
+    <!-- Search Icon -->
+    <div class="search-icon" *ngIf="config.showSearchButton">
+      <span 
+        class="material-icons" 
+        (click)="onSearch()" 
+        (keydown.enter)="onSearch()"
+        (keydown.space)="onSearch()"
+        [class.disabled]="!canSearch"
+        tabindex="0"
+        role="button"
+        aria-label="Search"
+      >
+        search
+      </span>
+    </div>
+    
+    <!-- Clear Button -->
+    <div class="clear-icon" *ngIf="config.showClearButton && hasValue">
+      <span class="material-icons" (click)="onClear()" tabindex="0" role="button" aria-label="Clear search">
+        close
+      </span>
+    </div>
+  </div>
+</div>
+

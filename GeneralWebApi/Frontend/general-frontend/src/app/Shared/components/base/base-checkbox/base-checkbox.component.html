@@ -1,0 +1,39 @@
+<!-- src/app/Shared/components/base/base-checkbox/base-checkbox.component.html -->
+<label 
+  [class]="checkboxClass"
+  [for]="inputId"
+  [attr.aria-disabled]="displayDisabled"
+>
+  <input
+    [id]="inputId"
+    type="checkbox"
+    [checked]="value"
+    [disabled]="displayDisabled"
+    [required]="displayRequired"
+    [indeterminate]="displayIndeterminate"
+    (change)="onInputChange($event)"
+    (focus)="onFocus($event)"
+    (blur)="onBlur($event)"
+    (keydown)="onKeydown($event)"
+    class="checkbox-input"
+    [attr.aria-describedby]="label ? inputId + '-label' : null"
+  />
+  
+  <span class="checkbox-checkmark">
+    <span class="checkmark-icon material-icons" *ngIf="value && !displayIndeterminate">
+      check
+    </span>
+    <span class="checkmark-icon material-icons" *ngIf="displayIndeterminate">
+      remove
+    </span>
+  </span>
+  
+  <span 
+    *ngIf="displayShowLabel && label" 
+    class="checkbox-label"
+    [id]="inputId + '-label'"
+  >
+    {{ label }}
+    <span *ngIf="displayRequired" class="required-indicator" aria-label="required">*</span>
+  </span>
+</label>

@@ -164,6 +164,86 @@ export class MyComponent {
 }
 ```
 
+#### BaseSearchComponent
+
+功能强大的搜索框组件，支持防抖、清除和自定义配置。
+
+```typescript
+import { BaseSearchComponent, SearchConfig } from '@shared/components/base';
+
+@Component({
+  template: `
+    <app-base-search
+      [config]="searchConfig"
+      (searchChange)="onSearchChange($event)"
+      (searchSubmit)="onSearchSubmit($event)"
+      (searchClear)="onSearchClear()"
+    >
+    </app-base-search>
+  `,
+  imports: [BaseSearchComponent],
+})
+export class MyComponent {
+  searchConfig: SearchConfig = {
+    placeholder: 'Search employees...',
+    debounceTime: 300,
+    minLength: 1,
+    showClearButton: true,
+    showSearchButton: true,
+    disabled: false,
+  };
+
+  onSearchChange(searchTerm: string) {
+    console.log('Search term:', searchTerm);
+  }
+
+  onSearchSubmit(searchTerm: string) {
+    console.log('Search submitted:', searchTerm);
+  }
+
+  onSearchClear() {
+    console.log('Search cleared');
+  }
+}
+```
+
+#### BaseCheckboxComponent
+
+自定义样式的复选框组件，支持多种变体和尺寸。
+
+```typescript
+import { BaseCheckboxComponent, CheckboxConfig } from '@shared/components/base';
+
+@Component({
+  template: `
+    <app-base-checkbox
+      label="I agree to the terms and conditions"
+      [config]="checkboxConfig"
+      [(ngModel)]="isAgreed"
+      (valueChange)="onCheckboxChange($event)"
+    >
+    </app-base-checkbox>
+  `,
+  imports: [BaseCheckboxComponent, FormsModule],
+})
+export class MyComponent {
+  isAgreed = false;
+
+  checkboxConfig: CheckboxConfig = {
+    size: 'md',
+    variant: 'primary',
+    showLabel: true,
+    disabled: false,
+    required: true,
+    indeterminate: false,
+  };
+
+  onCheckboxChange(value: boolean) {
+    console.log('Checkbox changed:', value);
+  }
+}
+```
+
 ### 数据展示组件 (Data Display Components)
 
 #### BaseTableComponent
@@ -292,6 +372,150 @@ export class MyComponent {
 ```
 
 ### 反馈组件 (Feedback Components)
+
+#### BaseLoadingComponent
+
+多种加载状态组件，支持不同的动画效果。
+
+```typescript
+import { BaseLoadingComponent, LoadingConfig } from '@shared/components/base';
+
+@Component({
+  template: ` <app-base-loading [config]="loadingConfig"> </app-base-loading> `,
+  imports: [BaseLoadingComponent],
+})
+export class MyComponent {
+  loadingConfig: LoadingConfig = {
+    size: 'md',
+    type: 'spinner',
+    message: 'Loading employees...',
+    overlay: false,
+    centered: true,
+    fullHeight: false,
+  };
+}
+```
+
+#### BaseErrorComponent
+
+错误状态显示组件，支持多种错误类型和操作按钮。
+
+```typescript
+import { BaseErrorComponent, ErrorConfig } from '@shared/components/base';
+
+@Component({
+  template: `
+    <app-base-error
+      [message]="errorMessage"
+      [config]="errorConfig"
+      (retry)="onRetry()"
+      (dismiss)="onDismiss()"
+    >
+    </app-base-error>
+  `,
+  imports: [BaseErrorComponent],
+})
+export class MyComponent {
+  errorMessage = 'Failed to load data';
+
+  errorConfig: ErrorConfig = {
+    type: 'error',
+    size: 'md',
+    showIcon: true,
+    showRetryButton: true,
+    showDismissButton: false,
+    retryButtonText: 'Retry',
+    centered: true,
+    fullWidth: false,
+  };
+
+  onRetry() {
+    console.log('Retrying...');
+  }
+
+  onDismiss() {
+    console.log('Dismissed');
+  }
+}
+```
+
+#### BaseEmptyComponent
+
+空状态显示组件，提供友好的无数据提示。
+
+```typescript
+import { BaseEmptyComponent, EmptyConfig } from '@shared/components/base';
+
+@Component({
+  template: `
+    <app-base-empty [config]="emptyConfig" (actionClick)="onAddNew()">
+    </app-base-empty>
+  `,
+  imports: [BaseEmptyComponent],
+})
+export class MyComponent {
+  emptyConfig: EmptyConfig = {
+    type: 'data',
+    size: 'md',
+    showIcon: true,
+    showActionButton: true,
+    actionButtonText: 'Add First Employee',
+    centered: true,
+    fullHeight: false,
+  };
+
+  onAddNew() {
+    console.log('Adding new item...');
+  }
+}
+```
+
+### 导航组件 (Navigation Components)
+
+#### BaseTabsComponent
+
+标签页导航组件，支持图标、徽章和多种样式。
+
+```typescript
+import { BaseTabsComponent, TabItem } from '@shared/components/base';
+
+@Component({
+  template: `
+    <app-base-tabs
+      [tabs]="tabs"
+      [activeTabId]="activeTab"
+      [config]="tabsConfig"
+      (tabChange)="onTabChange($event)"
+    >
+    </app-base-tabs>
+  `,
+  imports: [BaseTabsComponent],
+})
+export class MyComponent {
+  activeTab = 'list';
+
+  tabs: TabItem[] = [
+    { id: 'list', label: 'Employee List', icon: 'list' },
+    { id: 'add', label: 'Add Employee', icon: 'person_add' },
+    { id: 'reports', label: 'Reports', icon: 'assessment' },
+    { id: 'settings', label: 'Settings', icon: 'settings' },
+  ];
+
+  tabsConfig = {
+    size: 'md',
+    variant: 'default',
+    showIcons: true,
+    showBadges: false,
+    centered: false,
+    fullWidth: false,
+    scrollable: true,
+  };
+
+  onTabChange(tabId: string) {
+    this.activeTab = tabId;
+  }
+}
+```
 
 #### BaseModalComponent
 
@@ -427,4 +651,3 @@ export class MyComponent {
 ## 📚 更多示例
 
 查看 `examples/` 目录获取更多使用示例和最佳实践。
-

@@ -1,0 +1,226 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-error/base-error.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.error-container {
+  display: flex;
+  align-items: center;
+  padding: $spacing-4;
+  border-radius: var(--border-radius-base);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-sm);
+
+  &.centered {
+    justify-content: center;
+    text-align: center;
+  }
+
+  &.full-width {
+    width: 100%;
+  }
+
+  // Type variants
+  &.type-error {
+    border-color: var(--color-error-300);
+    background: var(--color-error-50);
+
+    .error-icon .material-icons {
+      color: var(--color-error-500);
+    }
+
+    .error-title {
+      color: var(--color-error-700);
+    }
+  }
+
+  &.type-warning {
+    border-color: var(--color-warning-300);
+    background: var(--color-warning-50);
+
+    .error-icon .material-icons {
+      color: var(--color-warning-500);
+    }
+
+    .error-title {
+      color: var(--color-warning-700);
+    }
+  }
+
+  &.type-info {
+    border-color: var(--color-info-300);
+    background: var(--color-info-50);
+
+    .error-icon .material-icons {
+      color: var(--color-info-500);
+    }
+
+    .error-title {
+      color: var(--color-info-700);
+    }
+  }
+
+  &.type-critical {
+    border-color: var(--color-error-500);
+    background: var(--color-error-100);
+    border-width: 2px;
+
+    .error-icon .material-icons {
+      color: var(--color-error-600);
+    }
+
+    .error-title {
+      color: var(--color-error-800);
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-3;
+  width: 100%;
+
+  .error-container:not(.centered) & {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .material-icons {
+    font-size: 24px;
+  }
+}
+
+.error-message {
+  flex: 1;
+  min-width: 0;
+
+  .error-title {
+    margin: 0 0 $spacing-1 0;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    line-height: 1.4;
+  }
+
+  .error-details {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+}
+
+.error-actions {
+  display: flex;
+  gap: $spacing-2;
+  flex-shrink: 0;
+
+  .btn {
+    padding: $spacing-2 $spacing-4;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    border-radius: var(--border-radius-base);
+    border: none;
+    cursor: pointer;
+    transition: all $duration-200 $ease-in-out;
+
+    &.btn-primary {
+      background: var(--color-primary-500);
+      color: var(--color-white);
+
+      &:hover:not(:disabled) {
+        background: var(--color-primary-600);
+        transform: translateY(-1px);
+      }
+    }
+
+    &.btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-primary);
+
+      &:hover:not(:disabled) {
+        background: var(--bg-hover);
+        border-color: var(--color-primary-300);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Size variants
+.error-container {
+  &.size-sm {
+    padding: $spacing-3;
+
+    .error-icon .material-icons {
+      font-size: 20px;
+    }
+
+    .error-title {
+      font-size: $font-size-sm;
+    }
+
+    .error-details {
+      font-size: $font-size-xs;
+    }
+
+    .error-actions .btn {
+      padding: $spacing-1 $spacing-3;
+      font-size: $font-size-xs;
+    }
+  }
+
+  &.size-lg {
+    padding: $spacing-6;
+
+    .error-icon .material-icons {
+      font-size: 32px;
+    }
+
+    .error-title {
+      font-size: $font-size-lg;
+    }
+
+    .error-details {
+      font-size: $font-size-base;
+    }
+
+    .error-actions .btn {
+      padding: $spacing-3 $spacing-6;
+      font-size: $font-size-base;
+    }
+  }
+}
+
+// Responsive design
+@include mobile-only {
+  .error-container {
+    padding: $spacing-3;
+
+    .error-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .error-actions {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+

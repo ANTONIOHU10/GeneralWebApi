@@ -9,71 +9,69 @@
       <p>Manage and view all employees in the system</p>
     </div>
     <div class="header-actions">
-      <div class="search-box">
-        <input
-          type="text"
-          placeholder="Search employees..."
-          class="search-input"
-        />
-        <button class="search-btn">
-          <span class="material-icons">search</span>
-        </button>
-      </div>
+      <app-base-search
+        [config]="{
+          placeholder: 'Search employees...',
+          debounceTime: 300,
+          minLength: 1,
+          showClearButton: true,
+          showSearchButton: true
+        }"
+        (searchChange)="onSearchChange($event)"
+        inputId="employee-search"
+      ></app-base-search>
     </div>
   </div>
 
   <!-- 标签页导航 -->
-  <div class="tab-navigation">
-    <button
-      class="tab-button"
-      [class.active]="activeTab() === 'list'"
-      (click)="setActiveTab('list')"
-    >
-      <span class="material-icons">list</span>
-      Employee List
-    </button>
-    <button
-      class="tab-button"
-      [class.active]="activeTab() === 'add'"
-      (click)="setActiveTab('add')"
-    >
-      <span class="material-icons">person_add</span>
-      Add Employee
-    </button>
-    <button
-      class="tab-button"
-      [class.active]="activeTab() === 'reports'"
-      (click)="setActiveTab('reports')"
-    >
-      <span class="material-icons">assessment</span>
-      Reports
-    </button>
-    <button
-      class="tab-button"
-      [class.active]="activeTab() === 'settings'"
-      (click)="setActiveTab('settings')"
-    >
-      <span class="material-icons">settings</span>
-      Settings
-    </button>
-  </div>
+  <app-base-tabs
+    [tabs]="tabs"
+    [activeTabId]="activeTab()"
+    [config]="{
+      size: 'md',
+      variant: 'default',
+      showIcons: true,
+      showBadges: false,
+      centered: false,
+      fullWidth: false,
+      scrollable: true
+    }"
+    (tabChange)="onTabChange($event)"
+  ></app-base-tabs>
 
   <!-- 内容区域 -->
   <div class="content-area">
     <!-- 员工列表标签页 -->
     <div *ngIf="activeTab() === 'list'" class="tab-content">
       <!-- 加载状态 -->
-      <div *ngIf="loading$ | async" class="loading">
-        <p>Loading employees...</p>
-      </div>
+      <app-base-loading
+        *ngIf="loading$ | async"
+        [config]="{
+          size: 'md',
+          type: 'spinner',
+          message: 'Loading employees...',
+          overlay: false,
+          centered: true,
+          fullHeight: false
+        }"
+      ></app-base-loading>
 
       <!-- 错误状态 -->
-      <div *ngIf="error$ | async as error" class="error">
-        <p>{{ error }}</p>
-        <button class="btn btn-secondary" (click)="loadEmployees()">
-          Retry
-        </button>
-      </div>
+      <app-base-error
+        *ngIf="error$ | async as error"
+        [message]="error"
+        [config]="{
+          type: 'error',
+          size: 'md',
+          showIcon: true,
+          showRetryButton: true,
+          showDismissButton: false,
+          retryButtonText: 'Retry',
+          centered: true,
+          fullWidth: false
+        }"
+        (retry)="loadEmployees()"
+      ></app-base-error>
 
       <!-- 员工列表 -->
       <div *ngIf="(loading$ | async) === false && (error$ | async) === null" class="employee-grid">
@@ -88,12 +86,19 @@
         </app-employee-card>
 
         <!-- 空状态 -->
-        <div *ngIf="(employees$ | async)?.length === 0" class="empty-state">
-          <p>No employees found.</p>
-          <button class="btn btn-primary" (click)="setActiveTab('add')">
-            Add First Employee
-          </button>
-        </div>
+        <app-base-empty
+          *ngIf="(employees$ | async)?.length === 0"
+          [config]="{
+            type: 'data',
+            size: 'md',
+            showIcon: true,
+            showActionButton: true,
+            actionButtonText: 'Add First Employee',
+            centered: true,
+            fullHeight: false
+          }"
+          (actionClick)="setActiveTab('add')"
+        ></app-base-empty>
       </div>
     </div>
 

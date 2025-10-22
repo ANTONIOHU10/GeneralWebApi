@@ -6,6 +6,11 @@ import { EmployeeCardComponent } from '../employee-card/employee-card.component'
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
 import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
+import { BaseSearchComponent } from '../../../Shared/components/base/base-search/base-search.component';
+import { BaseTabsComponent, TabItem } from '../../../Shared/components/base/base-tabs/base-tabs.component';
+import { BaseLoadingComponent } from '../../../Shared/components/base/base-loading/base-loading.component';
+import { BaseErrorComponent } from '../../../Shared/components/base/base-error/base-error.component';
+import { BaseEmptyComponent } from '../../../Shared/components/base/base-empty/base-empty.component';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { Employee } from 'app/contracts/employees/employee.model';
 
@@ -18,6 +23,11 @@ import { Employee } from 'app/contracts/employees/employee.model';
     AddEmployeeComponent,
     EmployeeReportsComponent,
     EmployeeSettingsComponent,
+    BaseSearchComponent,
+    BaseTabsComponent,
+    BaseLoadingComponent,
+    BaseErrorComponent,
+    BaseEmptyComponent,
   ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
@@ -36,6 +46,14 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   // Local state
   activeTab = signal<'list' | 'add' | 'reports' | 'settings'>('list');
+
+  // Tab configuration
+  tabs: TabItem[] = [
+    { id: 'list', label: 'Employee List', icon: 'list' },
+    { id: 'add', label: 'Add Employee', icon: 'person_add' },
+    { id: 'reports', label: 'Reports', icon: 'assessment' },
+    { id: 'settings', label: 'Settings', icon: 'settings' }
+  ];
 
   ngOnInit() {
     this.loadEmployees();
@@ -83,6 +101,13 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
    */
   setActiveTab(tab: 'list' | 'add' | 'reports' | 'settings'): void {
     this.activeTab.set(tab);
+  }
+
+  /**
+   * 处理标签页切换
+   */
+  onTabChange(tabId: string): void {
+    this.setActiveTab(tabId as 'list' | 'add' | 'reports' | 'settings');
   }
 
   // 过滤和搜索方法

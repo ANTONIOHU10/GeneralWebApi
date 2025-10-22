@@ -1,0 +1,219 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-loading/base-loading.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-6;
+  color: var(--text-secondary);
+
+  &.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 1000;
+  }
+
+  &.full-height {
+    min-height: 200px;
+  }
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.loading-message {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: $spacing-2;
+}
+
+// Spinner Animation
+.loading-spinner {
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-primary);
+    border-top: 3px solid var(--color-primary-500);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Dots Animation
+.loading-dots {
+  display: flex;
+  gap: $spacing-1;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-primary-500);
+    border-radius: 50%;
+    animation: dots-bounce 1.4s ease-in-out infinite both;
+
+    &:nth-child(1) { animation-delay: -0.32s; }
+    &:nth-child(2) { animation-delay: -0.16s; }
+    &:nth-child(3) { animation-delay: 0s; }
+  }
+}
+
+@keyframes dots-bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+// Pulse Animation
+.loading-pulse {
+  .pulse-circle {
+    width: 40px;
+    height: 40px;
+    background: var(--color-primary-500);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+// Skeleton Animation
+.loading-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  width: 100%;
+  max-width: 300px;
+
+  .skeleton-line {
+    background: linear-gradient(90deg, var(--bg-hover) 25%, var(--border-primary) 50%, var(--bg-hover) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: var(--border-radius-sm);
+    height: 12px;
+
+    &.skeleton-title {
+      height: 16px;
+      width: 60%;
+    }
+
+    &.skeleton-text {
+      width: 100%;
+
+      &.short {
+        width: 80%;
+      }
+    }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Size variants
+.loading-container {
+  &.size-sm {
+    padding: $spacing-4;
+
+    .loading-spinner .spinner {
+      width: 24px;
+      height: 24px;
+      border-width: 2px;
+    }
+
+    .loading-dots .dot {
+      width: 6px;
+      height: 6px;
+    }
+
+    .loading-pulse .pulse-circle {
+      width: 24px;
+      height: 24px;
+    }
+
+    .loading-message {
+      font-size: $font-size-xs;
+    }
+  }
+
+  &.size-lg {
+    padding: $spacing-8;
+
+    .loading-spinner .spinner {
+      width: 60px;
+      height: 60px;
+      border-width: 4px;
+    }
+
+    .loading-dots .dot {
+      width: 12px;
+      height: 12px;
+    }
+
+    .loading-pulse .pulse-circle {
+      width: 60px;
+      height: 60px;
+    }
+
+    .loading-message {
+      font-size: $font-size-base;
+    }
+  }
+}
+
+// Responsive design
+@include mobile-only {
+  .loading-container {
+    padding: $spacing-4;
+
+    &.overlay {
+      padding: $spacing-6;
+    }
+  }
+}
+

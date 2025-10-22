@@ -1,0 +1,163 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-search/base-search.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+
+  &.focused {
+    .search-input-wrapper {
+      border-color: var(--color-primary-500);
+      box-shadow: 0 0 0 3px var(--color-primary-100);
+    }
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    .search-input {
+      cursor: not-allowed;
+    }
+  }
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-base);
+  transition: all $duration-200 $ease-in-out;
+  overflow: hidden;
+
+  &:hover:not(.disabled) {
+    border-color: var(--color-primary-300);
+  }
+}
+
+.search-input {
+  flex: 1;
+  padding: $spacing-3 $spacing-4;
+  padding-right: 80px; // Space for icons
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: $font-size-base;
+  font-family: inherit;
+  outline: none;
+  transition: all $duration-200 $ease-in-out;
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.search-icon,
+.clear-icon {
+  position: absolute;
+  right: $spacing-3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  transition: all $duration-200 $ease-in-out;
+
+  .material-icons {
+    font-size: 18px;
+    color: var(--text-secondary);
+    transition: all $duration-200 $ease-in-out;
+  }
+
+  &:hover {
+    background: var(--bg-hover);
+    
+    .material-icons {
+      color: var(--text-primary);
+    }
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+
+    .material-icons {
+      color: var(--text-tertiary);
+    }
+  }
+}
+
+.clear-icon {
+  right: 40px; // Position left of search icon
+
+  .material-icons {
+    font-size: 16px;
+  }
+}
+
+// Size variants
+.search-container {
+  &.size-sm {
+    .search-input {
+      padding: $spacing-2 $spacing-3;
+      padding-right: 60px;
+      font-size: $font-size-sm;
+    }
+
+    .search-icon,
+    .clear-icon {
+      width: 20px;
+      height: 20px;
+      right: $spacing-2;
+
+      .material-icons {
+        font-size: 16px;
+      }
+    }
+
+    .clear-icon {
+      right: 32px;
+    }
+  }
+
+  &.size-lg {
+    .search-input {
+      padding: $spacing-4 $spacing-5;
+      padding-right: 100px;
+      font-size: $font-size-lg;
+    }
+
+    .search-icon,
+    .clear-icon {
+      width: 28px;
+      height: 28px;
+      right: $spacing-4;
+
+      .material-icons {
+        font-size: 20px;
+      }
+    }
+
+    .clear-icon {
+      right: 48px;
+    }
+  }
+}
+
+// Responsive design
+@include mobile-only {
+  .search-container {
+    max-width: 100%;
+  }
+}
+

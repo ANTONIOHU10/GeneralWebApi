@@ -1,0 +1,52 @@
+<!-- src/app/Shared/components/base/base-tabs/base-tabs.component.html -->
+<div 
+  class="tabs-container"
+  [class.centered]="displayCentered"
+  [class.full-width]="displayFullWidth"
+  [class.scrollable]="displayScrollable"
+  [class.variant-default]="displayVariant === 'default'"
+  [class.variant-pills]="displayVariant === 'pills'"
+  [class.variant-underline]="displayVariant === 'underline'"
+  [class.variant-cards]="displayVariant === 'cards'"
+  [class.size-sm]="displaySize === 'sm'"
+  [class.size-md]="displaySize === 'md'"
+  [class.size-lg]="displaySize === 'lg'"
+>
+  <div class="tabs-nav" role="tablist">
+    <button
+      *ngFor="let tab of tabs"
+      [class]="getTabClass(tab)"
+      [disabled]="tab.disabled"
+      (click)="onTabClick(tab)"
+      (keydown.enter)="onTabClick(tab)"
+      (keydown.space)="onTabClick(tab)"
+      role="tab"
+      [attr.aria-selected]="isTabActive(tab.id)"
+      [attr.aria-controls]="'tabpanel-' + tab.id"
+      [attr.id]="'tab-' + tab.id"
+      tabindex="0"
+    >
+      <!-- Tab Icon -->
+      <span 
+        *ngIf="displayShowIcons && tab.icon" 
+        class="tab-icon material-icons"
+        aria-hidden="true"
+      >
+        {{ tab.icon }}
+      </span>
+
+      <!-- Tab Label -->
+      <span class="tab-label">{{ tab.label }}</span>
+
+      <!-- Tab Badge -->
+      <span 
+        *ngIf="displayShowBadges && tab.badge" 
+        class="tab-badge"
+        [class.badge-number]="typeof tab.badge === 'number'"
+        [class.badge-text]="typeof tab.badge === 'string'"
+      >
+        {{ tab.badge }}
+      </span>
+    </button>
+  </div>
+</div>

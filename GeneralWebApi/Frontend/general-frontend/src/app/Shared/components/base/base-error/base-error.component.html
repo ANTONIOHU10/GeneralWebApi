@@ -1,0 +1,50 @@
+<!-- src/app/Shared/components/base/base-error/base-error.component.html -->
+<div 
+  class="error-container"
+  [class.centered]="displayCentered"
+  [class.full-width]="displayFullWidth"
+  [class.type-error]="displayType === 'error'"
+  [class.type-warning]="displayType === 'warning'"
+  [class.type-info]="displayType === 'info'"
+  [class.type-critical]="displayType === 'critical'"
+  [class.size-sm]="displaySize === 'sm'"
+  [class.size-md]="displaySize === 'md'"
+  [class.size-lg]="displaySize === 'lg'"
+  role="alert"
+  aria-live="polite"
+>
+  <div class="error-content">
+    <!-- Error Icon -->
+    <div *ngIf="displayShowIcon" class="error-icon">
+      <span class="material-icons">{{ iconName }}</span>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message">
+      <h3 class="error-title">{{ message }}</h3>
+      <p *ngIf="details" class="error-details">{{ details }}</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div *ngIf="displayShowRetryButton || displayShowDismissButton" class="error-actions">
+      <button 
+        *ngIf="displayShowRetryButton"
+        class="btn btn-primary"
+        (click)="onRetry()"
+        type="button"
+      >
+        {{ displayRetryButtonText }}
+      </button>
+      
+      <button 
+        *ngIf="displayShowDismissButton"
+        class="btn btn-secondary"
+        (click)="onDismiss()"
+        type="button"
+      >
+        {{ displayDismissButtonText }}
+      </button>
+    </div>
+  </div>
+</div>
+

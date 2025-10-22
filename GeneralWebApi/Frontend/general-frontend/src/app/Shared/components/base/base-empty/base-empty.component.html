@@ -1,0 +1,43 @@
+<!-- src/app/Shared/components/base/base-empty/base-empty.component.html -->
+<div 
+  class="empty-container"
+  [class.centered]="displayCentered"
+  [class.full-height]="displayFullHeight"
+  [class.type-default]="displayType === 'default'"
+  [class.type-search]="displayType === 'search'"
+  [class.type-data]="displayType === 'data'"
+  [class.type-error]="displayType === 'error'"
+  [class.type-custom]="displayType === 'custom'"
+  [class.size-sm]="displaySize === 'sm'"
+  [class.size-md]="displaySize === 'md'"
+  [class.size-lg]="displaySize === 'lg'"
+>
+  <div class="empty-content">
+    <!-- Empty State Icon -->
+    <div *ngIf="displayShowIcon" class="empty-icon">
+      <span class="material-icons">{{ iconName }}</span>
+    </div>
+
+    <!-- Empty State Text -->
+    <div class="empty-text">
+      <h3 class="empty-title">
+        {{ title || defaultTitle }}
+      </h3>
+      <p *ngIf="description || defaultDescription" class="empty-description">
+        {{ description || defaultDescription }}
+      </p>
+    </div>
+
+    <!-- Action Button -->
+    <div *ngIf="displayShowActionButton" class="empty-actions">
+      <button 
+        class="btn btn-primary"
+        (click)="onActionClick()"
+        type="button"
+      >
+        {{ displayActionButtonText }}
+      </button>
+    </div>
+  </div>
+</div>
+

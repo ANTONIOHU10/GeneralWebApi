@@ -1,0 +1,43 @@
+<!-- src/app/Shared/components/base/base-loading/base-loading.component.html -->
+<div 
+  class="loading-container"
+  [class.overlay]="isOverlay"
+  [class.centered]="isCentered"
+  [class.full-height]="isFullHeight"
+  [class.size-sm]="displaySize === 'sm'"
+  [class.size-md]="displaySize === 'md'"
+  [class.size-lg]="displaySize === 'lg'"
+>
+  <div class="loading-content">
+    <!-- Spinner Type -->
+    <div *ngIf="displayType === 'spinner'" class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Dots Type -->
+    <div *ngIf="displayType === 'dots'" class="loading-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <!-- Pulse Type -->
+    <div *ngIf="displayType === 'pulse'" class="loading-pulse">
+      <div class="pulse-circle"></div>
+    </div>
+
+    <!-- Skeleton Type -->
+    <div *ngIf="displayType === 'skeleton'" class="loading-skeleton">
+      <div class="skeleton-line skeleton-title"></div>
+      <div class="skeleton-line skeleton-text"></div>
+      <div class="skeleton-line skeleton-text"></div>
+      <div class="skeleton-line skeleton-text short"></div>
+    </div>
+
+    <!-- Loading Message -->
+    <div *ngIf="displayMessage" class="loading-message">
+      {{ displayMessage }}
+    </div>
+  </div>
+</div>
+
