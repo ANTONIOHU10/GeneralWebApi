@@ -1,0 +1,64 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-page-header/base-page-header.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.page-header {
+  padding: $spacing-8 $spacing-8 $spacing-4 $spacing-8;
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+  position: relative;
+  transition: background-color $duration-300 $ease-in-out, border-color $duration-300 $ease-in-out;
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  color: var(--text-primary);
+  font-size: $font-size-2xl;
+  margin: 0 0 $spacing-2 0;
+  font-weight: $font-weight-semibold;
+  transition: color $duration-300 $ease-in-out;
+}
+
+.material-icons {
+  font-size: $font-size-2xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color $duration-300 $ease-in-out;
+}
+
+p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  transition: color $duration-300 $ease-in-out;
+}
+
+.header-actions {
+  position: absolute;
+  top: $spacing-8;
+  right: $spacing-8;
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+// Responsive design
+@include mobile-only {
+  .page-header {
+    padding: $spacing-6 $spacing-4 $spacing-4 $spacing-4;
+  }
+
+  .header-actions {
+    position: static;
+    margin-top: $spacing-4;
+    justify-content: flex-end;
+  }
+
+  h1 {
+    font-size: $font-size-xl;
+  }
+}

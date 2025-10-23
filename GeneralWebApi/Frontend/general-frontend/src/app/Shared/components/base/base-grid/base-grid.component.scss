@@ -1,0 +1,238 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-grid/base-grid.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.base-grid {
+  display: grid;
+  width: 100%;
+  transition: all $duration-300 $ease-in-out;
+
+  /* Gap variants */
+  &.gap-none {
+    gap: 0;
+  }
+
+  &.gap-sm {
+    gap: $spacing-2;
+  }
+
+  &.gap-md {
+    gap: $spacing-4;
+  }
+
+  &.gap-lg {
+    gap: $spacing-6;
+  }
+
+  &.gap-xl {
+    gap: $spacing-8;
+  }
+
+  /* Alignment variants */
+  &.align-start {
+    align-items: start;
+  }
+
+  &.align-center {
+    align-items: center;
+  }
+
+  &.align-end {
+    align-items: end;
+  }
+
+  &.align-stretch {
+    align-items: stretch;
+  }
+
+  /* Justify variants */
+  &.justify-start {
+    justify-items: start;
+  }
+
+  &.justify-center {
+    justify-items: center;
+  }
+
+  &.justify-end {
+    justify-items: end;
+  }
+
+  &.justify-space-between {
+    justify-content: space-between;
+  }
+
+  &.justify-space-around {
+    justify-content: space-around;
+  }
+
+  &.justify-space-evenly {
+    justify-content: space-evenly;
+  }
+
+  /* Direction variants */
+  &.direction-row {
+    grid-auto-flow: row;
+  }
+
+  &.direction-column {
+    grid-auto-flow: column;
+  }
+
+  &.direction-row-reverse {
+    grid-auto-flow: row;
+    direction: rtl;
+  }
+
+  &.direction-column-reverse {
+    grid-auto-flow: column;
+    direction: rtl;
+  }
+
+  /* Wrap */
+  &.wrap {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  /* Column variants */
+  &.cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  &.cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &.cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &.cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &.cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  &.cols-6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  &.cols-12 {
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  /* Auto-fit variants */
+  &.auto-fit-sm {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  &.auto-fit-md {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  &.auto-fit-lg {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  &.auto-fit-xl {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  /* Auto-fill variants */
+  &.auto-fill-sm {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  &.auto-fill-md {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  &.auto-fill-lg {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  &.auto-fill-xl {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+// Responsive breakpoints
+@include mobile-only {
+  .base-grid {
+    &.cols-2,
+    &.cols-3,
+    &.cols-4,
+    &.cols-5,
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: 1fr;
+    }
+
+    &.gap-lg,
+    &.gap-xl {
+      gap: $spacing-4;
+    }
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .base-grid {
+    &.cols-3,
+    &.cols-4,
+    &.cols-5,
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &.cols-4,
+    &.cols-5,
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .base-grid {
+    &.cols-4,
+    &.cols-5,
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &.cols-5,
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .base-grid {
+    &.cols-5,
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+@media (min-width: 1281px) {
+  .base-grid {
+    &.cols-6,
+    &.cols-12 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+}

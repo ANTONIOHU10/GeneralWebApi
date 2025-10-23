@@ -29,7 +29,7 @@ export interface CheckboxConfig {
   ]
 })
 export class BaseCheckboxComponent implements ControlValueAccessor {
-  @Input() label: string = '';
+  @Input() label = '';
   @Input() config: CheckboxConfig = {
     size: 'md',
     variant: 'default',
@@ -41,22 +41,26 @@ export class BaseCheckboxComponent implements ControlValueAccessor {
 
   @Input() size: CheckboxSize = 'md';
   @Input() variant: CheckboxVariant = 'default';
-  @Input() showLabel: boolean = true;
-  @Input() disabled: boolean = false;
-  @Input() required: boolean = false;
-  @Input() indeterminate: boolean = false;
-  @Input() inputId: string = 'checkbox-input';
+  @Input() showLabel = true;
+  @Input() disabled = false;
+  @Input() required = false;
+  @Input() indeterminate = false;
+  @Input() inputId = 'checkbox-input';
 
   @Output() valueChange = new EventEmitter<boolean>();
-  @Output() focus = new EventEmitter<Event>();
-  @Output() blur = new EventEmitter<Event>();
+  @Output() focusEvent = new EventEmitter<Event>();
+  @Output() blurEvent = new EventEmitter<Event>();
+  @Output() focusChange = new EventEmitter<Event>();
+  @Output() blurChange = new EventEmitter<Event>();
 
   // Internal state
-  private _value: boolean = false;
-  private _touched: boolean = false;
+  private _value = false;
+  private _touched = false;
 
   // ControlValueAccessor implementation
-  private onChange = (value: boolean) => {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+  private onChange = (_value: boolean) => {};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onTouched = () => {};
 
   get value(): boolean {
@@ -120,11 +124,11 @@ export class BaseCheckboxComponent implements ControlValueAccessor {
   }
 
   onFocus(event: Event) {
-    this.focus.emit(event);
+    this.focusEvent.emit(event);
   }
 
   onBlur(event: Event) {
-    this.blur.emit(event);
+    this.blurEvent.emit(event);
     this.markAsTouched();
   }
 

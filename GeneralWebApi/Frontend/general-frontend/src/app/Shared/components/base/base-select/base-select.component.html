@@ -1,0 +1,89 @@
+<!-- src/app/Shared/components/base/base-select/base-select.component.html -->
+<div class="base-select-container" [class]="containerClass">
+  <label *ngIf="label" class="select-label" [id]="selectId + '-label'" [for]="selectId">
+    {{ label }}
+    <span *ngIf="required" class="required-asterisk">*</span>
+  </label>
+  
+  <div 
+    class="select-wrapper" 
+    [class]="wrapperClass" 
+    (click)="toggleDropdown()"
+    (keydown.enter)="toggleDropdown()"
+    (keydown.space)="toggleDropdown()"
+    tabindex="0"
+    role="button"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-haspopup]="'listbox'"
+    [attr.aria-labelledby]="label ? selectId + '-label' : null"
+  >
+    <div class="select-display">
+      <span *ngIf="selectedOption?.icon" class="option-icon material-icons">
+        {{ selectedOption?.icon }}
+      </span>
+      <span class="select-text">
+        {{ selectedOption?.label || placeholder }}
+      </span>
+    </div>
+    
+    <span class="select-arrow material-icons" [class.rotated]="isOpen">
+      keyboard_arrow_down
+    </span>
+  </div>
+  
+  <div class="select-dropdown" [class]="dropdownClass" *ngIf="isOpen">
+    <div class="dropdown-search" *ngIf="searchable">
+      <input
+        type="text"
+        placeholder="Search..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+        (keydown.enter)="onSearchChange()"
+        (keydown.space)="onSearchChange()"
+        class="search-input"
+        tabindex="0"
+        role="searchbox"
+        [attr.aria-label]="'Search options'"
+      />
+    </div>
+    
+    <div class="dropdown-content">
+      <div *ngFor="let group of groupedOptions" class="option-group">
+        <div *ngIf="group.name" class="group-header">{{ group.name }}</div>
+        <div
+          *ngFor="let option of group.options"
+          class="select-option"
+          [class.selected]="isSelected(option)"
+          [class.disabled]="option.disabled"
+          (click)="selectOption(option)"
+          (keydown.enter)="selectOption(option)"
+          (keydown.space)="selectOption(option)"
+          tabindex="0"
+          role="option"
+          [attr.aria-selected]="isSelected(option)"
+        >
+          <span *ngIf="option.icon" class="option-icon material-icons">
+            {{ option.icon }}
+          </span>
+          <span class="option-label">{{ option.label }}</span>
+          <span *ngIf="isSelected(option)" class="check-icon material-icons">
+            check
+          </span>
+        </div>
+      </div>
+      
+      <div *ngIf="filteredOptions.length === 0" class="no-options">
+        No options found
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="hint && !error" class="select-hint">
+    {{ hint }}
+  </div>
+  
+  <div *ngIf="error" class="select-error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>

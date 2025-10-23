@@ -24,7 +24,7 @@ export interface ErrorConfig {
   styleUrls: ['./base-error.component.scss']
 })
 export class BaseErrorComponent {
-  @Input() message: string = 'An error occurred';
+  @Input() message = 'An error occurred';
   @Input() details?: string;
   @Input() config: ErrorConfig = {
     type: 'error',
@@ -40,13 +40,13 @@ export class BaseErrorComponent {
 
   @Input() type: ErrorType = 'error';
   @Input() size: ErrorSize = 'md';
-  @Input() showIcon: boolean = true;
-  @Input() showRetryButton: boolean = true;
-  @Input() showDismissButton: boolean = false;
-  @Input() retryButtonText: string = 'Retry';
-  @Input() dismissButtonText: string = 'Dismiss';
-  @Input() centered: boolean = true;
-  @Input() fullWidth: boolean = false;
+  @Input() showIcon = true;
+  @Input() showRetryButton = true;
+  @Input() showDismissButton = false;
+  @Input() retryButtonText = 'Retry';
+  @Input() dismissButtonText = 'Dismiss';
+  @Input() centered = true;
+  @Input() fullWidth = false;
 
   @Output() retry = new EventEmitter<void>();
   @Output() dismiss = new EventEmitter<void>();

@@ -1,0 +1,251 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-modal/base-modal.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-overlay);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-4;
+  opacity: 0;
+  visibility: hidden;
+  transition: all $duration-300 $ease-in-out;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &.fade {
+    transition: opacity $duration-300 $ease-in-out, visibility $duration-300 $ease-in-out;
+  }
+}
+
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.9);
+  transition: transform $duration-300 $ease-in-out;
+
+  .modal-backdrop.show & {
+    transform: scale(1);
+  }
+
+  &.small {
+    width: 400px;
+  }
+
+  &.medium {
+    width: 600px;
+  }
+
+  &.large {
+    width: 800px;
+  }
+
+  &.fullscreen {
+    width: 95vw;
+    height: 95vh;
+    max-width: none;
+    max-height: none;
+  }
+
+  &.centered {
+    margin: auto;
+  }
+
+  &.scrollable {
+    overflow: hidden;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-6;
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+
+  .modal-title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+
+    .modal-icon {
+      font-size: 1.5rem;
+      color: var(--color-primary-500);
+    }
+
+    .modal-title-text {
+      margin: 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: var(--text-primary);
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    .modal-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border: none;
+      background: none;
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      transition: all $duration-200 $ease-in-out;
+
+      &:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+
+      .material-icons {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+.modal-body {
+  padding: $spacing-6;
+  flex: 1;
+  overflow-y: auto;
+  color: var(--text-primary);
+
+  &.scrollable {
+    max-height: 60vh;
+  }
+
+  &.no-padding {
+    padding: 0;
+  }
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-3;
+  padding: $spacing-4 $spacing-6;
+  border-top: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+}
+
+/* Modal sizes */
+.modal.small {
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: $spacing-4;
+  }
+}
+
+.modal.large {
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: $spacing-8;
+  }
+}
+
+/* Animation variants */
+.modal-backdrop.fade {
+  .modal {
+    &.slide-down {
+      transform: translateY(-50px);
+      transition: transform $duration-300 $ease-in-out;
+
+      .modal-backdrop.show & {
+        transform: translateY(0);
+      }
+    }
+
+    &.slide-up {
+      transform: translateY(50px);
+      transition: transform $duration-300 $ease-in-out;
+
+      .modal-backdrop.show & {
+        transform: translateY(0);
+      }
+    }
+
+    &.slide-left {
+      transform: translateX(-50px);
+      transition: transform $duration-300 $ease-in-out;
+
+      .modal-backdrop.show & {
+        transform: translateX(0);
+      }
+    }
+
+    &.slide-right {
+      transform: translateX(50px);
+      transition: transform $duration-300 $ease-in-out;
+
+      .modal-backdrop.show & {
+        transform: translateX(0);
+      }
+    }
+  }
+}
+
+// Responsive design
+@include mobile-only {
+  .modal-backdrop {
+    padding: $spacing-2;
+  }
+
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0;
+
+    &.small,
+    &.medium,
+    &.large {
+      width: 100% !important;
+    }
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: $spacing-4;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-backdrop {
+    padding: $spacing-1;
+  }
+
+  .modal-header {
+    .modal-title {
+      .modal-title-text {
+        font-size: $font-size-lg;
+      }
+    }
+  }
+}

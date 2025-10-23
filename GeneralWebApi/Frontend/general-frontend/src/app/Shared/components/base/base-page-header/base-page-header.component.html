@@ -1,0 +1,11 @@
+<!-- src/app/Shared/components/base/base-page-header/base-page-header.component.html -->
+<div class="page-header">
+  <h1>
+    <span class="material-icons" [style.color]="iconColor">{{ icon }}</span>
+    {{ title }}
+  </h1>
+  <p *ngIf="subtitle">{{ subtitle }}</p>
+  <div class="header-actions" *ngIf="showActions">
+    <ng-content select="[slot=actions]"></ng-content>
+  </div>
+</div>

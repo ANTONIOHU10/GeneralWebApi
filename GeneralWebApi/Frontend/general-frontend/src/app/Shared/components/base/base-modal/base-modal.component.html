@@ -1,0 +1,56 @@
+<!-- src/app/Shared/components/base/base-modal/base-modal.component.html -->
+<div
+  class="modal-backdrop"
+  [class.show]="isOpen"
+  [class.fade]="config.animation"
+  (click)="onBackdropClick()"
+  (keydown.escape)="onBackdropClick()"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="'Close modal'"
+  *ngIf="isOpen"
+>
+  <div
+    #modalElement
+    class="modal"
+    [class]="modalClass"
+    role="dialog"
+    [attr.aria-modal]="true"
+    [attr.aria-labelledby]="titleId"
+    [attr.aria-describedby]="contentId"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+  >
+    <!-- Modal Header -->
+    <div class="modal-header" *ngIf="showHeader">
+      <div class="modal-title">
+        <span *ngIf="icon" class="modal-icon material-icons">{{ icon }}</span>
+        <h4 [id]="titleId" class="modal-title-text">{{ title }}</h4>
+      </div>
+      
+      <div class="modal-actions">
+        <ng-content select="[slot=header-actions]"></ng-content>
+        
+        <button
+          *ngIf="config.closable"
+          type="button"
+          class="modal-close"
+          (click)="close()"
+          [attr.aria-label]="'Close modal'"
+        >
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body" [id]="contentId" [class]="bodyClass">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer" *ngIf="showFooter">
+      <ng-content select="[slot=footer]"></ng-content>
+    </div>
+  </div>
+</div>

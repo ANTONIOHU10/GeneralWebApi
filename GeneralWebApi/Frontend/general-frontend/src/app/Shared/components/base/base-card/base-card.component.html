@@ -1,0 +1,19 @@
+<!-- src/app/Shared/components/base/base-card/base-card.component.html -->
+<div class="base-card" [class]="cardClass" [style]="cardStyle">
+  <div class="card-header" *ngIf="showHeader">
+    <div class="card-title" *ngIf="title">
+      <span class="material-icons" *ngIf="icon">{{ icon }}</span>
+      {{ title }}
+    </div>
+    <div class="card-subtitle" *ngIf="subtitle">{{ subtitle }}</div>
+    <div class="card-actions" *ngIf="showActions">
+      <ng-content select="[slot=actions]"></ng-content>
+    </div>
+  </div>
+  <div class="card-content">
+    <ng-content></ng-content>
+  </div>
+  <div class="card-footer" *ngIf="showFooter">
+    <ng-content select="[slot=footer]"></ng-content>
+  </div>
+</div>

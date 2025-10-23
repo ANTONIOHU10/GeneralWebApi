@@ -1,0 +1,109 @@
+<!-- src/app/Shared/components/base/base-pagination/base-pagination.component.html -->
+<div class="base-pagination" [class]="paginationClass">
+  <!-- Pagination Info -->
+  <div class="pagination-info" *ngIf="config.showInfo">
+    <span class="info-text">
+      Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} entries
+    </span>
+  </div>
+
+  <!-- Page Size Selector -->
+  <div class="page-size-selector" *ngIf="config.showPageSize">
+    <label class="page-size-label" for="page-size-select">Show:</label>
+    <select
+      id="page-size-select"
+      [value]="pageSize"
+      (change)="onPageSizeChange($event)"
+      class="page-size-select"
+    >
+      <option *ngFor="let size of config.pageSizeOptions" [value]="size">
+        {{ size }}
+      </option>
+    </select>
+    <span class="page-size-text">per page</span>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-controls">
+    <!-- First Page Button -->
+    <button
+      *ngIf="config.showFirstLast"
+      class="page-btn first-btn"
+      [disabled]="currentPage === 1"
+      (click)="goToPage(1)"
+      [attr.aria-label]="'Go to first page'"
+    >
+      <span class="material-icons">first_page</span>
+    </button>
+
+    <!-- Previous Page Button -->
+    <button
+      *ngIf="config.showPrevNext"
+      class="page-btn prev-btn"
+      [disabled]="currentPage === 1"
+      (click)="goToPage(currentPage - 1)"
+      [attr.aria-label]="'Go to previous page'"
+    >
+      <span class="material-icons">chevron_left</span>
+    </button>
+
+    <!-- Page Numbers -->
+    <div class="page-numbers" *ngIf="config.showPageNumbers">
+      <button
+        *ngFor="let page of visiblePages"
+        class="page-btn page-number"
+        [class.active]="page === currentPage"
+        [class.ellipsis]="page === '...'"
+        [disabled]="page === '...'"
+        (click)="goToPage(page)"
+        [attr.aria-label]="page === '...' ? 'More pages' : 'Go to page ' + page"
+      >
+        {{ page }}
+      </button>
+    </div>
+
+    <!-- Next Page Button -->
+    <button
+      *ngIf="config.showPrevNext"
+      class="page-btn next-btn"
+      [disabled]="currentPage === totalPages"
+      (click)="goToPage(currentPage + 1)"
+      [attr.aria-label]="'Go to next page'"
+    >
+      <span class="material-icons">chevron_right</span>
+    </button>
+
+    <!-- Last Page Button -->
+    <button
+      *ngIf="config.showFirstLast"
+      class="page-btn last-btn"
+      [disabled]="currentPage === totalPages"
+      (click)="goToPage(totalPages)"
+      [attr.aria-label]="'Go to last page'"
+    >
+      <span class="material-icons">last_page</span>
+    </button>
+  </div>
+
+  <!-- Quick Jump -->
+  <div class="quick-jump" *ngIf="showQuickJump">
+    <label class="jump-label" for="jump-input">Go to:</label>
+    <input
+      id="jump-input"
+      type="number"
+      [min]="1"
+      [max]="totalPages"
+      [(ngModel)]="jumpPage"
+      (keydown.enter)="jumpToPage()"
+      class="jump-input"
+      [attr.aria-label]="'Jump to page'"
+    />
+    <button
+      class="jump-btn"
+      (click)="jumpToPage()"
+      [disabled]="!isValidJumpPage()"
+    >
+      Go
+    </button>
+  </div>
+</div>

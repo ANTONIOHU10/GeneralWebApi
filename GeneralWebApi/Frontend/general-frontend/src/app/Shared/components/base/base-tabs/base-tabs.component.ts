@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface TabItem {
@@ -29,7 +29,7 @@ export interface TabConfig {
   templateUrl: './base-tabs.component.html',
   styleUrls: ['./base-tabs.component.scss']
 })
-export class BaseTabsComponent {
+export class BaseTabsComponent implements OnInit {
   @Input() tabs: TabItem[] = [];
   @Input() activeTabId = '';
   @Input() config: TabConfig = {

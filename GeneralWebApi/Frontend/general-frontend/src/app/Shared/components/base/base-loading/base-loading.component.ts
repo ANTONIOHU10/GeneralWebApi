@@ -30,12 +30,12 @@ export class BaseLoadingComponent {
     fullHeight: false
   };
 
-  @Input() message: string = '';
+  @Input() message = '';
   @Input() size: LoadingSize = 'md';
   @Input() type: LoadingType = 'spinner';
-  @Input() overlay: boolean = false;
-  @Input() centered: boolean = true;
-  @Input() fullHeight: boolean = false;
+  @Input() overlay = false;
+  @Input() centered = true;
+  @Input() fullHeight = false;
 
   get displayMessage(): string {
     return this.message || this.config.message || 'Loading...';

@@ -1,0 +1,145 @@
+<!-- src/app/Shared/components/base/base-table/base-table.component.html -->
+<div class="base-table-container" [class]="containerClass">
+  <!-- Table Header -->
+  <div class="table-header" *ngIf="title || subtitle || config.showSearch">
+    <div class="table-title-section" *ngIf="title || subtitle">
+      <h3 class="table-title" *ngIf="title">{{ title }}</h3>
+      <p class="table-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+    </div>
+    
+    <div class="table-search-section" *ngIf="config.showSearch">
+      <app-base-search
+        [config]="searchConfig"
+        [value]="searchQuery"
+        (searchChange)="onSearchChange()"
+        class="table-search"
+      ></app-base-search>
+    </div>
+  </div>
+
+  <!-- Table Wrapper -->
+  <div class="table-wrapper" [class]="wrapperClass">
+    <!-- Loading State -->
+    <div class="table-loading" *ngIf="config.loading">
+      <app-base-loading
+        [config]="loadingConfig"
+        message="Loading data..."
+      ></app-base-loading>
+    </div>
+
+    <!-- Empty State -->
+    <div class="table-empty" *ngIf="!config.loading && filteredData.length === 0">
+      <app-base-empty
+        [config]="emptyConfig"
+        [title]="config.emptyMessage || 'No data available'"
+      ></app-base-empty>
+    </div>
+
+    <!-- Table -->
+    <table class="base-table" [class]="tableClass" *ngIf="!config.loading && filteredData.length > 0">
+      <!-- Table Header -->
+      <thead class="table-header-row" *ngIf="config.showHeader">
+        <tr>
+          <th
+            *ngFor="let column of columns"
+            [class]="getHeaderClass(column)"
+            [style.width]="column.width"
+            [style.text-align]="column.align || 'left'"
+            (click)="onSort(column)"
+          >
+            <div class="header-content">
+              <span class="header-label">{{ column.label }}</span>
+              <span
+                *ngIf="column.sortable"
+                class="sort-icon material-icons"
+                [class.active]="sortColumn === column.key"
+              >
+                {{ getSortIcon(column.key) }}
+              </span>
+            </div>
+          </th>
+          <th
+            *ngIf="actions.length > 0"
+            class="actions-header"
+            [style.width]="actionsWidth"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody class="table-body">
+        <tr
+          *ngFor="let item of paginatedData; trackBy: trackByFn; let i = index"
+          [class]="getRowClass(item, i)"
+          (click)="onRowClick(item)"
+        >
+          <!-- Data Cells -->
+          <td
+            *ngFor="let column of columns"
+            [class]="getCellClass(column)"
+            [style.text-align]="column.align || 'left'"
+          >
+            <ng-container [ngSwitch]="column.type">
+              <!-- Custom Template -->
+              <ng-container *ngSwitchCase="'custom'">
+                <ng-container *ngTemplateOutlet="column.template || null; context: { $implicit: item, column: column }"></ng-container>
+              </ng-container>
+              
+              <!-- Date Type -->
+              <span *ngSwitchCase="'date'">{{ formatDate(getValue(item, column.key)) }}</span>
+              
+              <!-- Number Type -->
+              <span *ngSwitchCase="'number'">{{ formatNumber(getValue(item, column.key)) }}</span>
+              
+              <!-- Boolean Type -->
+              <span *ngSwitchCase="'boolean'" class="boolean-cell">
+                <span class="material-icons" [class.true]="getValue(item, column.key)">
+                  {{ getValue(item, column.key) ? 'check_circle' : 'cancel' }}
+                </span>
+              </span>
+              
+              <!-- Default Text Type -->
+              <span *ngSwitchDefault>{{ getValue(item, column.key) }}</span>
+            </ng-container>
+          </td>
+          
+          <!-- Actions Cell -->
+          <td
+            *ngIf="actions.length > 0"
+            class="actions-cell"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="actions-container">
+              <button
+                *ngFor="let action of getVisibleActions(item)"
+                class="action-button"
+                [class]="getActionClass(action)"
+                [disabled]="action.disabled?.(item)"
+                (click)="action.onClick(item)"
+                [attr.aria-label]="action.label"
+              >
+                <span class="material-icons" *ngIf="action.icon">{{ action.icon }}</span>
+                <span class="action-label" *ngIf="action.label">{{ action.label }}</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table Footer -->
+  <div class="table-footer" *ngIf="config.showFooter && config.showPagination && totalPages > 1">
+    <app-base-pagination
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [totalItems]="filteredData.length"
+      [pageSize]="pageSize"
+      [config]="paginationConfig"
+      (pageChange)="goToPage($event)"
+      class="table-pagination"
+    ></app-base-pagination>
+  </div>
+</div>

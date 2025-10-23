@@ -1,0 +1,16 @@
+<!-- src/app/Shared/components/base/base-button/base-button.component.html -->
+<button
+  class="base-button"
+  [class]="buttonClass"
+  [disabled]="disabled"
+  [type]="type"
+  (click)="onClick($event)"
+>
+  <span class="material-icons" *ngIf="icon && !iconRight">{{ icon }}</span>
+  <span class="button-text" *ngIf="text">{{ text }}</span>
+  <ng-content></ng-content>
+  <span class="material-icons" *ngIf="icon && iconRight">{{ icon }}</span>
+  <span class="loading-spinner" *ngIf="loading">
+    <span class="material-icons">refresh</span>
+  </span>
+</button>

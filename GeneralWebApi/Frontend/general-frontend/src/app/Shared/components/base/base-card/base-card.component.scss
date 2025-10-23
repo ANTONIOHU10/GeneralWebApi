@@ -1,0 +1,112 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-card/base-card.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.base-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all $duration-300 $ease-in-out;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.card-header {
+  padding: $spacing-6;
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+  position: relative;
+  transition: background-color $duration-300 $ease-in-out, border-color $duration-300 $ease-in-out;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin-bottom: $spacing-1;
+  transition: color $duration-300 $ease-in-out;
+}
+
+.material-icons {
+  font-size: 20px;
+  color: var(--color-primary-500);
+  transition: color $duration-300 $ease-in-out;
+}
+
+.card-subtitle {
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+  margin: 0;
+  transition: color $duration-300 $ease-in-out;
+}
+
+.card-actions {
+  position: absolute;
+  top: $spacing-6;
+  right: $spacing-6;
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.card-content {
+  padding: $spacing-6;
+}
+
+.card-footer {
+  padding: $spacing-4 $spacing-6;
+  border-top: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  transition: background-color $duration-300 $ease-in-out, border-color $duration-300 $ease-in-out;
+}
+
+/* Card variants */
+.base-card.elevated {
+  box-shadow: var(--shadow-lg);
+
+  &:hover {
+    box-shadow: var(--shadow-xl);
+  }
+}
+
+.base-card.outlined {
+  box-shadow: none;
+  border: 2px solid var(--border-primary);
+
+  &:hover {
+    border-color: var(--color-primary-300);
+  }
+}
+
+.base-card.flat {
+  box-shadow: none;
+  border: none;
+}
+
+// Responsive design
+@include mobile-only {
+  .card-header {
+    padding: $spacing-4;
+  }
+
+  .card-content {
+    padding: $spacing-4;
+  }
+
+  .card-footer {
+    padding: $spacing-3 $spacing-4;
+  }
+
+  .card-actions {
+    position: static;
+    margin-top: $spacing-4;
+    justify-content: flex-end;
+  }
+}

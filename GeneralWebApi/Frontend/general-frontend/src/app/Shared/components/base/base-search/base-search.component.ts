@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -18,7 +18,7 @@ export interface SearchConfig {
   templateUrl: './base-search.component.html',
   styleUrls: ['./base-search.component.scss']
 })
-export class BaseSearchComponent {
+export class BaseSearchComponent implements OnInit {
   @Input() config: SearchConfig = {
     placeholder: 'Search...',
     debounceTime: 300,
@@ -28,8 +28,8 @@ export class BaseSearchComponent {
     disabled: false
   };
 
-  @Input() value: string = '';
-  @Input() inputId: string = 'search-input';
+  @Input() value= '';
+  @Input() inputId= 'search-input';
 
   @Output() searchChange = new EventEmitter<string>();
   @Output() searchSubmit = new EventEmitter<string>();

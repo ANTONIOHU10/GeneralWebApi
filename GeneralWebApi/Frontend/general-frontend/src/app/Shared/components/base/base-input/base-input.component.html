@@ -1,0 +1,51 @@
+<!-- src/app/Shared/components/base/base-input/base-input.component.html -->
+<div class="base-input-container" [class]="containerClass">
+  <label *ngIf="label" class="input-label" [for]="inputId">
+    {{ label }}
+    <span *ngIf="required" class="required-asterisk">*</span>
+  </label>
+  
+  <div class="input-wrapper" [class]="wrapperClass">
+    <span *ngIf="prefixIcon" class="input-icon prefix-icon material-icons">
+      {{ prefixIcon }}
+    </span>
+    
+    <input
+      [id]="inputId"
+      [type]="type"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [readonly]="readonly"
+      [step]="step"
+      [ngModel]="value"
+      [class]="inputClass"
+      (ngModelChange)="onInput($event)"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+      (keydown)="onKeydown($event)"
+    />
+    
+    <span *ngIf="suffixIcon" class="input-icon suffix-icon material-icons">
+      {{ suffixIcon }}
+    </span>
+    
+    <button 
+      *ngIf="clearable && value" 
+      type="button" 
+      class="clear-button"
+      (click)="onClear()"
+      [attr.aria-label]="'Clear input'"
+    >
+      <span class="material-icons">close</span>
+    </button>
+  </div>
+  
+  <div *ngIf="hint && !error" class="input-hint">
+    {{ hint }}
+  </div>
+  
+  <div *ngIf="error" class="input-error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>

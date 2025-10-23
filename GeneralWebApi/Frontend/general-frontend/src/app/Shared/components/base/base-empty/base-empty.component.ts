@@ -22,7 +22,7 @@ export interface EmptyConfig {
   styleUrls: ['./base-empty.component.scss']
 })
 export class BaseEmptyComponent {
-  @Input() title: string = 'No data found';
+  @Input() title = 'No data found';
   @Input() description?: string;
   @Input() config: EmptyConfig = {
     type: 'default',
@@ -36,11 +36,11 @@ export class BaseEmptyComponent {
 
   @Input() type: EmptyType = 'default';
   @Input() size: EmptySize = 'md';
-  @Input() showIcon: boolean = true;
-  @Input() showActionButton: boolean = false;
-  @Input() actionButtonText: string = 'Add New';
-  @Input() centered: boolean = true;
-  @Input() fullHeight: boolean = false;
+  @Input() showIcon = true;
+  @Input() showActionButton = false;
+  @Input() actionButtonText = 'Add New';
+  @Input() centered = true;
+  @Input() fullHeight = false;
 
   @Output() actionClick = new EventEmitter<void>();
 
