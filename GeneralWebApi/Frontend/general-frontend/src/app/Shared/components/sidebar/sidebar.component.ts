@@ -156,6 +156,18 @@ export class SidebarComponent implements OnInit {
       expandable: true,
       expanded: false,
     },
+    {
+      title: 'Development & Testing',
+      items: [
+        {
+          label: 'Notification Demo',
+          icon: 'notifications',
+          route: '/private/notification-demo',
+        },
+      ],
+      expandable: true,
+      expanded: false,
+    },
   ];
 
   @Output() closeSidebar = new EventEmitter<void>();

@@ -23,6 +23,7 @@ export { BaseErrorComponent } from './base-error/base-error.component';
 export { BaseEmptyComponent } from './base-empty/base-empty.component';
 export { BaseModalComponent } from './base-modal/base-modal.component';
 export { BaseToastComponent } from './base-toast/base-toast.component';
+export { BaseNotificationComponent } from './base-notification/base-notification.component';
 
 // Navigation Components
 export { BaseTabsComponent } from './base-tabs/base-tabs.component';
@@ -40,3 +41,4 @@ export type { CheckboxConfig } from './base-checkbox/base-checkbox.component';
 export type { LoadingConfig, LoadingSize, LoadingType } from './base-loading/base-loading.component';
 export type { ErrorConfig, ErrorType, ErrorSize } from './base-error/base-error.component';
 export type { EmptyConfig, EmptySize, EmptyType } from './base-empty/base-empty.component';
+export type { NotificationData, NotificationAction } from './base-notification/base-notification.component';
