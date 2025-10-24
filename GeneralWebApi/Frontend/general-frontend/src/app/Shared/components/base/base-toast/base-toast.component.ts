@@ -54,7 +54,7 @@ export class BaseToastComponent implements OnInit, OnDestroy {
   @Output() toastRemoved = new EventEmitter<string>();
 
   toasts: ToastData[] = [];
-  private timers = new Map<string, number>();
+  private timers = new Map<string, ReturnType<typeof setTimeout>>();
 
   get containerClass(): string {
     const classes = [
