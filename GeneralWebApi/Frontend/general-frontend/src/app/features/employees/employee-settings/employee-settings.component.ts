@@ -7,11 +7,7 @@ import { BaseButtonComponent } from '../../../Shared/components/base/base-button
 @Component({
   selector: 'app-employee-settings',
   standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule,
-    BaseButtonComponent
-  ],
+  imports: [CommonModule, FormsModule, BaseButtonComponent],
   templateUrl: './employee-settings.component.html',
   styleUrls: ['./employee-settings.component.scss'],
 })
@@ -27,7 +23,7 @@ export class EmployeeSettingsComponent {
     autoBackup: true,
     archiveInactive: false,
     restrictPersonalData: true,
-    requireTwoFactor: false
+    requireTwoFactor: false,
   };
 
   // 重置设置
@@ -42,7 +38,7 @@ export class EmployeeSettingsComponent {
       autoBackup: true,
       archiveInactive: false,
       restrictPersonalData: true,
-      requireTwoFactor: false
+      requireTwoFactor: false,
     };
     console.log('Settings reset to default');
   }

@@ -6,7 +6,7 @@
       <h3 class="table-title" *ngIf="title">{{ title }}</h3>
       <p class="table-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
     </div>
-    
+
     <div class="table-search-section" *ngIf="config.showSearch">
       <app-base-search
         [config]="searchConfig"
@@ -28,7 +28,10 @@
     </div>
 
     <!-- Empty State -->
-    <div class="table-empty" *ngIf="!config.loading && filteredData.length === 0">
+    <div
+      class="table-empty"
+      *ngIf="!config.loading && filteredData.length === 0"
+    >
       <app-base-empty
         [config]="emptyConfig"
         [title]="config.emptyMessage || 'No data available'"
@@ -36,7 +39,11 @@
     </div>
 
     <!-- Table -->
-    <table class="base-table" [class]="tableClass" *ngIf="!config.loading && filteredData.length > 0">
+    <table
+      class="base-table"
+      [class]="tableClass"
+      *ngIf="!config.loading && filteredData.length > 0"
+    >
       <!-- Table Header -->
       <thead class="table-header-row" *ngIf="config.showHeader">
         <tr>
@@ -84,27 +91,39 @@
             <ng-container [ngSwitch]="column.type">
               <!-- Custom Template -->
               <ng-container *ngSwitchCase="'custom'">
-                <ng-container *ngTemplateOutlet="column.template || null; context: { $implicit: item, column: column }"></ng-container>
+                <ng-container
+                  *ngTemplateOutlet="
+                    column.template || null;
+                    context: { $implicit: item, column: column }
+                  "
+                ></ng-container>
               </ng-container>
-              
+
               <!-- Date Type -->
-              <span *ngSwitchCase="'date'">{{ formatDate(getValue(item, column.key)) }}</span>
-              
+              <span *ngSwitchCase="'date'">{{
+                formatDate(getValue(item, column.key))
+              }}</span>
+
               <!-- Number Type -->
-              <span *ngSwitchCase="'number'">{{ formatNumber(getValue(item, column.key)) }}</span>
-              
+              <span *ngSwitchCase="'number'">{{
+                formatNumber(getValue(item, column.key))
+              }}</span>
+
               <!-- Boolean Type -->
               <span *ngSwitchCase="'boolean'" class="boolean-cell">
-                <span class="material-icons" [class.true]="getValue(item, column.key)">
+                <span
+                  class="material-icons"
+                  [class.true]="getValue(item, column.key)"
+                >
                   {{ getValue(item, column.key) ? 'check_circle' : 'cancel' }}
                 </span>
               </span>
-              
+
               <!-- Default Text Type -->
               <span *ngSwitchDefault>{{ getValue(item, column.key) }}</span>
             </ng-container>
           </td>
-          
+
           <!-- Actions Cell -->
           <td
             *ngIf="actions.length > 0"
@@ -120,8 +139,12 @@
                 (click)="action.onClick(item)"
                 [attr.aria-label]="action.label"
               >
-                <span class="material-icons" *ngIf="action.icon">{{ action.icon }}</span>
-                <span class="action-label" *ngIf="action.label">{{ action.label }}</span>
+                <span class="material-icons" *ngIf="action.icon">{{
+                  action.icon
+                }}</span>
+                <span class="action-label" *ngIf="action.label">{{
+                  action.label
+                }}</span>
               </button>
             </div>
           </td>
@@ -131,7 +154,10 @@
   </div>
 
   <!-- Table Footer -->
-  <div class="table-footer" *ngIf="config.showFooter && config.showPagination && totalPages > 1">
+  <div
+    class="table-footer"
+    *ngIf="config.showFooter && config.showPagination && totalPages > 1"
+  >
     <app-base-pagination
       [currentPage]="currentPage"
       [totalPages]="totalPages"

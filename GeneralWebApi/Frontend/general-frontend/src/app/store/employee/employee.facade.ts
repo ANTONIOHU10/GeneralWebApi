@@ -8,20 +8,26 @@ import * as EmployeeActions from './employee.actions';
 import * as EmployeeSelectors from './employee.selectors';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EmployeeFacade {
   private store = inject(Store);
 
   // 状态选择器
   employees$ = this.store.select(EmployeeSelectors.selectAllEmployees);
-  filteredEmployees$ = this.store.select(EmployeeSelectors.selectFilteredEmployees);
-  selectedEmployee$ = this.store.select(EmployeeSelectors.selectSelectedEmployee);
+  filteredEmployees$ = this.store.select(
+    EmployeeSelectors.selectFilteredEmployees
+  );
+  selectedEmployee$ = this.store.select(
+    EmployeeSelectors.selectSelectedEmployee
+  );
   loading$ = this.store.select(EmployeeSelectors.selectEmployeeLoading);
   error$ = this.store.select(EmployeeSelectors.selectEmployeeError);
   pagination$ = this.store.select(EmployeeSelectors.selectEmployeePagination);
   filters$ = this.store.select(EmployeeSelectors.selectEmployeeFilters);
-  operationInProgress$ = this.store.select(EmployeeSelectors.selectOperationInProgress);
+  operationInProgress$ = this.store.select(
+    EmployeeSelectors.selectOperationInProgress
+  );
   employeeStats$ = this.store.select(EmployeeSelectors.selectEmployeeStats);
 
   // 方法
@@ -75,10 +81,7 @@ export class EmployeeFacade {
     this.store.dispatch(EmployeeActions.clearFilters());
   }
 
-  setPagination(pagination: {
-    currentPage?: number;
-    pageSize?: number;
-  }) {
+  setPagination(pagination: { currentPage?: number; pageSize?: number }) {
     this.store.dispatch(EmployeeActions.setPagination(pagination));
   }
 
@@ -96,15 +99,20 @@ export class EmployeeFacade {
   }
 
   getEmployeesByDepartment(department: string): Observable<Employee[]> {
-    return this.store.select(EmployeeSelectors.selectEmployeesByDepartment(department));
+    return this.store.select(
+      EmployeeSelectors.selectEmployeesByDepartment(department)
+    );
   }
 
   getActiveEmployees(): Observable<Employee[]> {
     return this.store.select(EmployeeSelectors.selectActiveEmployees);
   }
 
-  isOperationInProgress(operation?: 'create' | 'update' | 'delete'): Observable<boolean> {
-    return this.store.select(EmployeeSelectors.selectIsEmployeeLoading(operation));
+  isOperationInProgress(
+    operation?: 'create' | 'update' | 'delete'
+  ): Observable<boolean> {
+    return this.store.select(
+      EmployeeSelectors.selectIsEmployeeLoading(operation)
+    );
   }
 }
-

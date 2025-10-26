@@ -1,13 +1,16 @@
 // src/app/features/employees/employee-list/employee-list.component.ts
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject} from 'rxjs';
+import { Subject } from 'rxjs';
 import { EmployeeCardComponent } from '../employee-card/employee-card.component';
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
 import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
 import { BaseSearchComponent } from '../../../Shared/components/base/base-search/base-search.component';
-import { BaseTabsComponent, TabItem } from '../../../Shared/components/base/base-tabs/base-tabs.component';
+import {
+  BaseTabsComponent,
+  TabItem,
+} from '../../../Shared/components/base/base-tabs/base-tabs.component';
 import { BaseLoadingComponent } from '../../../Shared/components/base/base-loading/base-loading.component';
 import { BaseErrorComponent } from '../../../Shared/components/base/base-error/base-error.component';
 import { BaseEmptyComponent } from '../../../Shared/components/base/base-empty/base-empty.component';
@@ -52,7 +55,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     { id: 'list', label: 'Employee List', icon: 'list' },
     { id: 'add', label: 'Add Employee', icon: 'person_add' },
     { id: 'reports', label: 'Reports', icon: 'assessment' },
-    { id: 'settings', label: 'Settings', icon: 'settings' }
+    { id: 'settings', label: 'Settings', icon: 'settings' },
   ];
 
   ngOnInit() {
@@ -68,7 +71,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     console.log('🔄 Loading employees...');
     this.employeeFacade.loadEmployees();
   }
-
 
   onEditEmployee(employee: Employee) {
     console.log('Edit employee:', employee);

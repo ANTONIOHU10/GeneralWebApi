@@ -15,7 +15,7 @@
           debounceTime: 300,
           minLength: 1,
           showClearButton: true,
-          showSearchButton: true
+          showSearchButton: true,
         }"
         (searchChange)="onSearchChange($event)"
         inputId="employee-search"
@@ -34,7 +34,7 @@
       showBadges: false,
       centered: false,
       fullWidth: false,
-      scrollable: true
+      scrollable: true,
     }"
     (tabChange)="onTabChange($event)"
   ></app-base-tabs>
@@ -52,7 +52,7 @@
           message: 'Loading employees...',
           overlay: false,
           centered: true,
-          fullHeight: false
+          fullHeight: false,
         }"
       ></app-base-loading>
 
@@ -68,13 +68,16 @@
           showDismissButton: false,
           retryButtonText: 'Retry',
           centered: true,
-          fullWidth: false
+          fullWidth: false,
         }"
         (retry)="loadEmployees()"
       ></app-base-error>
 
       <!-- 员工列表 -->
-      <div *ngIf="(loading$ | async) === false && (error$ | async) === null" class="employee-grid">
+      <div
+        *ngIf="(loading$ | async) === false && (error$ | async) === null"
+        class="employee-grid"
+      >
         <app-employee-card
           *ngFor="let employee of employees$ | async"
           [employee]="employee"
@@ -95,7 +98,7 @@
             showActionButton: true,
             actionButtonText: 'Add First Employee',
             centered: true,
-            fullHeight: false
+            fullHeight: false,
           }"
           (actionClick)="setActiveTab('add')"
         ></app-base-empty>

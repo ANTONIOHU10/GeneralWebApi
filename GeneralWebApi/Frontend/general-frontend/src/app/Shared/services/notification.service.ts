@@ -34,7 +34,7 @@ export interface NotificationData extends NotificationConfig {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
   private notificationsSubject = new BehaviorSubject<NotificationData[]>([]);
@@ -48,66 +48,82 @@ export class NotificationService {
       duration: 3000,
       closable: true,
       autoClose: true,
-      priority: 'normal' as const
+      priority: 'normal' as const,
     },
     error: {
       duration: 5000,
       closable: true,
       autoClose: true,
-      priority: 'high' as const
+      priority: 'high' as const,
     },
     warning: {
       duration: 4000,
       closable: true,
       autoClose: true,
-      priority: 'normal' as const
+      priority: 'normal' as const,
     },
     info: {
       duration: 3000,
       closable: true,
       autoClose: true,
-      priority: 'normal' as const
-    }
+      priority: 'normal' as const,
+    },
   };
 
   // Quick methods for common notification types
-  success(title: string, message: string, options?: Partial<NotificationConfig>): string {
+  success(
+    title: string,
+    message: string,
+    options?: Partial<NotificationConfig>
+  ): string {
     return this.show({
       title,
       message,
       type: 'success',
       ...this.defaultConfigs.success,
-      ...options
+      ...options,
     });
   }
 
-  error(title: string, message: string, options?: Partial<NotificationConfig>): string {
+  error(
+    title: string,
+    message: string,
+    options?: Partial<NotificationConfig>
+  ): string {
     return this.show({
       title,
       message,
       type: 'error',
       ...this.defaultConfigs.error,
-      ...options
+      ...options,
     });
   }
 
-  warning(title: string, message: string, options?: Partial<NotificationConfig>): string {
+  warning(
+    title: string,
+    message: string,
+    options?: Partial<NotificationConfig>
+  ): string {
     return this.show({
       title,
       message,
       type: 'warning',
       ...this.defaultConfigs.warning,
-      ...options
+      ...options,
     });
   }
 
-  info(title: string, message: string, options?: Partial<NotificationConfig>): string {
+  info(
+    title: string,
+    message: string,
+    options?: Partial<NotificationConfig>
+  ): string {
     return this.show({
       title,
       message,
       type: 'info',
       ...this.defaultConfigs.info,
-      ...options
+      ...options,
     });
   }
 
@@ -117,7 +133,7 @@ export class NotificationService {
     const notification: NotificationData = {
       ...config,
       id,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     const currentNotifications = this.notificationsSubject.value;
@@ -129,7 +145,9 @@ export class NotificationService {
   // Remove notification
   remove(id: string): void {
     const currentNotifications = this.notificationsSubject.value;
-    this.notificationsSubject.next(currentNotifications.filter(n => n.id !== id));
+    this.notificationsSubject.next(
+      currentNotifications.filter(n => n.id !== id)
+    );
   }
 
   // Clear all notifications
@@ -140,7 +158,9 @@ export class NotificationService {
   // Clear notifications by type
   clearByType(type: NotificationConfig['type']): void {
     const currentNotifications = this.notificationsSubject.value;
-    this.notificationsSubject.next(currentNotifications.filter(n => n.type !== type));
+    this.notificationsSubject.next(
+      currentNotifications.filter(n => n.type !== type)
+    );
   }
 
   // Get current notifications

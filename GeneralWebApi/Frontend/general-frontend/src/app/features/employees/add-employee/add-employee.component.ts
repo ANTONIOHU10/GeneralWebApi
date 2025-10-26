@@ -10,11 +10,11 @@ import { BaseSelectComponent } from '../../../Shared/components/base/base-select
   selector: 'app-add-employee',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
     BaseButtonComponent,
     BaseInputComponent,
-    BaseSelectComponent
+    BaseSelectComponent,
   ],
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'],
@@ -29,7 +29,7 @@ export class AddEmployeeComponent {
     department: '',
     position: '',
     startDate: '',
-    salary: ''
+    salary: '',
   };
 
   // 部门选项
@@ -38,7 +38,7 @@ export class AddEmployeeComponent {
     { value: 'it', label: 'Information Technology' },
     { value: 'finance', label: 'Finance' },
     { value: 'marketing', label: 'Marketing' },
-    { value: 'sales', label: 'Sales' }
+    { value: 'sales', label: 'Sales' },
   ];
 
   // 表单提交

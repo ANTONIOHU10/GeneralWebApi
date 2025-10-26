@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-card.component.html',
-  styleUrls: ['./base-card.component.scss']
+  styleUrls: ['./base-card.component.scss'],
 })
 export class BaseCardComponent {
   @Input() title = '';

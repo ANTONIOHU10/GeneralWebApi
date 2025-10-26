@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-page-header.component.html',
-  styleUrls: ['./base-page-header.component.scss']
+  styleUrls: ['./base-page-header.component.scss'],
 })
 export class BasePageHeaderComponent {
   @Input() title = '';

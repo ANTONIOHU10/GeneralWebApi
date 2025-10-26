@@ -12,7 +12,7 @@ import { BaseTableComponent } from '../../../Shared/components/base/base-table/b
     CommonModule,
     BaseButtonComponent,
     BaseCardComponent,
-    BaseTableComponent
+    BaseTableComponent,
   ],
   templateUrl: './employee-reports.component.html',
   styleUrls: ['./employee-reports.component.scss'],
@@ -24,38 +24,38 @@ export class EmployeeReportsComponent {
       icon: 'people',
       title: 'Department Overview',
       description: 'Employee distribution by department',
-      action: 'Generate Report'
+      action: 'Generate Report',
     },
     {
       icon: 'trending_up',
       title: 'Hiring Trends',
       description: 'Monthly hiring statistics and trends',
-      action: 'Generate Report'
+      action: 'Generate Report',
     },
     {
       icon: 'attach_money',
       title: 'Salary Analysis',
       description: 'Salary distribution and analysis',
-      action: 'Generate Report'
+      action: 'Generate Report',
     },
     {
       icon: 'event',
       title: 'Attendance Report',
       description: 'Employee attendance and leave records',
-      action: 'Generate Report'
+      action: 'Generate Report',
     },
     {
       icon: 'gps_fixed',
       title: 'Performance Review',
       description: 'Employee performance evaluation reports',
-      action: 'Generate Report'
+      action: 'Generate Report',
     },
     {
       icon: 'description',
       title: 'Custom Report',
       description: 'Create custom reports with specific criteria',
-      action: 'Create Report'
-    }
+      action: 'Create Report',
+    },
   ];
 
   // 最近报告数据
@@ -64,21 +64,21 @@ export class EmployeeReportsComponent {
       id: 1,
       title: 'Department Overview - December 2024',
       generatedDate: 'Dec 19, 2024 at 10:30 AM',
-      status: 'completed'
+      status: 'completed',
     },
     {
       id: 2,
       title: 'Hiring Trends - Q4 2024',
       generatedDate: 'Dec 15, 2024 at 2:15 PM',
-      status: 'completed'
-    }
+      status: 'completed',
+    },
   ];
 
   // 表格列定义
   reportColumns = [
     { key: 'title', label: 'Report Name', sortable: true },
     { key: 'generatedDate', label: 'Generated', sortable: true },
-    { key: 'status', label: 'Status', sortable: true }
+    { key: 'status', label: 'Status', sortable: true },
   ];
 
   // 表格操作
@@ -86,13 +86,13 @@ export class EmployeeReportsComponent {
     {
       label: 'View',
       icon: 'visibility',
-      onClick: (item: unknown) => this.viewReport(item)
+      onClick: (item: unknown) => this.viewReport(item),
     },
     {
       label: 'Download',
       icon: 'download',
-      onClick: (item: unknown) => this.downloadReport(item)
-    }
+      onClick: (item: unknown) => this.downloadReport(item),
+    },
   ];
 
   // 生成报告

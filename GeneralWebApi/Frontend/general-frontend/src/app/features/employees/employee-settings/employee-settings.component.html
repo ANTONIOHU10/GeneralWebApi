@@ -16,10 +16,11 @@
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.autoGenerateId"
-                name="autoGenerateId" />
+                name="autoGenerateId"
+              />
               <span class="checkmark"></span>
               Auto-generate employee ID
             </label>
@@ -27,13 +28,14 @@
               Automatically generate unique employee IDs for new employees
             </p>
           </div>
-          
+
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.sendWelcomeEmail"
-                name="sendWelcomeEmail" />
+                name="sendWelcomeEmail"
+              />
               <span class="checkmark"></span>
               Send welcome email
             </label>
@@ -41,13 +43,14 @@
               Send welcome email to new employees upon creation
             </p>
           </div>
-          
+
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.requireManagerApproval"
-                name="requireManagerApproval" />
+                name="requireManagerApproval"
+              />
               <span class="checkmark"></span>
               Require manager approval
             </label>
@@ -64,10 +67,11 @@
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.enableNotifications"
-                name="enableNotifications" />
+                name="enableNotifications"
+              />
               <span class="checkmark"></span>
               Enable notifications
             </label>
@@ -75,33 +79,31 @@
               Receive notifications for important employee events
             </p>
           </div>
-          
+
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.emailNotifications"
-                name="emailNotifications" />
+                name="emailNotifications"
+              />
               <span class="checkmark"></span>
               Email notifications
             </label>
-            <p class="setting-description">
-              Send notifications via email
-            </p>
+            <p class="setting-description">Send notifications via email</p>
           </div>
-          
+
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.smsNotifications"
-                name="smsNotifications" />
+                name="smsNotifications"
+              />
               <span class="checkmark"></span>
               SMS notifications
             </label>
-            <p class="setting-description">
-              Send notifications via SMS
-            </p>
+            <p class="setting-description">Send notifications via SMS</p>
           </div>
         </div>
       </div>
@@ -112,10 +114,11 @@
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.autoBackup"
-                name="autoBackup" />
+                name="autoBackup"
+              />
               <span class="checkmark"></span>
               Auto-backup employee data
             </label>
@@ -123,13 +126,14 @@
               Automatically backup employee data daily
             </p>
           </div>
-          
+
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.archiveInactive"
-                name="archiveInactive" />
+                name="archiveInactive"
+              />
               <span class="checkmark"></span>
               Archive inactive employees
             </label>
@@ -146,10 +150,11 @@
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.restrictPersonalData"
-                name="restrictPersonalData" />
+                name="restrictPersonalData"
+              />
               <span class="checkmark"></span>
               Restrict personal data access
             </label>
@@ -157,13 +162,14 @@
               Only HR and managers can view personal employee data
             </p>
           </div>
-          
+
           <div class="setting-item">
             <label class="setting-label">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 [(ngModel)]="settings.requireTwoFactor"
-                name="requireTwoFactor" />
+                name="requireTwoFactor"
+              />
               <span class="checkmark"></span>
               Require two-factor authentication
             </label>
@@ -180,13 +186,15 @@
       <app-base-button
         [variant]="'secondary'"
         [text]="'Reset to Default'"
-        (click)="resetToDefault()">
+        (click)="resetToDefault()"
+      >
       </app-base-button>
-      
+
       <app-base-button
         [variant]="'primary'"
         [text]="'Save Settings'"
-        (click)="saveSettings()">
+        (click)="saveSettings()"
+      >
       </app-base-button>
     </div>
   </div>

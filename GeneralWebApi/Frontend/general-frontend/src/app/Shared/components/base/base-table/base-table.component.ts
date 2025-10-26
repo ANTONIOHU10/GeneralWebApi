@@ -1,5 +1,13 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-table/base-table.component.ts
-import { Component, Input, Output, EventEmitter, TemplateRef, OnInit, OnChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  TemplateRef,
+  OnInit,
+  OnChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseSearchComponent } from '../base-search/base-search.component';
@@ -20,7 +28,14 @@ export interface TableColumn {
 export interface TableAction {
   label: string;
   icon?: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost';
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'outline'
+    | 'ghost';
   disabled?: (item: unknown) => boolean;
   visible?: (item: unknown) => boolean;
   onClick: (item: unknown) => void;
@@ -43,9 +58,16 @@ export interface TableConfig {
 @Component({
   selector: 'app-base-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseSearchComponent, BaseLoadingComponent, BaseEmptyComponent, BasePaginationComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BaseSearchComponent,
+    BaseLoadingComponent,
+    BaseEmptyComponent,
+    BasePaginationComponent,
+  ],
   templateUrl: './base-table.component.html',
-  styleUrls: ['./base-table.component.scss']
+  styleUrls: ['./base-table.component.scss'],
 })
 export class BaseTableComponent implements OnInit, OnChanges {
   @Input() title = '';
@@ -64,13 +86,16 @@ export class BaseTableComponent implements OnInit, OnChanges {
     bordered: false,
     size: 'medium',
     loading: false,
-    emptyMessage: 'No data available'
+    emptyMessage: 'No data available',
   };
   @Input() pageSize = 10;
   @Input() customClass = '';
 
   @Output() rowClick = new EventEmitter<unknown>();
-  @Output() sortChange = new EventEmitter<{ column: string; direction: 'asc' | 'desc' }>();
+  @Output() sortChange = new EventEmitter<{
+    column: string;
+    direction: 'asc' | 'desc';
+  }>();
   @Output() pageChange = new EventEmitter<number>();
 
   searchQuery = '';
@@ -87,7 +112,7 @@ export class BaseTableComponent implements OnInit, OnChanges {
     minLength: 1,
     showClearButton: true,
     showSearchButton: false,
-    disabled: false
+    disabled: false,
   };
 
   loadingConfig = {
@@ -96,7 +121,7 @@ export class BaseTableComponent implements OnInit, OnChanges {
     message: 'Loading...',
     overlay: false,
     centered: true,
-    fullHeight: false
+    fullHeight: false,
   };
 
   emptyConfig = {
@@ -106,7 +131,7 @@ export class BaseTableComponent implements OnInit, OnChanges {
     showActionButton: false,
     actionButtonText: 'Add New',
     centered: true,
-    fullHeight: false
+    fullHeight: false,
   };
 
   paginationConfig = {
@@ -117,7 +142,7 @@ export class BaseTableComponent implements OnInit, OnChanges {
     showInfo: true,
     showPageSize: true,
     pageSizeOptions: [5, 10, 25, 50, 100],
-    size: 'medium' as const
+    size: 'medium' as const,
   };
 
   get containerClass(): string {
@@ -205,7 +230,10 @@ export class BaseTableComponent implements OnInit, OnChanges {
       this.sortDirection = 'asc';
     }
 
-    this.sortChange.emit({ column: this.sortColumn, direction: this.sortDirection });
+    this.sortChange.emit({
+      column: this.sortColumn,
+      direction: this.sortDirection,
+    });
     this.updateData();
   }
 
@@ -218,12 +246,18 @@ export class BaseTableComponent implements OnInit, OnChanges {
   }
 
   getValue(item: unknown, key: string): unknown {
-    return key.split('.').reduce((obj: unknown, k) => (obj as Record<string, unknown>)?.[k], item);
+    return key
+      .split('.')
+      .reduce((obj: unknown, k) => (obj as Record<string, unknown>)?.[k], item);
   }
 
   formatDate(value: unknown): string {
     if (!value) return '';
-    if (typeof value === 'string' || typeof value === 'number' || value instanceof Date) {
+    if (
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      value instanceof Date
+    ) {
       return new Date(value).toLocaleDateString();
     }
     return '';
@@ -236,7 +270,9 @@ export class BaseTableComponent implements OnInit, OnChanges {
 
   getSortIcon(columnKey: string): string {
     if (this.sortColumn !== columnKey) return 'unfold_more';
-    return this.sortDirection === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+    return this.sortDirection === 'asc'
+      ? 'keyboard_arrow_up'
+      : 'keyboard_arrow_down';
   }
 
   getRowClass(item: unknown, index: number): string {
@@ -288,10 +324,12 @@ export class BaseTableComponent implements OnInit, OnChanges {
     // Filter data based on search query
     this.filteredData = this.data.filter(item => {
       if (!this.searchQuery) return true;
-      
+
       return this.columns.some(column => {
         const value = this.getValue(item, column.key);
-        return String(value).toLowerCase().includes(this.searchQuery.toLowerCase());
+        return String(value)
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase());
       });
     });
 
@@ -300,14 +338,16 @@ export class BaseTableComponent implements OnInit, OnChanges {
       this.filteredData.sort((a, b) => {
         const aValue = this.getValue(a, this.sortColumn);
         const bValue = this.getValue(b, this.sortColumn);
-        
+
         // Convert to comparable values
         const aComparable = aValue == null ? '' : String(aValue);
         const bComparable = bValue == null ? '' : String(bValue);
-        
-        if (aComparable < bComparable) return this.sortDirection === 'asc' ? -1 : 1;
-        if (aComparable > bComparable) return this.sortDirection === 'asc' ? 1 : -1;
-          return 0;
+
+        if (aComparable < bComparable)
+          return this.sortDirection === 'asc' ? -1 : 1;
+        if (aComparable > bComparable)
+          return this.sortDirection === 'asc' ? 1 : -1;
+        return 0;
       });
     }
 

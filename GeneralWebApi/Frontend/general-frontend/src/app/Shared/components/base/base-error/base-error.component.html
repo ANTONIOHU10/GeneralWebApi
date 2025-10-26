@@ -1,5 +1,5 @@
 <!-- src/app/Shared/components/base/base-error/base-error.component.html -->
-<div 
+<div
   class="error-container"
   [class.centered]="displayCentered"
   [class.full-width]="displayFullWidth"
@@ -26,8 +26,11 @@
     </div>
 
     <!-- Action Buttons -->
-    <div *ngIf="displayShowRetryButton || displayShowDismissButton" class="error-actions">
-      <button 
+    <div
+      *ngIf="displayShowRetryButton || displayShowDismissButton"
+      class="error-actions"
+    >
+      <button
         *ngIf="displayShowRetryButton"
         class="btn btn-primary"
         (click)="onRetry()"
@@ -35,8 +38,8 @@
       >
         {{ displayRetryButtonText }}
       </button>
-      
-      <button 
+
+      <button
         *ngIf="displayShowDismissButton"
         class="btn btn-secondary"
         (click)="onDismiss()"
@@ -47,4 +50,3 @@
     </div>
   </div>
 </div>
-

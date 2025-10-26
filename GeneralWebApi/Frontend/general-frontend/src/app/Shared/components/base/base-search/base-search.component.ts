@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, signal, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -16,7 +23,7 @@ export interface SearchConfig {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './base-search.component.html',
-  styleUrls: ['./base-search.component.scss']
+  styleUrls: ['./base-search.component.scss'],
 })
 export class BaseSearchComponent implements OnInit {
   @Input() config: SearchConfig = {
@@ -25,11 +32,11 @@ export class BaseSearchComponent implements OnInit {
     minLength: 1,
     showClearButton: true,
     showSearchButton: true,
-    disabled: false
+    disabled: false,
   };
 
-  @Input() value= '';
-  @Input() inputId= 'search-input';
+  @Input() value = '';
+  @Input() inputId = 'search-input';
 
   @Output() searchChange = new EventEmitter<string>();
   @Output() searchSubmit = new EventEmitter<string>();
@@ -102,4 +109,3 @@ export class BaseSearchComponent implements OnInit {
     return this.internalValue().length >= (this.config.minLength || 1);
   }
 }
-

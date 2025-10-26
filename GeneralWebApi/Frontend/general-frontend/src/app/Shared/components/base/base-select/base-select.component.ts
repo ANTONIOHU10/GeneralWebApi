@@ -1,7 +1,18 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-select/base-select.component.ts
-import { Component, Input, Output, EventEmitter, forwardRef, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  forwardRef,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from '@angular/forms';
 
 export interface SelectOption {
   value: unknown;
@@ -80,10 +91,9 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit {
   }
 
   get dropdownClass(): string {
-    const classes = [
-      'select-dropdown',
-      this.isOpen ? 'open' : '',
-    ].filter(Boolean);
+    const classes = ['select-dropdown', this.isOpen ? 'open' : ''].filter(
+      Boolean
+    );
 
     return classes.join(' ');
   }
@@ -149,10 +159,12 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit {
       }
     });
 
-    this.groupedOptions = Array.from(groups.entries()).map(([name, options]) => ({
-      name: name === 'Default' ? '' : name,
-      options,
-    }));
+    this.groupedOptions = Array.from(groups.entries()).map(
+      ([name, options]) => ({
+        name: name === 'Default' ? '' : name,
+        options,
+      })
+    );
   }
 
   // ControlValueAccessor implementation

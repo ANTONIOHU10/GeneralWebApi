@@ -9,7 +9,7 @@ import { NotificationContainerComponent } from './Shared/components/notification
     <!--<h1>Welcome to {{ title }}!</h1>-->
 
     <router-outlet />
-    
+
     <!-- Global notification container -->
     <app-notification-container></app-notification-container>
   `,

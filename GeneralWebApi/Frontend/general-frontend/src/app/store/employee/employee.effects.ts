@@ -7,7 +7,10 @@ import { of } from 'rxjs';
 
 import { EmployeeService } from '@core/services/employee.service';
 import * as EmployeeActions from './employee.actions';
-import { selectEmployeeFilters, selectEmployeePagination } from './employee.selectors';
+import {
+  selectEmployeeFilters,
+  selectEmployeePagination,
+} from './employee.selectors';
 
 @Injectable()
 export class EmployeeEffects {
@@ -37,8 +40,10 @@ export class EmployeeEffects {
         return this.employeeService.getEmployees(params).pipe(
           map(response => {
             const employees = Array.isArray(response.data) ? response.data : [];
-            const totalItems = (response as { pagination?: { totalItems: number } }).pagination?.totalItems ?? employees.length;
-            
+            const totalItems =
+              (response as { pagination?: { totalItems: number } }).pagination
+                ?.totalItems ?? employees.length;
+
             return EmployeeActions.loadEmployeesSuccess({
               employees,
               totalItems,
@@ -46,10 +51,12 @@ export class EmployeeEffects {
               pageSize: params.pageSize ?? 10,
             });
           }),
-          catchError(error => 
-            of(EmployeeActions.loadEmployeesFailure({ 
-              error: error.message || 'Failed to load employees' 
-            }))
+          catchError(error =>
+            of(
+              EmployeeActions.loadEmployeesFailure({
+                error: error.message || 'Failed to load employees',
+              })
+            )
           )
         );
       })
@@ -64,9 +71,11 @@ export class EmployeeEffects {
         this.employeeService.getEmployeeById(action.id).pipe(
           map(employee => EmployeeActions.loadEmployeeSuccess({ employee })),
           catchError(error =>
-            of(EmployeeActions.loadEmployeeFailure({ 
-              error: error.message || 'Failed to load employee' 
-            }))
+            of(
+              EmployeeActions.loadEmployeeFailure({
+                error: error.message || 'Failed to load employee',
+              })
+            )
           )
         )
       )
@@ -81,9 +90,11 @@ export class EmployeeEffects {
         this.employeeService.createEmployee(action.employee).pipe(
           map(employee => EmployeeActions.createEmployeeSuccess({ employee })),
           catchError(error =>
-            of(EmployeeActions.createEmployeeFailure({ 
-              error: error.message || 'Failed to create employee' 
-            }))
+            of(
+              EmployeeActions.createEmployeeFailure({
+                error: error.message || 'Failed to create employee',
+              })
+            )
           )
         )
       )
@@ -98,9 +109,11 @@ export class EmployeeEffects {
         this.employeeService.updateEmployee(action.id, action.employee).pipe(
           map(employee => EmployeeActions.updateEmployeeSuccess({ employee })),
           catchError(error =>
-            of(EmployeeActions.updateEmployeeFailure({ 
-              error: error.message || 'Failed to update employee' 
-            }))
+            of(
+              EmployeeActions.updateEmployeeFailure({
+                error: error.message || 'Failed to update employee',
+              })
+            )
           )
         )
       )
@@ -115,9 +128,11 @@ export class EmployeeEffects {
         this.employeeService.deleteEmployee(action.id).pipe(
           map(() => EmployeeActions.deleteEmployeeSuccess({ id: action.id })),
           catchError(error =>
-            of(EmployeeActions.deleteEmployeeFailure({ 
-              error: error.message || 'Failed to delete employee' 
-            }))
+            of(
+              EmployeeActions.deleteEmployeeFailure({
+                error: error.message || 'Failed to delete employee',
+              })
+            )
           )
         )
       )
@@ -136,4 +151,3 @@ export class EmployeeEffects {
     )
   );
 }
-

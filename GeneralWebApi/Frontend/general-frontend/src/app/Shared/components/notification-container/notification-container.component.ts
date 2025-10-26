@@ -1,7 +1,10 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { NotificationService, NotificationData } from '../../services/notification.service';
+import {
+  NotificationService,
+  NotificationData,
+} from '../../services/notification.service';
 import { BaseNotificationComponent } from '../base/base-notification/base-notification.component';
 
 @Component({
@@ -9,7 +12,7 @@ import { BaseNotificationComponent } from '../base/base-notification/base-notifi
   standalone: true,
   imports: [CommonModule, BaseNotificationComponent],
   templateUrl: './notification-container.component.html',
-  styleUrls: ['./notification-container.component.scss']
+  styleUrls: ['./notification-container.component.scss'],
 })
 export class NotificationContainerComponent implements OnInit, OnDestroy {
   notifications: NotificationData[] = [];
@@ -18,7 +21,7 @@ export class NotificationContainerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription = this.notificationService.notifications$.subscribe(
-      notifications => this.notifications = notifications
+      notifications => (this.notifications = notifications)
     );
   }
 

@@ -15,14 +15,15 @@
         *ngFor="let card of reportCards"
         [title]="card.title"
         [icon]="card.icon"
-        [class]="'report-card'">
-        
+        [class]="'report-card'"
+      >
         <p class="report-description">{{ card.description }}</p>
-        
+
         <app-base-button
           [variant]="'primary'"
           [text]="card.action"
-          (click)="generateReport(card.title)">
+          (click)="generateReport(card.title)"
+        >
         </app-base-button>
       </app-base-card>
     </div>
@@ -30,7 +31,7 @@
     <!-- 最近报告表格 -->
     <div class="recent-reports">
       <h3>Recent Reports</h3>
-      
+
       <app-base-table
         [data]="recentReports"
         [columns]="reportColumns"
@@ -38,9 +39,10 @@
         [config]="{
           striped: true,
           hoverable: true,
-          showPagination: false
+          showPagination: false,
         }"
-        class="report-table">
+        class="report-table"
+      >
       </app-base-table>
     </div>
   </div>

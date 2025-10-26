@@ -19,7 +19,7 @@ export interface ContainerConfig {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-container.component.html',
-  styleUrls: ['./base-container.component.scss']
+  styleUrls: ['./base-container.component.scss'],
 })
 export class BaseContainerComponent {
   @Input() config: ContainerConfig = {
@@ -95,4 +95,3 @@ export class BaseContainerComponent {
     return this.config.fluid ? 'fluid' : '';
   }
 }
-

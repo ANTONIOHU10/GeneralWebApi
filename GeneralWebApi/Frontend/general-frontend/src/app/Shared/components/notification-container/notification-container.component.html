@@ -1,10 +1,15 @@
 <div class="notification-container">
   <app-base-notification
-    *ngFor="let notification of notifications; let i = index; trackBy: trackByNotificationId"
+    *ngFor="
+      let notification of notifications;
+      let i = index;
+      trackBy: trackByNotificationId
+    "
     [notification]="notification"
     [index]="i"
     (notificationClose)="onNotificationClose($event)"
     (actionClick)="onActionClick($event)"
-    (notificationClick)="onNotificationClick($event)">
+    (notificationClick)="onNotificationClick($event)"
+  >
   </app-base-notification>
 </div>

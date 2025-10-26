@@ -1,9 +1,20 @@
-import { Component, EventEmitter, Input, Output, forwardRef } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  forwardRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export type CheckboxSize = 'sm' | 'md' | 'lg';
-export type CheckboxVariant = 'default' | 'primary' | 'success' | 'warning' | 'error';
+export type CheckboxVariant =
+  | 'default'
+  | 'primary'
+  | 'success'
+  | 'warning'
+  | 'error';
 
 export interface CheckboxConfig {
   size?: CheckboxSize;
@@ -24,9 +35,9 @@ export interface CheckboxConfig {
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => BaseCheckboxComponent),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class BaseCheckboxComponent implements ControlValueAccessor {
   @Input() label = '';
@@ -36,7 +47,7 @@ export class BaseCheckboxComponent implements ControlValueAccessor {
     showLabel: true,
     disabled: false,
     required: false,
-    indeterminate: false
+    indeterminate: false,
   };
 
   @Input() size: CheckboxSize = 'md';
@@ -82,7 +93,9 @@ export class BaseCheckboxComponent implements ControlValueAccessor {
   }
 
   get displayShowLabel(): boolean {
-    return this.showLabel !== undefined ? this.showLabel : (this.config.showLabel ?? true);
+    return this.showLabel !== undefined
+      ? this.showLabel
+      : (this.config.showLabel ?? true);
   }
 
   get displayDisabled(): boolean {
@@ -101,19 +114,19 @@ export class BaseCheckboxComponent implements ControlValueAccessor {
     const classes = ['checkbox-wrapper'];
     classes.push(`size-${this.displaySize}`);
     classes.push(`variant-${this.displayVariant}`);
-    
+
     if (this.displayDisabled) {
       classes.push('disabled');
     }
-    
+
     if (this.value) {
       classes.push('checked');
     }
-    
+
     if (this.displayIndeterminate) {
       classes.push('indeterminate');
     }
-    
+
     return classes.join(' ');
   }
 

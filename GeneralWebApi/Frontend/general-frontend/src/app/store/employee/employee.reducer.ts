@@ -7,25 +7,28 @@ export const employeeReducer = createReducer(
   initialEmployeeState,
 
   // 加载员工列表
-  on(EmployeeActions.loadEmployees, (state) => ({
+  on(EmployeeActions.loadEmployees, state => ({
     ...state,
     loading: true,
     error: null,
   })),
 
-  on(EmployeeActions.loadEmployeesSuccess, (state, { employees, totalItems, currentPage, pageSize }) => ({
-    ...state,
-    employees,
-    loading: false,
-    error: null,
-    pagination: {
-      ...state.pagination,
-      totalItems,
-      currentPage,
-      pageSize,
-      totalPages: Math.ceil(totalItems / pageSize),
-    },
-  })),
+  on(
+    EmployeeActions.loadEmployeesSuccess,
+    (state, { employees, totalItems, currentPage, pageSize }) => ({
+      ...state,
+      employees,
+      loading: false,
+      error: null,
+      pagination: {
+        ...state.pagination,
+        totalItems,
+        currentPage,
+        pageSize,
+        totalPages: Math.ceil(totalItems / pageSize),
+      },
+    })
+  ),
 
   on(EmployeeActions.loadEmployeesFailure, (state, { error }) => ({
     ...state,
@@ -34,7 +37,7 @@ export const employeeReducer = createReducer(
   })),
 
   // 加载单个员工
-  on(EmployeeActions.loadEmployee, (state) => ({
+  on(EmployeeActions.loadEmployee, state => ({
     ...state,
     loading: true,
     error: null,
@@ -54,7 +57,7 @@ export const employeeReducer = createReducer(
   })),
 
   // 创建员工
-  on(EmployeeActions.createEmployee, (state) => ({
+  on(EmployeeActions.createEmployee, state => ({
     ...state,
     operationInProgress: {
       loading: true,
@@ -98,10 +101,13 @@ export const employeeReducer = createReducer(
 
   on(EmployeeActions.updateEmployeeSuccess, (state, { employee }) => ({
     ...state,
-    employees: state.employees.map(emp => 
+    employees: state.employees.map(emp =>
       emp.id === employee.id ? employee : emp
     ),
-    selectedEmployee: state.selectedEmployee?.id === employee.id ? employee : state.selectedEmployee,
+    selectedEmployee:
+      state.selectedEmployee?.id === employee.id
+        ? employee
+        : state.selectedEmployee,
     operationInProgress: {
       loading: false,
       operation: null,
@@ -134,7 +140,8 @@ export const employeeReducer = createReducer(
   on(EmployeeActions.deleteEmployeeSuccess, (state, { id }) => ({
     ...state,
     employees: state.employees.filter(emp => emp.id !== id),
-    selectedEmployee: state.selectedEmployee?.id === id ? null : state.selectedEmployee,
+    selectedEmployee:
+      state.selectedEmployee?.id === id ? null : state.selectedEmployee,
     operationInProgress: {
       loading: false,
       operation: null,
@@ -160,7 +167,7 @@ export const employeeReducer = createReducer(
   })),
 
   // 清除选择
-  on(EmployeeActions.clearSelectedEmployee, (state) => ({
+  on(EmployeeActions.clearSelectedEmployee, state => ({
     ...state,
     selectedEmployee: null,
   })),
@@ -179,7 +186,7 @@ export const employeeReducer = createReducer(
   })),
 
   // 清除过滤器
-  on(EmployeeActions.clearFilters, (state) => ({
+  on(EmployeeActions.clearFilters, state => ({
     ...state,
     filters: {
       searchTerm: '',
@@ -204,7 +211,7 @@ export const employeeReducer = createReducer(
   })),
 
   // 清除错误
-  on(EmployeeActions.clearError, (state) => ({
+  on(EmployeeActions.clearError, state => ({
     ...state,
     error: null,
   })),
@@ -212,4 +219,3 @@ export const employeeReducer = createReducer(
   // 重置状态
   on(EmployeeActions.resetEmployeeState, () => initialEmployeeState)
 );
-

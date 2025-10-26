@@ -21,7 +21,7 @@ export interface ErrorConfig {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-error.component.html',
-  styleUrls: ['./base-error.component.scss']
+  styleUrls: ['./base-error.component.scss'],
 })
 export class BaseErrorComponent {
   @Input() message = 'An error occurred';
@@ -35,7 +35,7 @@ export class BaseErrorComponent {
     retryButtonText: 'Retry',
     dismissButtonText: 'Dismiss',
     centered: true,
-    fullWidth: false
+    fullWidth: false,
   };
 
   @Input() type: ErrorType = 'error';
@@ -60,15 +60,21 @@ export class BaseErrorComponent {
   }
 
   get displayShowIcon(): boolean {
-    return this.showIcon !== undefined ? this.showIcon : (this.config.showIcon ?? true);
+    return this.showIcon !== undefined
+      ? this.showIcon
+      : (this.config.showIcon ?? true);
   }
 
   get displayShowRetryButton(): boolean {
-    return this.showRetryButton !== undefined ? this.showRetryButton : (this.config.showRetryButton ?? true);
+    return this.showRetryButton !== undefined
+      ? this.showRetryButton
+      : (this.config.showRetryButton ?? true);
   }
 
   get displayShowDismissButton(): boolean {
-    return this.showDismissButton !== undefined ? this.showDismissButton : (this.config.showDismissButton ?? false);
+    return this.showDismissButton !== undefined
+      ? this.showDismissButton
+      : (this.config.showDismissButton ?? false);
   }
 
   get displayRetryButtonText(): string {
@@ -80,11 +86,15 @@ export class BaseErrorComponent {
   }
 
   get displayCentered(): boolean {
-    return this.centered !== undefined ? this.centered : (this.config.centered ?? true);
+    return this.centered !== undefined
+      ? this.centered
+      : (this.config.centered ?? true);
   }
 
   get displayFullWidth(): boolean {
-    return this.fullWidth !== undefined ? this.fullWidth : (this.config.fullWidth ?? false);
+    return this.fullWidth !== undefined
+      ? this.fullWidth
+      : (this.config.fullWidth ?? false);
   }
 
   get iconName(): string {
@@ -110,4 +120,3 @@ export class BaseErrorComponent {
     this.dismiss.emit();
   }
 }
-

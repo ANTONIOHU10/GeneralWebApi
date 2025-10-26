@@ -3,10 +3,18 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface GridConfig {
-  columns?: number | { xs?: number; sm?: number; md?: number; lg?: number; xl?: number };
+  columns?:
+    | number
+    | { xs?: number; sm?: number; md?: number; lg?: number; xl?: number };
   gap?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   align?: 'start' | 'center' | 'end' | 'stretch';
-  justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly';
+  justify?:
+    | 'start'
+    | 'center'
+    | 'end'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly';
   wrap?: boolean;
   direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
 }
@@ -16,7 +24,7 @@ export interface GridConfig {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-grid.component.html',
-  styleUrls: ['./base-grid.component.scss']
+  styleUrls: ['./base-grid.component.scss'],
 })
 export class BaseGridComponent {
   @Input() config: GridConfig = {
@@ -54,19 +62,29 @@ export class BaseGridComponent {
       const mediaQueries = [];
 
       if (responsiveColumns.xs) {
-        mediaQueries.push(`@media (max-width: 640px) { grid-template-columns: repeat(${responsiveColumns.xs}, 1fr); }`);
+        mediaQueries.push(
+          `@media (max-width: 640px) { grid-template-columns: repeat(${responsiveColumns.xs}, 1fr); }`
+        );
       }
       if (responsiveColumns.sm) {
-        mediaQueries.push(`@media (min-width: 641px) and (max-width: 768px) { grid-template-columns: repeat(${responsiveColumns.sm}, 1fr); }`);
+        mediaQueries.push(
+          `@media (min-width: 641px) and (max-width: 768px) { grid-template-columns: repeat(${responsiveColumns.sm}, 1fr); }`
+        );
       }
       if (responsiveColumns.md) {
-        mediaQueries.push(`@media (min-width: 769px) and (max-width: 1024px) { grid-template-columns: repeat(${responsiveColumns.md}, 1fr); }`);
+        mediaQueries.push(
+          `@media (min-width: 769px) and (max-width: 1024px) { grid-template-columns: repeat(${responsiveColumns.md}, 1fr); }`
+        );
       }
       if (responsiveColumns.lg) {
-        mediaQueries.push(`@media (min-width: 1025px) and (max-width: 1280px) { grid-template-columns: repeat(${responsiveColumns.lg}, 1fr); }`);
+        mediaQueries.push(
+          `@media (min-width: 1025px) and (max-width: 1280px) { grid-template-columns: repeat(${responsiveColumns.lg}, 1fr); }`
+        );
       }
       if (responsiveColumns.xl) {
-        mediaQueries.push(`@media (min-width: 1281px) { grid-template-columns: repeat(${responsiveColumns.xl}, 1fr); }`);
+        mediaQueries.push(
+          `@media (min-width: 1281px) { grid-template-columns: repeat(${responsiveColumns.xl}, 1fr); }`
+        );
       }
 
       if (mediaQueries.length > 0) {
@@ -83,7 +101,7 @@ export class BaseGridComponent {
     }
 
     const columns = this.config.columns || 3;
-    
+
     if (columns <= 12) {
       return `cols-${columns}`;
     }
@@ -118,4 +136,3 @@ export class BaseGridComponent {
     return this.config.wrap ? 'wrap' : '';
   }
 }
-

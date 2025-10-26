@@ -27,10 +27,10 @@
         <span *ngIf="icon" class="modal-icon material-icons">{{ icon }}</span>
         <h4 [id]="titleId" class="modal-title-text">{{ title }}</h4>
       </div>
-      
+
       <div class="modal-actions">
         <ng-content select="[slot=header-actions]"></ng-content>
-        
+
         <button
           *ngIf="config.closable"
           type="button"

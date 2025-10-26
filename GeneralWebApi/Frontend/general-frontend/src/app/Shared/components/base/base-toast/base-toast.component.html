@@ -10,11 +10,11 @@
       <div class="toast-icon">
         <span class="material-icons">{{ getToastIcon(toast) }}</span>
       </div>
-      
+
       <div class="toast-body">
         <div class="toast-title" *ngIf="toast.title">{{ toast.title }}</div>
         <div class="toast-message">{{ toast.message }}</div>
-        
+
         <div class="toast-actions" *ngIf="toast.actions?.length">
           <button
             *ngFor="let action of toast.actions"
@@ -26,7 +26,7 @@
           </button>
         </div>
       </div>
-      
+
       <div class="toast-close" *ngIf="toast.closable !== false">
         <button
           class="close-btn"
@@ -37,7 +37,7 @@
         </button>
       </div>
     </div>
-    
+
     <div
       *ngIf="config.showProgress && toast.duration"
       class="toast-progress"

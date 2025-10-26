@@ -19,7 +19,7 @@ export interface EmptyConfig {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-empty.component.html',
-  styleUrls: ['./base-empty.component.scss']
+  styleUrls: ['./base-empty.component.scss'],
 })
 export class BaseEmptyComponent {
   @Input() title = 'No data found';
@@ -31,7 +31,7 @@ export class BaseEmptyComponent {
     showActionButton: false,
     actionButtonText: 'Add New',
     centered: true,
-    fullHeight: false
+    fullHeight: false,
   };
 
   @Input() type: EmptyType = 'default';
@@ -53,11 +53,15 @@ export class BaseEmptyComponent {
   }
 
   get displayShowIcon(): boolean {
-    return this.showIcon !== undefined ? this.showIcon : (this.config.showIcon ?? true);
+    return this.showIcon !== undefined
+      ? this.showIcon
+      : (this.config.showIcon ?? true);
   }
 
   get displayShowActionButton(): boolean {
-    return this.showActionButton !== undefined ? this.showActionButton : (this.config.showActionButton ?? false);
+    return this.showActionButton !== undefined
+      ? this.showActionButton
+      : (this.config.showActionButton ?? false);
   }
 
   get displayActionButtonText(): string {
@@ -65,11 +69,15 @@ export class BaseEmptyComponent {
   }
 
   get displayCentered(): boolean {
-    return this.centered !== undefined ? this.centered : (this.config.centered ?? true);
+    return this.centered !== undefined
+      ? this.centered
+      : (this.config.centered ?? true);
   }
 
   get displayFullHeight(): boolean {
-    return this.fullHeight !== undefined ? this.fullHeight : (this.config.fullHeight ?? false);
+    return this.fullHeight !== undefined
+      ? this.fullHeight
+      : (this.config.fullHeight ?? false);
   }
 
   get iconName(): string {
@@ -121,4 +129,3 @@ export class BaseEmptyComponent {
     this.actionClick.emit();
   }
 }
-

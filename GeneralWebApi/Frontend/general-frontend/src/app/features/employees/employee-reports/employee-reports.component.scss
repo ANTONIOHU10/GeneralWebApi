@@ -14,7 +14,6 @@
 
   .page-content {
     .grid {
-      
       .report-card {
         @include card-base; // 使用全局卡片混入
         text-align: center;

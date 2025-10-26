@@ -18,7 +18,7 @@ export interface LoadingConfig {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-loading.component.html',
-  styleUrls: ['./base-loading.component.scss']
+  styleUrls: ['./base-loading.component.scss'],
 })
 export class BaseLoadingComponent {
   @Input() config: LoadingConfig = {
@@ -27,7 +27,7 @@ export class BaseLoadingComponent {
     message: 'Loading...',
     overlay: false,
     centered: true,
-    fullHeight: false
+    fullHeight: false,
   };
 
   @Input() message = '';

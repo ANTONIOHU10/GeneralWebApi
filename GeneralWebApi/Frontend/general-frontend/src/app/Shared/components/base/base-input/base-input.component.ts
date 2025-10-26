@@ -1,7 +1,17 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-input/base-input.component.ts
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  forwardRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-base-input',
@@ -20,7 +30,16 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/f
 export class BaseInputComponent implements ControlValueAccessor {
   @Input() label = '';
   @Input() placeholder = '';
-  @Input() type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'datetime-local' | 'time' = 'text';
+  @Input() type:
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'number'
+    | 'tel'
+    | 'url'
+    | 'date'
+    | 'datetime-local'
+    | 'time' = 'text';
   @Input() step: string | number = '';
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() variant: 'outlined' | 'filled' | 'underlined' = 'outlined';
@@ -125,4 +144,3 @@ export class BaseInputComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 }
-

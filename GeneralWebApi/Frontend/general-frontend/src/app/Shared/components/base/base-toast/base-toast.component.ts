@@ -1,9 +1,22 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-toast/base-toast.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface ToastConfig {
-  position?: 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left' | 'bottom-center';
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'top-center'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'bottom-center';
   duration?: number;
   closable?: boolean;
   pauseOnHover?: boolean;
@@ -144,10 +157,7 @@ export class BaseToastComponent implements OnInit, OnDestroy {
   }
 
   getToastClass(toast: ToastData): string {
-    const classes = [
-      'toast',
-      toast.type,
-    ].filter(Boolean);
+    const classes = ['toast', toast.type].filter(Boolean);
 
     return classes.join(' ');
   }
@@ -166,10 +176,9 @@ export class BaseToastComponent implements OnInit, OnDestroy {
   }
 
   getActionClass(action: ToastAction): string {
-    const classes = [
-      'toast-action',
-      action.variant || 'secondary',
-    ].filter(Boolean);
+    const classes = ['toast-action', action.variant || 'secondary'].filter(
+      Boolean
+    );
 
     return classes.join(' ');
   }
@@ -179,7 +188,11 @@ export class BaseToastComponent implements OnInit, OnDestroy {
   }
 
   // Convenience methods for different toast types
-  success(title: string, message: string, options?: Partial<ToastData>): string {
+  success(
+    title: string,
+    message: string,
+    options?: Partial<ToastData>
+  ): string {
     return this.addToast({ title, message, type: 'success', ...options });
   }
 
@@ -187,7 +200,11 @@ export class BaseToastComponent implements OnInit, OnDestroy {
     return this.addToast({ title, message, type: 'error', ...options });
   }
 
-  warning(title: string, message: string, options?: Partial<ToastData>): string {
+  warning(
+    title: string,
+    message: string,
+    options?: Partial<ToastData>
+  ): string {
     return this.addToast({ title, message, type: 'warning', ...options });
   }
 
@@ -195,4 +212,3 @@ export class BaseToastComponent implements OnInit, OnDestroy {
     return this.addToast({ title, message, type: 'info', ...options });
   }
 }
-

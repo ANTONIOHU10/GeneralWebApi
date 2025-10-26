@@ -4,16 +4,16 @@ import { Employee } from 'app/contracts/employees/employee.model';
 export interface EmployeeState {
   // 员工列表
   employees: Employee[];
-  
+
   // 当前选中的员工
   selectedEmployee: Employee | null;
-  
+
   // 加载状态
   loading: boolean;
-  
+
   // 错误信息
   error: string | null;
-  
+
   // 分页信息
   pagination: {
     currentPage: number;
@@ -21,7 +21,7 @@ export interface EmployeeState {
     totalItems: number;
     totalPages: number;
   };
-  
+
   // 搜索和过滤
   filters: {
     searchTerm: string;
@@ -30,7 +30,7 @@ export interface EmployeeState {
     sortBy: string;
     sortDirection: 'asc' | 'desc';
   };
-  
+
   // 操作状态
   operationInProgress: {
     loading: boolean;
@@ -63,4 +63,3 @@ export const initialEmployeeState: EmployeeState = {
     employeeId: null,
   },
 };
-

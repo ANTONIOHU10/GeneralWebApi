@@ -1,5 +1,5 @@
 <!-- src/app/Shared/components/base/base-empty/base-empty.component.html -->
-<div 
+<div
   class="empty-container"
   [class.centered]="displayCentered"
   [class.full-height]="displayFullHeight"
@@ -30,14 +30,9 @@
 
     <!-- Action Button -->
     <div *ngIf="displayShowActionButton" class="empty-actions">
-      <button 
-        class="btn btn-primary"
-        (click)="onActionClick()"
-        type="button"
-      >
+      <button class="btn btn-primary" (click)="onActionClick()" type="button">
         {{ displayActionButtonText }}
       </button>
     </div>
   </div>
 </div>
-

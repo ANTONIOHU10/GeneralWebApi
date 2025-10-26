@@ -85,12 +85,9 @@
 
   @include mobile-only {
     flex-direction: column;
-    
+
     .btn {
       width: 100%;
     }
   }
 }
-
-
-

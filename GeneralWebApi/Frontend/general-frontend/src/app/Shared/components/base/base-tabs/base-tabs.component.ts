@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, signal, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface TabItem {
@@ -27,7 +34,7 @@ export interface TabConfig {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-tabs.component.html',
-  styleUrls: ['./base-tabs.component.scss']
+  styleUrls: ['./base-tabs.component.scss'],
 })
 export class BaseTabsComponent implements OnInit {
   @Input() tabs: TabItem[] = [];
@@ -39,7 +46,7 @@ export class BaseTabsComponent implements OnInit {
     showBadges: true,
     centered: false,
     fullWidth: false,
-    scrollable: false
+    scrollable: false,
   };
 
   @Input() size: TabSize = 'md';
@@ -57,7 +64,9 @@ export class BaseTabsComponent implements OnInit {
   internalActiveTabId = signal('');
 
   ngOnInit() {
-    this.internalActiveTabId.set(this.activeTabId || (this.tabs.length > 0 ? this.tabs[0].id : ''));
+    this.internalActiveTabId.set(
+      this.activeTabId || (this.tabs.length > 0 ? this.tabs[0].id : '')
+    );
   }
 
   get displaySize(): TabSize {
@@ -69,23 +78,33 @@ export class BaseTabsComponent implements OnInit {
   }
 
   get displayShowIcons(): boolean {
-    return this.showIcons !== undefined ? this.showIcons : (this.config.showIcons ?? true);
+    return this.showIcons !== undefined
+      ? this.showIcons
+      : (this.config.showIcons ?? true);
   }
 
   get displayShowBadges(): boolean {
-    return this.showBadges !== undefined ? this.showBadges : (this.config.showBadges ?? true);
+    return this.showBadges !== undefined
+      ? this.showBadges
+      : (this.config.showBadges ?? true);
   }
 
   get displayCentered(): boolean {
-    return this.centered !== undefined ? this.centered : (this.config.centered ?? false);
+    return this.centered !== undefined
+      ? this.centered
+      : (this.config.centered ?? false);
   }
 
   get displayFullWidth(): boolean {
-    return this.fullWidth !== undefined ? this.fullWidth : (this.config.fullWidth ?? false);
+    return this.fullWidth !== undefined
+      ? this.fullWidth
+      : (this.config.fullWidth ?? false);
   }
 
   get displayScrollable(): boolean {
-    return this.scrollable !== undefined ? this.scrollable : (this.config.scrollable ?? false);
+    return this.scrollable !== undefined
+      ? this.scrollable
+      : (this.config.scrollable ?? false);
   }
 
   get currentActiveTabId(): string {
@@ -108,18 +127,18 @@ export class BaseTabsComponent implements OnInit {
 
   getTabClass(tab: TabItem): string {
     const classes = ['tab-button'];
-    
+
     if (this.isTabActive(tab.id)) {
       classes.push('active');
     }
-    
+
     if (tab.disabled) {
       classes.push('disabled');
     }
-    
+
     classes.push(`size-${this.displaySize}`);
     classes.push(`variant-${this.displayVariant}`);
-    
+
     return classes.join(' ');
   }
 }

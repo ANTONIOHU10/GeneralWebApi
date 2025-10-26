@@ -1,5 +1,14 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-modal/base-modal.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface ModalConfig {
@@ -17,7 +26,7 @@ export interface ModalConfig {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-modal.component.html',
-  styleUrls: ['./base-modal.component.scss']
+  styleUrls: ['./base-modal.component.scss'],
 })
 export class BaseModalComponent implements OnInit, OnDestroy {
   @Input() isOpen = false;
@@ -72,7 +81,7 @@ export class BaseModalComponent implements OnInit, OnDestroy {
     this.isOpen = true;
     document.body.style.overflow = 'hidden';
     this.open.emit();
-    
+
     // Focus management
     setTimeout(() => {
       if (this.modalElement) {

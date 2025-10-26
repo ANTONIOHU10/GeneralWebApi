@@ -200,7 +200,11 @@
 }
 
 // Responsive Spacing
-@mixin responsive-spacing($mobile: $spacing-4, $tablet: $spacing-6, $desktop: $spacing-8) {
+@mixin responsive-spacing(
+  $mobile: $spacing-4,
+  $tablet: $spacing-6,
+  $desktop: $spacing-8
+) {
   padding: $mobile;
 
   @include tablet-up {
@@ -264,6 +268,3 @@
     top: 6px;
   }
 }
-
-
-

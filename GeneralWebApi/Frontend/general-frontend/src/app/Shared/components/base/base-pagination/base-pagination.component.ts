@@ -1,5 +1,12 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-pagination/base-pagination.component.ts
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,7 +26,7 @@ export interface PaginationConfig {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './base-pagination.component.html',
-  styleUrls: ['./base-pagination.component.scss']
+  styleUrls: ['./base-pagination.component.scss'],
 })
 export class BasePaginationComponent implements OnChanges {
   @Input() currentPage = 1;
@@ -56,7 +63,9 @@ export class BasePaginationComponent implements OnChanges {
   }
 
   get startItem(): number {
-    return this.totalItems === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+    return this.totalItems === 0
+      ? 0
+      : (this.currentPage - 1) * this.pageSize + 1;
   }
 
   get endItem(): number {
@@ -80,7 +89,7 @@ export class BasePaginationComponent implements OnChanges {
   onPageSizeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const newPageSize = parseInt(target.value, 10);
-    
+
     this.pageSize = newPageSize;
     this.currentPage = 1;
     this.pageSizeChange.emit(newPageSize);

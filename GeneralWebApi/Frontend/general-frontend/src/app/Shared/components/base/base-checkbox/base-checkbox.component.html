@@ -1,5 +1,5 @@
 <!-- src/app/Shared/components/base/base-checkbox/base-checkbox.component.html -->
-<label 
+<label
   [class]="checkboxClass"
   [for]="inputId"
   [attr.aria-disabled]="displayDisabled"
@@ -18,22 +18,30 @@
     class="checkbox-input"
     [attr.aria-describedby]="label ? inputId + '-label' : null"
   />
-  
+
   <span class="checkbox-checkmark">
-    <span class="checkmark-icon material-icons" *ngIf="value && !displayIndeterminate">
+    <span
+      class="checkmark-icon material-icons"
+      *ngIf="value && !displayIndeterminate"
+    >
       check
     </span>
     <span class="checkmark-icon material-icons" *ngIf="displayIndeterminate">
       remove
     </span>
   </span>
-  
-  <span 
-    *ngIf="displayShowLabel && label" 
+
+  <span
+    *ngIf="displayShowLabel && label"
     class="checkbox-label"
     [id]="inputId + '-label'"
   >
     {{ label }}
-    <span *ngIf="displayRequired" class="required-indicator" aria-label="required">*</span>
+    <span
+      *ngIf="displayRequired"
+      class="required-indicator"
+      aria-label="required"
+      >*</span
+    >
   </span>
 </label>

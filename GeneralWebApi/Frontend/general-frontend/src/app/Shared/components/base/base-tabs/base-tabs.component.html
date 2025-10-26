@@ -1,5 +1,5 @@
 <!-- src/app/Shared/components/base/base-tabs/base-tabs.component.html -->
-<div 
+<div
   class="tabs-container"
   [class.centered]="displayCentered"
   [class.full-width]="displayFullWidth"
@@ -27,8 +27,8 @@
       tabindex="0"
     >
       <!-- Tab Icon -->
-      <span 
-        *ngIf="displayShowIcons && tab.icon" 
+      <span
+        *ngIf="displayShowIcons && tab.icon"
         class="tab-icon material-icons"
         aria-hidden="true"
       >
@@ -39,8 +39,8 @@
       <span class="tab-label">{{ tab.label }}</span>
 
       <!-- Tab Badge -->
-      <span 
-        *ngIf="displayShowBadges && tab.badge" 
+      <span
+        *ngIf="displayShowBadges && tab.badge"
         class="tab-badge"
         [class.badge-number]="typeof tab.badge === 'number'"
         [class.badge-text]="typeof tab.badge === 'string'"

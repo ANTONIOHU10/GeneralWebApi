@@ -119,9 +119,7 @@ export const setFilters = createAction(
 );
 
 // 清除过滤器
-export const clearFilters = createAction(
-  '[Employee] Clear Filters'
-);
+export const clearFilters = createAction('[Employee] Clear Filters');
 
 // 设置分页
 export const setPagination = createAction(
@@ -133,12 +131,7 @@ export const setPagination = createAction(
 );
 
 // 清除错误
-export const clearError = createAction(
-  '[Employee] Clear Error'
-);
+export const clearError = createAction('[Employee] Clear Error');
 
 // 重置状态
-export const resetEmployeeState = createAction(
-  '[Employee] Reset State'
-);
-
+export const resetEmployeeState = createAction('[Employee] Reset State');

@@ -1,18 +1,27 @@
-import { 
-  Component, 
-  Input, 
-  Output, 
-  EventEmitter, 
-  OnInit, 
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
   OnDestroy,
   HostBinding,
   ElementRef,
   ViewChild,
-  AfterViewInit
+  AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { NotificationData, NotificationAction } from '../../../services/notification.service';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
+import {
+  NotificationData,
+  NotificationAction,
+} from '../../../services/notification.service';
 
 @Component({
   selector: 'app-base-notification',
@@ -25,25 +34,36 @@ import { NotificationData, NotificationAction } from '../../../services/notifica
       state('in', style({ transform: 'translateX(0)', opacity: 1 })),
       transition('void => *', [
         style({ transform: 'translateX(100%)', opacity: 0 }),
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(0)', opacity: 1 }))
+        animate(
+          '300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateX(0)', opacity: 1 })
+        ),
       ]),
       transition('* => void', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(100%)', opacity: 0 }))
-      ])
+        animate(
+          '300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateX(100%)', opacity: 0 })
+        ),
+      ]),
     ]),
     trigger('fadeIn', [
       state('in', style({ opacity: 1, transform: 'scale(1)' })),
       transition('void => *', [
         style({ opacity: 0, transform: 'scale(0.8)' }),
-        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))
+        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' })),
       ]),
       transition('* => void', [
-        animate('200ms ease-in', style({ opacity: 0, transform: 'scale(0.8)' }))
-      ])
-    ])
-  ]
+        animate(
+          '200ms ease-in',
+          style({ opacity: 0, transform: 'scale(0.8)' })
+        ),
+      ]),
+    ]),
+  ],
 })
-export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewInit {
+export class BaseNotificationComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   @Input() notification!: NotificationData;
   // index = Z index
   @Input() index = 0;
@@ -53,7 +73,8 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
   @Output() notificationClick = new EventEmitter<NotificationData>();
   @Output() dismiss = new EventEmitter<string>();
 
-  @ViewChild('notificationElement', { static: false }) notificationElement?: ElementRef;
+  @ViewChild('notificationElement', { static: false })
+  notificationElement?: ElementRef;
 
   @HostBinding('class')
   get hostClass(): string {
@@ -64,8 +85,10 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
       this.notification.closable ? 'base-notification--closable' : '',
       this.notification.clickable ? 'base-notification--clickable' : '',
       this.notification.persistent ? 'base-notification--persistent' : '',
-      this.notification.customClass || ''
-    ].filter(Boolean).join(' ');
+      this.notification.customClass || '',
+    ]
+      .filter(Boolean)
+      .join(' ');
   }
 
   @HostBinding('style.max-width')
@@ -96,7 +119,11 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   private setupAutoClose(): void {
-    if (this.notification.autoClose !== false && this.notification.duration && this.notification.duration > 0) {
+    if (
+      this.notification.autoClose !== false &&
+      this.notification.duration &&
+      this.notification.duration > 0
+    ) {
       this.timer = setTimeout(() => {
         this.closeNotification();
       }, this.notification.duration);
@@ -106,13 +133,13 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
   private setupIntersectionObserver(): void {
     if ('IntersectionObserver' in window && this.notificationElement) {
       const observer = new IntersectionObserver(
-        (entries) => {
+        entries => {
           entries.forEach(entry => {
             // if the notification is visible, pause the timers for auto close
             // like when the notification is hovered or clicked
             if (entry.isIntersecting) {
               this.pauseTimers();
-            // if the notification is not visible (focused), resume the timers for auto close
+              // if the notification is not visible (focused), resume the timers for auto close
             } else {
               this.resumeTimers();
             }
@@ -120,7 +147,7 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
         },
         { threshold: 0.5 }
       );
-      
+
       observer.observe(this.notificationElement.nativeElement);
     }
   }
@@ -132,7 +159,11 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   private resumeTimers(): void {
-    if (this.notification.duration && this.notification.duration > 0 && !this.isDismissed) {
+    if (
+      this.notification.duration &&
+      this.notification.duration > 0 &&
+      !this.isDismissed
+    ) {
       this.timer = setTimeout(() => {
         this.closeNotification();
       }, this.notification.duration);
@@ -199,7 +230,7 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
       success: 'check_circle',
       error: 'error',
       warning: 'warning',
-      info: 'info'
+      info: 'info',
     };
 
     return iconMap[this.notification.type] || 'info';
@@ -210,7 +241,9 @@ export class BaseNotificationComponent implements OnInit, OnDestroy, AfterViewIn
       'notification__action',
       `notification__action--${action.variant || 'secondary'}`,
       action.disabled ? 'notification__action--disabled' : '',
-      this.actionLoadingStates.get(action.id) ? 'notification__action--loading' : ''
+      this.actionLoadingStates.get(action.id)
+        ? 'notification__action--loading'
+        : '',
     ].filter(Boolean);
 
     return classes.join(' ');

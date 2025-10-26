@@ -7,7 +7,7 @@ import { NotificationService } from '../../../Shared/services/notification.servi
   standalone: true,
   imports: [CommonModule],
   templateUrl: './notification-demo.component.html',
-  styleUrls: ['./notification-demo.component.scss']
+  styleUrls: ['./notification-demo.component.scss'],
 })
 export class NotificationDemoComponent {
   private notificationService = inject(NotificationService);
@@ -44,7 +44,8 @@ export class NotificationDemoComponent {
   showWithActions(): void {
     const notificationId = this.notificationService.show({
       title: 'Confirm Operation',
-      message: 'Are you sure you want to perform this operation? This action cannot be undone.',
+      message:
+        'Are you sure you want to perform this operation? This action cannot be undone.',
       type: 'warning',
       duration: 0, // No auto-close
       persistent: true,
@@ -53,27 +54,28 @@ export class NotificationDemoComponent {
           id: 'confirm',
           label: 'Confirm',
           action: () => this.handleConfirm(notificationId),
-          variant: 'primary'
+          variant: 'primary',
         },
         {
           id: 'cancel',
           label: 'Cancel',
           action: () => this.handleCancel(notificationId),
-          variant: 'secondary'
-        }
-      ]
+          variant: 'secondary',
+        },
+      ],
     });
   }
 
   showCustomNotification(): void {
     this.notificationService.show({
       title: 'Custom Notification',
-      message: 'This is a custom notification with specific styling and behavior.',
+      message:
+        'This is a custom notification with specific styling and behavior.',
       type: 'info',
       duration: 6000,
       priority: 'high',
       customClass: 'custom-notification',
-      icon: 'star'
+      icon: 'star',
     });
   }
 
@@ -91,9 +93,9 @@ export class NotificationDemoComponent {
           id: 'acknowledge',
           label: 'Acknowledge',
           action: () => this.handleAcknowledge(notificationId),
-          variant: 'danger'
-        }
-      ]
+          variant: 'danger',
+        },
+      ],
     });
   }
 
@@ -104,18 +106,19 @@ export class NotificationDemoComponent {
       message: 'Data has been successfully saved to the server.',
       type: 'success',
       duration: 3000,
-      icon: 'cloud_done'
+      icon: 'cloud_done',
     });
   }
 
   simulateApiError(): void {
     this.notificationService.show({
       title: 'API Error',
-      message: 'Failed to connect to the server. Please check your internet connection.',
+      message:
+        'Failed to connect to the server. Please check your internet connection.',
       type: 'error',
       duration: 5000,
       priority: 'high',
-      icon: 'cloud_off'
+      icon: 'cloud_off',
     });
   }
 
@@ -126,13 +129,16 @@ export class NotificationDemoComponent {
       type: 'info',
       duration: 0,
       persistent: true,
-      icon: 'hourglass_empty'
+      icon: 'hourglass_empty',
     });
 
     // Simulate API call
     setTimeout(() => {
       this.notificationService.remove(loadingId);
-      this.notificationService.success('Complete', 'Your request has been processed successfully!');
+      this.notificationService.success(
+        'Complete',
+        'Your request has been processed successfully!'
+      );
     }, 3000);
   }
 
@@ -143,7 +149,10 @@ export class NotificationDemoComponent {
   private handleConfirm(notificationId: string): void {
     console.log('Operation confirmed');
     this.notificationService.remove(notificationId);
-    this.notificationService.success('Confirmed', 'Operation has been confirmed and executed.');
+    this.notificationService.success(
+      'Confirmed',
+      'Operation has been confirmed and executed.'
+    );
   }
 
   private handleCancel(notificationId: string): void {
@@ -155,6 +164,9 @@ export class NotificationDemoComponent {
   private handleAcknowledge(notificationId: string): void {
     console.log('Critical alert acknowledged');
     this.notificationService.remove(notificationId);
-    this.notificationService.success('Acknowledged', 'Critical alert has been acknowledged.');
+    this.notificationService.success(
+      'Acknowledged',
+      'Critical alert has been acknowledged.'
+    );
   }
 }

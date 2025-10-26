@@ -68,7 +68,7 @@
 @mixin card-elevated {
   @include card-base;
   box-shadow: var(--shadow-lg);
-  
+
   &:hover {
     box-shadow: var(--shadow-xl);
     transform: translateY(-2px);
@@ -80,7 +80,7 @@
   @include card-base;
   box-shadow: none;
   border: 2px solid var(--border-primary);
-  
+
   &:hover {
     border-color: var(--color-primary-300);
   }
@@ -100,7 +100,12 @@
 
 // Loading Skeleton
 @mixin loading-skeleton {
-  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 25%,
+    var(--bg-secondary) 50%,
+    var(--bg-tertiary) 75%
+  );
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }
@@ -171,12 +176,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
   outline: none;
-  
+
   &:focus {
     outline: 2px solid var(--color-primary-300);
     outline-offset: 2px;
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -195,12 +200,12 @@
   background: var(--color-primary-500);
   color: var(--color-white);
   border-color: var(--color-primary-500);
-  
+
   &:hover:not(:disabled) {
     background: var(--color-primary-600);
     border-color: var(--color-primary-600);
   }
-  
+
   &:active:not(:disabled) {
     background: var(--color-primary-700);
     border-color: var(--color-primary-700);
@@ -213,7 +218,7 @@
   background: var(--bg-surface);
   color: var(--text-primary);
   border-color: var(--border-primary);
-  
+
   &:hover:not(:disabled) {
     background: var(--bg-secondary);
     border-color: var(--color-primary-300);
@@ -226,28 +231,33 @@
   background: transparent;
   color: var(--color-primary-500);
   border-color: var(--color-primary-500);
-  
+
   &:hover:not(:disabled) {
     background: var(--color-primary-50);
   }
 }
 
 // Button Variant
-@mixin button-variant($background-color, $text-color, $border-color: $background-color, $hover-border-color: $border-color) {
+@mixin button-variant(
+  $background-color,
+  $text-color,
+  $border-color: $background-color,
+  $hover-border-color: $border-color
+) {
   background-color: $background-color;
   color: $text-color;
   border-color: $border-color;
-  
+
   &:hover:not(:disabled) {
     background-color: color.adjust($background-color, $lightness: -10%);
     border-color: color.adjust($hover-border-color, $lightness: -10%);
   }
-  
+
   &:active:not(:disabled) {
     background-color: color.adjust($background-color, $lightness: -15%);
     border-color: color.adjust($hover-border-color, $lightness: -15%);
   }
-  
+
   &:focus {
     box-shadow: 0 0 0 3px rgba($background-color, 0.3);
   }
@@ -267,19 +277,19 @@
   color: var(--text-primary);
   font-size: $font-size-sm;
   transition: all 0.2s ease;
-  
+
   &:focus {
     outline: none;
     border-color: var(--color-primary-500);
     box-shadow: 0 0 0 3px var(--color-primary-100);
   }
-  
+
   &:disabled {
     background: var(--bg-tertiary);
     color: var(--text-disabled);
     cursor: not-allowed;
   }
-  
+
   &::placeholder {
     color: var(--text-tertiary);
   }
@@ -290,7 +300,11 @@
 // ===========================================
 
 // Heading Style
-@mixin heading-style($font-size: $font-size-2xl, $font-weight: $font-weight-semibold, $color: var(--text-primary)) {
+@mixin heading-style(
+  $font-size: $font-size-2xl,
+  $font-weight: $font-weight-semibold,
+  $color: var(--text-primary)
+) {
   font-size: $font-size;
   font-weight: $font-weight;
   line-height: $line-height-tight;
@@ -323,8 +337,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 // Slide In
@@ -449,7 +467,9 @@
 
 // Sidebar Transition
 @mixin sidebar-transition {
-  transition: transform 0.3s ease, width 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    width 0.3s ease;
 }
 
 // Smooth Transition
