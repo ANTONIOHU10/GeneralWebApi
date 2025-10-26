@@ -1,0 +1,146 @@
+<div class="demo-container">
+  <h2>Notification Service Demo</h2>
+  <p class="demo-description">
+    This demo showcases the NotificationService for API call handling and user feedback. 
+    Perfect for dynamic notifications triggered by user actions or API responses.
+  </p>
+  
+  <!-- Basic Notifications -->
+  <div class="demo-section">
+    <h3>📢 Basic Notifications</h3>
+    <p class="section-description">
+      Simple success, error, warning, and info notifications for common use cases.
+    </p>
+    
+    <div class="demo-buttons">
+      <button class="btn btn-success" (click)="showSuccess()">
+        Success Notification
+      </button>
+      
+      <button class="btn btn-error" (click)="showError()">
+        Error Notification
+      </button>
+      
+      <button class="btn btn-warning" (click)="showWarning()">
+        Warning Notification
+      </button>
+      
+      <button class="btn btn-info" (click)="showInfo()">
+        Info Notification
+      </button>
+    </div>
+  </div>
+
+  <!-- Advanced Notifications -->
+  <div class="demo-section">
+    <h3>⚡ Advanced Notifications</h3>
+    <p class="section-description">
+      Notifications with actions, custom styling, and special behaviors.
+    </p>
+    
+    <div class="demo-buttons">
+      <button class="btn btn-primary" (click)="showWithActions()">
+        With Actions
+      </button>
+      
+      <button class="btn btn-secondary" (click)="showCustomNotification()">
+        Custom Styling
+      </button>
+      
+      <button class="btn btn-danger" (click)="showCriticalNotification()">
+        Critical Alert
+      </button>
+    </div>
+  </div>
+
+  <!-- API Simulation -->
+  <div class="demo-section">
+    <h3>🌐 API Call Simulation</h3>
+    <p class="section-description">
+      Simulate real-world API scenarios with loading states and error handling.
+    </p>
+    
+    <div class="demo-buttons">
+      <button class="btn btn-success" (click)="simulateApiSuccess()">
+        API Success
+      </button>
+      
+      <button class="btn btn-error" (click)="simulateApiError()">
+        API Error
+      </button>
+      
+      <button class="btn btn-info" (click)="simulateApiLoading()">
+        API Loading
+      </button>
+      
+      <button class="btn btn-secondary" (click)="clearAll()">
+        Clear All
+      </button>
+    </div>
+  </div>
+  
+  <div class="demo-features">
+    <h3>🚀 Perfect for API Integration:</h3>
+    <ul>
+      <li>✅ <strong>Service-driven:</strong> Call notifications from anywhere in your app</li>
+      <li>✅ <strong>API-ready:</strong> Perfect for HTTP interceptors and error handling</li>
+      <li>✅ <strong>Type-safe:</strong> Full TypeScript support with IntelliSense</li>
+      <li>✅ <strong>Flexible:</strong> Support for all notification types and customizations</li>
+      <li>✅ <strong>Responsive:</strong> Works seamlessly on all devices</li>
+      <li>✅ <strong>Accessible:</strong> Full keyboard and screen reader support</li>
+    </ul>
+  </div>
+
+  <div class="code-examples">
+    <h3>💻 Usage Examples:</h3>
+    <div class="code-block">
+      <h4>Basic Usage:</h4>
+      <pre><code>// Success notification
+this.notificationService.success('Success', 'Operation completed!');
+
+// Error notification  
+this.notificationService.error('Error', 'Something went wrong!');
+
+// Warning notification
+this.notificationService.warning('Warning', 'Please check your input!');
+
+// Info notification
+this.notificationService.info('Info', 'Here is some information!');</code></pre>
+    </div>
+
+    <div class="code-block">
+      <h4>API Error Handling:</h4>
+      <pre><code>// In HTTP interceptor
+catchError((error: HttpErrorResponse) => &#123;
+  switch (error.status) &#123;
+    case 400:
+      this.notificationService.error('Bad Request', 'Invalid data');
+      break;
+    case 401:
+      this.notificationService.warning('Unauthorized', 'Please login');
+      break;
+    case 500:
+      this.notificationService.error('Server Error', 'Try again later');
+      break;
+  &#125;
+  return throwError(error);
+&#125;)</code></pre>
+    </div>
+
+    <div class="code-block">
+      <h4>Loading States:</h4>
+      <pre><code>// Show loading notification
+const loadingId = this.notificationService.show(&#123;
+  title: 'Loading...',
+  message: 'Please wait...',
+  type: 'info',
+  duration: 0,
+  persistent: true
+&#125;);
+
+// Hide loading and show result
+this.notificationService.remove(loadingId);
+this.notificationService.success('Complete', 'Done!');</code></pre>
+    </div>
+  </div>
+</div>

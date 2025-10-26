@@ -41,4 +41,4 @@ export type { CheckboxConfig } from './base-checkbox/base-checkbox.component';
 export type { LoadingConfig, LoadingSize, LoadingType } from './base-loading/base-loading.component';
 export type { ErrorConfig, ErrorType, ErrorSize } from './base-error/base-error.component';
 export type { EmptyConfig, EmptySize, EmptyType } from './base-empty/base-empty.component';
-export type { NotificationData, NotificationAction } from './base-notification/base-notification.component';
+export type { NotificationData, NotificationAction } from '../../services/notification.service';
