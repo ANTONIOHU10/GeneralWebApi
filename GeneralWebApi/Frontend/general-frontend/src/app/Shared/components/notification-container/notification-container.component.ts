@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import {
   NotificationService,
   NotificationData,
+  NotificationAction,
 } from '../../services/notification.service';
 import { BaseNotificationComponent } from '../base/base-notification/base-notification.component';
 
@@ -33,9 +34,12 @@ export class NotificationContainerComponent implements OnInit, OnDestroy {
     this.notificationService.remove(id);
   }
 
-  // onActionClick(action: any): void {
-  //   // Action is handled in the BaseNotificationComponent
-  // }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onActionClick(action: NotificationAction): void {
+    // Action is handled in the BaseNotificationComponent
+    // This method is required for the template but doesn't need to do anything
+    // as the BaseNotificationComponent already handles the action execution
+  }
 
   onNotificationClick(notification: NotificationData): void {
     console.log('Notification clicked:', notification);

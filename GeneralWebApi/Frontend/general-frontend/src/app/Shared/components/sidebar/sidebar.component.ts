@@ -164,6 +164,11 @@ export class SidebarComponent implements OnInit {
           icon: 'notifications',
           route: '/private/notification-demo',
         },
+        {
+          label: 'Base Components Demo',
+          icon: 'widgets',
+          route: '/private/base-components-demo',
+        },
       ],
       expandable: true,
       expanded: false,

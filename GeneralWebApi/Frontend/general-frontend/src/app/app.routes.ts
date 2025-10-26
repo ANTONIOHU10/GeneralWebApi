@@ -30,6 +30,7 @@ import { SystemMonitorComponent } from './features/system-monitor/system-monitor
 import { SecurityAuditComponent } from './features/security-audit/security-audit/security-audit.component';
 import { BackupComponent } from './features/backup/backup/backup.component';
 import { NotificationDemoComponent } from './features/demo/notification-demo/notification-demo.component';
+import { BaseComponentsDemoComponent } from './features/demo/base-components-demo/base-components-demo.component';
 
 export const routes: Routes = [
   {
@@ -86,6 +87,7 @@ export const routes: Routes = [
 
       // 🧪 Development & Testing
       { path: 'notification-demo', component: NotificationDemoComponent },
+      { path: 'base-components-demo', component: BaseComponentsDemoComponent },
     ],
   },
 ];

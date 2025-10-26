@@ -1,0 +1,174 @@
+<app-base-container>
+  <app-base-page-header
+    title="Base Components Demo"
+    subtitle="Test and showcase all available base components"
+  />
+
+  <!-- Tabs Navigation -->
+  <app-base-tabs
+    [tabs]="tabs"
+    [activeTabId]="activeTabId"
+    (tabChange)="onTabChangeFromId($event)"
+  />
+
+  <!-- Tab Content -->
+  <div class="demo-content">
+    <!-- Tab 1: Form Components -->
+    <div *ngIf="selectedTab === 0" class="demo-section">
+      <h2>Form Components</h2>
+
+      <app-base-grid columns="2" gap="1.5rem">
+        <!-- Card 1: Buttons -->
+        <app-base-card title="Buttons" subtitle="Different button variants">
+          <div class="button-demo">
+            <app-base-button
+              label="Primary"
+              variant="primary"
+              (click)="onButtonClick('primary')"
+            />
+            <app-base-button
+              label="Secondary"
+              variant="secondary"
+              (click)="onButtonClick('secondary')"
+            />
+            <app-base-button
+              label="Success"
+              variant="success"
+              (click)="onButtonClick('success')"
+            />
+            <app-base-button
+              label="Danger"
+              variant="danger"
+              (click)="onButtonClick('danger')"
+            />
+            <app-base-button
+              label="Outline"
+              variant="outline"
+              (click)="onButtonClick('outline')"
+            />
+            <app-base-button
+              label="Disabled"
+              [disabled]="true"
+            />
+          </div>
+        </app-base-card>
+
+        <!-- Card 2: Inputs -->
+        <app-base-card title="Inputs" subtitle="Text input component">
+          <app-base-input
+            label="Username"
+            placeholder="Enter username"
+            [(ngModel)]="inputValue"
+            (inputChange)="onInputChange($event)"
+          />
+          <app-base-input
+            label="Password"
+            type="password"
+            placeholder="Enter password"
+            [(ngModel)]="inputValue"
+          />
+        </app-base-card>
+
+        <!-- Card 3: Select -->
+        <app-base-card title="Select" subtitle="Dropdown selection">
+          <app-base-select
+            label="Choose Option"
+            [options]="selectOptions"
+            [(ngModel)]="selectValue"
+          />
+        </app-base-card>
+
+        <!-- Card 4: Checkbox & Search -->
+        <app-base-card title="Checkbox & Search" subtitle="Selection and search">
+          <app-base-checkbox
+            label="Enable Feature"
+            [(ngModel)]="checkboxValue"
+          />
+          <app-base-search
+            placeholder="Search..."
+            [(ngModel)]="searchValue"
+          />
+        </app-base-card>
+      </app-base-grid>
+    </div>
+
+    <!-- Tab 2: Layout Components -->
+    <div *ngIf="selectedTab === 1" class="demo-section">
+      <h2>Layout Components</h2>
+
+      <app-base-grid columns="2" gap="1.5rem">
+        <!-- Card Component -->
+        <app-base-card 
+          title="Card Component" 
+          subtitle="A flexible container component"
+        >
+          <p>Card content goes here. You can put any content inside a card.</p>
+          <app-base-button label="Action in Card" variant="primary" />
+        </app-base-card>
+
+        <!-- Grid Layout -->
+        <div>
+          <h3>Grid Layout</h3>
+          <app-base-grid columns="3" gap="1rem">
+            <div class="grid-demo-item">Item 1</div>
+            <div class="grid-demo-item">Item 2</div>
+            <div class="grid-demo-item">Item 3</div>
+            <div class="grid-demo-item">Item 4</div>
+            <div class="grid-demo-item">Item 5</div>
+            <div class="grid-demo-item">Item 6</div>
+          </app-base-grid>
+        </div>
+      </app-base-grid>
+    </div>
+
+    <!-- Tab 3: Data Display -->
+    <div *ngIf="selectedTab === 2" class="demo-section">
+      <h2>Data Display Components</h2>
+
+      <!-- Table -->
+      <app-base-card title="Data Table" subtitle="Interactive table component">
+        <app-base-table
+          [data]="tableData"
+          [columns]="tableColumns"
+          [actions]="tableActions"
+        />
+        
+        <app-base-pagination
+          [currentPage]="currentPage"
+          [totalPages]="totalPages"
+          [pageSize]="pageSize"
+          (pageChange)="onPageChange($event)"
+        />
+      </app-base-card>
+    </div>
+
+    <!-- Tab 4: Feedback -->
+    <div *ngIf="selectedTab === 3" class="demo-section">
+      <h2>Feedback Components</h2>
+
+      <app-base-grid columns="3" gap="1.5rem">
+        <!-- Loading -->
+        <app-base-card title="Loading" subtitle="Show loading state">
+          <button (click)="showLoading()">Show Loading</button>
+          <app-base-loading *ngIf="isLoading" />
+        </app-base-card>
+
+        <!-- Error -->
+        <app-base-card title="Error" subtitle="Error state component">
+          <button (click)="showErrorState()">Show Error</button>
+          <app-base-error 
+            *ngIf="showError"
+          />
+        </app-base-card>
+
+        <!-- Empty -->
+        <app-base-card title="Empty" subtitle="Empty state component">
+          <button (click)="showEmptyState()">Show Empty</button>
+          <app-base-empty 
+            *ngIf="showEmpty"
+          />
+        </app-base-card>
+      </app-base-grid>
+    </div>
+  </div>
+</app-base-container>

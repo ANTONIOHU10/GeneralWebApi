@@ -1,0 +1,50 @@
+.demo-content {
+  padding: 2rem 0;
+}
+
+.demo-section {
+  h2 {
+    margin-bottom: 2rem;
+    color: var(--text-color-primary, #111827);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+// Button demo
+.button-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// Grid demo
+.grid-demo-item {
+  padding: 1rem;
+  background: var(--surface-color-secondary, #f9fafb);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: var(--border-radius-md, 0.375rem);
+  text-align: center;
+  color: var(--text-color-secondary, #6b7280);
+}
+
+// Card demo
+:host ::ng-deep app-base-card {
+  margin-bottom: 1.5rem;
+}
+
+// Media queries
+@media (max-width: 768px) {
+  .demo-content {
+    padding: 1rem 0;
+  }
+
+  .demo-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .button-demo {
+    gap: 0.75rem;
+  }
+}
