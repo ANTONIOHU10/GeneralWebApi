@@ -1,0 +1,27 @@
+<!-- src/app/Shared/components/base/base-avatar/base-avatar.component.html -->
+<div class="base-avatar" [class]="avatarClass" [attr.aria-label]="alt">
+  <img
+    *ngIf="src && !error"
+    [src]="src"
+    [alt]="alt"
+    (error)="onImageError()"
+    class="avatar-image"
+  />
+  <span *ngIf="!src || error" class="avatar-fallback">
+    {{ fallbackText }}
+  </span>
+  <span *ngIf="icon && (!src || error)" class="avatar-icon material-icons">
+    {{ icon }}
+  </span>
+  <span *ngIf="showBadge" class="avatar-badge" [class]="badgeClass">
+    <span *ngIf="badgeCount">{{ badgeCount > 99 ? '99+' : badgeCount }}</span>
+  </span>
+  <span *ngIf="status" class="avatar-status" [class]="'status-' + status"></span>
+</div>
+
+
+
+
+
+
+

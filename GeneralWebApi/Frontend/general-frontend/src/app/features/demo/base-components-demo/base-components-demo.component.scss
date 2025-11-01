@@ -18,6 +18,29 @@
   gap: 1rem;
 }
 
+// Tag demo
+.tag-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+// Avatar demo
+.avatar-demo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+// Badge demo
+.badge-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 // Grid demo
 .grid-demo-item {
   padding: 1rem;

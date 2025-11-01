@@ -8,6 +8,7 @@
   flex-direction: column;
   gap: $spacing-2;
   width: 100%;
+  overflow: visible; // Allow dropdown to overflow
 }
 
 .select-label {
@@ -99,9 +100,9 @@
   border: 1px solid var(--border-primary);
   border-radius: var(--border-radius-base);
   box-shadow: var(--shadow-lg);
-  z-index: 1000;
+  z-index: 9999; // Higher z-index to ensure it appears above other elements
   max-height: 300px;
-  overflow: hidden;
+  overflow-y: auto; // Allow scrolling within dropdown
   margin-top: $spacing-1;
 }
 

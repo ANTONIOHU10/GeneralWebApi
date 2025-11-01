@@ -1,0 +1,128 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-badge/base-badge.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.base-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-1;
+  padding: $spacing-1 $spacing-2;
+  border-radius: var(--border-radius-full);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all $duration-200 $ease-in-out;
+
+  /* Variants */
+  &.primary {
+    background: var(--color-primary-100);
+    color: var(--color-primary-700);
+    border: 1px solid var(--color-primary-200);
+  }
+
+  &.secondary {
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+    border: 1px solid var(--color-gray-200);
+  }
+
+  &.success {
+    background: var(--color-success-100);
+    color: var(--color-success-700);
+    border: 1px solid var(--color-success-200);
+  }
+
+  &.warning {
+    background: var(--color-warning-100);
+    color: var(--color-warning-700);
+    border: 1px solid var(--color-warning-200);
+  }
+
+  &.danger {
+    background: var(--color-error-100);
+    color: var(--color-error-700);
+    border: 1px solid var(--color-error-200);
+  }
+
+  &.info {
+    background: var(--color-info-100);
+    color: var(--color-info-700);
+    border: 1px solid var(--color-info-200);
+  }
+
+  /* Sizes */
+  &.small {
+    padding: 2px $spacing-1;
+    font-size: $font-size-xs;
+
+    .material-icons {
+      font-size: 12px;
+    }
+  }
+
+  &.medium {
+    padding: $spacing-1 $spacing-2;
+    font-size: $font-size-xs;
+
+    .material-icons {
+      font-size: 14px;
+    }
+  }
+
+  &.large {
+    padding: $spacing-2 $spacing-3;
+    font-size: $font-size-sm;
+
+    .material-icons {
+      font-size: 16px;
+    }
+  }
+
+  /* Pills/Dot variants */
+  &.pill {
+    border-radius: var(--border-radius-full);
+  }
+
+  &.square {
+    border-radius: var(--border-radius-sm);
+  }
+
+  &.dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
+
+    &.small {
+      width: 6px;
+      height: 6px;
+    }
+
+    &.large {
+      width: 10px;
+      height: 10px;
+    }
+  }
+}
+
+.material-icons {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.badge-count {
+  font-weight: $font-weight-bold;
+}
+
+// Responsive design
+@include mobile-only {
+  .base-badge {
+    font-size: $font-size-xs;
+    padding: 2px $spacing-1;
+  }
+}
+
+
+

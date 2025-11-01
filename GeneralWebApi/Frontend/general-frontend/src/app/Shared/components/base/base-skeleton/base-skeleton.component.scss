@@ -1,0 +1,140 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-skeleton/base-skeleton.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  &.inline {
+    display: inline-flex;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton-line {
+  height: 12px;
+  background: var(--bg-hover);
+  border-radius: var(--border-radius-sm);
+  animation: shimmer 2s infinite;
+}
+
+.skeleton-text-line {
+  height: 16px;
+  background: var(--bg-hover);
+  border-radius: var(--border-radius-sm);
+  animation: shimmer 2s infinite;
+
+  &.short {
+    width: 60%;
+  }
+
+  &.medium {
+    width: 80%;
+  }
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  animation: shimmer 2s infinite;
+
+  &.small {
+    width: 32px;
+    height: 32px;
+  }
+
+  &.large {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.skeleton-button {
+  width: 80px;
+  height: 36px;
+  border-radius: var(--border-radius-base);
+  background: var(--bg-hover);
+  animation: shimmer 2s infinite;
+
+  &.small {
+    width: 60px;
+    height: 28px;
+  }
+
+  &.large {
+    width: 120px;
+    height: 44px;
+  }
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  border-radius: var(--border-radius-base);
+  background: var(--bg-hover);
+  animation: shimmer 2s infinite;
+}
+
+.skeleton-card {
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  background: var(--bg-surface);
+
+  .skeleton-card-header {
+    height: 40px;
+    background: var(--bg-hover);
+    animation: shimmer 2s infinite;
+  }
+
+  .skeleton-card-body {
+    padding: $spacing-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-line,
+.skeleton-text-line,
+.skeleton-avatar,
+.skeleton-button,
+.skeleton-image {
+  background: linear-gradient(
+    90deg,
+    var(--bg-hover) 25%,
+    var(--border-primary) 50%,
+    var(--bg-hover) 75%
+  );
+  background-size: 200% 100%;
+}
+
+// Responsive design
+@include mobile-only {
+  .skeleton {
+    gap: $spacing-1;
+  }
+}
+

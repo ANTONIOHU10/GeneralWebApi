@@ -17,9 +17,25 @@ import {
   BaseErrorComponent,
   BaseEmptyComponent,
   BaseTabsComponent,
+  BaseSwitchComponent,
+  BaseTagComponent,
+  BaseTextareaComponent,
+  BaseAvatarComponent,
+  BaseBadgeComponent,
+  BaseDatepickerComponent,
+  BaseDrawerComponent,
+  BaseFileUploadComponent,
+  BaseListComponent,
+  BaseModalComponent,
+  BaseRadioComponent,
+  BaseSkeletonComponent,
+  BaseTimelineComponent,
   SelectOption,
   TableColumn,
-  TableAction
+  TableAction,
+  RadioOption,
+  ListItem,
+  TimelineItem
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services/notification.service';
 import { HttpClient } from '@angular/common/http';
@@ -51,7 +67,20 @@ interface DemoTableData {
     BaseLoadingComponent,
     BaseErrorComponent,
     BaseEmptyComponent,
-    BaseTabsComponent
+    BaseTabsComponent,
+    BaseSwitchComponent,
+    BaseTagComponent,
+    BaseTextareaComponent,
+    BaseAvatarComponent,
+    BaseBadgeComponent,
+    BaseDatepickerComponent,
+    BaseDrawerComponent,
+    BaseFileUploadComponent,
+    BaseListComponent,
+    BaseModalComponent,
+    BaseRadioComponent,
+    BaseSkeletonComponent,
+    BaseTimelineComponent
   ],
   templateUrl: './base-components-demo.component.html',
   styleUrls: ['./base-components-demo.component.scss']
@@ -62,12 +91,38 @@ export class BaseComponentsDemoComponent {
   selectValue = '';
   searchValue = '';
   checkboxValue = false;
+  switchValue = false;
+  textareaValue = '';
+  radioValue = 'option1';
+  dateValue = '';
 
   // Select options
   selectOptions: SelectOption[] = [
     { label: 'Option 1', value: 'option1' },
     { label: 'Option 2', value: 'option2' },
     { label: 'Option 3', value: 'option3' }
+  ];
+
+  // Radio options
+  radioOptions: RadioOption[] = [
+    { value: 'option1', label: 'Option 1' },
+    { value: 'option2', label: 'Option 2' },
+    { value: 'option3', label: 'Option 3' }
+  ];
+
+  // List items
+  listItems: ListItem[] = [
+    { id: 1, title: 'Item 1', description: 'Description for item 1', icon: 'folder' },
+    { id: 2, title: 'Item 2', description: 'Description for item 2', icon: 'file' },
+    { id: 3, title: 'Item 3', description: 'Description for item 3', icon: 'image' }
+  ];
+
+  // Timeline items
+  timelineItems: TimelineItem[] = [
+    { id: 1, title: 'Project Created', description: 'Initial repository setup', time: '09:00', icon: 'folder' },
+    { id: 2, title: 'First Commit', description: 'Add base components', time: '10:30', icon: 'commit' },
+    { id: 3, title: 'Build Passed', description: 'CI pipeline success', time: '11:15', icon: 'check_circle' },
+    { id: 4, title: 'Demo Ready', description: 'Development demo prepared', time: '14:00', icon: 'rocket_launch' }
   ];
 
   // Table data
@@ -114,6 +169,10 @@ export class BaseComponentsDemoComponent {
   showError = false;
   showEmpty = false;
 
+  // Modal & Drawer states
+  isModalOpen = false;
+  isDrawerOpen = false;
+
   // Tabs
   selectedTab = 0;
   tabs = [
@@ -136,16 +195,60 @@ export class BaseComponentsDemoComponent {
     this.notificationService.info('Input Changed', value);
   }
 
-  onSelectChange(value: string): void {
-    this.notificationService.info('Selection Changed', `Selected: ${value}`);
+  onSelectChange(option: SelectOption | SelectOption[]): void {
+    const selectedOption = Array.isArray(option) ? option[0] : option;
+    this.selectValue = selectedOption.value as string;
+    this.notificationService.info('Selection Changed', `Selected: ${selectedOption.label}`);
   }
 
   onSearchChange(value: string): void {
+    this.searchValue = value;
     console.log('Search:', value);
   }
 
   onCheckboxChange(value: boolean): void {
     this.notificationService.info('Checkbox Changed', `Value: ${value}`);
+  }
+
+  onSwitchChange(value: boolean): void {
+    this.notificationService.info('Switch Changed', `Value: ${value}`);
+  }
+
+  onTextareaChange(value: string): void {
+    this.notificationService.info('Textarea Changed', value);
+  }
+
+  onTagClose(): void {
+    this.notificationService.info('Tag Closed', 'Tag was closed');
+  }
+
+  onRadioChange(value: string | number): void {
+    this.notificationService.info('Radio Changed', `Value: ${value}`);
+  }
+
+  onDateChange(value: string): void {
+    this.dateValue = value;
+    this.notificationService.info('Date Changed', value);
+  }
+
+  onDrawerClose(): void {
+    this.isDrawerOpen = false;
+  }
+
+  onModalClose(): void {
+    this.isModalOpen = false;
+  }
+
+  openDrawer(): void {
+    this.isDrawerOpen = true;
+  }
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  onListItemClick(item: ListItem): void {
+    this.notificationService.info('List Item Clicked', `Clicked ${item.title}`);
   }
 
   // Table actions

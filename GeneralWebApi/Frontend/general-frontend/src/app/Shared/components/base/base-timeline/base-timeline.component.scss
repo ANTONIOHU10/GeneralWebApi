@@ -1,0 +1,112 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-timeline/base-timeline.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.base-timeline {
+  position: relative;
+  padding: $spacing-4 0;
+
+  &.layout-vertical {
+    .timeline-item {
+      position: relative;
+      padding-left: $spacing-10; // add extra gap between marker and content
+      padding-bottom: $spacing-6;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+
+      &:not(.last)::before {
+        content: '';
+        position: absolute;
+        left: $spacing-4;
+        top: $spacing-6;
+        bottom: -$spacing-6;
+        width: 2px;
+        background: var(--border-primary);
+      }
+    }
+
+    .timeline-marker {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: $spacing-8;
+      height: $spacing-8;
+      background: var(--bg-surface);
+      border: 2px solid var(--color-primary-500);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+
+      .marker-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--color-primary-500);
+        border-radius: 50%;
+      }
+
+      .marker-icon {
+        font-size: 1rem;
+        color: var(--color-primary-500);
+      }
+    }
+
+    &.mode-right .timeline-item {
+      padding-left: 0;
+      padding-right: $spacing-10; // mirror extra gap for right mode
+
+      .timeline-marker {
+        right: 0;
+        left: auto;
+      }
+
+      &:not(.last)::before {
+        left: auto;
+        right: $spacing-4;
+      }
+    }
+  }
+}
+
+.timeline-content {
+  .timeline-title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+    margin-bottom: $spacing-1;
+  }
+
+  .timeline-description {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: $spacing-2;
+  }
+
+  .timeline-time {
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+  }
+}
+
+// Responsive design
+@include mobile-only {
+  .base-timeline.layout-vertical .timeline-item {
+    padding-left: $spacing-8; // keep a noticeable gap on mobile as well
+
+    &:not(.last)::before {
+      left: $spacing-3;
+    }
+  }
+
+  .timeline-marker {
+    width: $spacing-6 !important;
+    height: $spacing-6 !important;
+  }
+}
+
+
+

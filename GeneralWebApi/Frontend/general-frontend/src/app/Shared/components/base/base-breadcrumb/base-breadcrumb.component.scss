@@ -1,0 +1,107 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-breadcrumb/base-breadcrumb.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.breadcrumb {
+  width: 100%;
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+  gap: $spacing-1;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.breadcrumb-link {
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  padding: $spacing-2 $spacing-2;
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  transition: all $duration-200 $ease-in-out;
+
+  &:hover {
+    color: var(--color-primary-600);
+    background: var(--bg-hover);
+  }
+
+  &.active {
+    color: var(--color-primary-600);
+    font-weight: $font-weight-semibold;
+  }
+
+  .breadcrumb-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+}
+
+.breadcrumb-current {
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  padding: $spacing-2 $spacing-2;
+  color: var(--text-primary);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+
+  .breadcrumb-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+}
+
+.breadcrumb-separator {
+  display: flex;
+  align-items: center;
+  color: var(--text-tertiary);
+  font-size: $font-size-sm;
+  margin: 0 $spacing-1;
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+// Variants
+.breadcrumb-item.compact {
+  .breadcrumb-link,
+  .breadcrumb-current {
+    padding: $spacing-1 $spacing-2;
+    font-size: $font-size-xs;
+  }
+}
+
+// Responsive design
+@include mobile-only {
+  .breadcrumb-list {
+    gap: $spacing-1;
+  }
+
+  .breadcrumb-link,
+  .breadcrumb-current {
+    padding: $spacing-1 $spacing-2;
+    font-size: $font-size-xs;
+  }
+}
+
+
+
+
+
+
+

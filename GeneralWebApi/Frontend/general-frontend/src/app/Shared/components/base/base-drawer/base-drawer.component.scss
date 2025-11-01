@@ -1,0 +1,131 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-drawer/base-drawer.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-overlay);
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: all $duration-300 $ease-in-out;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform $duration-300 $ease-in-out;
+  z-index: 1051;
+
+  &.right {
+    right: 0;
+    transform: translateX(100%);
+
+    .drawer-backdrop.show & {
+      transform: translateX(0);
+    }
+  }
+
+  &.left {
+    left: 0;
+    transform: translateX(-100%);
+
+    .drawer-backdrop.show & {
+      transform: translateX(0);
+    }
+  }
+
+  &.small { width: 300px; }
+  &.medium { width: 450px; }
+  &.large { width: 600px; }
+  &.full { width: 100%; }
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-6;
+  border-bottom: 1px solid var(--border-primary);
+  flex-shrink: 0;
+
+  .drawer-title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+
+    .drawer-icon {
+      font-size: 1.5rem;
+      color: var(--color-primary-500);
+    }
+
+    .drawer-title-text {
+      margin: 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: var(--text-primary);
+    }
+  }
+
+  .drawer-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text-tertiary);
+
+    &:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+  }
+}
+
+.drawer-body {
+  padding: $spacing-6;
+  flex: 1;
+  overflow-y: auto;
+
+  &.no-padding { padding: 0; }
+}
+
+.drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-3;
+  padding: $spacing-4 $spacing-6;
+  border-top: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+@include mobile-only {
+  .drawer.small,
+  .drawer.medium,
+  .drawer.large {
+    width: 100%;
+  }
+}
+

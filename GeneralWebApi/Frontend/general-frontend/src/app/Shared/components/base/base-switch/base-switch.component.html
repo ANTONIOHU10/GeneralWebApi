@@ -1,0 +1,39 @@
+<!-- src/app/Shared/components/base/base-switch/base-switch.component.html -->
+<div class="switch-wrapper" [class]="switchWrapperClass">
+  <span *ngIf="label" class="switch-label">
+    {{ label }}
+    <span *ngIf="required" class="required-asterisk">*</span>
+  </span>
+
+  <label class="switch-container" [for]="switchId">
+    <input
+      [id]="switchId"
+      type="checkbox"
+      [checked]="value"
+      [disabled]="disabled"
+      [required]="required"
+      (change)="onToggle($event)"
+      (focus)="onFocus($event)"
+      (blur)="onBlur($event)"
+      class="switch-input"
+    />
+
+    <span class="switch-slider" [class]="containerClass">
+      <span class="switch-handle"></span>
+    </span>
+
+    <span *ngIf="label && inlineLabel" class="switch-inline-label">
+      {{ label }}
+    </span>
+  </label>
+
+  <div *ngIf="hint && !error" class="switch-hint">{{ hint }}</div>
+
+  <div *ngIf="error" class="switch-error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>
+
+
+

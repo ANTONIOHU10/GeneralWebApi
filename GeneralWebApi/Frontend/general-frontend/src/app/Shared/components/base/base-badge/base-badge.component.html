@@ -1,0 +1,14 @@
+<!-- src/app/Shared/components/base/base-badge/base-badge.component.html -->
+<span class="base-badge" [class]="badgeClass">
+  <ng-content></ng-content>
+  <span *ngIf="text">{{ text }}</span>
+  <span *ngIf="icon" class="material-icons">{{ icon }}</span>
+  <span *ngIf="count && count > 0" class="badge-count">{{ formatCount(count) }}</span>
+</span>
+
+
+
+
+
+
+

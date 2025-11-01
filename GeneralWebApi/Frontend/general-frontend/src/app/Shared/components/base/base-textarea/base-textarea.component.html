@@ -1,0 +1,40 @@
+<!-- src/app/Shared/components/base/base-textarea/base-textarea.component.html -->
+<div class="base-textarea-container" [class]="containerClass">
+  <label *ngIf="label" class="textarea-label" [for]="textareaId">
+    {{ label }}
+    <span *ngIf="required" class="required-asterisk">*</span>
+  </label>
+
+  <div class="textarea-wrapper" [class]="wrapperClass">
+    <textarea
+      [id]="textareaId"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [readonly]="readonly"
+      [rows]="rows"
+      [maxlength]="maxLength"
+      [ngModel]="value"
+      [class]="textareaClass"
+      (ngModelChange)="onInput($event)"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+      (keydown)="onKeydown($event)"
+    ></textarea>
+
+    <div *ngIf="showCounter" class="textarea-counter">
+      {{ value.length || 0 }}/{{ maxLength || '∞' }}
+    </div>
+  </div>
+
+  <div *ngIf="hint && !error" class="textarea-hint">
+    {{ hint }}
+  </div>
+
+  <div *ngIf="error" class="textarea-error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>
+
+
+

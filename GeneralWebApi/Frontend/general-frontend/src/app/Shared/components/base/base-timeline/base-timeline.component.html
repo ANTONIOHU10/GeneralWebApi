@@ -1,0 +1,23 @@
+<!-- src/app/Shared/components/base/base-timeline/base-timeline.component.html -->
+<div class="base-timeline" [class]="timelineClass">
+  <div *ngFor="let item of items; let i = index" class="timeline-item" [class]="getItemClass(item)">
+    <div class="timeline-marker">
+      <span *ngIf="item.icon" class="marker-icon material-icons">{{ item.icon }}</span>
+      <div *ngIf="!item.icon" class="marker-dot"></div>
+    </div>
+
+    <div class="timeline-content">
+      <div class="timeline-title" *ngIf="item.title">{{ item.title }}</div>
+      <div class="timeline-description" *ngIf="item.description">{{ item.description }}</div>
+      <div class="timeline-time" *ngIf="item.time">{{ item.time }}</div>
+      <ng-content select="[slot=content-{{i}}]"></ng-content>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+

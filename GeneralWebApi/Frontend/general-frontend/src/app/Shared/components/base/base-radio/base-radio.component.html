@@ -1,0 +1,42 @@
+<!-- src/app/Shared/components/base/base-radio/base-radio.component.html -->
+<div class="radio-group" [class]="radioGroupClass">
+  <span *ngIf="label" class="radio-group-label">{{ label }}</span>
+
+  <div class="radio-options" role="radiogroup">
+    <label
+      *ngFor="let option of options"
+      [class]="getRadioClass(option)"
+      [for]="option.id || option.value"
+      [attr.aria-disabled]="option.disabled"
+    >
+      <input
+        [id]="option.id || option.value"
+        type="radio"
+        [name]="name"
+        [value]="option.value"
+        [checked]="option.value === value"
+        [disabled]="option.disabled"
+        (change)="onRadioChange(option)"
+        class="radio-input"
+      />
+
+      <span class="radio-dot">
+        <span class="radio-inner-dot" *ngIf="option.value === value"></span>
+      </span>
+
+      <span
+        *ngIf="displayShowLabel && option.label"
+        class="radio-label"
+        [id]="(option.id || option.value) + '-label'"
+      >{{ option.label }}</span>
+    </label>
+  </div>
+
+  <div *ngIf="hint && !error" class="radio-hint">{{ hint }}</div>
+
+  <div *ngIf="error" class="radio-error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>
+

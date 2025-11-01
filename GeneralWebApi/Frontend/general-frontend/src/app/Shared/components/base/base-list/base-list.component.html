@@ -1,0 +1,36 @@
+<!-- src/app/Shared/components/base/base-list/base-list.component.html -->
+<div class="base-list" [class]="listClass">
+  <div *ngFor="let item of items; let i = index" class="list-item" [class]="getItemClass(item)">
+    <div class="item-content" (click)="onItemClick(item)" (keydown.enter)="onItemClick(item)" [attr.tabindex]="clickable ? 0 : -1" [attr.role]="clickable ? 'button' : null">
+      <div *ngIf="item.icon || showAvatar" class="item-prefix">
+        <app-base-avatar
+          *ngIf="showAvatar && item.avatar"
+          [src]="item.avatar"
+          [alt]="item.title"
+          size="small"
+          class="item-avatar"
+        ></app-base-avatar>
+        <span *ngIf="item.icon" class="material-icons">{{ item.icon }}</span>
+      </div>
+
+      <div class="item-body">
+        <div class="item-title" *ngIf="item.title">{{ item.title }}</div>
+        <div class="item-description" *ngIf="item.description">{{ item.description }}</div>
+        <div class="item-meta" *ngIf="item.meta">
+          <span class="meta-item" *ngFor="let meta of item.meta">{{ meta }}</span>
+        </div>
+      </div>
+
+      <div class="item-suffix">
+        <span *ngIf="item.badge" class="item-badge">{{ item.badge }}</span>
+        <span *ngIf="item.actionIcon" class="material-icons action-icon">{{ item.actionIcon }}</span>
+        <ng-content select="[slot=actions]"></ng-content>
+      </div>
+    </div>
+
+    <div class="item-divider" *ngIf="!item.last"></div>
+  </div>
+</div>
+
+
+

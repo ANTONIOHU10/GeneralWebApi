@@ -1,4 +1,4 @@
-// Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-input/base-input.component.ts
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/base/base-textarea/base-textarea.component.ts
 import {
   Component,
   Input,
@@ -14,52 +14,39 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-base-input',
+  selector: 'app-base-textarea',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './base-input.component.html',
-  styleUrls: ['./base-input.component.scss'],
+  templateUrl: './base-textarea.component.html',
+  styleUrls: ['./base-textarea.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => BaseInputComponent),
+      useExisting: forwardRef(() => BaseTextareaComponent),
       multi: true,
     },
   ],
 })
-export class BaseInputComponent implements ControlValueAccessor {
+export class BaseTextareaComponent implements ControlValueAccessor {
   @Input() label = '';
   @Input() placeholder = '';
-  @Input() type:
-    | 'text'
-    | 'email'
-    | 'password'
-    | 'number'
-    | 'tel'
-    | 'url'
-    | 'date'
-    | 'datetime-local'
-    | 'time' = 'text';
-  @Input() step: string | number = '';
+  @Input() rows = 4;
+  @Input() maxLength: number | null = null;
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() variant: 'outlined' | 'filled' | 'underlined' = 'outlined';
   @Input() disabled = false;
   @Input() readonly = false;
   @Input() required = false;
-  @Input() clearable = false;
-  @Input() prefixIcon = '';
-  @Input() suffixIcon = '';
+  @Input() showCounter = false;
   @Input() hint = '';
   @Input() error = '';
   @Input() customClass = '';
-  @Input() inputId = `input-${Math.random().toString(36).slice(2, 11)}`;
-  @Input() autocomplete = '';
+  @Input() textareaId = `textarea-${Math.random().toString(36).slice(2, 11)}`;
 
   @Output() inputChange = new EventEmitter<string>();
   @Output() inputFocus = new EventEmitter<FocusEvent>();
   @Output() inputBlur = new EventEmitter<FocusEvent>();
   @Output() inputKeydown = new EventEmitter<KeyboardEvent>();
-  @Output() inputClear = new EventEmitter<void>();
 
   value = '';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -72,7 +59,7 @@ export class BaseInputComponent implements ControlValueAccessor {
 
   get containerClass(): string {
     const classes = [
-      'base-input-container',
+      'base-textarea-container',
       this.size !== 'medium' ? this.size : '',
       this.variant,
       this.error ? 'error' : '',
@@ -85,7 +72,7 @@ export class BaseInputComponent implements ControlValueAccessor {
 
   get wrapperClass(): string {
     const classes = [
-      'input-wrapper',
+      'textarea-wrapper',
       this.error ? 'error' : '',
       this.disabled ? 'disabled' : '',
     ].filter(Boolean);
@@ -93,35 +80,13 @@ export class BaseInputComponent implements ControlValueAccessor {
     return classes.join(' ');
   }
 
-  get inputClass(): string {
-    const classes = [
-      'base-input',
-      this.prefixIcon ? 'with-prefix' : '',
-      this.suffixIcon || this.clearable ? 'with-suffix' : '',
-    ].filter(Boolean);
-
-    return classes.join(' ');
-  }
-
-  get autocompleteValue(): string {
-    if (this.autocomplete) return this.autocomplete;
-    
-    // Default autocomplete based on type
-    switch (this.type) {
-      case 'password':
-        return 'current-password';
-      case 'email':
-        return 'email';
-      case 'tel':
-        return 'tel';
-      case 'url':
-        return 'url';
-      default:
-        return 'off';
-    }
-  }
+  readonly textareaClass = 'base-textarea';
 
   onInput(value: string): void {
+    if (this.maxLength && value.length > this.maxLength) {
+      return;
+    }
+
     this.value = value;
     this.onChange(this.value);
     this.inputChange.emit(this.value);
@@ -138,12 +103,6 @@ export class BaseInputComponent implements ControlValueAccessor {
 
   onKeydown(event: KeyboardEvent): void {
     this.inputKeydown.emit(event);
-  }
-
-  onClear(): void {
-    this.value = '';
-    this.onChange(this.value);
-    this.inputClear.emit();
   }
 
   // ControlValueAccessor implementation
@@ -163,3 +122,4 @@ export class BaseInputComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 }
+

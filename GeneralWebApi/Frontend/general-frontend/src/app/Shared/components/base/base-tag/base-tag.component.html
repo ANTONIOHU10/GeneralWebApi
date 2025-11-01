@@ -1,0 +1,22 @@
+<!-- src/app/Shared/components/base/base-tag/base-tag.component.html -->
+<span class="base-tag" [class]="tagClass" [attr.aria-label]="label">
+  <span *ngIf="icon" class="tag-icon material-icons">{{ icon }}</span>
+  <ng-content></ng-content>
+  <span *ngIf="!children">{{ label }}</span>
+  <button
+    *ngIf="closable"
+    type="button"
+    class="tag-close"
+    (click)="onClose($event)"
+    [attr.aria-label]="'Remove'"
+  >
+    <span class="material-icons">close</span>
+  </button>
+</span>
+
+
+
+
+
+
+

@@ -1,0 +1,126 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-list/base-list.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.base-list {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+
+  &.clickable .list-item .item-content {
+    cursor: pointer;
+    transition: background-color $duration-200 $ease-in-out;
+
+    &:hover:not(.disabled) {
+      background: var(--bg-hover);
+    }
+  }
+}
+
+.list-item {
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-4;
+
+  &.disabled {
+    cursor: not-allowed;
+  }
+}
+
+.item-prefix {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  .material-icons {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+  }
+}
+
+.item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: var(--text-primary);
+  margin-bottom: $spacing-1;
+}
+
+.item-description {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.item-meta {
+  display: flex;
+  gap: $spacing-2;
+  margin-top: $spacing-1;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  font-size: $font-size-xs;
+  color: var(--text-tertiary);
+}
+
+.item-suffix {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  flex-shrink: 0;
+}
+
+.item-badge {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  padding: 2px $spacing-2;
+  border-radius: var(--border-radius-full);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.action-icon {
+  font-size: 1.5rem;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color $duration-200 $ease-in-out;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.item-divider {
+  height: 1px;
+  background: var(--border-primary);
+  margin: 0 $spacing-4;
+}
+
+// Responsive design
+@include mobile-only {
+  .item-content {
+    padding: $spacing-3;
+    gap: $spacing-2;
+  }
+}
+
+
+
+
+
+
+

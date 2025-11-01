@@ -55,18 +55,22 @@
 
         <!-- Card 2: Inputs -->
         <app-base-card title="Inputs" subtitle="Text input component">
-          <app-base-input
-            label="Username"
-            placeholder="Enter username"
-            [(ngModel)]="inputValue"
-            (inputChange)="onInputChange($event)"
-          />
-          <app-base-input
-            label="Password"
-            type="password"
-            placeholder="Enter password"
-            [(ngModel)]="inputValue"
-          />
+          <form>
+            <app-base-input
+              label="Username"
+              placeholder="Enter username"
+              [(ngModel)]="inputValue"
+              (inputChange)="onInputChange($event)"
+              name="username"
+            />
+            <app-base-input
+              label="Password"
+              type="password"
+              placeholder="Enter password"
+              [(ngModel)]="inputValue"
+              name="password"
+            />
+          </form>
         </app-base-card>
 
         <!-- Card 3: Select -->
@@ -74,7 +78,8 @@
           <app-base-select
             label="Choose Option"
             [options]="selectOptions"
-            [(ngModel)]="selectValue"
+            [ngModel]="selectValue"
+            (selectionChange)="onSelectChange($event)"
           />
         </app-base-card>
 
@@ -86,7 +91,93 @@
           />
           <app-base-search
             placeholder="Search..."
-            [(ngModel)]="searchValue"
+            [value]="searchValue"
+            (searchChange)="searchValue = $event"
+          />
+        </app-base-card>
+
+        <!-- Card 5: Switch -->
+        <app-base-card title="Switch" subtitle="Toggle switch component">
+          <app-base-switch
+            label="Enable Notifications"
+            size="md"
+            switchId="switch-notifications"
+            [(ngModel)]="switchValue"
+            (valueChange)="onSwitchChange($event)"
+          />
+          <app-base-switch
+            label="Dark Mode"
+            size="sm"
+            switchId="switch-darkmode"
+            [(ngModel)]="switchValue"
+          />
+          <app-base-switch
+            label="Auto Save"
+            size="lg"
+            switchId="switch-autosave"
+            [(ngModel)]="switchValue"
+            [disabled]="true"
+          />
+        </app-base-card>
+
+        <!-- Card 6: Tags -->
+        <app-base-card title="Tags" subtitle="Tag component variants">
+          <div class="tag-demo">
+            <app-base-tag label="Primary" variant="primary" />
+            <app-base-tag label="Success" variant="success" />
+            <app-base-tag label="Warning" variant="warning" />
+            <app-base-tag label="Danger" variant="danger" />
+            <app-base-tag label="Secondary" variant="secondary" />
+            <app-base-tag label="Outline" variant="outline" />
+            <app-base-tag 
+              label="Closable" 
+              variant="primary" 
+              [closable]="true"
+              (closed)="onTagClose()"
+            />
+          </div>
+        </app-base-card>
+
+        <!-- Card 7: Textarea -->
+        <app-base-card title="Textarea" subtitle="Multi-line text input">
+          <app-base-textarea
+            label="Description"
+            placeholder="Enter description"
+            [rows]="4"
+            [maxLength]="200"
+            [showCounter]="true"
+            [(ngModel)]="textareaValue"
+            (inputChange)="onTextareaChange($event)"
+          />
+        </app-base-card>
+
+        <!-- Card 8: Radio -->
+        <app-base-card title="Radio" subtitle="Radio button group">
+          <app-base-radio
+            label="Select Option"
+            name="demo-radio"
+            [options]="radioOptions"
+            [(ngModel)]="radioValue"
+            (selectionChange)="onRadioChange($event)"
+          />
+        </app-base-card>
+
+        <!-- Card 9: Datepicker -->
+        <app-base-card title="Date Picker" subtitle="Date selection">
+          <app-base-datepicker
+            label="Select Date"
+            placeholder="Choose a date"
+            [(ngModel)]="dateValue"
+            (inputChange)="onDateChange($event)"
+          />
+        </app-base-card>
+
+        <!-- Card 10: File Upload -->
+        <app-base-card title="File Upload" subtitle="File upload component">
+          <app-base-file-upload
+            accept="image/*,.pdf"
+            [multiple]="true"
+            placeholder="Upload files here"
           />
         </app-base-card>
       </app-base-grid>
@@ -118,6 +209,30 @@
             <div class="grid-demo-item">Item 6</div>
           </app-base-grid>
         </div>
+
+        <!-- Avatar -->
+        <app-base-card title="Avatar" subtitle="User avatar component">
+          <div class="avatar-demo">
+            <app-base-avatar size="small" fallbackText="A" />
+            <app-base-avatar size="medium" fallbackText="B" />
+            <app-base-avatar size="large" fallbackText="C" />
+            <app-base-avatar size="xlarge" fallbackText="D" />
+            <app-base-avatar size="medium" shape="square" fallbackText="S" />
+            <app-base-avatar size="medium" icon="person" />
+          </div>
+        </app-base-card>
+
+        <!-- Badge -->
+        <app-base-card title="Badge" subtitle="Badge variants">
+          <div class="badge-demo">
+            <app-base-badge text="Primary" variant="primary" />
+            <app-base-badge text="Success" variant="success" />
+            <app-base-badge text="Warning" variant="warning" />
+            <app-base-badge text="Danger" variant="danger" />
+            <app-base-badge [count]="99" />
+            <app-base-badge [count]="100" />
+          </div>
+        </app-base-card>
       </app-base-grid>
     </div>
 
@@ -125,21 +240,46 @@
     <div *ngIf="selectedTab === 2" class="demo-section">
       <h2>Data Display Components</h2>
 
-      <!-- Table -->
-      <app-base-card title="Data Table" subtitle="Interactive table component">
-        <app-base-table
-          [data]="tableData"
-          [columns]="tableColumns"
-          [actions]="tableActions"
-        />
-        
-        <app-base-pagination
-          [currentPage]="currentPage"
-          [totalPages]="totalPages"
-          [pageSize]="pageSize"
-          (pageChange)="onPageChange($event)"
-        />
-      </app-base-card>
+      <app-base-grid columns="2" gap="1.5rem">
+        <!-- Table -->
+        <app-base-card title="Data Table" subtitle="Interactive table component">
+          <app-base-table
+            [data]="tableData"
+            [columns]="tableColumns"
+            [actions]="tableActions"
+          />
+          
+          <app-base-pagination
+            [currentPage]="currentPage"
+            [totalPages]="totalPages"
+            [pageSize]="pageSize"
+            (pageChange)="onPageChange($event)"
+          />
+        </app-base-card>
+
+        <!-- List -->
+        <app-base-card title="List" subtitle="List component">
+          <app-base-list
+            [items]="listItems"
+            [clickable]="true"
+            (itemClick)="onListItemClick($event)"
+          />
+        </app-base-card>
+
+        <!-- Skeleton -->
+        <app-base-card title="Skeleton" subtitle="Loading skeleton">
+          <app-base-skeleton variant="card" [lines]="4" />
+        </app-base-card>
+
+        <!-- Timeline -->
+        <app-base-card title="Timeline" subtitle="Sequential events">
+          <app-base-timeline
+            [items]="timelineItems"
+            layout="vertical"
+            mode="left"
+          />
+        </app-base-card>
+      </app-base-grid>
     </div>
 
     <!-- Tab 4: Feedback -->
@@ -168,7 +308,37 @@
             *ngIf="showEmpty"
           />
         </app-base-card>
+
+        <!-- Modal -->
+        <app-base-card title="Modal" subtitle="Modal dialog component">
+          <app-base-button label="Open Modal" (click)="openModal()" />
+        </app-base-card>
+
+        <!-- Drawer -->
+        <app-base-card title="Drawer" subtitle="Side drawer component">
+          <app-base-button label="Open Drawer" (click)="openDrawer()" />
+        </app-base-card>
       </app-base-grid>
+
+      <!-- Modal -->
+      <app-base-modal
+        [isOpen]="isModalOpen"
+        title="Sample Modal"
+        icon="info"
+        (closeEvent)="onModalClose()"
+      >
+        <p>This is a sample modal content. You can put any content here.</p>
+      </app-base-modal>
+
+      <!-- Drawer -->
+      <app-base-drawer
+        [isOpen]="isDrawerOpen"
+        title="Sample Drawer"
+        icon="menu"
+        (closeEvent)="onDrawerClose()"
+      >
+        <p>This is a sample drawer content.</p>
+      </app-base-drawer>
     </div>
   </div>
 </app-base-container>

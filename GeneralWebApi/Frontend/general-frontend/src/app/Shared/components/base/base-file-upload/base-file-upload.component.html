@@ -1,0 +1,77 @@
+<!-- src/app/Shared/components/base/base-file-upload/base-file-upload.component.html -->
+<div class="file-upload-wrapper" [class]="wrapperClass">
+  <input
+    [id]="uploadId"
+    type="file"
+    [accept]="accept"
+    [multiple]="multiple"
+    [disabled]="disabled"
+    (change)="onFileChange($event)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    class="file-input"
+    hidden
+  />
+
+  <div class="file-upload-container" [class]="containerClass">
+    <label
+      [for]="uploadId"
+      class="upload-label"
+      [class.disabled]="disabled"
+    >
+      <span class="upload-icon material-icons">cloud_upload</span>
+      <span class="upload-text">
+        {{ placeholder || 'Click to upload or drag and drop' }}
+      </span>
+      <span class="upload-accept" *ngIf="accept">
+        {{ accept }}
+      </span>
+    </label>
+
+    <div class="file-list" *ngIf="files.length > 0">
+      <div
+        *ngFor="let file of files; let i = index"
+        class="file-item"
+        [class.error]="file.status === 'error'"
+      >
+        <span class="file-icon material-icons">{{
+          getFileIcon(file.type)
+        }}</span>
+        <span class="file-name">{{ file.name }}</span>
+        <span class="file-size">{{ formatFileSize(file.size) }}</span>
+
+        <button
+          *ngIf="showRemoveButton"
+          type="button"
+          class="file-remove"
+          (click)="removeFile(i)"
+          [attr.aria-label]="'Remove file'"
+        >
+          <span class="material-icons">close</span>
+        </button>
+
+        <div class="file-progress" *ngIf="file.status === 'uploading'">
+          <div class="progress-bar" [style.width.%]="file.progress || 0"></div>
+        </div>
+
+        <div *ngIf="file.status === 'error'" class="file-error-message">
+          {{ file.error }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="hint && !error" class="upload-hint">{{ hint }}</div>
+
+  <div *ngIf="error" class="upload-error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>
+
+
+
+
+
+
+

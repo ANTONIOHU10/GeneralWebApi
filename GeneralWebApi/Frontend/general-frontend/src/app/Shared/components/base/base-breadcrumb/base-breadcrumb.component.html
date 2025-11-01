@@ -1,0 +1,31 @@
+<!-- src/app/Shared/components/base/base-breadcrumb/base-breadcrumb.component.html -->
+<nav class="breadcrumb" [attr.aria-label]="'Breadcrumb navigation'">
+  <ol class="breadcrumb-list">
+    <li *ngFor="let item of items; let isLast = last" class="breadcrumb-item">
+      <a
+        *ngIf="!isLast"
+        [routerLink]="item.path"
+        class="breadcrumb-link"
+        [class.active]="item.active"
+      >
+        <span *ngIf="item.icon" class="breadcrumb-icon material-icons">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+      <span *ngIf="isLast" class="breadcrumb-current" [attr.aria-current]="'page'">
+        <span *ngIf="item.icon" class="breadcrumb-icon material-icons">{{ item.icon }}</span>
+        {{ item.label }}
+      </span>
+      <span *ngIf="!isLast" class="breadcrumb-separator">
+        <span *ngIf="separator === 'icon'" class="material-icons">chevron_right</span>
+        <span *ngIf="separator === 'text'">{{ separatorText }}</span>
+      </span>
+    </li>
+  </ol>
+</nav>
+
+
+
+
+
+
+

@@ -7,7 +7,7 @@
   border: 1px solid var(--border-primary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
+  overflow: visible; // Allow dropdowns to overflow card boundaries
   transition: all $duration-300 $ease-in-out;
 
   &:hover {
@@ -60,6 +60,7 @@
 
 .card-content {
   padding: $spacing-6;
+  overflow: visible; // Allow dropdowns to overflow card content
 }
 
 .card-footer {

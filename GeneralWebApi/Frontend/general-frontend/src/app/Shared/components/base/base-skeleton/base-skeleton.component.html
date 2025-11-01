@@ -1,0 +1,36 @@
+<!-- src/app/Shared/components/base/base-skeleton/base-skeleton.component.html -->
+<div class="skeleton" [class]="skeletonClass">
+  <ng-container *ngIf="variant === 'default'">
+    <div class="skeleton-line" *ngFor="let line of linesArray"></div>
+  </ng-container>
+
+  <ng-container *ngIf="variant === 'text'">
+    <div class="skeleton-text-line" *ngFor="let line of textLinesArray"></div>
+  </ng-container>
+
+  <ng-container *ngIf="variant === 'avatar'">
+    <div class="skeleton-avatar"></div>
+  </ng-container>
+
+  <ng-container *ngIf="variant === 'button'">
+    <div class="skeleton-button"></div>
+  </ng-container>
+
+  <ng-container *ngIf="variant === 'image'">
+    <div class="skeleton-image"></div>
+  </ng-container>
+
+  <ng-container *ngIf="variant === 'card'">
+    <div class="skeleton-card">
+      <div class="skeleton-card-header"></div>
+      <div class="skeleton-card-body">
+        <div class="skeleton-text-line"></div>
+        <div class="skeleton-text-line"></div>
+        <div class="skeleton-text-line short"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-content></ng-content>
+</div>
+

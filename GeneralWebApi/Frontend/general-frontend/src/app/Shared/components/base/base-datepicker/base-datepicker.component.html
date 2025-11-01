@@ -1,0 +1,47 @@
+<!-- src/app/Shared/components/base/base-datepicker/base-datepicker.component.html -->
+<div class="base-datepicker-container" [class]="containerClass">
+  <label *ngIf="label" class="datepicker-label" [for]="datepickerId">
+    {{ label }}
+    <span *ngIf="required" class="required-asterisk">*</span>
+  </label>
+
+  <div class="datepicker-wrapper" [class]="wrapperClass">
+    <span *ngIf="prefixIcon" class="input-icon prefix-icon material-icons">
+      {{ prefixIcon }}
+    </span>
+
+    <input
+      [id]="datepickerId"
+      type="date"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [readonly]="readonly"
+      [min]="minDate"
+      [max]="maxDate"
+      [ngModel]="value"
+      [class]="inputClass"
+      (ngModelChange)="onInput($event)"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+      (keydown)="onKeydown($event)"
+    />
+
+    <span class="calendar-icon material-icons">calendar_today</span>
+  </div>
+
+  <div *ngIf="hint && !error" class="datepicker-hint">
+    {{ hint }}
+  </div>
+
+  <div *ngIf="error" class="datepicker-error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>
+
+
+
+
+
+
+

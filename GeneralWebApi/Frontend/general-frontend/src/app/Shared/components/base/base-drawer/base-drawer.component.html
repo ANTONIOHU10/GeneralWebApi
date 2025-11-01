@@ -1,0 +1,55 @@
+<!-- src/app/Shared/components/base/base-drawer/base-drawer.component.html -->
+<div
+  class="drawer-backdrop"
+  [class.show]="isOpen"
+  [class.fade]="config.animation"
+  (click)="onBackdropClick()"
+  (keydown.escape)="onBackdropClick()"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="'Close drawer'"
+  *ngIf="isOpen"
+>
+  <aside
+    #drawerElement
+    class="drawer"
+    [class]="drawerClass"
+    role="dialog"
+    [attr.aria-modal]="true"
+    [attr.aria-labelledby]="titleId"
+    [attr.aria-describedby]="contentId"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+  >
+    <!-- Drawer Header -->
+    <div class="drawer-header" *ngIf="showHeader">
+      <div class="drawer-title">
+        <span *ngIf="icon" class="drawer-icon material-icons">{{ icon }}</span>
+        <h4 [id]="titleId" class="drawer-title-text">{{ title }}</h4>
+      </div>
+
+      <button
+        *ngIf="config.closable"
+        type="button"
+        class="drawer-close"
+        (click)="close()"
+        [attr.aria-label]="'Close drawer'"
+      >
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Drawer Body -->
+    <div class="drawer-body" [id]="contentId" [class]="bodyClass">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer" *ngIf="showFooter">
+      <ng-content select="[slot=footer]"></ng-content>
+    </div>
+  </aside>
+</div>
+
+
+

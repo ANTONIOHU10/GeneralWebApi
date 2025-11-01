@@ -48,7 +48,7 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit {
   @Input() hint = '';
   @Input() error = '';
   @Input() customClass = '';
-  @Input() selectId = '';
+  @Input() selectId = `select-liquid-${Math.random().toString(36).slice(2, 11)}`;
 
   @Output() selectionChange = new EventEmitter<SelectOption | SelectOption[]>();
   @Output() dropdownOpen = new EventEmitter<void>();
@@ -118,6 +118,7 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit {
 
     this.selectedOption = option;
     this.onChange(option.value);
+    this.onTouched();
     this.selectionChange.emit(option);
     this.isOpen = false;
     this.dropdownClose.emit();
