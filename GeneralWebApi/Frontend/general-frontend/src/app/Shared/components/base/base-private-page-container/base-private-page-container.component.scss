@@ -1,0 +1,128 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-private-page-container/base-private-page-container.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.private-page-container {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem 2rem 1rem 2rem;
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+  gap: 2rem;
+  margin: 0;
+
+  .header-content {
+    flex: 1;
+
+    h2 {
+      margin: 0 0 0.5rem 0;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .material-icons {
+        font-size: 1.5rem;
+        color: var(--color-primary-500);
+      }
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: $font-size-base;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .search-slot {
+      display: flex;
+      align-items: center;
+    }
+
+    .actions-slot {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+}
+
+// Tab Navigation
+.tab-navigation {
+  display: flex;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+  padding: 0 2rem;
+  gap: 0.5rem;
+}
+
+// Content Area
+.content-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+.page-content {
+  height: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+// Responsive Design
+@include mobile-only {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem;
+
+    .header-actions {
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .search-slot {
+        flex: 1;
+        min-width: 100%;
+      }
+    }
+
+    .header-content {
+      h2 {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .tab-navigation {
+    padding: 0 1rem;
+    overflow-x: auto;
+  }
+
+  .content-area {
+    .page-content {
+      padding: 1rem 0;
+    }
+  }
+}
+
+
+

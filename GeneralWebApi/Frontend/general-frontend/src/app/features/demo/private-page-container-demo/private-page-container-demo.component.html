@@ -1,0 +1,170 @@
+<!-- src/app/features/demo/private-page-container-demo/private-page-container-demo.component.html -->
+<app-base-private-page-container
+  title="Private Page Container Demo"
+  subtitle="Demonstrates the reusable private page container component with all its features"
+  icon="dashboard"
+  [showTabs]="true"
+  [showSearch]="true"
+  [tabs]="tabs"
+  [activeTabId]="activeTab"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header -->
+  <app-base-search
+    slot="search"
+    [config]="{
+      placeholder: 'Search items...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true
+    }"
+    (searchChange)="onSearchChange($event)"
+  />
+
+  <!-- Actions in header -->
+  <app-base-button
+    slot="actions"
+    label="Add New"
+    variant="primary"
+    icon="add"
+    (buttonClick)="onAddNew()"
+  />
+  <app-base-button
+    slot="actions"
+    label="Export"
+    variant="outline"
+    icon="download"
+    (buttonClick)="onExport()"
+  />
+
+  <!-- Overview Tab Content -->
+  <div *ngIf="activeTab === 'overview'" style="padding: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Overview</h3>
+    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+      This is the overview tab content. You can display summary information, statistics, or key metrics here.
+    </p>
+
+    <app-base-grid columns="3" gap="1.5rem" style="margin-top: 1.5rem;">
+      <app-base-card title="Total Items" subtitle="Summary">
+        <div style="font-size: 2rem; font-weight: bold; color: var(--color-primary-500);">
+          1,234
+        </div>
+        <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+          +12% from last month
+        </p>
+      </app-base-card>
+
+      <app-base-card title="Active Items" subtitle="Current Status">
+        <div style="font-size: 2rem; font-weight: bold; color: var(--color-success-500);">
+          856
+        </div>
+        <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+          Active right now
+        </p>
+      </app-base-card>
+
+      <app-base-card title="Pending Items" subtitle="Awaiting Action">
+        <div style="font-size: 2rem; font-weight: bold; color: var(--color-warning-500);">
+          378
+        </div>
+        <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+          Need attention
+        </p>
+      </app-base-card>
+    </app-base-grid>
+
+    <app-base-card title="Recent Activity" subtitle="Latest updates" style="margin-top: 1.5rem;">
+      <div style="padding: 1rem 0;">
+        <p>Recent activity will be displayed here...</p>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-primary);">
+            Item created by John Doe - 2 hours ago
+          </li>
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-primary);">
+            Item updated by Jane Smith - 5 hours ago
+          </li>
+          <li style="padding: 0.5rem 0;">
+            Item deleted by Bob Johnson - 1 day ago
+          </li>
+        </ul>
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Details Tab Content -->
+  <div *ngIf="activeTab === 'details'" style="padding: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Details</h3>
+    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+      This is the details tab with a data table example.
+    </p>
+
+    <app-base-card title="Data Table" subtitle="Sample data display">
+      <app-base-table
+        [data]="tableData"
+        [columns]="tableColumns"
+      />
+    </app-base-card>
+  </div>
+
+  <!-- Settings Tab Content -->
+  <div *ngIf="activeTab === 'settings'" style="padding: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Settings</h3>
+    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+      Configure your preferences and settings here.
+    </p>
+
+    <app-base-card title="General Settings" subtitle="Basic configuration">
+      <div style="display: flex; flex-direction: column; gap: 1.5rem; padding: 1rem 0;">
+        <app-base-input
+          label="Setting Name"
+          placeholder="Enter setting name"
+          [(ngModel)]="setting1"
+        />
+        <app-base-input
+          label="Setting Value"
+          type="number"
+          placeholder="Enter numeric value"
+          [(ngModel)]="setting2"
+        />
+        <app-base-switch
+          label="Enable Feature"
+          [(ngModel)]="featureEnabled"
+        />
+        <app-base-button
+          label="Save Settings"
+          variant="primary"
+          (buttonClick)="onSaveSettings()"
+        />
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Reports Tab Content -->
+  <div *ngIf="activeTab === 'reports'" style="padding: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Reports</h3>
+    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+      View and generate reports here.
+    </p>
+
+    <app-base-grid columns="2" gap="1.5rem">
+      <app-base-card title="Monthly Report" subtitle="Last 30 days">
+        <p>Monthly report content goes here...</p>
+        <app-base-button
+          label="Generate Report"
+          variant="primary"
+          style="margin-top: 1rem;"
+        />
+      </app-base-card>
+
+      <app-base-card title="Annual Report" subtitle="Current year">
+        <p>Annual report content goes here...</p>
+        <app-base-button
+          label="Generate Report"
+          variant="primary"
+          style="margin-top: 1rem;"
+        />
+      </app-base-card>
+    </app-base-grid>
+  </div>
+</app-base-private-page-container>

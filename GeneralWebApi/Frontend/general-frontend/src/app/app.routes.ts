@@ -31,6 +31,7 @@ import { SecurityAuditComponent } from './features/security-audit/security-audit
 import { BackupComponent } from './features/backup/backup/backup.component';
 import { NotificationDemoComponent } from './features/demo/notification-demo/notification-demo.component';
 import { BaseComponentsDemoComponent } from './features/demo/base-components-demo/base-components-demo.component';
+import { PrivatePageContainerDemoComponent } from './features/demo/private-page-container-demo/private-page-container-demo.component';
 
 export const routes: Routes = [
   {
@@ -88,6 +89,7 @@ export const routes: Routes = [
       // 🧪 Development & Testing
       { path: 'notification-demo', component: NotificationDemoComponent },
       { path: 'base-components-demo', component: BaseComponentsDemoComponent },
+      { path: 'private-page-container-demo', component: PrivatePageContainerDemoComponent },
     ],
   },
 ];

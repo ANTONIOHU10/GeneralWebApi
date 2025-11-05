@@ -51,6 +51,9 @@ export { BasePopoverComponent } from './base-popover/base-popover.component';
 export { BaseTooltipComponent } from './base-tooltip/base-tooltip.component';
 export { BaseConfirmDialogComponent } from './base-confirm-dialog/base-confirm-dialog.component';
 
+// Layout Components
+export { BasePrivatePageContainerComponent } from './base-private-page-container/base-private-page-container.component';
+
 // Type Exports
 export type {
   TableColumn,

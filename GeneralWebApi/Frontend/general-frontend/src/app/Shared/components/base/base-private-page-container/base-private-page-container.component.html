@@ -1,0 +1,44 @@
+<!-- src/app/Shared/components/base/base-private-page-container/base-private-page-container.component.html -->
+<div class="private-page-container" [class]="customClass">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h2 *ngIf="title">
+        <span *ngIf="icon" class="material-icons">{{ icon }}</span>
+        {{ title }}
+      </h2>
+      <p *ngIf="subtitle">{{ subtitle }}</p>
+    </div>
+
+    <div class="header-actions">
+      <!-- Search Slot -->
+      <div *ngIf="showSearch" class="search-slot">
+        <ng-content select="[slot=search]"></ng-content>
+      </div>
+
+      <!-- Actions Slot -->
+      <div class="actions-slot">
+        <ng-content select="[slot=actions]"></ng-content>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <app-base-tabs
+    *ngIf="showTabs && tabs.length > 0"
+    [tabs]="tabs"
+    [activeTabId]="activeTabId"
+    (tabChange)="onTabChange($event)"
+    class="tab-navigation"
+  />
+
+  <!-- Content Area -->
+  <div class="content-area">
+    <div class="page-content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
+
+
+
