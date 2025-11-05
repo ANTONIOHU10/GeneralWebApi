@@ -1,0 +1,31 @@
+<!-- src/app/Shared/components/base/base-tooltip/base-tooltip.component.html -->
+<div class="base-tooltip">
+  <div
+    #triggerElement
+    class="tooltip-trigger"
+    (click)="onTriggerClick()"
+    (mouseenter)="onTriggerMouseEnter()"
+    (mouseleave)="onTriggerMouseLeave()"
+    (focus)="onTriggerFocus()"
+    (blur)="onTriggerBlur()"
+    [attr.aria-describedby]="tooltipId"
+    tabindex="0"
+  >
+    <ng-content></ng-content>
+  </div>
+
+  <div
+    #tooltipContent
+    [id]="tooltipId"
+    class="tooltip-content"
+    [class]="tooltipClass"
+    [class.show]="isVisible"
+    *ngIf="isVisible && text"
+    (mouseenter)="onTooltipMouseEnter()"
+    (mouseleave)="onTooltipMouseLeave()"
+    role="tooltip"
+  >
+    <div class="tooltip-arrow" *ngIf="showArrow"></div>
+    <div class="tooltip-text">{{ text }}</div>
+  </div>
+</div>

@@ -30,12 +30,18 @@ import {
   BaseRadioComponent,
   BaseSkeletonComponent,
   BaseTimelineComponent,
+  BaseDropdownComponent,
+  BasePopoverComponent,
+  BaseTooltipComponent,
+  BaseConfirmDialogComponent,
   SelectOption,
   TableColumn,
   TableAction,
   RadioOption,
   ListItem,
-  TimelineItem
+  TimelineItem,
+  DropdownItem,
+  ConfirmDialogConfig
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services/notification.service';
 import { HttpClient } from '@angular/common/http';
@@ -80,7 +86,11 @@ interface DemoTableData {
     BaseModalComponent,
     BaseRadioComponent,
     BaseSkeletonComponent,
-    BaseTimelineComponent
+    BaseTimelineComponent,
+    BaseDropdownComponent,
+    BasePopoverComponent,
+    BaseTooltipComponent,
+    BaseConfirmDialogComponent
   ],
   templateUrl: './base-components-demo.component.html',
   styleUrls: ['./base-components-demo.component.scss']
@@ -172,6 +182,27 @@ export class BaseComponentsDemoComponent {
   // Modal & Drawer states
   isModalOpen = false;
   isDrawerOpen = false;
+  isConfirmDialogOpen = false;
+
+  // Dropdown items
+  dropdownItems: DropdownItem[] = [
+    { label: 'Edit', value: 'edit', icon: 'edit', onClick: () => this.onDropdownItemClick('edit') },
+    { label: 'Duplicate', value: 'duplicate', icon: 'content_copy', onClick: () => this.onDropdownItemClick('duplicate') },
+    { label: 'Share', value: 'share', icon: 'share', onClick: () => this.onDropdownItemClick('share') },
+    { divider: true },
+    { label: 'Delete', value: 'delete', icon: 'delete', onClick: () => this.onDropdownItemClick('delete') },
+    { label: 'Archive', value: 'archive', icon: 'archive', onClick: () => this.onDropdownItemClick('archive'), disabled: true }
+  ];
+
+  // Confirm dialog config
+  confirmDialogConfig: ConfirmDialogConfig = {
+    title: 'Confirm Action',
+    message: 'Are you sure you want to perform this action? This cannot be undone.',
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
+    confirmVariant: 'danger',
+    showCancel: true
+  };
 
   // Tabs
   selectedTab = 0;
@@ -310,5 +341,92 @@ export class BaseComponentsDemoComponent {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  // Dropdown actions
+  onDropdownItemClick(action: string): void {
+    this.notificationService.info('Dropdown Action', `Clicked: ${action}`);
+  }
+
+  onDropdownItemClickHandler(item: DropdownItem): void {
+    const action = typeof item.value === 'string' ? item.value : String(item.value);
+    this.onDropdownItemClick(action);
+  }
+
+  onDropdownChange(isOpen: boolean): void {
+    console.log('Dropdown is', isOpen ? 'open' : 'closed');
+  }
+
+  // Confirm dialog actions
+  openConfirmDialog(): void {
+    // Ensure dialog is closed first
+    this.isConfirmDialogOpen = false;
+    
+    // Use setTimeout to ensure state reset before opening
+    setTimeout(() => {
+      this.confirmDialogConfig = {
+        title: 'Confirm Action',
+        message: 'Are you sure you want to perform this action? This cannot be undone.',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
+        confirmVariant: 'danger',
+        showCancel: true
+      };
+      this.isConfirmDialogOpen = true;
+    }, 0);
+  }
+
+  openSuccessDialog(): void {
+    // Ensure dialog is closed first
+    this.isConfirmDialogOpen = false;
+    
+    // Use setTimeout to ensure state reset before opening
+    setTimeout(() => {
+      this.confirmDialogConfig = {
+        title: 'Success',
+        message: 'Operation completed successfully!',
+        confirmVariant: 'success',
+        confirmText: 'OK',
+        showCancel: false,
+        size: 'medium',
+        closable: true
+      };
+      this.isConfirmDialogOpen = true;
+    }, 0);
+  }
+
+  openWarningDialog(): void {
+    // Ensure dialog is closed first
+    this.isConfirmDialogOpen = false;
+    
+    // Use setTimeout to ensure state reset before opening
+    setTimeout(() => {
+      this.confirmDialogConfig = {
+        title: 'Warning',
+        message: 'This action may have side effects. Are you sure?',
+        confirmVariant: 'warning',
+        confirmText: 'Proceed',
+        cancelText: 'Cancel',
+        showCancel: true,
+        size: 'medium',
+        closable: true
+      };
+      this.isConfirmDialogOpen = true;
+    }, 0);
+  }
+
+  onConfirmDialogConfirm(): void {
+    this.notificationService.success('Confirmed', 'Action confirmed!');
+    // Dialog close is handled by dialogClose event
+  }
+
+  onConfirmDialogCancel(): void {
+    this.notificationService.info('Cancelled', 'Action cancelled');
+    // Dialog close is handled by dialogClose event
+  }
+
+  onConfirmDialogClose(): void {
+    // Always ensure dialog is closed
+    this.isConfirmDialogOpen = false;
   }
 }

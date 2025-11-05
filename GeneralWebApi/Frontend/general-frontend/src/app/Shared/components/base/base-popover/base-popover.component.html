@@ -1,0 +1,43 @@
+<!-- src/app/Shared/components/base/base-popover/base-popover.component.html -->
+<div class="base-popover">
+  <div
+    #triggerElement
+    class="popover-trigger"
+    (click)="onTriggerClick()"
+    (mouseenter)="onTriggerMouseEnter()"
+    (mouseleave)="onTriggerMouseLeave()"
+    (focus)="onTriggerFocus()"
+    (blur)="onTriggerBlur()"
+    [attr.aria-describedby]="popoverId"
+    [attr.aria-expanded]="isVisible"
+    tabindex="0"
+  >
+    <ng-content></ng-content>
+  </div>
+
+  <div
+    #popoverContent
+    [id]="popoverId"
+    class="popover-content"
+    [class]="popoverClass"
+    [class.show]="isVisible"
+    [ngStyle]="popoverStyle"
+    *ngIf="isVisible"
+    (mouseenter)="onPopoverMouseEnter()"
+    (mouseleave)="onPopoverMouseLeave()"
+    role="tooltip"
+  >
+    <div class="popover-arrow" *ngIf="showArrow"></div>
+    <div class="popover-header" *ngIf="title">
+      <h4 class="popover-title">{{ title }}</h4>
+    </div>
+    <div class="popover-body">
+      <ng-container *ngIf="content; else contentTemplate">
+        <p>{{ content }}</p>
+      </ng-container>
+      <ng-template #contentTemplate>
+        <ng-content select="[slot=content]"></ng-content>
+      </ng-template>
+    </div>
+  </div>
+</div>

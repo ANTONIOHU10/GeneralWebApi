@@ -52,8 +52,8 @@ export class BaseModalComponent implements OnInit, OnDestroy {
 
   @ViewChild('modalElement') modalElement!: ElementRef;
 
-  titleId = `modal-title-${Math.random().toString(36).substr(2, 9)}`;
-  contentId = `modal-content-${Math.random().toString(36).substr(2, 9)}`;
+  titleId = `modal-title-${Math.random().toString(36).slice(2, 11)}`;
+  contentId = `modal-content-${Math.random().toString(36).slice(2, 11)}`;
 
   get modalClass(): string {
     const classes = [

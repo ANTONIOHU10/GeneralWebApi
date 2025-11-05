@@ -318,6 +318,125 @@
         <app-base-card title="Drawer" subtitle="Side drawer component">
           <app-base-button label="Open Drawer" (click)="openDrawer()" />
         </app-base-card>
+
+        <!-- Dropdown -->
+        <app-base-card title="Dropdown" subtitle="Dropdown menu component">
+          <div class="dropdown-demo" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <app-base-dropdown
+              [items]="dropdownItems"
+              trigger="click"
+              placement="bottom-start"
+              triggerText="Actions"
+              (itemClick)="onDropdownItemClickHandler($event)"
+              (openChange)="onDropdownChange($event)"
+            />
+            <app-base-dropdown
+              [items]="dropdownItems"
+              trigger="click"
+              placement="bottom-end"
+              triggerIcon="more_vert"
+            />
+            <app-base-dropdown
+              [items]="dropdownItems"
+              trigger="hover"
+              placement="top-start"
+              triggerText="Hover Me"
+            />
+          </div>
+        </app-base-card>
+
+        <!-- Popover -->
+        <app-base-card title="Popover" subtitle="Popover component">
+          <div class="popover-demo" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+            <app-base-popover
+              title="Popover Title"
+              content="This is a popover with title and content. You can place it anywhere."
+              trigger="click"
+              placement="bottom"
+            >
+              <app-base-button label="Click Popover" variant="primary" />
+            </app-base-popover>
+
+            <app-base-popover
+              content="Simple popover without title"
+              trigger="hover"
+              placement="top"
+            >
+              <app-base-button label="Hover Popover" variant="secondary" />
+            </app-base-popover>
+
+            <app-base-popover
+              title="Rich Content"
+              trigger="click"
+              placement="right"
+              width="300px"
+            >
+              <app-base-button label="Rich Popover" variant="outline" />
+              <div slot="content">
+                <p>This popover contains rich content with <strong>HTML</strong> elements.</p>
+                <app-base-button label="Action Button" variant="primary" />
+              </div>
+            </app-base-popover>
+          </div>
+        </app-base-card>
+
+        <!-- Tooltip -->
+        <app-base-card title="Tooltip" subtitle="Tooltip component">
+          <div class="tooltip-demo" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+            <app-base-tooltip
+              text="This is a tooltip on top"
+              placement="top"
+              trigger="hover"
+            >
+              <app-base-button label="Hover Top" variant="primary" />
+            </app-base-tooltip>
+
+            <app-base-tooltip
+              text="Tooltip on bottom"
+              placement="bottom"
+              trigger="hover"
+            >
+              <app-base-button label="Hover Bottom" variant="secondary" />
+            </app-base-tooltip>
+
+            <app-base-tooltip
+              text="Click to show tooltip"
+              placement="right"
+              trigger="click"
+            >
+              <app-base-button label="Click Tooltip" variant="outline" />
+            </app-base-tooltip>
+
+            <app-base-tooltip
+              text="Focus to show tooltip"
+              placement="left"
+              trigger="focus"
+            >
+              <app-base-button label="Focus Tooltip" variant="ghost" />
+            </app-base-tooltip>
+          </div>
+        </app-base-card>
+
+        <!-- Confirm Dialog -->
+        <app-base-card title="Confirm Dialog" subtitle="Confirmation dialog component">
+          <div class="confirm-dialog-demo" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <app-base-button
+              label="Open Confirm Dialog"
+              variant="danger"
+              (click)="openConfirmDialog()"
+            />
+            <app-base-button
+              label="Success Dialog"
+              variant="success"
+              (click)="openSuccessDialog()"
+            />
+            <app-base-button
+              label="Warning Dialog"
+              variant="warning"
+              (click)="openWarningDialog()"
+            />
+          </div>
+        </app-base-card>
       </app-base-grid>
 
       <!-- Modal -->
@@ -339,6 +458,15 @@
       >
         <p>This is a sample drawer content.</p>
       </app-base-drawer>
+
+      <!-- Confirm Dialog -->
+      <app-base-confirm-dialog
+        [isOpen]="isConfirmDialogOpen"
+        [config]="confirmDialogConfig"
+        (confirm)="onConfirmDialogConfirm()"
+        (cancelAction)="onConfirmDialogCancel()"
+        (dialogClose)="onConfirmDialogClose()"
+      />
     </div>
   </div>
 </app-base-container>

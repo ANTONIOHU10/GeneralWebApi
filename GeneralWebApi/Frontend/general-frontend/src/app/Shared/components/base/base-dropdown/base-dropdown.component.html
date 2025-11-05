@@ -1,0 +1,60 @@
+<!-- src/app/Shared/components/base/base-dropdown/base-dropdown.component.html -->
+<div class="base-dropdown" [class]="customClass">
+  <div
+    #triggerElement
+    class="dropdown-trigger-wrapper"
+    [class]="triggerClass"
+    (click)="onTriggerClick()"
+    (mouseenter)="onTriggerMouseEnter()"
+    (mouseleave)="onTriggerMouseLeave()"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-haspopup]="true"
+    [attr.aria-controls]="dropdownId"
+    role="button"
+    tabindex="0"
+    [attr.disabled]="disabled ? '' : null"
+  >
+    <ng-content select="[slot=trigger]"></ng-content>
+    <span *ngIf="!triggerText && !triggerIcon" class="default-trigger">
+      <span class="material-icons">more_vert</span>
+    </span>
+    <span *ngIf="triggerIcon && !triggerText" class="trigger-icon material-icons">
+      {{ triggerIcon }}
+    </span>
+    <span *ngIf="triggerText" class="trigger-text">{{ triggerText }}</span>
+  </div>
+
+  <div
+    #dropdownMenu
+    [id]="dropdownId"
+    class="dropdown-menu"
+    [class]="dropdownClass"
+    [class.show]="isOpen"
+    *ngIf="isOpen"
+    (mouseenter)="onMenuMouseEnter()"
+    (mouseleave)="onMenuMouseLeave()"
+    role="menu"
+    [attr.aria-labelledby]="dropdownId + '-trigger'"
+  >
+    <div
+      *ngFor="let item of items"
+      class="dropdown-item"
+      [class.divider]="item.divider"
+      [class.disabled]="item.disabled"
+      (click)="onItemClick(item, $event)"
+      role="menuitem"
+      [attr.aria-disabled]="item.disabled"
+    >
+      <span *ngIf="item.icon && !item.divider" class="item-icon material-icons">
+        {{ item.icon }}
+      </span>
+      <span class="item-label" *ngIf="item.label">{{ item.label }}</span>
+      <hr *ngIf="item.divider" class="dropdown-divider" />
+    </div>
+
+    <div *ngIf="items.length === 0" class="dropdown-empty">
+      <span class="material-icons">info</span>
+      <span>No items</span>
+    </div>
+  </div>
+</div>

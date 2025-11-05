@@ -1,0 +1,34 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-confirm-dialog/base-confirm-dialog.component.scss */
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.confirm-dialog-body {
+  padding: 0;
+}
+
+.confirm-message {
+  font-size: $font-size-base;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.confirm-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-3;
+  padding: $spacing-4 0 0;
+}
+
+// Responsive design
+@include mobile-only {
+  .confirm-dialog-footer {
+    flex-direction: column-reverse;
+    width: 100%;
+
+    app-base-button {
+      width: 100%;
+    }
+  }
+}

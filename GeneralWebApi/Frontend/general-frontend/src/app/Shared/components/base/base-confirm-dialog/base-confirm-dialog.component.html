@@ -1,0 +1,34 @@
+<!-- src/app/Shared/components/base/base-confirm-dialog/base-confirm-dialog.component.html -->
+<app-base-modal
+  [isOpen]="isOpen"
+  [title]="config.title || 'Confirm'"
+  [icon]="iconType"
+  [config]="modalConfig"
+  [showHeader]="true"
+  [showFooter]="true"
+  (closeEvent)="onClose()"
+  (backdropClick)="onCancel()"
+>
+  <div class="confirm-dialog-body">
+    <div class="confirm-message" *ngIf="config.message">
+      {{ config.message }}
+    </div>
+    <ng-content></ng-content>
+  </div>
+
+  <div slot="footer" class="confirm-dialog-footer">
+    <app-base-button
+      *ngIf="config.showCancel !== false"
+      [text]="config.cancelText || 'Cancel'"
+      [variant]="cancelButtonVariant"
+      size="medium"
+      (buttonClick)="onCancel()"
+    />
+    <app-base-button
+      [text]="config.confirmText || 'Confirm'"
+      [variant]="confirmButtonVariant"
+      size="medium"
+      (buttonClick)="onConfirm()"
+    />
+  </div>
+</app-base-modal>

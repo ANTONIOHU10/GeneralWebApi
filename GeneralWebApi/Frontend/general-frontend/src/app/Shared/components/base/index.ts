@@ -45,6 +45,12 @@ export { BaseBreadcrumbComponent } from './base-breadcrumb/base-breadcrumb.compo
 // Loading Components
 export { BaseSkeletonComponent } from './base-skeleton/base-skeleton.component';
 
+// Advanced Components
+export { BaseDropdownComponent } from './base-dropdown/base-dropdown.component';
+export { BasePopoverComponent } from './base-popover/base-popover.component';
+export { BaseTooltipComponent } from './base-tooltip/base-tooltip.component';
+export { BaseConfirmDialogComponent } from './base-confirm-dialog/base-confirm-dialog.component';
+
 // Type Exports
 export type {
   TableColumn,
@@ -92,3 +98,17 @@ export type {
   NotificationData,
   NotificationAction,
 } from '../../services/notification.service';
+export type {
+  DropdownItem,
+  DropdownPlacement,
+  DropdownTrigger,
+} from './base-dropdown/base-dropdown.component';
+export type {
+  PopoverPlacement,
+  PopoverTrigger,
+} from './base-popover/base-popover.component';
+export type {
+  TooltipPlacement,
+  TooltipTrigger,
+} from './base-tooltip/base-tooltip.component';
+export type { ConfirmDialogConfig } from './base-confirm-dialog/base-confirm-dialog.component';
