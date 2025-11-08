@@ -1,0 +1,18 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/toast-container/toast-container.component.html -->
+<div class="toast-container-wrapper">
+  <app-base-toast
+    [config]="{
+      position: 'top-right',
+      duration: 5000,
+      closable: true,
+      pauseOnHover: true,
+      showProgress: true,
+      maxToasts: 5,
+      animation: true
+    }"
+  >
+    <!-- Toasts are managed by ToastService and displayed via BaseToastComponent -->
+    <!-- The BaseToastComponent will handle the display internally -->
+  </app-base-toast>
+</div>
+
