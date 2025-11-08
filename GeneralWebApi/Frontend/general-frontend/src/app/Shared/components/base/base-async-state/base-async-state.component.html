@@ -1,0 +1,33 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-async-state/base-async-state.component.html -->
+
+<!-- Combined state rendering - single async pipe for synchronized state -->
+<ng-container *ngIf="combinedState$ | async as state">
+  <!-- Loading state -->
+  <app-base-loading
+    *ngIf="state.loading"
+    [config]="defaultLoadingConfig"
+  ></app-base-loading>
+
+  <!-- Error state -->
+  <app-base-error
+    *ngIf="!state.loading && state.error"
+    [message]="state.error"
+    [config]="defaultErrorConfig"
+    (retry)="handleRetry()"
+  ></app-base-error>
+
+  <!-- Empty state -->
+  <app-base-empty
+    *ngIf="!state.loading && !state.error && (!state.data || state.data.length === 0)"
+    [title]="emptyTitle"
+    [description]="emptyDescription"
+    [config]="defaultEmptyConfig"
+    (actionClick)="handleEmptyAction()"
+  ></app-base-empty>
+
+  <!-- Success content -->
+  <ng-container *ngIf="!state.loading && !state.error && state.data && state.data.length > 0">
+    <ng-content></ng-content>
+  </ng-container>
+</ng-container>
+

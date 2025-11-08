@@ -47,18 +47,43 @@
 
   // Semantic Colors
   --color-success: #{$success-500};
+  --color-success-50: #{$success-50};
+  --color-success-100: #{$success-100};
+  --color-success-400: #{$success-400};
+  --color-success-500: #{$success-500};
+  --color-success-600: #{$success-600};
+  --color-success-700: #{$success-700};
   --color-success-light: #{$success-50};
   --color-success-dark: #{$success-700};
 
   --color-warning: #{$warning-500};
+  --color-warning-50: #{$warning-50};
+  --color-warning-100: #{$warning-100};
+  --color-warning-400: #{$warning-400};
+  --color-warning-500: #{$warning-500};
+  --color-warning-600: #{$warning-600};
+  --color-warning-700: #{$warning-700};
   --color-warning-light: #{$warning-50};
   --color-warning-dark: #{$warning-700};
 
   --color-error: #{$error-500};
+  --color-error-50: #{$error-50};
+  --color-error-100: #{$error-100};
+  --color-error-200: #{$error-200};
+  --color-error-400: #{$error-400};
+  --color-error-500: #{$error-500};
+  --color-error-600: #{$error-600};
+  --color-error-700: #{$error-700};
   --color-error-light: #{$error-50};
   --color-error-dark: #{$error-700};
 
   --color-info: #{$info-500};
+  --color-info-50: #{$info-50};
+  --color-info-100: #{$info-100};
+  --color-info-400: #{$info-400};
+  --color-info-500: #{$info-500};
+  --color-info-600: #{$info-600};
+  --color-info-700: #{$info-700};
   --color-info-light: #{$info-50};
   --color-info-dark: #{$info-700};
 

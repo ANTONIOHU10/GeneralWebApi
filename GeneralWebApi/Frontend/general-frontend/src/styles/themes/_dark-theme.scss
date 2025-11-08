@@ -47,18 +47,43 @@
 
   // Semantic Colors (adjusted for dark mode)
   --color-success: #{$success-400};
+  --color-success-50: rgba(76, 175, 80, 0.2);
+  --color-success-100: rgba(76, 175, 80, 0.3);
+  --color-success-400: #{$success-400};
+  --color-success-500: #{$success-500};
+  --color-success-600: #{$success-600};
+  --color-success-700: #{$success-700};
   --color-success-light: rgba(76, 175, 80, 0.2);
   --color-success-dark: #{$success-600};
 
   --color-warning: #{$warning-400};
+  --color-warning-50: rgba(255, 152, 0, 0.2);
+  --color-warning-100: rgba(255, 152, 0, 0.3);
+  --color-warning-400: #{$warning-400};
+  --color-warning-500: #{$warning-500};
+  --color-warning-600: #{$warning-600};
+  --color-warning-700: #{$warning-700};
   --color-warning-light: rgba(255, 152, 0, 0.2);
   --color-warning-dark: #{$warning-600};
 
   --color-error: #{$error-400};
+  --color-error-50: rgba(244, 67, 54, 0.2);
+  --color-error-100: rgba(244, 67, 54, 0.3);
+  --color-error-200: rgba(244, 67, 54, 0.4);
+  --color-error-400: #{$error-400};
+  --color-error-500: #{$error-500};
+  --color-error-600: #{$error-600};
+  --color-error-700: #{$error-700};
   --color-error-light: rgba(244, 67, 54, 0.2);
   --color-error-dark: #{$error-600};
 
   --color-info: #{$info-400};
+  --color-info-50: rgba(33, 150, 243, 0.2);
+  --color-info-100: rgba(33, 150, 243, 0.3);
+  --color-info-400: #{$info-400};
+  --color-info-500: #{$info-500};
+  --color-info-600: #{$info-600};
+  --color-info-700: #{$info-700};
   --color-info-light: rgba(33, 150, 243, 0.2);
   --color-info-dark: #{$info-600};
 

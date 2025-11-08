@@ -1,147 +1,111 @@
-/* src/app/features/employees/employee-card/employee-card.component.scss */
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-card/employee-card.component.scss */
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
 
+// Employee card specific styles
+// Most layout styles are now handled by BaseCardComponent
+
 .employee-card {
-  @include card-elevated;
-  padding: $spacing-6;
   height: fit-content;
   min-height: 200px;
   position: relative;
-
-  &.status-active {
-    border-left: 4px solid var(--color-success);
-  }
-
-  &.status-inactive {
-    border-left: 4px solid var(--color-warning);
-  }
-
-  &.status-terminated {
-    border-left: 4px solid var(--color-error);
-  }
 }
 
-.card-header {
-  @include flex-between;
-  margin-bottom: $spacing-4;
-}
-
-.avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: $border-radius-full;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.employee-card-content {
+  .employee-info-header {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-4;
+    margin-bottom: $spacing-4;
   }
 
-  .avatar-placeholder {
-    @include flex-center;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      135deg,
-      var(--color-primary-500) 0%,
-      var(--color-secondary-500) 100%
-    );
-    color: var(--color-white);
-    font-weight: $font-weight-bold;
-    font-size: $font-size-xl;
+  .employee-name-section {
+    flex: 1;
+    min-width: 0;
   }
-}
-
-.status-badge {
-  @include status-badge(--color-gray-100, --color-gray-700);
-
-  &.status-active {
-    @include status-active;
-  }
-
-  &.status-inactive {
-    @include status-inactive;
-  }
-
-  &.status-terminated {
-    @include status-terminated;
-  }
-}
-
-.card-body {
-  margin-bottom: $spacing-4;
 
   .employee-name {
     margin: 0 0 $spacing-2 0;
     color: var(--text-primary);
     font-size: $font-size-xl;
     font-weight: $font-weight-semibold;
+    line-height: 1.2;
   }
 
   .employee-position {
     margin: 0 0 $spacing-1 0;
     color: var(--text-secondary);
     font-size: $font-size-sm;
+    line-height: 1.4;
   }
 
   .employee-department {
-    margin: 0 0 $spacing-4 0;
+    margin: 0;
     color: var(--text-tertiary);
     font-size: $font-size-xs;
+    line-height: 1.4;
   }
 }
 
 .contact-info {
+  margin-top: $spacing-4;
+  padding-top: $spacing-4;
+  border-top: 1px solid var(--border-primary);
+
   .contact-item {
-    @include flex-center;
-    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
     margin-bottom: $spacing-2;
     font-size: $font-size-xs;
     color: var(--text-secondary);
 
-    i {
-      margin-right: $spacing-2;
-      width: 16px;
-      @include flex-center;
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .material-icons {
       font-size: $font-size-base;
       color: var(--text-tertiary);
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    span:not(.material-icons) {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
 
-.card-footer {
-  @include flex-between;
+.employee-card-footer {
+  display: flex;
   justify-content: flex-end;
   gap: $spacing-2;
-  padding-top: $spacing-4;
-  border-top: 1px solid var(--border-primary);
+  flex-wrap: wrap;
+}
 
-  .btn {
-    @include button-base;
-    padding: $spacing-2 $spacing-4;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
-
-    &.btn-primary {
-      @include button-primary;
+// Responsive design
+@include mobile-only {
+  .employee-card-content {
+    .employee-info-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
+  }
 
-    &.btn-secondary {
-      @include button-secondary;
-    }
+  .employee-card-footer {
+    flex-direction: column;
 
-    &.btn-danger {
-      @include button-base;
-      background: var(--color-error);
-      color: var(--color-white);
-      border-color: var(--color-error);
-
-      &:hover:not(:disabled) {
-        background: var(--color-error-dark);
-        border-color: var(--color-error-dark);
-      }
+    app-base-button {
+      width: 100%;
     }
   }
 }

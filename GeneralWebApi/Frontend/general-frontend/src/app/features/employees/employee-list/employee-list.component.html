@@ -1,83 +1,43 @@
 <!-- src/app/features/employees/employee-list/employee-list.component.html -->
-<div class="employee-list">
-  <div class="list-header">
-    <div class="header-content">
-      <h2>
-        <span class="material-icons">people</span>
-        Employee Management
-      </h2>
-      <p>Manage and view all employees in the system</p>
-    </div>
-    <div class="header-actions">
-      <app-base-search
-        [config]="{
-          placeholder: 'Search employees...',
-          debounceTime: 300,
-          minLength: 1,
-          showClearButton: true,
-          showSearchButton: true,
-        }"
-        (searchChange)="onSearchChange($event)"
-        inputId="employee-search"
-      ></app-base-search>
-    </div>
-  </div>
-
-  <!-- 标签页导航 -->
-  <app-base-tabs
-    [tabs]="tabs"
-    [activeTabId]="activeTab()"
+<app-base-private-page-container
+  title="Employee Management"
+  subtitle="Manage and view all employees in the system"
+  icon="people"
+  [showTabs]="true"
+  [showSearch]="true"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header -->
+  <app-base-search
+    slot="search"
     [config]="{
-      size: 'md',
-      variant: 'default',
-      showIcons: true,
-      showBadges: false,
-      centered: false,
-      fullWidth: false,
-      scrollable: true,
+      placeholder: 'Search employees...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true,
     }"
-    (tabChange)="onTabChange($event)"
-  ></app-base-tabs>
+    (searchChange)="onSearchChange($event)"
+    inputId="employee-search"
+  ></app-base-search>
 
-  <!-- 内容区域 -->
-  <div class="content-area">
-    <!-- 员工列表标签页 -->
-    <div *ngIf="activeTab() === 'list'" class="tab-content">
-      <!-- 加载状态 -->
-      <app-base-loading
-        *ngIf="loading$ | async"
-        [config]="{
-          size: 'md',
-          type: 'spinner',
-          message: 'Loading employees...',
-          overlay: false,
-          centered: true,
-          fullHeight: false,
-        }"
-      ></app-base-loading>
-
-      <!-- 错误状态 -->
-      <app-base-error
-        *ngIf="error$ | async as error"
-        [message]="error"
-        [config]="{
-          type: 'error',
-          size: 'md',
-          showIcon: true,
-          showRetryButton: true,
-          showDismissButton: false,
-          retryButtonText: 'Retry',
-          centered: true,
-          fullWidth: false,
-        }"
-        (retry)="loadEmployees()"
-      ></app-base-error>
-
-      <!-- 员工列表 -->
-      <div
-        *ngIf="(loading$ | async) === false && (error$ | async) === null"
-        class="employee-grid"
-      >
+  <!-- Employee List Tab Content -->
+  <div *ngIf="activeTab() === 'list'">
+    <app-base-async-state
+      [loading$]="loading$"
+      [error$]="error$"
+      [data$]="employees$"
+      loadingMessage="Loading employees..."
+      emptyTitle="No employees found"
+      emptyDescription="There are no employees to display at the moment"
+      emptyActionText="Add First Employee"
+      [onRetry]="onRetryLoad"
+      [onEmptyAction]="onEmptyActionClick"
+    >
+      <!-- Success content: Employee grid -->
+      <div class="employee-grid">
         <app-employee-card
           *ngFor="let employee of employees$ | async"
           [employee]="employee"
@@ -87,37 +47,22 @@
           (view)="onViewEmployee($event)"
         >
         </app-employee-card>
-
-        <!-- 空状态 -->
-        <app-base-empty
-          *ngIf="(employees$ | async)?.length === 0"
-          [config]="{
-            type: 'data',
-            size: 'md',
-            showIcon: true,
-            showActionButton: true,
-            actionButtonText: 'Add First Employee',
-            centered: true,
-            fullHeight: false,
-          }"
-          (actionClick)="setActiveTab('add')"
-        ></app-base-empty>
       </div>
-    </div>
-
-    <!-- 添加员工标签页 -->
-    <div *ngIf="activeTab() === 'add'" class="tab-content">
-      <app-add-employee></app-add-employee>
-    </div>
-
-    <!-- 报告标签页 -->
-    <div *ngIf="activeTab() === 'reports'" class="tab-content">
-      <app-employee-reports></app-employee-reports>
-    </div>
-
-    <!-- 设置标签页 -->
-    <div *ngIf="activeTab() === 'settings'" class="tab-content">
-      <app-employee-settings></app-employee-settings>
-    </div>
+    </app-base-async-state>
   </div>
-</div>
+
+  <!-- Add Employee Tab Content -->
+  <div *ngIf="activeTab() === 'add'">
+    <app-add-employee></app-add-employee>
+  </div>
+
+  <!-- Reports Tab Content -->
+  <div *ngIf="activeTab() === 'reports'">
+    <app-employee-reports></app-employee-reports>
+  </div>
+
+  <!-- Settings Tab Content -->
+  <div *ngIf="activeTab() === 'settings'">
+    <app-employee-settings></app-employee-settings>
+  </div>
+</app-base-private-page-container>

@@ -33,6 +33,7 @@ export { BasePaginationComponent } from './base-pagination/base-pagination.compo
 export { BaseLoadingComponent } from './base-loading/base-loading.component';
 export { BaseErrorComponent } from './base-error/base-error.component';
 export { BaseEmptyComponent } from './base-empty/base-empty.component';
+export { BaseAsyncStateComponent } from './base-async-state/base-async-state.component';
 export { BaseModalComponent } from './base-modal/base-modal.component';
 export { BaseToastComponent } from './base-toast/base-toast.component';
 export { BaseNotificationComponent } from './base-notification/base-notification.component';
@@ -97,6 +98,9 @@ export type {
   EmptySize,
   EmptyType,
 } from './base-empty/base-empty.component';
+export type {
+  AsyncStateConfig,
+} from './base-async-state/base-async-state.component';
 export type {
   NotificationData,
   NotificationAction,

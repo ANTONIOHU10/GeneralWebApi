@@ -1,163 +1,8 @@
-/* src/app/features/employees/employee-list/employee-list.component.scss */
-.employee-list {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  height: auto; // 根据内容自动调整高度
-  overflow: visible;
-  margin: 0; // 确保没有额外的margin
-  padding: 0; // 确保没有额外的padding
-}
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-list/employee-list.component.scss */
+// Styles specific to employee list content
+// Most layout styles are now handled by BasePrivatePageContainerComponent
 
-.list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 1.5rem 2rem 1rem 2rem;
-  border-bottom: 1px solid var(--border-primary);
-  background: var(--bg-surface);
-  gap: 2rem;
-  margin: 0; // 确保没有额外的margin
-
-  .header-content {
-    flex: 1;
-
-    h2 {
-      margin: 0 0 0.5rem 0;
-      color: var(--text-primary);
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .material-icons {
-        font-size: 1.5rem;
-        color: var(--color-primary-500);
-      }
-    }
-
-    p {
-      margin: 0;
-      color: var(--text-secondary);
-    }
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .search-box {
-    display: flex;
-    align-items: center;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-primary);
-    border-radius: 6px;
-    overflow: hidden;
-
-    .search-input {
-      padding: 0.75rem 1rem;
-      border: none;
-      background: transparent;
-      outline: none;
-      width: 200px;
-      color: var(--text-primary);
-
-      &::placeholder {
-        color: var(--text-tertiary);
-      }
-    }
-
-    .search-btn {
-      padding: 0.75rem;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      color: var(--text-tertiary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &:hover {
-        color: var(--text-primary);
-      }
-
-      .material-icons {
-        font-size: 1.2rem;
-      }
-    }
-  }
-
-  .btn {
-    padding: 0.75rem 1.5rem;
-    background: var(--button-bg);
-    color: var(--button-text);
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: var(--color-primary-600);
-      transform: translateY(-1px);
-    }
-  }
-}
-
-// 标签页导航样式
-.tab-navigation {
-  display: flex;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-primary);
-  padding: 0 2rem;
-  gap: 0.5rem;
-
-  .tab-button {
-    padding: 1rem 1.5rem;
-    background: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    &:hover {
-      color: var(--text-primary);
-      background: var(--bg-hover);
-    }
-
-    &.active {
-      color: var(--color-primary-500);
-      border-bottom-color: var(--color-primary-500);
-      background: var(--color-primary-50);
-    }
-
-    .material-icons {
-      font-size: 1.1rem;
-    }
-  }
-}
-
-// 内容区域样式
-.content-area {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
-
-.tab-content {
-  height: 100%;
-  padding: 0;
-}
-
+// Employee grid layout
 .employee-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -165,53 +10,13 @@
   padding: 2rem;
   flex: 1;
   overflow-y: visible;
-  height: auto; // 根据内容自动调整高度
-  align-content: start; // 确保网格从顶部开始排列
-  min-height: 0; // 允许收缩到内容大小
+  height: auto;
+  align-content: start;
+  min-height: 0;
 }
 
-.loading,
-.error,
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  color: #666;
-  flex: 1;
-}
-
-.error {
-  color: #dc3545;
-
-  .btn {
-    margin-top: 1rem;
-  }
-}
-
-.empty-state {
-  p {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-  }
-}
-
+// Responsive design
 @media (max-width: 768px) {
-  .list-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-
-    .header-actions {
-      justify-content: space-between;
-    }
-
-    .search-box .search-input {
-      width: 150px;
-    }
-  }
-
   .employee-grid {
     grid-template-columns: 1fr;
     padding: 1rem;

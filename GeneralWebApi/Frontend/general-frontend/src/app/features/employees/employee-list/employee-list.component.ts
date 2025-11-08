@@ -6,14 +6,12 @@ import { EmployeeCardComponent } from '../employee-card/employee-card.component'
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
 import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
-import { BaseSearchComponent } from '../../../Shared/components/base/base-search/base-search.component';
 import {
-  BaseTabsComponent,
+  BasePrivatePageContainerComponent,
+  BaseSearchComponent,
+  BaseAsyncStateComponent,
   TabItem,
-} from '../../../Shared/components/base/base-tabs/base-tabs.component';
-import { BaseLoadingComponent } from '../../../Shared/components/base/base-loading/base-loading.component';
-import { BaseErrorComponent } from '../../../Shared/components/base/base-error/base-error.component';
-import { BaseEmptyComponent } from '../../../Shared/components/base/base-empty/base-empty.component';
+} from '../../../Shared/components/base';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { Employee } from 'app/contracts/employees/employee.model';
 
@@ -26,11 +24,9 @@ import { Employee } from 'app/contracts/employees/employee.model';
     AddEmployeeComponent,
     EmployeeReportsComponent,
     EmployeeSettingsComponent,
+    BasePrivatePageContainerComponent,
     BaseSearchComponent,
-    BaseTabsComponent,
-    BaseLoadingComponent,
-    BaseErrorComponent,
-    BaseEmptyComponent,
+    BaseAsyncStateComponent,
   ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
@@ -144,4 +140,18 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   clearError() {
     this.employeeFacade.clearError();
   }
+
+  /**
+   * Handler for retry action in async state component
+   */
+  onRetryLoad = () => {
+    this.loadEmployees();
+  };
+
+  /**
+   * Handler for empty state action
+   */
+  onEmptyActionClick = () => {
+    this.setActiveTab('add');
+  };
 }
