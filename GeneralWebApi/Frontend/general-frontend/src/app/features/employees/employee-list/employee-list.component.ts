@@ -14,6 +14,7 @@ import {
 } from '../../../Shared/components/base';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { Employee } from 'app/contracts/employees/employee.model';
+import { DialogService } from '../../../Shared/services/dialog.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -33,6 +34,7 @@ import { Employee } from 'app/contracts/employees/employee.model';
 })
 export class EmployeeListComponent implements OnInit, OnDestroy {
   private employeeFacade = inject(EmployeeFacade);
+  private dialogService = inject(DialogService);
   private destroy$ = new Subject<void>();
 
   // Observable streams from NgRx store
@@ -74,12 +76,12 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     // TODO: 导航到编辑页面或打开编辑模态框
   }
 
-  onDeleteEmployee(employee: Employee) {
-    if (
-      confirm(
-        `Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`
-      )
-    ) {
+  async onDeleteEmployee(employee: Employee) {
+    const confirmed = await this.dialogService.confirmDelete(
+      `Are you sure you want to delete ${employee.firstName} ${employee.lastName}? This action cannot be undone.`
+    );
+
+    if (confirmed) {
       this.employeeFacade.deleteEmployee(employee.id);
     }
   }

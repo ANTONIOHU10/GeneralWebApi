@@ -1,0 +1,23 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/dialog-container/dialog-container.component.html -->
+<div class="dialog-container">
+  <app-base-confirm-dialog
+    *ngFor="let dialog of dialogs; trackBy: trackByDialogId"
+    [isOpen]="true"
+    [config]="{
+      title: dialog.title,
+      message: dialog.message,
+      confirmText: dialog.confirmText,
+      cancelText: dialog.cancelText,
+      confirmVariant: dialog.confirmVariant,
+      cancelVariant: dialog.cancelVariant,
+      icon: dialog.icon,
+      showCancel: dialog.showCancel,
+      size: dialog.size,
+      closable: dialog.closable
+    }"
+    (confirm)="onConfirm(dialog)"
+    (cancelAction)="onCancel(dialog)"
+    (dialogClose)="onClose(dialog)"
+  />
+</div>
+

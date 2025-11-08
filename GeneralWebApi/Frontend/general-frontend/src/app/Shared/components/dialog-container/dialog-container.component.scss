@@ -1,0 +1,16 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/dialog-container/dialog-container.component.scss
+.dialog-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+
+  // Only the last dialog should be interactive
+  app-base-confirm-dialog:last-child {
+    pointer-events: auto;
+  }
+}
+

@@ -5,3 +5,7 @@ export type {
   NotificationAction,
   NotificationData,
 } from './notification.service';
+
+// Dialog Service
+export { DialogService } from './dialog.service';
+export type { DialogData } from './dialog.service';
