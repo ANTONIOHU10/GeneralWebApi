@@ -88,14 +88,20 @@ export class EmployeeEffects {
       ofType(EmployeeActions.createEmployee),
       switchMap(action =>
         this.employeeService.createEmployee(action.employee).pipe(
-          map(employee => EmployeeActions.createEmployeeSuccess({ employee })),
-          catchError(error =>
-            of(
+          map(employee => {
+            console.log('✅ Effect: Employee created successfully');
+            return EmployeeActions.createEmployeeSuccess({ employee });
+          }),
+          catchError(error => {
+            console.log('❌ Effect: Employee creation failed:', error);
+            const errorMessage = error.message || 'Failed to create employee';
+            console.log('📤 Effect: Dispatching failure with message:', errorMessage);
+            return of(
               EmployeeActions.createEmployeeFailure({
-                error: error.message || 'Failed to create employee',
+                error: errorMessage,
               })
-            )
-          )
+            );
+          })
         )
       )
     )
@@ -150,4 +156,15 @@ export class EmployeeEffects {
       switchMap(() => of(EmployeeActions.loadEmployees({})))
     )
   );
+
+  // 删除成功后重新加载员工列表（确保分页信息正确）
+  reloadEmployeesAfterDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.deleteEmployeeSuccess),
+      switchMap(() => of(EmployeeActions.loadEmployees({})))
+    )
+  );
+
+  // Note: No auto-reload after create - the reducer adds the new employee to the store directly
+  // This avoids unnecessary GET requests
 }

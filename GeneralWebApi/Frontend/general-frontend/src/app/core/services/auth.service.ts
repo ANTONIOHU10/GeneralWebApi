@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/core/services/auth.service.ts
 import { Injectable, inject } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { BaseHttpService } from './base-http.service';
 import { TokenService } from './token.service';
-// which improt? test or prod?
-import { environment } from '@environments/environment';
-import { catchError, map, of, tap, throwError } from 'rxjs';
 import {
   LoginRequest,
   LoginData,
@@ -14,111 +14,76 @@ import {
   UserInfoRequest,
   UserInfoData,
 } from 'app/contracts/auth/auth.models';
-import { ApiResponse } from 'app/contracts/common/api-response';
 import { decodeJwt } from '@core/utils/jwt.util';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
-  private http = inject(HttpClient);
+export class AuthService extends BaseHttpService {
   private token = inject(TokenService);
-  private base = environment.apiUrl;
+  private readonly endpoint = `${this.baseUrl}/auth`;
 
-  // without the usage of response.success, we handle all the errors in the interceptor
-  // it will create a problem if the backend return a 201 but the response is not successful
-
-  // src/app/core/services/auth.service.ts
-  login(payload: LoginRequest) {
+  // Login - automatically extracts data and handles token storage
+  login(payload: LoginRequest): Observable<LoginData> {
     console.log('AuthService: Starting login request...', payload);
 
-    return this.http
-      .post<ApiResponse<LoginData>>(`${this.base}/auth/login`, payload)
-      .pipe(
-        tap(res => {
-          console.log('AuthService: Login response received:', res);
+    return this.post<LoginData>(`${this.endpoint}/login`, payload).pipe(
+      tap(data => {
+        console.log('AuthService: Login response received:', data);
 
-          // 修复：从 res.data.token 中获取 token
-          const tokenData = res.data?.token;
-          console.log('AuthService: Token data:', tokenData);
+        // Extract token from response data
+        const tokenData = data?.token;
+        console.log('AuthService: Token data:', tokenData);
 
-          if (tokenData?.accessToken) {
-            console.log('AuthService: Setting access token...');
-            this.token.setAccessToken(tokenData.accessToken);
-            console.log(
-              'AuthService: Access token set, verifying...',
-              localStorage.getItem('access_token')
-            );
-          } else {
-            console.error('AuthService: No access token in response!');
-          }
+        if (tokenData?.accessToken) {
+          console.log('AuthService: Setting access token...');
+          this.token.setAccessToken(tokenData.accessToken);
+          console.log(
+            'AuthService: Access token set, verifying...',
+            localStorage.getItem('access_token')
+          );
+        } else {
+          console.error('AuthService: No access token in response!');
+        }
 
-          if (tokenData?.refreshToken) {
-            console.log('AuthService: Setting refresh token...');
-            this.token.setRefreshToken(tokenData.refreshToken);
-          }
-        }),
-        map(res => res.data), // 返回整个 data 对象
-        catchError(err => {
-          console.error('AuthService: Login error:', err);
-          const message = err?.error?.message ?? 'Login failed';
-          return throwError(() => new Error(message));
-        })
-      );
+        if (tokenData?.refreshToken) {
+          console.log('AuthService: Setting refresh token...');
+          this.token.setRefreshToken(tokenData.refreshToken);
+        }
+      })
+    );
   }
 
-  // src/app/core/services/auth.service.ts
-  refreshToken(payload: RefreshTokenRequest) {
-    return this.http
-      .post<ApiResponse<RefreshTokenData>>(`${this.base}/auth/refresh`, payload)
-      .pipe(
-        tap(res => {
-          // 修复：从 res.data.token 中获取 token
-          const tokenData = res.data?.token;
+  // Refresh token - automatically extracts data and handles token storage
+  refreshToken(payload: RefreshTokenRequest): Observable<RefreshTokenData> {
+    return this.post<RefreshTokenData>(`${this.endpoint}/refresh`, payload).pipe(
+      tap(data => {
+        // Extract token from response data
+        const tokenData = data?.token;
 
-          if (tokenData?.accessToken) {
-            this.token.setAccessToken(tokenData.accessToken);
-          }
-          if (tokenData?.refreshToken) {
-            this.token.setRefreshToken(tokenData.refreshToken);
-          }
-        }),
-        map(res => res.data),
-        catchError(err => {
-          const message = err?.error?.message ?? 'Token refresh failed';
-          return throwError(() => new Error(message));
-        })
-      );
+        if (tokenData?.accessToken) {
+          this.token.setAccessToken(tokenData.accessToken);
+        }
+        if (tokenData?.refreshToken) {
+          this.token.setRefreshToken(tokenData.refreshToken);
+        }
+      })
+    );
   }
 
-  getUserInfo(payload: UserInfoRequest) {
-    return this.http
-      .post<ApiResponse<UserInfoData>>(`${this.base}/auth/userinfo`, payload)
-      .pipe(
-        map(res => res.data),
-        catchError(err => {
-          const message = err?.error?.message ?? 'Failed to get user info';
-          return throwError(() => new Error(message));
-        })
-      );
+  // Get user info - automatically extracts data
+  getUserInfo(payload: UserInfoRequest): Observable<UserInfoData> {
+    return this.post<UserInfoData>(`${this.endpoint}/userinfo`, payload);
   }
 
-  logout(payload?: LogoutRequest) {
+  // Logout - handles both backend and local logout
+  logout(payload?: LogoutRequest): Observable<LogoutData | void> {
     if (payload) {
       // Call backend logout if refresh token provided
-      return this.http
-        .post<ApiResponse<LogoutData>>(`${this.base}/auth/logout`, payload)
-        .pipe(
-          tap(() => this.token.clearAllTokens()),
-          map(res => res.data),
-          catchError(() => {
-            // Even if backend fails, clear local tokens
-            this.token.clearAllTokens();
-            return throwError(() => new Error('Logout failed'));
-          })
-        );
+      return this.post<LogoutData>(`${this.endpoint}/logout`, payload).pipe(
+        tap(() => this.token.clearAllTokens())
+      );
     } else {
       // Local logout only
       this.token.clearAllTokens();
-      // return an <Observable<void>>
       return of(void 0);
     }
   }

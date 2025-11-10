@@ -53,7 +53,7 @@
 
   <!-- Add Employee Tab Content -->
   <div *ngIf="activeTab() === 'add'">
-    <app-add-employee></app-add-employee>
+    <app-add-employee (employeeCreated)="onEmployeeCreated()"></app-add-employee>
   </div>
 
   <!-- Reports Tab Content -->

@@ -10,6 +10,16 @@ import {
   BadgeVariant,
 } from '../../../Shared/components/base';
 
+/**
+ * EmployeeCardComponent - Display component for employee information
+ * 
+ * This is a presentational component that:
+ * - Displays employee information in a card format
+ * - Emits events for user actions (edit, delete, view)
+ * - Does NOT handle business logic or confirmations
+ * - Parent component (EmployeeListComponent) handles confirmations via DialogService
+ */
+
 @Component({
   selector: 'app-employee-card',
   standalone: true,

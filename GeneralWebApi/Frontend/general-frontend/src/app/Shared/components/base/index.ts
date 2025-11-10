@@ -35,7 +35,6 @@ export { BaseErrorComponent } from './base-error/base-error.component';
 export { BaseEmptyComponent } from './base-empty/base-empty.component';
 export { BaseAsyncStateComponent } from './base-async-state/base-async-state.component';
 export { BaseModalComponent } from './base-modal/base-modal.component';
-export { BaseToastComponent } from './base-toast/base-toast.component';
 export { BaseNotificationComponent } from './base-notification/base-notification.component';
 
 // Navigation Components
@@ -72,11 +71,6 @@ export type { TimelineItem, TimelineLayout, TimelineMode } from './base-timeline
 export type { DrawerConfig } from './base-drawer/base-drawer.component';
 export type { BreadcrumbItem } from './base-breadcrumb/base-breadcrumb.component';
 export type { SkeletonVariant } from './base-skeleton/base-skeleton.component';
-export type {
-  ToastConfig,
-  ToastData,
-  ToastAction,
-} from './base-toast/base-toast.component';
 export type { ModalConfig } from './base-modal/base-modal.component';
 export type { ContainerConfig } from './base-container/base-container.component';
 export type { GridConfig } from './base-grid/base-grid.component';

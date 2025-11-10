@@ -1,6 +1,10 @@
 <div
   #notificationElement
   class="notification"
+  [class.notification--success]="notification.type === 'success'"
+  [class.notification--error]="notification.type === 'error'"
+  [class.notification--warning]="notification.type === 'warning'"
+  [class.notification--info]="notification.type === 'info'"
   [@slideIn]
   [class.notification--hovered]="isHovered"
   [class.notification--dismissed]="isDismissed"

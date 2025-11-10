@@ -1,7 +1,8 @@
 // src/app/features/employees/employee-list/employee-list.component.ts
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject } from 'rxjs';
+import { Subject, from, Observable } from 'rxjs';
+import { takeUntil, filter, take, switchMap, concatMap, delay } from 'rxjs/operators';
 import { EmployeeCardComponent } from '../employee-card/employee-card.component';
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
@@ -14,7 +15,12 @@ import {
 } from '../../../Shared/components/base';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { Employee } from 'app/contracts/employees/employee.model';
-import { DialogService } from '../../../Shared/services/dialog.service';
+import {
+  DialogService,
+  NotificationService,
+  LoadingService,
+  OperationNotificationService,
+} from '../../../Shared/services';
 
 @Component({
   selector: 'app-employee-list',
@@ -35,6 +41,9 @@ import { DialogService } from '../../../Shared/services/dialog.service';
 export class EmployeeListComponent implements OnInit, OnDestroy {
   private employeeFacade = inject(EmployeeFacade);
   private dialogService = inject(DialogService);
+  private notificationService = inject(NotificationService);
+  private loadingService = inject(LoadingService);
+  private operationNotification = inject(OperationNotificationService);
   private destroy$ = new Subject<void>();
 
   // Observable streams from NgRx store
@@ -58,6 +67,23 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadEmployees();
+    this.setupOperationListeners();
+  }
+
+  /**
+   * Setup listeners for employee operations to show notifications
+   * Uses OperationNotificationService for unified operation monitoring
+   * 
+   * All operations now go through NgRx Store, so autoShowLoading is enabled
+   * to automatically show/hide loading indicators based on Store state.
+   */
+  private setupOperationListeners(): void {
+    this.operationNotification.setup({
+      error$: this.employeeFacade.error$,
+      operationInProgress$: this.employeeFacade.operationInProgress$,
+      destroy$: this.destroy$,
+      autoShowLoading: true, // NgRx manages loading state through Store
+    });
   }
 
   ngOnDestroy() {
@@ -70,30 +96,183 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.employeeFacade.loadEmployees();
   }
 
+  /**
+   * Handle edit employee action with confirmation if needed
+   * Uses Observable pattern for dialog confirmation
+   */
   onEditEmployee(employee: Employee) {
-    console.log('Edit employee:', employee);
-    this.employeeFacade.selectEmployee(employee);
-    // TODO: 导航到编辑页面或打开编辑模态框
-  }
-
-  async onDeleteEmployee(employee: Employee) {
-    const confirmed = await this.dialogService.confirmDelete(
-      `Are you sure you want to delete ${employee.firstName} ${employee.lastName}? This action cannot be undone.`
-    );
-
-    if (confirmed) {
-      this.employeeFacade.deleteEmployee(employee.id);
+    // Check if employee is active before editing
+    if (employee.status?.toLowerCase() === 'terminated') {
+      const confirm$: Observable<boolean> = this.dialogService.confirm({
+        title: 'Edit Terminated Employee',
+        message: `This employee is terminated. Do you want to continue editing?`,
+        confirmText: 'Continue',
+        cancelText: 'Cancel',
+        confirmVariant: 'warning',
+        icon: 'warning',
+      });
+      
+      confirm$.pipe(
+          take(1),
+          takeUntil(this.destroy$),
+        filter((confirmed: boolean) => confirmed)
+        )
+        .subscribe(() => {
+          this.employeeFacade.selectEmployee(employee);
+          this.notificationService.info('Edit Employee', `Editing ${employee.firstName} ${employee.lastName}`);
+          // TODO: Navigate to edit page or open edit modal
+        });
+    } else {
+      this.employeeFacade.selectEmployee(employee);
+      this.notificationService.info('Edit Employee', `Editing ${employee.firstName} ${employee.lastName}`);
+      // TODO: Navigate to edit page or open edit modal
     }
   }
 
+  /**
+   * Handle delete employee action with confirmation
+   * Uses NgRx architecture: Dialog → Facade → Effect → Store → Notification
+   */
+  onDeleteEmployee(employee: Employee) {
+    const employeeName = `${employee.firstName} ${employee.lastName}`;
+    
+    // Show confirmation dialog first
+    const confirm$: Observable<boolean> = this.dialogService.confirm({
+      title: 'Confirm Delete',
+      message: `Are you sure you want to delete ${employeeName}? This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      confirmVariant: 'danger',
+      icon: 'warning',
+    });
+    
+    confirm$.pipe(
+      take(1),
+      takeUntil(this.destroy$),
+      filter((confirmed: boolean) => confirmed)
+    ).subscribe(() => {
+      // Track operation for success notification
+      this.operationNotification.trackOperation({
+        type: 'delete',
+        employeeName,
+      });
+
+      // Dispatch action through Facade (NgRx architecture)
+      // Effect will handle HTTP call, Reducer will update Store,
+      // OperationNotificationService will show notifications
+      this.employeeFacade.deleteEmployee(employee.id);
+    });
+  }
+
+  /**
+   * Handle view employee action
+   */
   onViewEmployee(employee: Employee) {
-    console.log('View employee:', employee);
     this.employeeFacade.selectEmployee(employee);
-    // TODO: 导航到员工详情页面
+    // TODO: Navigate to employee detail page
+  }
+
+  /**
+   * Handle bulk delete action with confirmation
+   * Uses Observable pattern for dialog confirmation
+   */
+  onBulkDelete(selectedEmployees: Employee[]) {
+    if (selectedEmployees.length === 0) {
+      this.notificationService.warning('No Selection', 'Please select employees to delete.');
+      return;
+    }
+
+    const employeeNames = selectedEmployees
+      .map(e => `${e.firstName} ${e.lastName}`)
+      .join(', ');
+
+    const confirm$: Observable<boolean> = this.dialogService.confirm({
+      title: 'Bulk Delete',
+      message: `Are you sure you want to delete ${selectedEmployees.length} employee(s)?\n\n${employeeNames}\n\nThis action cannot be undone.`,
+      confirmText: 'Delete All',
+      cancelText: 'Cancel',
+      confirmVariant: 'danger',
+      icon: 'warning',
+    });
+    
+    confirm$.pipe(
+        take(1),
+        takeUntil(this.destroy$),
+      filter((confirmed: boolean) => confirmed),
+        switchMap(() => {
+          // Track operation for success notification
+          this.operationNotification.trackOperation({
+            type: 'delete',
+            employeeName: `${selectedEmployees.length} employee(s)`,
+          });
+
+          // Delete all selected employees sequentially
+          // Using RxJS from() to convert array to Observable for better control
+          return from(selectedEmployees).pipe(
+            concatMap((employee, index) => {
+              this.employeeFacade.deleteEmployee(employee.id);
+              // Add delay between deletions to avoid overwhelming the server
+              return index < selectedEmployees.length - 1 
+                ? from([true]).pipe(delay(100))
+                : from([true]);
+            })
+          );
+        })
+      )
+      .subscribe({
+        complete: () => {
+          // Success notification will be shown by setupOperationListeners
+        }
+      });
+  }
+
+  /**
+   * Handle status change with confirmation
+   * Uses Observable pattern for dialog confirmation
+   */
+  onChangeStatus(employee: Employee, newStatus: string) {
+    const statusMessages: Record<string, string> = {
+      terminated: `Are you sure you want to terminate ${employee.firstName} ${employee.lastName}? This action will deactivate their account.`,
+      inactive: `Are you sure you want to deactivate ${employee.firstName} ${employee.lastName}?`,
+      active: `Are you sure you want to activate ${employee.firstName} ${employee.lastName}?`,
+    };
+
+    const message = statusMessages[newStatus.toLowerCase()] || `Change status to ${newStatus}?`;
+
+    const confirm$: Observable<boolean> = this.dialogService.confirm({
+      title: 'Change Employee Status',
+      message,
+      confirmText: 'Confirm',
+      cancelText: 'Cancel',
+      confirmVariant: newStatus.toLowerCase() === 'terminated' ? 'danger' : 'primary',
+      icon: 'info',
+    });
+    
+    confirm$.pipe(
+        take(1),
+        takeUntil(this.destroy$),
+      filter((confirmed: boolean) => confirmed)
+      )
+      .subscribe(() => {
+        // TODO: Implement status change
+        this.notificationService.success(
+          'Status Updated',
+          `${employee.firstName} ${employee.lastName}'s status has been changed to ${newStatus}.`
+        );
+      });
   }
 
   onAddEmployee() {
     this.setActiveTab('add');
+  }
+
+  /**
+   * Handle employee created event from AddEmployeeComponent
+   * Don't reload or switch tabs - let the store handle state updates automatically
+   */
+  onEmployeeCreated() {
+    // Don't reload - the store automatically adds the new employee to the list
+    // No need for extra GET request
   }
 
   /**
@@ -104,10 +283,25 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 处理标签页切换
+   * Handle tab change
+   * Clear error state when switching to list tab (unless there's an active operation)
    */
   onTabChange(tabId: string): void {
-    this.setActiveTab(tabId as 'list' | 'add' | 'reports' | 'settings');
+    const newTab = tabId as 'list' | 'add' | 'reports' | 'settings';
+    this.setActiveTab(newTab);
+    
+    // Clear error when switching to list tab
+    // This prevents showing errors from other tabs (e.g., create employee errors)
+    if (newTab === 'list') {
+      // Check if there's an active operation before clearing error
+      this.operationInProgress$.pipe(take(1)).subscribe(operation => {
+        // Only clear error if no operation is in progress
+        // If loading, the error might be from the load operation itself
+        if (!operation.loading) {
+          this.clearError();
+        }
+      });
+    }
   }
 
   // 过滤和搜索方法

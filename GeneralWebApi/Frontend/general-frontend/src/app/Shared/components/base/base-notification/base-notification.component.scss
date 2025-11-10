@@ -5,41 +5,35 @@
 .base-notification {
   position: relative;
   margin-bottom: $spacing-3;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
-  transition: all $duration-300 $ease-out;
-  backdrop-filter: blur(10px);
-  border: 1px solid transparent;
+  transition: all $duration-200 $ease-in-out;
 
   // Base styles
   &--clickable {
     cursor: pointer;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: $shadow-xl;
+      box-shadow: var(--shadow-md);
     }
   }
 
   &--hovered {
-    transform: translateY(-1px);
-    box-shadow: $shadow-xl;
+    box-shadow: var(--shadow-md);
   }
 
   &--dismissed {
     animation: slideOutRight 0.3s ease-in forwards;
   }
 
-  // Priority styles
+  // Priority styles - minimal
   &--critical {
-    border-color: $error-500;
-    box-shadow: 0 0 20px rgba($error-500, 0.3);
-    animation: criticalPulse 2s infinite;
+    border-color: var(--color-error);
   }
 
   &--high {
-    border-color: $warning-500;
+    border-color: var(--color-warning);
   }
 
   &--normal {
@@ -52,44 +46,42 @@
 }
 
 .notification {
-  background: $white;
-  color: $gray-900;
+  background: var(--bg-surface);
+  color: var(--text-primary);
   min-height: 60px;
+  border: 1px solid var(--border-primary);
+  transition: all $duration-200 $ease-in-out;
 
-  // Type-specific styles
+  // Minimal type-specific styles - only left border for status indication
   &--success {
-    background: linear-gradient(135deg, $success-50 0%, $white 100%);
-    border-left: 4px solid $success-500;
+    border-left: 3px solid var(--color-success);
 
     .notification__icon {
-      color: $success-600;
+      color: var(--color-success);
     }
   }
 
   &--error {
-    background: linear-gradient(135deg, $error-50 0%, $white 100%);
-    border-left: 4px solid $error-500;
+    border-left: 3px solid var(--color-error);
 
     .notification__icon {
-      color: $error-600;
+      color: var(--color-error);
     }
   }
 
   &--warning {
-    background: linear-gradient(135deg, $warning-50 0%, $white 100%);
-    border-left: 4px solid $warning-500;
+    border-left: 3px solid var(--color-warning);
 
     .notification__icon {
-      color: $warning-600;
+      color: var(--color-warning);
     }
   }
 
   &--info {
-    background: linear-gradient(135deg, $info-50 0%, $white 100%);
-    border-left: 4px solid $info-500;
+    border-left: 3px solid var(--color-info);
 
     .notification__icon {
-      color: $info-600;
+      color: var(--color-info);
     }
   }
 }
@@ -106,9 +98,14 @@
 .notification__icon {
   flex-shrink: 0;
   margin-top: $spacing-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $duration-200;
 
   .material-icons {
     font-size: $font-size-xl;
+    line-height: 1;
   }
 }
 
@@ -130,14 +127,14 @@
   font-weight: $font-weight-semibold;
   font-size: $font-size-sm;
   line-height: $line-height-tight;
-  color: $gray-900;
+  color: var(--text-primary);
 }
 
 // Message
 .notification__message {
   font-size: $font-size-sm;
   line-height: $line-height-normal;
-  color: $gray-700;
+  color: var(--text-secondary);
   margin-bottom: $spacing-3;
   word-wrap: break-word;
 }
@@ -153,64 +150,64 @@
   @include button-base;
   padding: $spacing-2 $spacing-3;
   font-size: $font-size-xs;
-  border-radius: $border-radius-sm;
+  border-radius: var(--border-radius-sm);
   font-weight: $font-weight-medium;
   display: inline-flex;
   align-items: center;
   gap: $spacing-1;
   transition: all $duration-200;
+  border: 1px solid var(--border-primary);
 
   &--primary {
-    background: $primary-500;
-    color: $white;
-    border-color: $primary-500;
+    background: var(--color-primary-500);
+    color: var(--text-inverse);
+    border-color: var(--color-primary-500);
 
     &:hover:not(:disabled) {
-      background: $primary-600;
-      border-color: $primary-600;
+      background: var(--color-primary-600);
+      border-color: var(--color-primary-600);
     }
   }
 
   &--secondary {
-    background: $gray-100;
-    color: $gray-700;
-    border-color: $gray-300;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-primary);
 
     &:hover:not(:disabled) {
-      background: $gray-200;
-      border-color: $gray-400;
+      background: var(--bg-tertiary);
     }
   }
 
   &--outline {
     background: transparent;
-    color: $primary-500;
-    border-color: $primary-500;
+    color: var(--color-primary-500);
+    border-color: var(--color-primary-500);
 
     &:hover:not(:disabled) {
-      background: $primary-50;
+      background: var(--color-primary-50);
     }
   }
 
   &--danger {
-    background: $error-500;
-    color: $white;
-    border-color: $error-500;
+    background: var(--color-error);
+    color: var(--text-inverse);
+    border-color: var(--color-error);
 
     &:hover:not(:disabled) {
-      background: $error-600;
-      border-color: $error-600;
+      background: var(--color-error-600);
+      border-color: var(--color-error-600);
     }
   }
 
   &--success {
-    background: $success-500;
-    color: $white;
-    border-color: $success-500;
+    background: var(--color-success);
+    color: var(--text-inverse);
+    border-color: var(--color-success);
 
     &:hover:not(:disabled) {
-      background: $success-600;
-      border-color: $success-600;
+      background: var(--color-success-600);
+      border-color: var(--color-success-600);
     }
   }
 
@@ -245,17 +242,17 @@
   right: $spacing-2;
   background: none;
   border: none;
-  color: $gray-400;
+  color: var(--text-tertiary);
   cursor: pointer;
   padding: $spacing-1;
-  border-radius: $border-radius-sm;
+  border-radius: var(--border-radius-sm);
   transition: all $duration-200;
   opacity: 0.7;
 
   &:hover {
     opacity: 1;
-    background: rgba($gray-200, 0.5);
-    color: $gray-600;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
   }
 
   .material-icons {
@@ -263,13 +260,12 @@
   }
 }
 
-// Priority Indicator
+// Priority Indicator - minimal
 .notification__priority-indicator {
   position: absolute;
   top: $spacing-2;
   left: $spacing-2;
-  color: $error-500;
-  animation: priorityBlink 1s infinite;
+  color: var(--color-error);
 
   .material-icons {
     font-size: $font-size-lg;
@@ -297,26 +293,7 @@
   }
 }
 
-@keyframes criticalPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba($error-500, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba($error-500, 0.5);
-  }
-}
-
-@keyframes priorityBlink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0.3;
-  }
-}
+// Removed criticalPulse and priorityBlink animations for minimal design
 
 // Responsive Design
 @include mobile-only {
@@ -341,50 +318,4 @@
   }
 }
 
-// Dark mode support
-@media (prefers-color-scheme: dark) {
-  .notification {
-    background: $gray-800;
-    color: $gray-100;
-
-    &--success {
-      background: linear-gradient(
-        135deg,
-        rgba($success-500, 0.1) 0%,
-        $gray-800 100%
-      );
-    }
-
-    &--error {
-      background: linear-gradient(
-        135deg,
-        rgba($error-500, 0.1) 0%,
-        $gray-800 100%
-      );
-    }
-
-    &--warning {
-      background: linear-gradient(
-        135deg,
-        rgba($warning-500, 0.1) 0%,
-        $gray-800 100%
-      );
-    }
-
-    &--info {
-      background: linear-gradient(
-        135deg,
-        rgba($info-500, 0.1) 0%,
-        $gray-800 100%
-      );
-    }
-  }
-
-  .notification__title {
-    color: $gray-100;
-  }
-
-  .notification__message {
-    color: $gray-300;
-  }
-}
+// Dark mode support - uses CSS variables, automatically adapts

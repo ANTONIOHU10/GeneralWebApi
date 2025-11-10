@@ -225,7 +225,7 @@ export class UtilityService {
    * Generate unique ID
    */
   generateId(prefix: string = 'id'): string {
-    return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
   /**

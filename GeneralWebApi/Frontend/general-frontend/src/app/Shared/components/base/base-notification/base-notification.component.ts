@@ -6,8 +6,6 @@ import {
   OnInit,
   OnDestroy,
   HostBinding,
-  ElementRef,
-  ViewChild,
   AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -73,9 +71,6 @@ export class BaseNotificationComponent
   @Output() notificationClick = new EventEmitter<NotificationData>();
   @Output() dismiss = new EventEmitter<string>();
 
-  @ViewChild('notificationElement', { static: false })
-  notificationElement?: ElementRef;
-
   @HostBinding('class')
   get hostClass(): string {
     return [
@@ -105,13 +100,15 @@ export class BaseNotificationComponent
   protected isHovered = false;
   protected isDismissed = false;
   private actionLoadingStates = new Map<string, boolean>();
+  private timerStartTime?: number;
+  private remainingDuration?: number;
 
   ngOnInit(): void {
     this.setupAutoClose();
   }
 
   ngAfterViewInit(): void {
-    this.setupIntersectionObserver();
+    // Removed IntersectionObserver as it conflicts with hover logic
   }
 
   ngOnDestroy(): void {
@@ -122,58 +119,50 @@ export class BaseNotificationComponent
     if (
       this.notification.autoClose !== false &&
       this.notification.duration &&
-      this.notification.duration > 0
+      this.notification.duration > 0 &&
+      !this.notification.persistent
     ) {
-      this.timer = setTimeout(() => {
-        this.closeNotification();
-      }, this.notification.duration);
+      this.startTimer(this.notification.duration);
     }
   }
 
-  private setupIntersectionObserver(): void {
-    if ('IntersectionObserver' in window && this.notificationElement) {
-      const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            // if the notification is visible, pause the timers for auto close
-            // like when the notification is hovered or clicked
-            if (entry.isIntersecting) {
-              this.pauseTimers();
-              // if the notification is not visible (focused), resume the timers for auto close
-            } else {
-              this.resumeTimers();
-            }
-          });
-        },
-        { threshold: 0.5 }
-      );
-
-      observer.observe(this.notificationElement.nativeElement);
-    }
+  private startTimer(duration: number): void {
+    this.clearTimers();
+    this.timerStartTime = Date.now();
+    this.remainingDuration = duration;
+    
+    this.timer = setTimeout(() => {
+      this.closeNotification();
+    }, duration);
   }
 
   private pauseTimers(): void {
-    if (this.timer) {
-      clearTimeout(this.timer);
+    if (this.timer && this.timerStartTime && this.remainingDuration) {
+      // Calculate remaining time
+      const elapsed = Date.now() - this.timerStartTime;
+      this.remainingDuration = Math.max(0, this.remainingDuration - elapsed);
+      this.clearTimers();
+      this.timerStartTime = undefined;
     }
   }
 
   private resumeTimers(): void {
     if (
-      this.notification.duration &&
-      this.notification.duration > 0 &&
-      !this.isDismissed
+      this.remainingDuration !== undefined &&
+      this.remainingDuration > 0 &&
+      !this.isDismissed &&
+      !this.notification.persistent
     ) {
-      this.timer = setTimeout(() => {
-        this.closeNotification();
-      }, this.notification.duration);
+      this.startTimer(this.remainingDuration);
     }
   }
 
   private clearTimers(): void {
     if (this.timer) {
       clearTimeout(this.timer);
+      this.timer = undefined;
     }
+    this.timerStartTime = undefined;
   }
 
   closeNotification(): void {

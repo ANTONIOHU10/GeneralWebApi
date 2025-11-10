@@ -154,7 +154,15 @@ export class StorageService {
   getSessionItem<T = any>(key: string): T | null {
     try {
       const item = sessionStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
+      if (item === null) {
+        return null;
+      }
+      const parsed = JSON.parse(item) as T;
+      
+      // Notify watchers
+      this.notifyWatchers(key, parsed, 'sessionStorage');
+      
+      return parsed;
     } catch (error) {
       console.error(`Error getting item from sessionStorage: ${key}`, error);
       return null;
@@ -166,7 +174,15 @@ export class StorageService {
    */
   setSessionItem<T = any>(key: string, value: T): boolean {
     try {
+      const oldValue = this.getSessionItem(key);
       sessionStorage.setItem(key, JSON.stringify(value));
+      
+      // Emit storage change event
+      this.emitStorageChange(key, oldValue, value, 'sessionStorage');
+      
+      // Notify watchers
+      this.notifyWatchers(key, value, 'sessionStorage');
+      
       return true;
     } catch (error) {
       console.error(`Error setting item to sessionStorage: ${key}`, error);
@@ -179,7 +195,14 @@ export class StorageService {
    */
   removeSessionItem(key: string): void {
     try {
+      const oldValue = this.getSessionItem(key);
       sessionStorage.removeItem(key);
+      
+      // Emit storage change event
+      this.emitStorageChange(key, oldValue, null, 'sessionStorage');
+      
+      // Notify watchers
+      this.notifyWatchers(key, null, 'sessionStorage');
     } catch (error) {
       console.error(`Error removing item from sessionStorage: ${key}`, error);
     }

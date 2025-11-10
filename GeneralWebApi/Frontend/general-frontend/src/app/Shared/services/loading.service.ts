@@ -1,6 +1,6 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/services/loading.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError, from } from 'rxjs';
 import { finalize, catchError, map, distinctUntilChanged } from 'rxjs/operators';
 
 export interface LoadingState {
@@ -18,9 +18,27 @@ export interface LoadingState {
  * - Integrates seamlessly with RxJS operators for Angular reactive patterns
  * - Handles loading state for both Promise and Observable operations
  * 
+ * Use Cases:
+ * 1. **Direct control**: Manual show/hide for custom loading scenarios
+ *    - Used by ActionService and OperationNotificationService
+ *    - Best for: Complex flows with conditional loading
+ * 
+ * 2. **Observable wrapping**: Automatic loading for Observable operations
+ *    - Use executeWithLoadingObservable() for simple cases
+ *    - Best for: Direct HTTP calls without confirmation dialogs
+ * 
+ * 3. **Promise wrapping**: Automatic loading for Promise operations
+ *    - Use executeWithLoadingFromPromise() for Promise-based code
+ *    - Best for: Legacy code or third-party libraries using Promises
+ * 
+ * Relationship with other services:
+ * - Used by ActionService for HTTP operation loading
+ * - Used by OperationNotificationService for state-based loading
+ * - Provides reactive streams for UI components
+ * 
  * Usage:
  * - For Observable operations: Use executeWithLoadingObservable() with RxJS pipe
- * - For Promise operations: Use executeWithLoadingAndErrorHandling() with async/await
+ * - For Promise operations: Use executeWithLoadingFromPromise() with async/await
  * - Direct control: Use show()/hide() methods for manual control
  */
 @Injectable({
@@ -187,46 +205,50 @@ export class LoadingService {
   }
 
   /**
-   * Execute async operation with loading indicator using async/await
-   * Recommended for Promise-based operations with clean async/await syntax
+   * Execute Promise-based operation with loading indicator (converts to Observable)
+   * Recommended for Promise-based operations that need to be integrated with RxJS
+   * Uses RxJS from() to convert Promise to Observable
    * 
-   * @param operation Async operation to execute
+   * @param operation Promise-based operation to execute
    * @param message Optional loading message
-   * @param onError Optional error handler callback
-   * @returns Promise that resolves with the operation result or rejects with error
+   * @returns Observable that emits the operation result
    * 
    * @example
    * ```typescript
-   * try {
-   *   const data = await this.loadingService.executeWithLoadingAndErrorHandling(
+   * this.loadingService
+   *   .executeWithLoadingFromPromise(
    *     () => this.dataService.fetch(),
-   *     'Loading data...',
-   *     (error) => this.notificationService.error('Error', error.message)
-   *   );
-   *   this.items = data;
-   * } catch (error) {
-   *   // Error already handled by onError callback
-   * }
+   *     'Loading data...'
+   *   )
+   *   .pipe(
+   *     catchError(error => {
+   *       this.notificationService.error('Error', error.message);
+   *       return of(null);
+   *     })
+   *   )
+   *   .subscribe(data => {
+   *     if (data) {
+   *       this.items = data;
+   *     }
+   *   });
    * ```
    */
-  async executeWithLoadingAndErrorHandling<T>(
+  executeWithLoadingFromPromise<T>(
     operation: () => Promise<T>,
-    message?: string,
-    onError?: (error: unknown) => void
-  ): Promise<T> {
+    message?: string
+  ): Observable<T> {
     const id = this.show(message);
-    try {
-      const result = await operation();
-      return result;
-    } catch (error) {
-      if (onError) {
-        onError(error);
-      }
-      throw error;
-    } finally {
-      // Always hide loading indicator, even if error occurs
-      this.hide(id);
-    }
+    
+    return from(operation()).pipe(
+      finalize(() => {
+        // Always hide loading indicator, regardless of success or error
+        this.hide(id);
+      }),
+      catchError((error) => {
+        // Re-throw error after cleanup
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
