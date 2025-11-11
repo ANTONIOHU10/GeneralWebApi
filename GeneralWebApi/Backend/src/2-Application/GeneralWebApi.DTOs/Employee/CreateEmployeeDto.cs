@@ -3,7 +3,8 @@ public class CreateEmployeeDto
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public string EmployeeNumber { get; set; } = string.Empty;
+    // Optional: if not provided, the system will generate a unique employee number
+    public string? EmployeeNumber { get; set; }
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public int? DepartmentId { get; set; }
@@ -21,4 +22,6 @@ public class CreateEmployeeDto
     public string EmergencyContactName { get; set; } = string.Empty;
     public string EmergencyContactPhone { get; set; } = string.Empty;
     public string EmergencyContactRelation { get; set; } = string.Empty;
+    // Required: Tax code (fiscal code) - database column does not allow NULL
+    public string TaxCode { get; set; } = string.Empty;
 }

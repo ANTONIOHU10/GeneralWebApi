@@ -54,3 +54,28 @@ export interface EmployeeCardData {
   employee: Employee;
   showActions?: boolean;
 }
+
+// Request DTO for creating employee - matches backend CreateEmployeeDto
+export interface CreateEmployeeRequest {
+  firstName: string;
+  lastName: string;
+  employeeNumber?: string; // Optional: if not provided, backend will generate
+  email: string;
+  phoneNumber?: string;
+  departmentId?: number;
+  positionId?: number;
+  managerId?: number;
+  hireDate: string; // ISO date string
+  employmentStatus: string; // Required: e.g., "Active", "Inactive", "Terminated"
+  employmentType: string; // Required: e.g., "FullTime", "PartTime"
+  currentSalary?: number;
+  salaryCurrency?: string;
+  address?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelation?: string;
+  taxCode: string; // Required: Tax code (fiscal code) - database does not allow NULL
+}

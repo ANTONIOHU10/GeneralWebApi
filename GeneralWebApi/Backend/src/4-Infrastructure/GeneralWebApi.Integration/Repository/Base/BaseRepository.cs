@@ -159,6 +159,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
 
             // Soft delete
             entity.IsDeleted = true;
+            entity.IsActive = false;
             entity.DeletedAt = DateTime.UtcNow;
             entity.UpdatedAt = DateTime.UtcNow;
 
@@ -184,6 +185,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             foreach (var entity in entityList)
             {
                 entity.IsDeleted = true;
+                entity.IsActive = false;
                 entity.DeletedAt = DateTime.UtcNow;
                 entity.UpdatedAt = DateTime.UtcNow;
             }

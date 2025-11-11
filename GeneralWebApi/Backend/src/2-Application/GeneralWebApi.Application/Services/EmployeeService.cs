@@ -21,11 +21,28 @@ public class EmployeeService : IEmployeeService
     {
         _logger.LogInformation("Creating employee with number: {EmployeeNumber}", createDto.EmployeeNumber);
 
-        // Check if employee number already exists
-        if (await _employeeRepository.ExistsByEmployeeNumberAsync(createDto.EmployeeNumber, cancellationToken))
+        // If employee number is not provided, generate a unique one
+        if (string.IsNullOrWhiteSpace(createDto.EmployeeNumber))
+        {
+            createDto.EmployeeNumber = await GenerateUniqueEmployeeNumberAsync(cancellationToken);
+            _logger.LogInformation("Generated employee number: {EmployeeNumber}", createDto.EmployeeNumber);
+        }
+
+        // Check if employee number already exists (only when provided/generated)
+        if (await _employeeRepository.ExistsByEmployeeNumberAsync(createDto.EmployeeNumber!, cancellationToken))
         {
             _logger.LogWarning("Employee with number {EmployeeNumber} already exists", createDto.EmployeeNumber);
             throw new InvalidOperationException($"Employee with number {createDto.EmployeeNumber} already exists");
+        }
+
+        // Check if email already exists
+        if (!string.IsNullOrWhiteSpace(createDto.Email))
+        {
+            if (await _employeeRepository.ExistsByEmailAsync(createDto.Email, cancellationToken))
+            {
+                _logger.LogWarning("Employee with email {Email} already exists", createDto.Email);
+                throw new InvalidOperationException($"Employee with email {createDto.Email} already exists");
+            }
         }
 
         var employee = _mapper.Map<Employee>(createDto);
@@ -112,10 +129,52 @@ public class EmployeeService : IEmployeeService
             }
         }
 
+        // Check if email is being changed and if new email already exists
+        if (!string.IsNullOrWhiteSpace(updateDto.Email) && updateDto.Email != existingEmployee.Email)
+        {
+            if (await _employeeRepository.ExistsByEmailAsync(updateDto.Email, cancellationToken))
+            {
+                _logger.LogWarning("Employee with email {Email} already exists", updateDto.Email);
+                throw new InvalidOperationException($"Employee with email {updateDto.Email} already exists");
+            }
+        }
+
         _mapper.Map(updateDto, existingEmployee);
         var updatedEmployee = await _employeeRepository.UpdateAsync(existingEmployee, cancellationToken);
 
         _logger.LogInformation("Successfully updated employee with ID: {EmployeeId}", id);
         return _mapper.Map<EmployeeDto>(updatedEmployee);
+    }
+
+    /// <summary>
+    /// Generate a unique employee number with prefix EMP plus random 8-char token.
+    /// Ensure uniqueness by checking repository.
+    /// </summary>
+    private async Task<string> GenerateUniqueEmployeeNumberAsync(CancellationToken cancellationToken)
+    {
+        const string prefix = "EMP";
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var random = new Random();
+
+        string GenerateToken()
+        {
+            return new string(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        string employeeNumber;
+        int attempts = 0;
+        do
+        {
+            employeeNumber = $"{prefix}{GenerateToken()}";
+            attempts++;
+            if (attempts > 10)
+            {
+                // Extremely unlikely - fallback to GUID based
+                employeeNumber = $"{prefix}{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+            }
+        }
+        while (await _employeeRepository.ExistsByEmployeeNumberAsync(employeeNumber, cancellationToken));
+
+        return employeeNumber;
     }
 }

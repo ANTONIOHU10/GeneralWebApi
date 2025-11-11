@@ -94,7 +94,8 @@ export class EmployeeService extends BaseHttpService {
   }
 
   // 创建员工 - 自动提取 data
-  createEmployee(employee: Omit<Employee, 'id'>): Observable<Employee> {
+  // Accepts CreateEmployeeRequest which matches backend CreateEmployeeDto
+  createEmployee(employee: Omit<Employee, 'id'> | any): Observable<Employee> {
     return this.post<BackendEmployee>(this.endpoint, employee).pipe(
       map(backendEmployee => this.transformBackendEmployee(backendEmployee))
     );

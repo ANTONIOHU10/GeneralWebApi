@@ -10,6 +10,7 @@
 
   <div class="page-content">
     <form class="employee-form" (ngSubmit)="onSubmit()">
+      <!-- Personal Information Section -->
       <div class="form-section">
         <h3>Personal Information</h3>
         <div class="form-row">
@@ -44,56 +45,180 @@
           </app-base-input>
 
           <app-base-input
-            [label]="'Phone'"
+            [label]="'Phone Number'"
             [type]="'tel'"
-            [placeholder]="'Enter phone number'"
-            [(ngModel)]="employeeForm.phone"
-            name="phone"
+            [placeholder]="'Enter phone number (optional)'"
+            [(ngModel)]="employeeForm.phoneNumber"
+            name="phoneNumber"
+          >
+          </app-base-input>
+        </div>
+
+        <div class="form-row">
+          <app-base-input
+            [label]="'Employee Number'"
+            [placeholder]="'Leave empty to auto-generate (optional)'"
+            [(ngModel)]="employeeForm.employeeNumber"
+            name="employeeNumber"
+          >
+          </app-base-input>
+
+          <app-base-input
+            [label]="'Tax Code'"
+            [required]="true"
+            [placeholder]="'Enter tax code / fiscal code'"
+            [(ngModel)]="employeeForm.taxCode"
+            name="taxCode"
           >
           </app-base-input>
         </div>
       </div>
 
+      <!-- Work Information Section -->
       <div class="form-section">
         <h3>Work Information</h3>
         <div class="form-row">
           <app-base-select
-            [label]="'Department'"
+            [label]="'Employment Status'"
             [required]="true"
-            [placeholder]="'Select Department'"
+            [placeholder]="'Select employment status'"
+            [options]="employmentStatusOptions"
+            [(ngModel)]="employeeForm.employmentStatus"
+            name="employmentStatus"
+          >
+          </app-base-select>
+
+          <app-base-select
+            [label]="'Employment Type'"
+            [required]="true"
+            [placeholder]="'Select employment type'"
+            [options]="employmentTypeOptions"
+            [(ngModel)]="employeeForm.employmentType"
+            name="employmentType"
+          >
+          </app-base-select>
+        </div>
+
+        <div class="form-row">
+          <app-base-input
+            [label]="'Hire Date'"
+            [type]="'date'"
+            [required]="true"
+            [(ngModel)]="employeeForm.hireDate"
+            name="hireDate"
+          >
+          </app-base-input>
+
+          <app-base-select
+            [label]="'Department'"
+            [placeholder]="'Select department (optional)'"
             [options]="departments"
-            [(ngModel)]="employeeForm.department"
-            name="department"
+            [(ngModel)]="employeeForm.departmentId"
+            name="departmentId"
+          >
+          </app-base-select>
+        </div>
+
+        <div class="form-row">
+          <app-base-select
+            [label]="'Position'"
+            [placeholder]="'Select position (optional)'"
+            [options]="positions"
+            [(ngModel)]="employeeForm.positionId"
+            name="positionId"
           >
           </app-base-select>
 
           <app-base-input
-            [label]="'Position'"
-            [required]="true"
-            [placeholder]="'Enter job position'"
-            [(ngModel)]="employeeForm.position"
-            name="position"
+            [label]="'Current Salary'"
+            [type]="'number'"
+            [placeholder]="'Enter salary amount (optional)'"
+            [step]="0.01"
+            [(ngModel)]="employeeForm.currentSalary"
+            name="currentSalary"
           >
           </app-base-input>
         </div>
 
         <div class="form-row">
           <app-base-input
-            [label]="'Start Date'"
-            [type]="'date'"
-            [required]="true"
-            [(ngModel)]="employeeForm.startDate"
-            name="startDate"
+            [label]="'Salary Currency'"
+            [placeholder]="'e.g., USD, EUR (optional)'"
+            [(ngModel)]="employeeForm.salaryCurrency"
+            name="salaryCurrency"
+          >
+          </app-base-input>
+        </div>
+      </div>
+
+      <!-- Address Information Section -->
+      <div class="form-section">
+        <h3>Address Information (Optional)</h3>
+        <div class="form-row">
+          <app-base-input
+            [label]="'Address'"
+            [placeholder]="'Enter street address (optional)'"
+            [(ngModel)]="employeeForm.address"
+            name="address"
           >
           </app-base-input>
 
           <app-base-input
-            [label]="'Salary'"
-            [type]="'number'"
-            [placeholder]="'Enter salary amount'"
-            [step]="0.01"
-            [(ngModel)]="employeeForm.salary"
-            name="salary"
+            [label]="'City'"
+            [placeholder]="'Enter city (optional)'"
+            [(ngModel)]="employeeForm.city"
+            name="city"
+          >
+          </app-base-input>
+        </div>
+
+        <div class="form-row">
+          <app-base-input
+            [label]="'Postal Code'"
+            [placeholder]="'Enter postal code (optional)'"
+            [(ngModel)]="employeeForm.postalCode"
+            name="postalCode"
+          >
+          </app-base-input>
+
+          <app-base-input
+            [label]="'Country'"
+            [placeholder]="'Enter country (optional)'"
+            [(ngModel)]="employeeForm.country"
+            name="country"
+          >
+          </app-base-input>
+        </div>
+      </div>
+
+      <!-- Emergency Contact Section -->
+      <div class="form-section">
+        <h3>Emergency Contact (Optional)</h3>
+        <div class="form-row">
+          <app-base-input
+            [label]="'Contact Name'"
+            [placeholder]="'Enter emergency contact name (optional)'"
+            [(ngModel)]="employeeForm.emergencyContactName"
+            name="emergencyContactName"
+          >
+          </app-base-input>
+
+          <app-base-input
+            [label]="'Contact Phone'"
+            [type]="'tel'"
+            [placeholder]="'Enter emergency contact phone (optional)'"
+            [(ngModel)]="employeeForm.emergencyContactPhone"
+            name="emergencyContactPhone"
+          >
+          </app-base-input>
+        </div>
+
+        <div class="form-row">
+          <app-base-input
+            [label]="'Contact Relation'"
+            [placeholder]="'e.g., Spouse, Parent (optional)'"
+            [(ngModel)]="employeeForm.emergencyContactRelation"
+            name="emergencyContactRelation"
           >
           </app-base-input>
         </div>

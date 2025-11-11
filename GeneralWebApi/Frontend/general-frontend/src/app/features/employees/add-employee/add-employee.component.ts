@@ -9,7 +9,7 @@ import { BaseInputComponent } from '../../../Shared/components/base/base-input/b
 import { BaseSelectComponent } from '../../../Shared/components/base/base-select/base-select.component';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { EmployeeFacade } from '@store/employee/employee.facade';
-import { Employee } from 'app/contracts/employees/employee.model';
+import { Employee, CreateEmployeeRequest } from 'app/contracts/employees/employee.model';
 
 @Component({
   selector: 'app-add-employee',
@@ -36,25 +36,65 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
    */
   @Output() employeeCreated = new EventEmitter<void>();
 
-  // 表单数据
+  // Form data - matches backend CreateEmployeeDto requirements
   employeeForm = {
+    // Required fields
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
-    department: '',
-    position: '',
-    startDate: '',
-    salary: '',
+    hireDate: '',
+    employmentStatus: 'Active',
+    employmentType: 'FullTime',
+    // Optional fields
+    employeeNumber: '', // Optional: if empty, backend will auto-generate
+    phoneNumber: '',
+    departmentId: null as number | null,
+    positionId: null as number | null,
+    managerId: null as number | null,
+    currentSalary: null as number | null,
+    salaryCurrency: 'USD',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    emergencyContactRelation: '',
+    taxCode: '', // Optional: Tax code
   };
 
-  // 部门选项
+  // Employment status options
+  employmentStatusOptions = [
+    { value: 'Active', label: 'Active' },
+    { value: 'Inactive', label: 'Inactive' },
+    { value: 'Terminated', label: 'Terminated' },
+    { value: 'OnLeave', label: 'On Leave' },
+  ];
+
+  // Employment type options
+  employmentTypeOptions = [
+    { value: 'FullTime', label: 'Full Time' },
+    { value: 'PartTime', label: 'Part Time' },
+    { value: 'Contract', label: 'Contract' },
+    { value: 'Intern', label: 'Intern' },
+  ];
+
+  // Department options (should be loaded from API, using placeholder for now)
   departments = [
-    { value: 'hr', label: 'Human Resources' },
-    { value: 'it', label: 'Information Technology' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'sales', label: 'Sales' },
+    { value: 1, label: 'Human Resources' },
+    { value: 2, label: 'Information Technology' },
+    { value: 3, label: 'Finance' },
+    { value: 4, label: 'Marketing' },
+    { value: 5, label: 'Sales' },
+  ];
+
+  // Position options (should be loaded from API, using placeholder for now)
+  positions = [
+    { value: 1, label: 'Manager' },
+    { value: 2, label: 'Developer' },
+    { value: 3, label: 'Analyst' },
+    { value: 4, label: 'Designer' },
+    { value: 5, label: 'Coordinator' },
   ];
 
   ngOnInit() {
@@ -129,24 +169,68 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
         employeeName,
       });
 
-      // Prepare employee data (Omit<Employee, 'id'>)
-      const newEmployee: Omit<Employee, 'id'> = {
-        firstName: this.employeeForm.firstName,
-        lastName: this.employeeForm.lastName,
-        email: this.employeeForm.email,
-        phone: this.employeeForm.phone || undefined,
-        department: this.employeeForm.department || undefined,
-        position: this.employeeForm.position || undefined,
-        hireDate: this.employeeForm.startDate || undefined,
-        status: 'Active', // Default status for new employees
-        salary: this.employeeForm.salary ? parseFloat(this.employeeForm.salary) : undefined,
+      // Prepare employee data matching backend CreateEmployeeDto
+      const createRequest: CreateEmployeeRequest = {
+        // Required fields
+        firstName: this.employeeForm.firstName.trim(),
+        lastName: this.employeeForm.lastName.trim(),
+        email: this.employeeForm.email.trim(),
+        hireDate: this.employeeForm.hireDate,
+        employmentStatus: this.employeeForm.employmentStatus,
+        employmentType: this.employeeForm.employmentType,
+        // Optional fields - only include if provided
+        ...(this.employeeForm.employeeNumber.trim() && {
+          employeeNumber: this.employeeForm.employeeNumber.trim(),
+        }),
+        ...(this.employeeForm.phoneNumber.trim() && {
+          phoneNumber: this.employeeForm.phoneNumber.trim(),
+        }),
+        ...(this.employeeForm.departmentId && {
+          departmentId: this.employeeForm.departmentId,
+        }),
+        ...(this.employeeForm.positionId && {
+          positionId: this.employeeForm.positionId,
+        }),
+        ...(this.employeeForm.managerId && {
+          managerId: this.employeeForm.managerId,
+        }),
+        ...(this.employeeForm.currentSalary && {
+          currentSalary: this.employeeForm.currentSalary,
+        }),
+        ...(this.employeeForm.salaryCurrency && {
+          salaryCurrency: this.employeeForm.salaryCurrency,
+        }),
+        ...(this.employeeForm.address.trim() && {
+          address: this.employeeForm.address.trim(),
+        }),
+        ...(this.employeeForm.city.trim() && {
+          city: this.employeeForm.city.trim(),
+        }),
+        ...(this.employeeForm.postalCode.trim() && {
+          postalCode: this.employeeForm.postalCode.trim(),
+        }),
+        ...(this.employeeForm.country.trim() && {
+          country: this.employeeForm.country.trim(),
+        }),
+        ...(this.employeeForm.emergencyContactName.trim() && {
+          emergencyContactName: this.employeeForm.emergencyContactName.trim(),
+        }),
+        ...(this.employeeForm.emergencyContactPhone.trim() && {
+          emergencyContactPhone: this.employeeForm.emergencyContactPhone.trim(),
+        }),
+        ...(this.employeeForm.emergencyContactRelation.trim() && {
+          emergencyContactRelation: this.employeeForm.emergencyContactRelation.trim(),
+        }),
+        // TaxCode is required - always include it
+        taxCode: this.employeeForm.taxCode.trim(),
       };
 
       // Dispatch action through Facade (NgRx architecture)
+      // Note: We need to cast to Omit<Employee, 'id'> for now, but ideally should update the action type
       // Effect will handle HTTP call, Reducer will update Store,
       // OperationNotificationService will show notifications
       // Form reset will be handled in ngOnInit subscription only on success
-      this.employeeFacade.createEmployee(newEmployee);
+      this.employeeFacade.createEmployee(createRequest as any);
     });
   }
 
@@ -160,16 +244,17 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Validate form fields
+   * Validate form fields - check required fields only
    */
   private isFormValid(): boolean {
     return !!(
-      this.employeeForm.firstName &&
-      this.employeeForm.lastName &&
-      this.employeeForm.email &&
-      this.employeeForm.department &&
-      this.employeeForm.position &&
-      this.employeeForm.startDate
+      this.employeeForm.firstName?.trim() &&
+      this.employeeForm.lastName?.trim() &&
+      this.employeeForm.email?.trim() &&
+      this.employeeForm.hireDate &&
+      this.employeeForm.employmentStatus &&
+      this.employeeForm.employmentType &&
+      this.employeeForm.taxCode?.trim()
     );
   }
 
@@ -181,11 +266,24 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       firstName: '',
       lastName: '',
       email: '',
-      phone: '',
-      department: '',
-      position: '',
-      startDate: '',
-      salary: '',
+      hireDate: '',
+      employmentStatus: 'Active',
+      employmentType: 'FullTime',
+      employeeNumber: '',
+      phoneNumber: '',
+      departmentId: null,
+      positionId: null,
+      managerId: null,
+      currentSalary: null,
+      salaryCurrency: 'USD',
+      address: '',
+      city: '',
+      postalCode: '',
+      country: '',
+      emergencyContactName: '',
+      emergencyContactPhone: '',
+      emergencyContactRelation: '',
+      taxCode: '',
     };
   }
 }

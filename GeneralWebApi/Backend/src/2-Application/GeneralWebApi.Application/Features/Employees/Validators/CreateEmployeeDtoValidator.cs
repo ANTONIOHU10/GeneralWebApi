@@ -16,9 +16,12 @@ public class CreateEmployeeDtoValidator : AbstractValidator<CreateEmployeeDto>
             .NotEmpty().WithMessage("Last name is required")
             .MaximumLength(50).WithMessage("Last name cannot exceed 50 characters");
 
-        RuleFor(x => x.EmployeeNumber)
-            .NotEmpty().WithMessage("Employee number is required")
-            .MaximumLength(20).WithMessage("Employee number cannot exceed 20 characters");
+        // Employee number is optional on create; when provided, validate format/length
+        When(x => !string.IsNullOrWhiteSpace(x.EmployeeNumber), () =>
+        {
+            RuleFor(x => x.EmployeeNumber!)
+                .MaximumLength(20).WithMessage("Employee number cannot exceed 20 characters");
+        });
 
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required")
@@ -47,5 +50,9 @@ public class CreateEmployeeDtoValidator : AbstractValidator<CreateEmployeeDto>
 
         RuleFor(x => x.Country)
             .MaximumLength(50).WithMessage("Country cannot exceed 50 characters");
+
+        RuleFor(x => x.TaxCode)
+            .NotEmpty().WithMessage("Tax code is required")
+            .MaximumLength(50).WithMessage("Tax code cannot exceed 50 characters");
     }
 }

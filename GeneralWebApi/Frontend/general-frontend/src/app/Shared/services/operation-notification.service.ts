@@ -1,7 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/services/operation-notification.service.ts
 import { Injectable, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, filter } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { NotificationService } from './notification.service';
 import { LoadingService } from './loading.service';
 
@@ -156,7 +156,7 @@ export class OperationNotificationService {
       .pipe(takeUntil(config.destroy$))
       .subscribe(error => {
         if (error !== null) {
-          this.hasError = true;
+        this.hasError = true;
           // Only show notification if it's a different error (prevent duplicates)
           if (this.lastErrorShown !== error) {
             this.lastErrorShown = error;
@@ -215,7 +215,7 @@ export class OperationNotificationService {
       // Show success notification ONLY if operation completed AND no error
       if (this.currentOperation.type && !this.hasError) {
         this.showSuccessNotification(config.successMessages);
-      }
+    }
 
       // Reset current operation after handling
       this.currentOperation = { type: null };
