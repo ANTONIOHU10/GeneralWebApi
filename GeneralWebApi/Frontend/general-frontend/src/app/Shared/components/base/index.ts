@@ -17,6 +17,7 @@ export { BaseDatepickerComponent } from './base-datepicker/base-datepicker.compo
 export { BaseFileUploadComponent } from './base-file-upload/base-file-upload.component';
 export { BaseRadioComponent } from './base-radio/base-radio.component';
 export { BaseSwitchComponent } from './base-switch/base-switch.component';
+export { BaseFormComponent } from './base-form/base-form.component';
 
 // Display Components
 export { BaseBadgeComponent } from './base-badge/base-badge.component';
@@ -113,3 +114,11 @@ export type {
   TooltipTrigger,
 } from './base-tooltip/base-tooltip.component';
 export type { ConfirmDialogConfig } from './base-confirm-dialog/base-confirm-dialog.component';
+export type {
+  FormField,
+  FormFieldType,
+  FormSection,
+  FormLayoutConfig,
+  FormButton,
+  FormConfig,
+} from './base-form/base-form.component';

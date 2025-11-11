@@ -1,0 +1,144 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-form/base-form.component.scss
+.base-form {
+  width: 100%;
+
+  &.loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .form-section {
+    margin-bottom: var(--section-gap, 2rem);
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-primary, #e0e0e0);
+      padding-bottom: var(--section-gap, 2rem);
+    }
+
+    &.collapsible {
+      .section-header {
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+
+      .section-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary, #212121);
+      }
+
+      .section-toggle {
+        font-size: 1.5rem;
+        color: var(--text-secondary, #757575);
+        transition: transform 0.2s ease;
+      }
+    }
+
+    .section-description {
+      margin: 0 0 1rem 0;
+      color: var(--text-secondary, #757575);
+      font-size: 0.875rem;
+    }
+
+    .section-fields {
+      display: grid;
+      gap: var(--gap, 1.5rem);
+
+      &.hidden {
+        display: none;
+      }
+
+      .form-field {
+        &.hidden {
+          display: none;
+        }
+
+        // Grid column span classes
+        &.col-span-1 {
+          grid-column: span 1;
+        }
+
+        &.col-span-2 {
+          grid-column: span 2;
+        }
+
+        &.col-span-3 {
+          grid-column: span 3;
+        }
+
+        &.col-span-4 {
+          grid-column: span 4;
+        }
+
+        // Full width for single column layout
+        @media (max-width: 768px) {
+          grid-column: span 1 !important;
+        }
+      }
+    }
+  }
+
+  .form-fields {
+    display: grid;
+    gap: var(--gap, 1.5rem);
+
+    .form-field {
+      &.hidden {
+        display: none;
+      }
+
+      // Grid column span classes
+      &.col-span-1 {
+        grid-column: span 1;
+      }
+
+      &.col-span-2 {
+        grid-column: span 2;
+      }
+
+      &.col-span-3 {
+        grid-column: span 3;
+      }
+
+      &.col-span-4 {
+        grid-column: span 4;
+      }
+
+      // Full width for single column layout
+      @media (max-width: 768px) {
+        grid-column: span 1 !important;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-primary, #e0e0e0);
+
+    @media (max-width: 768px) {
+      flex-direction: column-reverse;
+
+      app-base-button {
+        width: 100%;
+      }
+    }
+  }
+}
+

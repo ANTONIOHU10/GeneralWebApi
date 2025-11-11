@@ -1,0 +1,64 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/demo/base-form-demo/base-form-demo.component.scss
+.demo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+
+  .form-type-selector {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .type-button {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid var(--border-primary, #e0e0e0);
+      background: var(--bg-surface, #ffffff);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: var(--color-primary-500, #2196f3);
+        background: var(--color-primary-50, #e3f2fd);
+      }
+
+      &.active {
+        background: var(--color-primary-500, #2196f3);
+        color: white;
+        border-color: var(--color-primary-500, #2196f3);
+      }
+    }
+  }
+
+  .form-status {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-secondary, #757575);
+
+      strong {
+        color: var(--text-primary, #212121);
+      }
+    }
+  }
+
+  .form-data-display {
+    background: var(--bg-secondary, #f5f5f5);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+  }
+}
+

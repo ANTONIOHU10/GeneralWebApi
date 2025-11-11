@@ -1,0 +1,68 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/demo/base-form-demo/base-form-demo.component.html -->
+<app-base-container>
+  <app-base-page-header
+    title="Base Form Component Demo"
+    subtitle="Test and showcase the configuration-driven form component"
+  />
+
+  <div class="demo-content">
+    <!-- Form Type Selector -->
+    <app-base-card title="Form Examples" subtitle="Select a form example to test">
+      <div class="form-type-selector">
+        <button
+          class="type-button"
+          [class.active]="currentFormType === 'employee'"
+          (click)="switchFormType('employee')"
+        >
+          Employee Form
+        </button>
+        <button
+          class="type-button"
+          [class.active]="currentFormType === 'simple'"
+          (click)="switchFormType('simple')"
+        >
+          Simple Form
+        </button>
+        <button
+          class="type-button"
+          [class.active]="currentFormType === 'mixed'"
+          (click)="switchFormType('mixed')"
+        >
+          Mixed Fields Form
+        </button>
+      </div>
+    </app-base-card>
+
+    <!-- Form Status -->
+    <app-base-card title="Form Status" subtitle="Current form state">
+      <div class="form-status">
+        <p><strong>Form Valid:</strong> {{ isFormValid ? 'Yes' : 'No' }}</p>
+        <p><strong>Form Type:</strong> {{ currentFormType }}</p>
+        <p><strong>Fields Count:</strong> {{ currentFormConfig.fields.length }}</p>
+      </div>
+    </app-base-card>
+
+    <!-- Form Component -->
+    <app-base-card
+      [title]="'Form: ' + currentFormType"
+      subtitle="Configuration-driven form component"
+    >
+      <app-base-form
+        [config]="currentFormConfig"
+        [formData]="formData"
+        [loading]="false"
+        (formSubmit)="onFormSubmit($event)"
+        (formCancel)="onFormCancel()"
+        (fieldChange)="onFieldChange($event)"
+        (formValid)="onFormValidChange($event)"
+      >
+      </app-base-form>
+    </app-base-card>
+
+    <!-- Form Data Display -->
+    <app-base-card title="Form Data" subtitle="Current form values (JSON)">
+      <pre class="form-data-display">{{ formData | json }}</pre>
+    </app-base-card>
+  </div>
+</app-base-container>
+

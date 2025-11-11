@@ -174,6 +174,11 @@ export class SidebarComponent implements OnInit {
           icon: 'view_quilt',
           route: '/private/private-page-container-demo',
         },
+        {
+          label: 'Base Form Demo',
+          icon: 'description',
+          route: '/private/base-form-demo',
+        },
       ],
       expandable: true,
       expanded: false,

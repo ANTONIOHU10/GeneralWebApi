@@ -1,0 +1,391 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-form/base-form.component.html -->
+<form class="base-form" (ngSubmit)="onSubmit()" [class.loading]="loading">
+  <!-- Render sections if configured -->
+  <ng-container *ngIf="sections.length > 0">
+    <div
+      *ngFor="let section of sections"
+      class="form-section"
+      [class.collapsible]="section.collapsible"
+      [class.collapsed]="section.collapsed"
+    >
+      <!-- Section Header -->
+      <div
+        *ngIf="section.title"
+        class="section-header"
+        [class.clickable]="section.collapsible"
+        (click)="toggleSection(section)"
+      >
+        <h3 class="section-title">{{ section.title }}</h3>
+        <span
+          *ngIf="section.collapsible"
+          class="section-toggle material-icons"
+        >
+          {{ section.collapsed ? 'expand_more' : 'expand_less' }}
+        </span>
+      </div>
+      <p *ngIf="section.description" class="section-description">
+        {{ section.description }}
+      </p>
+
+      <!-- Section Fields -->
+      <div
+        class="section-fields"
+        [class.hidden]="section.collapsed"
+        [style.grid-template-columns]="'repeat(' + (layout.columns || 2) + ', 1fr)'"
+        [style.gap]="layout.gap"
+      >
+        <ng-container
+          *ngFor="let field of getFieldsForSection(section.title)"
+        >
+          <!-- Input Field -->
+          <div
+            *ngIf="field.type === 'input' || field.type === 'number'"
+            class="form-field"
+            [class]="getGridColumnClass(field)"
+            [class.hidden]="field.hidden"
+          >
+            <app-base-input
+              [label]="field.label"
+              [type]="field.inputType || (field.type === 'number' ? 'number' : 'text')"
+              [placeholder]="field.placeholder || ''"
+              [required]="field.required || false"
+              [disabled]="field.disabled || loading"
+              [readonly]="field.readonly || false"
+              [hint]="field.hint || ''"
+              [error]="getFieldError(field.key)"
+              [prefixIcon]="field.prefixIcon || ''"
+              [suffixIcon]="field.suffixIcon || ''"
+              [clearable]="field.clearable || false"
+              [step]="field.step ?? ''"
+              [customClass]="field.customClass || ''"
+              [(ngModel)]="internalFormData[field.key]"
+              [ngModelOptions]="{ standalone: true }"
+              (inputChange)="onFieldChange(field.key, $event)"
+            >
+            </app-base-input>
+          </div>
+
+          <!-- Select Field -->
+          <div
+            *ngIf="field.type === 'select'"
+            class="form-field"
+            [class]="getGridColumnClass(field)"
+            [class.hidden]="field.hidden"
+          >
+            <app-base-select
+              [label]="field.label"
+              [placeholder]="field.placeholder || 'Select an option'"
+              [options]="field.options || []"
+              [required]="field.required || false"
+              [disabled]="field.disabled || loading"
+              [searchable]="field.searchable || false"
+              [multiple]="field.multiple || false"
+              [hint]="field.hint || ''"
+              [error]="getFieldError(field.key)"
+              [customClass]="field.customClass || ''"
+              [(ngModel)]="internalFormData[field.key]"
+              [ngModelOptions]="{ standalone: true }"
+              (selectionChange)="onSelectChange(field.key, $event)"
+            >
+            </app-base-select>
+          </div>
+
+          <!-- Textarea Field -->
+          <div
+            *ngIf="field.type === 'textarea'"
+            class="form-field"
+            [class]="getGridColumnClass(field)"
+            [class.hidden]="field.hidden"
+          >
+            <app-base-textarea
+              [label]="field.label"
+              [placeholder]="field.placeholder || ''"
+              [required]="field.required || false"
+              [disabled]="field.disabled || loading"
+              [readonly]="field.readonly || false"
+              [rows]="field.rows || 4"
+              [maxLength]="field.maxLength ?? null"
+              [hint]="field.hint || ''"
+              [error]="getFieldError(field.key)"
+              [customClass]="field.customClass || ''"
+              [(ngModel)]="internalFormData[field.key]"
+              [ngModelOptions]="{ standalone: true }"
+              (inputChange)="onFieldChange(field.key, $event)"
+            >
+            </app-base-textarea>
+          </div>
+
+          <!-- Checkbox Field -->
+          <div
+            *ngIf="field.type === 'checkbox'"
+            class="form-field"
+            [class]="getGridColumnClass(field)"
+            [class.hidden]="field.hidden"
+          >
+            <app-base-checkbox
+              [label]="field.label"
+              [required]="field.required || false"
+              [disabled]="field.disabled || loading"
+              [(ngModel)]="internalFormData[field.key]"
+              [ngModelOptions]="{ standalone: true }"
+              (valueChange)="onFieldChange(field.key, $event)"
+            >
+            </app-base-checkbox>
+          </div>
+
+          <!-- Radio Field -->
+          <div
+            *ngIf="field.type === 'radio'"
+            class="form-field"
+            [class]="getGridColumnClass(field)"
+            [class.hidden]="field.hidden"
+          >
+            <app-base-radio
+              [label]="field.label"
+              [options]="field.radioOptions || []"
+              [required]="field.required || false"
+              [disabled]="field.disabled || loading"
+              [hint]="field.hint || ''"
+              [error]="getFieldError(field.key)"
+              [customClass]="field.customClass || ''"
+              [(ngModel)]="internalFormData[field.key]"
+              [ngModelOptions]="{ standalone: true }"
+              (selectionChange)="onFieldChange(field.key, $event)"
+            >
+            </app-base-radio>
+          </div>
+
+          <!-- Datepicker Field -->
+          <div
+            *ngIf="field.type === 'datepicker'"
+            class="form-field"
+            [class]="getGridColumnClass(field)"
+            [class.hidden]="field.hidden"
+          >
+            <app-base-datepicker
+              [label]="field.label"
+              [placeholder]="field.placeholder || ''"
+              [required]="field.required || false"
+              [disabled]="field.disabled || loading"
+              [hint]="field.hint || ''"
+              [error]="getFieldError(field.key)"
+              [customClass]="field.customClass || ''"
+              [(ngModel)]="internalFormData[field.key]"
+              [ngModelOptions]="{ standalone: true }"
+              (inputChange)="onFieldChange(field.key, $event)"
+            >
+            </app-base-datepicker>
+          </div>
+
+          <!-- Switch Field -->
+          <div
+            *ngIf="field.type === 'switch'"
+            class="form-field"
+            [class]="getGridColumnClass(field)"
+            [class.hidden]="field.hidden"
+          >
+            <app-base-switch
+              [label]="field.label"
+              [required]="field.required || false"
+              [disabled]="field.disabled || loading"
+              [hint]="field.hint || ''"
+              [customClass]="field.customClass || ''"
+              [(ngModel)]="internalFormData[field.key]"
+              [ngModelOptions]="{ standalone: true }"
+              (valueChange)="onFieldChange(field.key, $event)"
+            >
+            </app-base-switch>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Render fields without sections (default section) -->
+  <ng-container *ngIf="sections.length === 0">
+    <div
+      class="form-fields"
+      [style.grid-template-columns]="'repeat(' + (layout.columns || 2) + ', 1fr)'"
+      [style.gap]="layout.gap"
+    >
+      <ng-container *ngFor="let field of getDefaultFields()">
+        <!-- Same field templates as above -->
+        <!-- Input Field -->
+        <div
+          *ngIf="field.type === 'input' || field.type === 'number'"
+          class="form-field"
+          [class]="getGridColumnClass(field)"
+          [class.hidden]="field.hidden"
+        >
+          <app-base-input
+            [label]="field.label"
+            [type]="field.inputType || (field.type === 'number' ? 'number' : 'text')"
+            [placeholder]="field.placeholder || ''"
+            [required]="field.required || false"
+            [disabled]="field.disabled || loading"
+            [readonly]="field.readonly || false"
+            [hint]="field.hint || ''"
+            [error]="getFieldError(field.key)"
+            [prefixIcon]="field.prefixIcon || ''"
+            [suffixIcon]="field.suffixIcon || ''"
+            [clearable]="field.clearable || false"
+            [step]="field.step ?? ''"
+            [customClass]="field.customClass || ''"
+            [(ngModel)]="internalFormData[field.key]"
+            [ngModelOptions]="{ standalone: true }"
+            (inputChange)="onFieldChange(field.key, $event)"
+          >
+          </app-base-input>
+        </div>
+
+        <!-- Select Field -->
+        <div
+          *ngIf="field.type === 'select'"
+          class="form-field"
+          [class]="getGridColumnClass(field)"
+          [class.hidden]="field.hidden"
+        >
+          <app-base-select
+            [label]="field.label"
+            [placeholder]="field.placeholder || 'Select an option'"
+            [options]="field.options || []"
+            [required]="field.required || false"
+            [disabled]="field.disabled || loading"
+            [searchable]="field.searchable || false"
+            [multiple]="field.multiple || false"
+            [hint]="field.hint || ''"
+            [error]="getFieldError(field.key)"
+            [customClass]="field.customClass || ''"
+            [(ngModel)]="internalFormData[field.key]"
+            [ngModelOptions]="{ standalone: true }"
+            (selectionChange)="onSelectChange(field.key, $event)"
+          >
+          </app-base-select>
+        </div>
+
+        <!-- Textarea Field -->
+        <div
+          *ngIf="field.type === 'textarea'"
+          class="form-field"
+          [class]="getGridColumnClass(field)"
+          [class.hidden]="field.hidden"
+        >
+          <app-base-textarea
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [required]="field.required || false"
+            [disabled]="field.disabled || loading"
+            [readonly]="field.readonly || false"
+            [rows]="field.rows || 4"
+            [maxLength]="field.maxLength ?? null"
+            [hint]="field.hint || ''"
+            [error]="getFieldError(field.key)"
+            [customClass]="field.customClass || ''"
+            [(ngModel)]="internalFormData[field.key]"
+            [ngModelOptions]="{ standalone: true }"
+            (inputChange)="onFieldChange(field.key, $event)"
+          >
+          </app-base-textarea>
+        </div>
+
+        <!-- Checkbox Field -->
+        <div
+          *ngIf="field.type === 'checkbox'"
+          class="form-field"
+          [class]="getGridColumnClass(field)"
+          [class.hidden]="field.hidden"
+        >
+          <app-base-checkbox
+            [label]="field.label"
+            [required]="field.required || false"
+            [disabled]="field.disabled || loading"
+            [(ngModel)]="internalFormData[field.key]"
+            [ngModelOptions]="{ standalone: true }"
+            (valueChange)="onFieldChange(field.key, $event)"
+          >
+          </app-base-checkbox>
+        </div>
+
+        <!-- Radio Field -->
+        <div
+          *ngIf="field.type === 'radio'"
+          class="form-field"
+          [class]="getGridColumnClass(field)"
+          [class.hidden]="field.hidden"
+        >
+          <app-base-radio
+            [label]="field.label"
+            [options]="field.radioOptions || []"
+            [required]="field.required || false"
+            [disabled]="field.disabled || loading"
+            [hint]="field.hint || ''"
+            [error]="getFieldError(field.key)"
+            [customClass]="field.customClass || ''"
+            [(ngModel)]="internalFormData[field.key]"
+            [ngModelOptions]="{ standalone: true }"
+            (selectionChange)="onFieldChange(field.key, $event)"
+          >
+          </app-base-radio>
+        </div>
+
+        <!-- Datepicker Field -->
+        <div
+          *ngIf="field.type === 'datepicker'"
+          class="form-field"
+          [class]="getGridColumnClass(field)"
+          [class.hidden]="field.hidden"
+        >
+          <app-base-datepicker
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [required]="field.required || false"
+            [disabled]="field.disabled || loading"
+            [hint]="field.hint || ''"
+            [error]="getFieldError(field.key)"
+            [customClass]="field.customClass || ''"
+            [(ngModel)]="internalFormData[field.key]"
+            [ngModelOptions]="{ standalone: true }"
+            (inputChange)="onFieldChange(field.key, $event)"
+          >
+          </app-base-datepicker>
+        </div>
+
+        <!-- Switch Field -->
+        <div
+          *ngIf="field.type === 'switch'"
+          class="form-field"
+          [class]="getGridColumnClass(field)"
+          [class.hidden]="field.hidden"
+        >
+          <app-base-switch
+            [label]="field.label"
+            [required]="field.required || false"
+            [disabled]="field.disabled || loading"
+            [hint]="field.hint || ''"
+            [customClass]="field.customClass || ''"
+            [(ngModel)]="internalFormData[field.key]"
+            [ngModelOptions]="{ standalone: true }"
+            (valueChange)="onFieldChange(field.key, $event)"
+          >
+          </app-base-switch>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <!-- Form Actions -->
+  <div *ngIf="getDefaultButtons().length > 0" class="form-actions">
+    <app-base-button
+      *ngFor="let button of getDefaultButtons()"
+      [text]="button.label"
+      [type]="button.type"
+      [variant]="button.variant || 'primary'"
+      [icon]="button.icon || ''"
+      [disabled]="button.disabled || loading"
+      [customClass]="button.customClass || ''"
+      (buttonClick)="button.type === 'submit' ? onSubmit() : (button.type === 'reset' ? onCancel() : $event)"
+    >
+    </app-base-button>
+  </div>
+</form>
+

@@ -135,7 +135,6 @@
 
 // Loading States
 .loading,
-.error,
 .empty-state {
   @include flex-center;
   flex-direction: column;
@@ -153,6 +152,25 @@
   }
 }
 
+// Page-level error state (separate from form field errors)
+.page-error {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-12;
+  color: var(--text-secondary);
+  flex: 1;
+
+  p {
+    margin-bottom: $spacing-4;
+    font-size: $font-size-lg;
+  }
+
+  .btn {
+    margin-top: $spacing-4;
+  }
+}
+
+// General error text color (no flex)
 .error {
   color: var(--color-error);
 }
