@@ -1,25 +1,23 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/add-employee/add-employee.component.ts
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { takeUntil, filter, take, pairwise, debounceTime } from 'rxjs/operators';
-import { BaseButtonComponent } from '../../../Shared/components/base/base-button/base-button.component';
-import { BaseInputComponent } from '../../../Shared/components/base/base-input/base-input.component';
-import { BaseSelectComponent } from '../../../Shared/components/base/base-select/base-select.component';
+import {
+  BaseFormComponent,
+  FormConfig,
+  SelectOption,
+} from '../../../Shared/components/base';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { EmployeeFacade } from '@store/employee/employee.facade';
-import { Employee, CreateEmployeeRequest } from 'app/contracts/employees/employee.model';
+import { CreateEmployeeRequest } from 'app/contracts/employees/employee.model';
 
 @Component({
   selector: 'app-add-employee',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    BaseButtonComponent,
-    BaseInputComponent,
-    BaseSelectComponent,
+    BaseFormComponent,
   ],
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'],
@@ -37,7 +35,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   @Output() employeeCreated = new EventEmitter<void>();
 
   // Form data - matches backend CreateEmployeeDto requirements
-  employeeForm = {
+  formData: Record<string, unknown> = {
     // Required fields
     firstName: '',
     lastName: '',
@@ -48,10 +46,10 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     // Optional fields
     employeeNumber: '', // Optional: if empty, backend will auto-generate
     phoneNumber: '',
-    departmentId: null as number | null,
-    positionId: null as number | null,
-    managerId: null as number | null,
-    currentSalary: null as number | null,
+    departmentId: null,
+    positionId: null,
+    managerId: null,
+    currentSalary: null,
     salaryCurrency: 'USD',
     address: '',
     city: '',
@@ -60,42 +58,279 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     emergencyContactName: '',
     emergencyContactPhone: '',
     emergencyContactRelation: '',
-    taxCode: '', // Optional: Tax code
+    taxCode: '', // Required: Tax code
   };
 
-  // Employment status options
-  employmentStatusOptions = [
-    { value: 'Active', label: 'Active' },
-    { value: 'Inactive', label: 'Inactive' },
-    { value: 'Terminated', label: 'Terminated' },
-    { value: 'OnLeave', label: 'On Leave' },
-  ];
-
-  // Employment type options
-  employmentTypeOptions = [
-    { value: 'FullTime', label: 'Full Time' },
-    { value: 'PartTime', label: 'Part Time' },
-    { value: 'Contract', label: 'Contract' },
-    { value: 'Intern', label: 'Intern' },
-  ];
-
-  // Department options (should be loaded from API, using placeholder for now)
-  departments = [
-    { value: 1, label: 'Human Resources' },
-    { value: 2, label: 'Information Technology' },
-    { value: 3, label: 'Finance' },
-    { value: 4, label: 'Marketing' },
-    { value: 5, label: 'Sales' },
-  ];
-
-  // Position options (should be loaded from API, using placeholder for now)
-  positions = [
-    { value: 1, label: 'Manager' },
-    { value: 2, label: 'Developer' },
-    { value: 3, label: 'Analyst' },
-    { value: 4, label: 'Designer' },
-    { value: 5, label: 'Coordinator' },
-  ];
+  // Form configuration
+  formConfig: FormConfig = {
+    sections: [
+      {
+        title: 'Personal Information',
+        description: 'Enter the employee\'s personal details',
+        order: 0,
+      },
+      {
+        title: 'Work Information',
+        description: 'Enter employment details',
+        order: 1,
+      },
+      {
+        title: 'Address Information',
+        description: 'Optional address details',
+        order: 2,
+        collapsible: true,
+        collapsed: false,
+      },
+      {
+        title: 'Emergency Contact',
+        description: 'Optional emergency contact information',
+        order: 3,
+        collapsible: true,
+        collapsed: true,
+      },
+    ],
+    layout: {
+      columns: 2,
+      gap: '1.5rem',
+      sectionGap: '2rem',
+      labelPosition: 'top',
+      showSectionDividers: true,
+    },
+    fields: [
+      // Personal Information Section
+      {
+        key: 'firstName',
+        type: 'input',
+        label: 'First Name',
+        placeholder: 'Enter first name',
+        required: true,
+        section: 'Personal Information',
+        order: 0,
+        colSpan: 1,
+      },
+      {
+        key: 'lastName',
+        type: 'input',
+        label: 'Last Name',
+        placeholder: 'Enter last name',
+        required: true,
+        section: 'Personal Information',
+        order: 1,
+        colSpan: 1,
+      },
+      {
+        key: 'email',
+        type: 'input',
+        label: 'Email',
+        placeholder: 'Enter email address',
+        required: true,
+        inputType: 'email',
+        section: 'Personal Information',
+        order: 2,
+        colSpan: 1,
+        validator: (value) => {
+          if (!value) return null;
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return emailRegex.test(value as string) ? null : 'Invalid email format';
+        },
+      },
+      {
+        key: 'phoneNumber',
+        type: 'input',
+        label: 'Phone Number',
+        placeholder: 'Enter phone number (optional)',
+        inputType: 'tel',
+        section: 'Personal Information',
+        order: 3,
+        colSpan: 1,
+      },
+      {
+        key: 'employeeNumber',
+        type: 'input',
+        label: 'Employee Number',
+        placeholder: 'Leave empty to auto-generate (optional)',
+        section: 'Personal Information',
+        order: 4,
+        colSpan: 1,
+      },
+      {
+        key: 'taxCode',
+        type: 'input',
+        label: 'Tax Code',
+        placeholder: 'Enter tax code / fiscal code',
+        required: true,
+        section: 'Personal Information',
+        order: 5,
+        colSpan: 1,
+      },
+      // Work Information Section
+      {
+        key: 'employmentStatus',
+        type: 'select',
+        label: 'Employment Status',
+        placeholder: 'Select employment status',
+        required: true,
+        section: 'Work Information',
+        order: 0,
+        colSpan: 1,
+        options: [
+          { value: 'Active', label: 'Active' },
+          { value: 'Inactive', label: 'Inactive' },
+          { value: 'Terminated', label: 'Terminated' },
+          { value: 'OnLeave', label: 'On Leave' },
+        ] as SelectOption[],
+      },
+      {
+        key: 'employmentType',
+        type: 'select',
+        label: 'Employment Type',
+        placeholder: 'Select employment type',
+        required: true,
+        section: 'Work Information',
+        order: 1,
+        colSpan: 1,
+        options: [
+          { value: 'FullTime', label: 'Full Time' },
+          { value: 'PartTime', label: 'Part Time' },
+          { value: 'Contract', label: 'Contract' },
+          { value: 'Intern', label: 'Intern' },
+        ] as SelectOption[],
+      },
+      {
+        key: 'hireDate',
+        type: 'datepicker',
+        label: 'Hire Date',
+        placeholder: 'Select hire date',
+        required: true,
+        section: 'Work Information',
+        order: 2,
+        colSpan: 1,
+      },
+      {
+        key: 'departmentId',
+        type: 'select',
+        label: 'Department',
+        placeholder: 'Select department (optional)',
+        section: 'Work Information',
+        order: 3,
+        colSpan: 1,
+        searchable: true,
+        options: [
+          { value: 1, label: 'Human Resources' },
+          { value: 2, label: 'Information Technology' },
+          { value: 3, label: 'Finance' },
+          { value: 4, label: 'Marketing' },
+          { value: 5, label: 'Sales' },
+        ] as SelectOption[],
+      },
+      {
+        key: 'positionId',
+        type: 'select',
+        label: 'Position',
+        placeholder: 'Select position (optional)',
+        section: 'Work Information',
+        order: 4,
+        colSpan: 1,
+        options: [
+          { value: 1, label: 'Manager' },
+          { value: 2, label: 'Developer' },
+          { value: 3, label: 'Analyst' },
+          { value: 4, label: 'Designer' },
+          { value: 5, label: 'Coordinator' },
+        ] as SelectOption[],
+      },
+      {
+        key: 'currentSalary',
+        type: 'number',
+        label: 'Current Salary',
+        placeholder: 'Enter salary amount (optional)',
+        section: 'Work Information',
+        order: 5,
+        colSpan: 1,
+        step: 0.01,
+        min: 0,
+      },
+      {
+        key: 'salaryCurrency',
+        type: 'input',
+        label: 'Salary Currency',
+        placeholder: 'e.g., USD, EUR (optional)',
+        section: 'Work Information',
+        order: 6,
+        colSpan: 1,
+      },
+      // Address Information Section
+      {
+        key: 'address',
+        type: 'input',
+        label: 'Address',
+        placeholder: 'Enter street address (optional)',
+        section: 'Address Information',
+        order: 0,
+        colSpan: 1,
+      },
+      {
+        key: 'city',
+        type: 'input',
+        label: 'City',
+        placeholder: 'Enter city (optional)',
+        section: 'Address Information',
+        order: 1,
+        colSpan: 1,
+      },
+      {
+        key: 'postalCode',
+        type: 'input',
+        label: 'Postal Code',
+        placeholder: 'Enter postal code (optional)',
+        section: 'Address Information',
+        order: 2,
+        colSpan: 1,
+      },
+      {
+        key: 'country',
+        type: 'input',
+        label: 'Country',
+        placeholder: 'Enter country (optional)',
+        section: 'Address Information',
+        order: 3,
+        colSpan: 1,
+      },
+      // Emergency Contact Section
+      {
+        key: 'emergencyContactName',
+        type: 'input',
+        label: 'Contact Name',
+        placeholder: 'Enter emergency contact name (optional)',
+        section: 'Emergency Contact',
+        order: 0,
+        colSpan: 1,
+      },
+      {
+        key: 'emergencyContactPhone',
+        type: 'input',
+        label: 'Contact Phone',
+        placeholder: 'Enter emergency contact phone (optional)',
+        inputType: 'tel',
+        section: 'Emergency Contact',
+        order: 1,
+        colSpan: 1,
+      },
+      {
+        key: 'emergencyContactRelation',
+        type: 'input',
+        label: 'Contact Relation',
+        placeholder: 'e.g., Spouse, Parent (optional)',
+        section: 'Emergency Contact',
+        order: 2,
+        colSpan: 1,
+      },
+    ],
+    submitButtonText: 'Add Employee',
+    cancelButtonText: 'Cancel',
+    submitButtonVariant: 'primary',
+    cancelButtonVariant: 'secondary',
+  };
 
   ngOnInit() {
     // Note: OperationNotificationService is already setup in parent component (employee-list)
@@ -136,17 +371,13 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle create employee action with confirmation
+   * Handle form submit from base-form component
    * Uses NgRx architecture: Dialog → Facade → Effect → Store → Notification
-   * Follows the same pattern as deleteEmployee in employee-list.component.ts
    */
-  onSubmit() {
-    // Validate form
-    if (!this.isFormValid()) {
-      return;
-    }
-
-    const employeeName = `${this.employeeForm.firstName} ${this.employeeForm.lastName}`;
+  onFormSubmit(data: Record<string, unknown>): void {
+    const firstName = (data['firstName'] as string)?.trim() || '';
+    const lastName = (data['lastName'] as string)?.trim() || '';
+    const employeeName = `${firstName} ${lastName}`;
     
     // Show confirmation dialog first
     const confirm$: Observable<boolean> = this.dialogService.confirm({
@@ -172,61 +403,60 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       // Prepare employee data matching backend CreateEmployeeDto
       const createRequest: CreateEmployeeRequest = {
         // Required fields
-        firstName: this.employeeForm.firstName.trim(),
-        lastName: this.employeeForm.lastName.trim(),
-        email: this.employeeForm.email.trim(),
-        hireDate: this.employeeForm.hireDate,
-        employmentStatus: this.employeeForm.employmentStatus,
-        employmentType: this.employeeForm.employmentType,
+        firstName: firstName,
+        lastName: lastName,
+        email: (data['email'] as string)?.trim() || '',
+        hireDate: (data['hireDate'] as string) || '',
+        employmentStatus: (data['employmentStatus'] as string) || 'Active',
+        employmentType: (data['employmentType'] as string) || 'FullTime',
         // Optional fields - only include if provided
-        ...(this.employeeForm.employeeNumber.trim() && {
-          employeeNumber: this.employeeForm.employeeNumber.trim(),
-        }),
-        ...(this.employeeForm.phoneNumber.trim() && {
-          phoneNumber: this.employeeForm.phoneNumber.trim(),
-        }),
-        ...(this.employeeForm.departmentId && {
-          departmentId: this.employeeForm.departmentId,
-        }),
-        ...(this.employeeForm.positionId && {
-          positionId: this.employeeForm.positionId,
-        }),
-        ...(this.employeeForm.managerId && {
-          managerId: this.employeeForm.managerId,
-        }),
-        ...(this.employeeForm.currentSalary && {
-          currentSalary: this.employeeForm.currentSalary,
-        }),
-        ...(this.employeeForm.salaryCurrency && {
-          salaryCurrency: this.employeeForm.salaryCurrency,
-        }),
-        ...(this.employeeForm.address.trim() && {
-          address: this.employeeForm.address.trim(),
-        }),
-        ...(this.employeeForm.city.trim() && {
-          city: this.employeeForm.city.trim(),
-        }),
-        ...(this.employeeForm.postalCode.trim() && {
-          postalCode: this.employeeForm.postalCode.trim(),
-        }),
-        ...(this.employeeForm.country.trim() && {
-          country: this.employeeForm.country.trim(),
-        }),
-        ...(this.employeeForm.emergencyContactName.trim() && {
-          emergencyContactName: this.employeeForm.emergencyContactName.trim(),
-        }),
-        ...(this.employeeForm.emergencyContactPhone.trim() && {
-          emergencyContactPhone: this.employeeForm.emergencyContactPhone.trim(),
-        }),
-        ...(this.employeeForm.emergencyContactRelation.trim() && {
-          emergencyContactRelation: this.employeeForm.emergencyContactRelation.trim(),
-        }),
+        ...((data['employeeNumber'] as string)?.trim() ? {
+          employeeNumber: (data['employeeNumber'] as string).trim(),
+        } : {}),
+        ...((data['phoneNumber'] as string)?.trim() ? {
+          phoneNumber: (data['phoneNumber'] as string).trim(),
+        } : {}),
+        ...(data['departmentId'] ? {
+          departmentId: data['departmentId'] as number,
+        } : {}),
+        ...(data['positionId'] ? {
+          positionId: data['positionId'] as number,
+        } : {}),
+        ...(data['managerId'] ? {
+          managerId: data['managerId'] as number,
+        } : {}),
+        ...(data['currentSalary'] ? {
+          currentSalary: data['currentSalary'] as number,
+        } : {}),
+        ...((data['salaryCurrency'] as string)?.trim() ? {
+          salaryCurrency: (data['salaryCurrency'] as string).trim(),
+        } : {}),
+        ...((data['address'] as string)?.trim() ? {
+          address: (data['address'] as string).trim(),
+        } : {}),
+        ...((data['city'] as string)?.trim() ? {
+          city: (data['city'] as string).trim(),
+        } : {}),
+        ...((data['postalCode'] as string)?.trim() ? {
+          postalCode: (data['postalCode'] as string).trim(),
+        } : {}),
+        ...((data['country'] as string)?.trim() ? {
+          country: (data['country'] as string).trim(),
+        } : {}),
+        ...((data['emergencyContactName'] as string)?.trim() ? {
+          emergencyContactName: (data['emergencyContactName'] as string).trim(),
+        } : {}),
+        ...((data['emergencyContactPhone'] as string)?.trim() ? {
+          emergencyContactPhone: (data['emergencyContactPhone'] as string).trim(),
+        } : {}),
+        ...((data['emergencyContactRelation'] as string)?.trim() ? {
+          emergencyContactRelation: (data['emergencyContactRelation'] as string).trim(),
+        } : {}),
         // TaxCode is required - always include it
-        taxCode: this.employeeForm.taxCode.trim(),
+        taxCode: (data['taxCode'] as string)?.trim() || '',
       };
 
       // Dispatch action through Facade (NgRx architecture)
-      // Note: We need to cast to Omit<Employee, 'id'> for now, but ideally should update the action type
       // Effect will handle HTTP call, Reducer will update Store,
       // OperationNotificationService will show notifications
       // Form reset will be handled in ngOnInit subscription only on success
@@ -235,34 +465,19 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle cancel action - reset form
+   * Handle form cancel from base-form component
    * Parent component can listen to this or handle tab switching separately
    */
-  onCancel() {
+  onFormCancel(): void {
     // Reset form
     this.resetForm();
-  }
-
-  /**
-   * Validate form fields - check required fields only
-   */
-  private isFormValid(): boolean {
-    return !!(
-      this.employeeForm.firstName?.trim() &&
-      this.employeeForm.lastName?.trim() &&
-      this.employeeForm.email?.trim() &&
-      this.employeeForm.hireDate &&
-      this.employeeForm.employmentStatus &&
-      this.employeeForm.employmentType &&
-      this.employeeForm.taxCode?.trim()
-    );
   }
 
   /**
    * Reset form to initial state
    */
   private resetForm(): void {
-    this.employeeForm = {
+    this.formData = {
       firstName: '',
       lastName: '',
       email: '',

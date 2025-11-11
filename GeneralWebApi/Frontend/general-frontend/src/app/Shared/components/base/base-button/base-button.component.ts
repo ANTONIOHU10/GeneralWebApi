@@ -43,6 +43,11 @@ export class BaseButtonComponent {
 
   onClick(event: Event): void {
     if (!this.disabled && !this.loading) {
+      // If button type is submit, prevent default form submission
+      // We'll handle submission through buttonClick event instead
+      if (this.type === 'submit') {
+        event.preventDefault();
+      }
       this.buttonClick.emit(event);
     }
   }

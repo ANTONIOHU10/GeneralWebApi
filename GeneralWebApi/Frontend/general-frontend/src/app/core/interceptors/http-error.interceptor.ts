@@ -14,9 +14,15 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       let message = 'Request error';
 
       // Extract error message from various formats
+      // Priority: message > error > validation errors > statusText
       if (error?.error) {
-        // Check for ASP.NET Core validation errors
-        if (error.error.errors && typeof error.error.errors === 'object') {
+        // Priority 1: Check for ApiResponse message format (most detailed)
+        if (error.error.message) {
+          message = error.error.message;
+          console.log('✅ Extracted from error.error.message (priority):', message);
+        }
+        // Priority 2: Check for ASP.NET Core validation errors
+        else if (error.error.errors && typeof error.error.errors === 'object') {
           const validationErrors = Object.entries(error.error.errors)
             .map(([field, messages]) => {
               const msgArray = Array.isArray(messages) ? messages : [messages];
@@ -26,15 +32,10 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
           message = validationErrors;
           console.log('✅ Extracted validation errors:', message);
         }
-        // Check for ApiResponse error format
+        // Priority 3: Check for ApiResponse error format (error title/type)
         else if (error.error.error) {
           message = error.error.error;
           console.log('✅ Extracted from error.error.error:', message);
-        }
-        // Check for standard message format
-        else if (error.error.message) {
-          message = error.error.message;
-          console.log('✅ Extracted from error.error.message:', message);
         }
         // Fallback to statusText
         else if (error.statusText) {

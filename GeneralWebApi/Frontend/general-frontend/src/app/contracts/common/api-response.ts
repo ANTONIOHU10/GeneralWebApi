@@ -1,7 +1,10 @@
 export interface ApiResponse<T> {
   success: boolean;
-  message?: string;
-  data: T;
+  message?: string; // Detailed error message (priority)
+  data?: T;
+  error?: string; // Error title/type (fallback)
+  statusCode?: number;
+  timestamp?: string;
 }
 
 export interface ApiError {

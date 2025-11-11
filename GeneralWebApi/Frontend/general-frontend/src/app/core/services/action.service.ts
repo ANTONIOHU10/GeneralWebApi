@@ -211,19 +211,31 @@ export class ActionService extends BaseHttpService {
   /**
    * Extract error message from various error formats
    * Handles HttpErrorResponse, Error objects, and plain error messages
+   * Priority: message > error > validation errors > statusText
    */
   private extractErrorMessage(error: unknown): string {
     // HttpErrorResponse (from Angular HttpClient)
     if (error instanceof HttpErrorResponse) {
-      // Try to extract from ApiResponse format
-      if (error.error?.error) {
-        return error.error.error;
-      }
+      // Priority 1: Check for ApiResponse message format (most detailed)
       if (error.error?.message) {
         return error.error.message;
       }
+      // Priority 2: Check for ASP.NET Core validation errors
+      if (error.error?.errors && typeof error.error.errors === 'object') {
+        const validationErrors = Object.entries(error.error.errors)
+          .map(([field, messages]) => {
+            const msgArray = Array.isArray(messages) ? messages : [messages];
+            return `${field}: ${msgArray.join(', ')}`;
+          })
+          .join('; ');
+        return validationErrors;
+      }
+      // Priority 3: Check for ApiResponse error format (error title/type)
+      if (error.error?.error) {
+        return error.error.error;
+      }
       // Fallback to status text or default
-      return error.error?.message || error.statusText || `HTTP ${error.status}: ${error.message}`;
+      return error.statusText || `HTTP ${error.status}: ${error.message}`;
     }
 
     // Error object

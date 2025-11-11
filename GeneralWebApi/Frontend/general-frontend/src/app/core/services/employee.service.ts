@@ -71,9 +71,13 @@ export class EmployeeService extends BaseHttpService {
       params,
       { extractData: false } // 不提取 data，因为需要处理 pagination
     ).pipe(
-      map((response: ApiResponse<PaginatedResponse<BackendEmployee>>) => ({
+      map((response: ApiResponse<PaginatedResponse<BackendEmployee>>) => {
+        if (!response.data) {
+          throw new Error(response.message || 'Response data is missing');
+        }
+        return {
           ...response,
-        data: response.data.items.map((item: BackendEmployee) =>
+          data: response.data.items.map((item: BackendEmployee) =>
             this.transformBackendEmployee(item)
           ),
           pagination: {
@@ -82,8 +86,9 @@ export class EmployeeService extends BaseHttpService {
             pageSize: response.data.pageSize,
             totalPages: response.data.totalPages,
           },
-        }))
-      );
+        };
+      })
+    );
   }
 
   // 根据ID获取员工 - 自动提取 data

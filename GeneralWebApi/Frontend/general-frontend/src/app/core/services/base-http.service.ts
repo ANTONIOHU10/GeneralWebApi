@@ -69,11 +69,15 @@ export class BaseHttpService {
   /**
    * Extract data from ApiResponse
    * Validates response.success and throws error if not successful
+   * Throws error if data is undefined
    */
   protected extractData<T>(): (source: Observable<ApiResponse<T>>) => Observable<T> {
     return map((response: ApiResponse<T>) => {
       if (!response.success) {
-        throw new Error(response.message || 'Request failed');
+        throw new Error(response.message || response.error || 'Request failed');
+      }
+      if (response.data === undefined || response.data === null) {
+        throw new Error(response.message || 'Response data is missing');
       }
       return response.data;
     });

@@ -1,5 +1,5 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-form/base-form.component.html -->
-<form class="base-form" (ngSubmit)="onSubmit()" [class.loading]="loading">
+<form class="base-form" [class.loading]="loading">
   <!-- Render sections if configured -->
   <ng-container *ngIf="sections.length > 0">
     <div
