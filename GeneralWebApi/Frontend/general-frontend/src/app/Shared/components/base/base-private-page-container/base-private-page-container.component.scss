@@ -12,7 +12,8 @@
   padding: 0;
 }
 
-.page-header {
+// Use global layout classes with layout- prefix
+.layout-page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -64,8 +65,8 @@
   }
 }
 
-// Tab Navigation
-.tab-navigation {
+// Tab Navigation - use global layout class
+.layout-tab-navigation {
   display: flex;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border-primary);
@@ -73,15 +74,15 @@
   gap: 0.5rem;
 }
 
-// Content Area
-.content-area {
+// Content Area - use global layout class
+.layout-content-area {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   background: var(--bg-primary);
 }
 
-.page-content {
+.layout-page-content {
   height: 100%;
   padding: 0;
   width: 100%;
@@ -89,7 +90,7 @@
 
 // Responsive Design
 @include mobile-only {
-  .page-header {
+  .layout-page-header {
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
@@ -112,13 +113,13 @@
     }
   }
 
-  .tab-navigation {
+  .layout-tab-navigation {
     padding: 0 1rem;
     overflow-x: auto;
   }
 
-  .content-area {
-    .page-content {
+  .layout-content-area {
+    .layout-page-content {
       padding: 1rem 0;
     }
   }

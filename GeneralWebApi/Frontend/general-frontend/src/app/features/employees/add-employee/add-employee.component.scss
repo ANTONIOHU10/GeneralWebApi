@@ -7,15 +7,50 @@
   .page-header {
     h2 {
       .material-icons {
-        color: var(--color-success); // 自定义图标颜色
+        color: var(--color-success); // Custom icon color
       }
     }
   }
 }
 
-// 响应式设计
-@include mobile-only {
-  .form-row {
+// Employee Form - Moved from global styles to component scope
+.employee-form {
+  padding: $spacing-6;
+  height: 100%;
+  overflow-y: auto;
+}
+
+// Form Sections
+.form-section {
+  margin-bottom: $spacing-6;
+
+  h3 {
+    @include heading-style($font-size-lg, $font-weight-semibold);
+    margin-bottom: $spacing-4;
+    border-bottom: 2px solid var(--border-primary);
+    padding-bottom: $spacing-2;
+  }
+}
+
+// Form Rows
+.form-row {
+  @include grid(2, $spacing-4);
+  margin-bottom: $spacing-4;
+
+  @include mobile-only {
     grid-template-columns: 1fr;
+  }
+}
+
+// Form Actions
+.form-actions {
+  @include flex-between;
+  justify-content: flex-end;
+  gap: $spacing-4;
+  padding-top: $spacing-4;
+  border-top: 1px solid var(--border-primary);
+
+  @include mobile-only {
+    flex-direction: column;
   }
 }

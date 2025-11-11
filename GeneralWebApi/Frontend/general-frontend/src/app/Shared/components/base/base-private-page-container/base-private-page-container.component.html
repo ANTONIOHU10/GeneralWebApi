@@ -1,7 +1,7 @@
 <!-- src/app/Shared/components/base/base-private-page-container/base-private-page-container.component.html -->
 <div class="private-page-container" [class]="customClass">
   <!-- Page Header -->
-  <div class="page-header">
+  <div class="layout-page-header">
     <div class="header-content">
       <h2 *ngIf="title">
         <span *ngIf="icon" class="material-icons">{{ icon }}</span>
@@ -29,12 +29,12 @@
     [tabs]="tabs"
     [activeTabId]="activeTabId"
     (tabChange)="onTabChange($event)"
-    class="tab-navigation"
+    class="layout-tab-navigation"
   />
 
   <!-- Content Area -->
-  <div class="content-area">
-    <div class="page-content">
+  <div class="layout-content-area">
+    <div class="layout-page-content">
       <ng-content></ng-content>
     </div>
   </div>

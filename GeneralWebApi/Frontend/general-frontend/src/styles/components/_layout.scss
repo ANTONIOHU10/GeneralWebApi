@@ -16,68 +16,7 @@
     background-color $duration-300 $ease-in-out,
     color $duration-300 $ease-in-out;
 
-  // Header Section
-  &__header {
-    position: sticky;
-    top: 0;
-    z-index: $z-index-header;
-    height: $header-height;
-    background-color: var(--header-bg);
-    border-bottom: 1px solid var(--border-primary);
-    @include header-shadow;
-    @include flex-between;
-    padding: 0 $spacing-6;
-
-    // Logo/Brand Area
-    .header-brand {
-      @include flex-center;
-      gap: $spacing-3;
-
-      .brand-logo {
-        width: 32px;
-        height: 32px;
-        border-radius: $border-radius-base;
-        background-color: var(--color-primary-500);
-        @include flex-center;
-        color: var(--button-text);
-        font-weight: $font-weight-bold;
-        font-size: $font-size-sm;
-      }
-
-      .brand-title {
-        font-size: $font-size-lg;
-        font-weight: $font-weight-semibold;
-        color: var(--text-primary);
-
-        @include mobile-only {
-          display: none;
-        }
-      }
-    }
-
-    // Header Actions
-    .header-actions {
-      @include flex-center;
-      gap: $spacing-3;
-
-      .action-button {
-        @include button-base;
-        @include button-size(36px, $spacing-3);
-        background-color: transparent;
-        color: var(--text-secondary);
-        border: 1px solid var(--border-primary);
-
-        &:hover {
-          background-color: var(--bg-secondary);
-          color: var(--text-primary);
-        }
-
-        &.theme-toggle {
-          border-radius: $border-radius-full;
-        }
-      }
-    }
-  }
+  // NOTE: Removed &__header and all nested styles - unused, project uses app-header component with its own styles
 
   // Main Content Area
   &__main {
@@ -90,124 +29,7 @@
     }
   }
 
-  // Sidebar Section
-  &__sidebar {
-    width: $sidebar-width;
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--border-primary);
-    @include sidebar-transition;
-    overflow-y: auto;
-
-    @include mobile-only {
-      position: fixed;
-      top: $header-height;
-      left: -$sidebar-width;
-      height: calc(100vh - #{$header-height});
-      z-index: $z-index-modal;
-      transition: left $duration-300 $ease-in-out;
-
-      &.mobile-open {
-        left: 0;
-      }
-    }
-
-    // Sidebar Content
-    .sidebar-content {
-      padding: $spacing-4;
-
-      .nav-section {
-        margin-bottom: $spacing-6;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-
-        .nav-title {
-          font-size: $font-size-xs;
-          font-weight: $font-weight-semibold;
-          color: var(--text-tertiary);
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          margin-bottom: $spacing-3;
-          padding: 0 $spacing-3;
-        }
-
-        .nav-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-
-          .nav-item {
-            margin-bottom: $spacing-1;
-
-            .nav-link {
-              display: flex;
-              align-items: center;
-              gap: $spacing-3;
-              padding: $spacing-3;
-              border-radius: $border-radius-base;
-              color: var(--text-secondary);
-              text-decoration: none;
-              transition: all $duration-200 $ease-in-out;
-
-              &:hover {
-                background-color: var(--bg-secondary);
-                color: var(--text-primary);
-              }
-
-              &.active {
-                background-color: var(--color-primary-50);
-                color: var(--color-primary-500);
-                font-weight: $font-weight-medium;
-              }
-
-              .nav-icon {
-                width: 20px;
-                height: 20px;
-                @include flex-center;
-              }
-
-              .nav-text {
-                flex: 1;
-
-                @include mobile-only {
-                  display: none;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // Collapsed State
-    &--collapsed {
-      width: $sidebar-width-collapsed;
-
-      .sidebar-content {
-        padding: $spacing-2;
-
-        .nav-section {
-          .nav-title {
-            display: none;
-          }
-
-          .nav-list {
-            .nav-item {
-              .nav-link {
-                justify-content: center;
-                padding: $spacing-3;
-
-                .nav-text {
-                  display: none;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  // NOTE: Removed &__sidebar and all nested styles - unused, project uses app-sidebar component with its own styles
 
   // Content Section
   &__content {
@@ -221,75 +43,13 @@
       padding: $spacing-4;
     }
 
-    // Content Header
-    .content-header {
-      margin-bottom: $spacing-6;
-
-      .page-title {
-        @include heading-style($font-size-2xl, $font-weight-semibold);
-        margin-bottom: $spacing-2;
-      }
-
-      .page-description {
-        color: var(--text-secondary);
-        font-size: $font-size-sm;
-        line-height: $line-height-relaxed;
-      }
-
-      .page-actions {
-        margin-top: $spacing-4;
-        @include flex-center;
-        gap: $spacing-3;
-        justify-content: flex-end;
-
-        @include mobile-only {
-          justify-content: stretch;
-
-          .btn {
-            flex: 1;
-          }
-        }
-      }
-    }
-
-    // Content Body
-    .content-body {
-      // Individual page components will add their own styles here
-      min-height: 200px;
-    }
+    // Removed unused styles:
+    // - .content-header, .page-title, .page-description (unused, project uses base-private-page-container component)
+    // - .content-body (unused, project uses base-private-page-container component)
+    // - .page-actions (unused, and .btn class reference removed - global .btn class no longer exists)
   }
 
-  // Footer Section
-  &__footer {
-    height: $footer-height;
-    background-color: var(--footer-bg);
-    border-top: 1px solid var(--border-primary);
-    @include flex-center;
-    padding: 0 $spacing-6;
-
-    .footer-content {
-      @include flex-between;
-      width: 100%;
-      font-size: $font-size-sm;
-      color: var(--text-tertiary);
-
-      .footer-left {
-        @include flex-center;
-        gap: $spacing-4;
-      }
-
-      .footer-right {
-        @include flex-center;
-        gap: $spacing-4;
-      }
-
-      @include mobile-only {
-        flex-direction: column;
-        gap: $spacing-2;
-        text-align: center;
-      }
-    }
-  }
+  // NOTE: Removed &__footer and all nested styles - unused, project uses app-footer component with its own styles
 }
 
 // Public Layout Styles
@@ -307,42 +67,8 @@
     display: flex;
     flex-direction: column;
 
-    .public-header {
-      padding: $spacing-4 $spacing-6;
-      background-color: var(--header-bg);
-      border-bottom: 1px solid var(--border-primary);
-
-      .public-nav {
-        @include flex-between;
-
-        .nav-brand {
-          @include flex-center;
-          gap: $spacing-3;
-
-          .brand-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: $border-radius-base;
-            background-color: var(--color-primary-500);
-            @include flex-center;
-            color: var(--button-text);
-            font-weight: $font-weight-bold;
-            font-size: $font-size-lg;
-          }
-
-          .brand-title {
-            font-size: $font-size-xl;
-            font-weight: $font-weight-semibold;
-            color: var(--text-primary);
-          }
-        }
-
-        .nav-actions {
-          @include flex-center;
-          gap: $spacing-3;
-        }
-      }
-    }
+    // NOTE: Removed .public-header, .public-nav, .nav-brand, .nav-actions - unused, project uses app-header component
+    // NOTE: Removed .public-footer - unused, project uses app-footer component
 
     .public-main {
       flex: 1;
@@ -351,15 +77,6 @@
       @include mobile-only {
         padding: $spacing-4;
       }
-    }
-
-    .public-footer {
-      padding: $spacing-6;
-      background-color: var(--footer-bg);
-      border-top: 1px solid var(--border-primary);
-      text-align: center;
-      color: var(--text-tertiary);
-      font-size: $font-size-sm;
     }
   }
 }
@@ -392,16 +109,6 @@
 // Responsive Adjustments
 @include mobile-only {
   .app-private-layout {
-    &__header {
-      padding: 0 $spacing-4;
-
-      .header-brand {
-        .brand-title {
-          display: none;
-        }
-      }
-    }
-
     &__content {
       padding: $spacing-4;
     }
@@ -417,12 +124,6 @@
 // Print Styles
 @media print {
   .app-private-layout {
-    &__header,
-    &__sidebar,
-    &__footer {
-      display: none;
-    }
-
     &__content {
       padding: 0;
     }
@@ -430,11 +131,6 @@
 
   .app-public-layout {
     &__content {
-      .public-header,
-      .public-footer {
-        display: none;
-      }
-
       .public-main {
         padding: 0;
       }
