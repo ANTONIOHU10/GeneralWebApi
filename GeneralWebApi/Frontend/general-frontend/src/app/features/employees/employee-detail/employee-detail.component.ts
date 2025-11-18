@@ -12,9 +12,13 @@ import {
   SelectOption,
 } from '../../../Shared/components/base';
 import { EmployeeFacade } from '@store/employee/employee.facade';
+import { DepartmentFacade } from '@store/department/department.facade';
+import { PositionFacade } from '@store/position/position.facade';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs/operators';
+import { Department } from 'app/contracts/departments/department.model';
+import { Position } from 'app/contracts/positions/position.model';
 
 /**
  * EmployeeDetailComponent - Modal component for displaying detailed employee information
@@ -40,6 +44,8 @@ import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs
 })
 export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   private employeeFacade = inject(EmployeeFacade);
+  private departmentFacade = inject(DepartmentFacade);
+  private positionFacade = inject(PositionFacade);
   private dialogService = inject(DialogService);
   private operationNotification = inject(OperationNotificationService);
   private destroy$ = new Subject<void>();
@@ -212,13 +218,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         order: 4,
         colSpan: 1,
         searchable: true,
-        options: [
-          { value: 1, label: 'Human Resources' },
-          { value: 2, label: 'Information Technology' },
-          { value: 3, label: 'Finance' },
-          { value: 4, label: 'Marketing' },
-          { value: 5, label: 'Sales' },
-        ] as SelectOption[],
+        options: [] as SelectOption[], // Will be populated dynamically from backend
       },
       {
         key: 'positionId',
@@ -228,13 +228,8 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         section: 'Work Information',
         order: 5,
         colSpan: 1,
-        options: [
-          { value: 1, label: 'Manager' },
-          { value: 2, label: 'Developer' },
-          { value: 3, label: 'Analyst' },
-          { value: 4, label: 'Designer' },
-          { value: 5, label: 'Coordinator' },
-        ] as SelectOption[],
+        searchable: true,
+        options: [] as SelectOption[], // Will be populated dynamically from backend
       },
       {
         key: 'managerId',
@@ -385,9 +380,16 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // When modal opens (isOpen changes from false/undefined to true), load employees if needed
+    // When modal opens (isOpen changes from false/undefined to true), load fresh data
+    // This ensures we always have the latest data when opening the modal
     if (changes['isOpen'] && this.isOpen && changes['isOpen'].previousValue !== true) {
-      // Check if employees are already loaded in Store
+      // Load departments and positions options - always refresh to get latest data
+      // This ensures if user added new department/position in another component,
+      // they will see it when opening this modal
+      this.loadDepartmentOptions();
+      this.loadPositionOptions();
+
+      // Check if employees are already loaded in Store (for manager dropdown)
       this.employeeFacade.employees$.pipe(
         take(1),
         takeUntil(this.destroy$)
@@ -523,6 +525,76 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
+
+  /**
+   * Load department options from backend
+   * Always refreshes to ensure latest data is available
+   */
+  private loadDepartmentOptions(): void {
+    // Always reload departments to get the latest data
+    // This ensures if user added a new department in another component,
+    // it will be available in the dropdown
+    this.departmentFacade.loadDepartments();
+    
+    // Wait for departments to load, then update options
+    this.departmentFacade.departments$.pipe(
+      takeUntil(this.destroy$),
+      filter(depts => depts.length > 0),
+      take(1)
+    ).subscribe(loadedDepartments => {
+      this.updateDepartmentOptions(loadedDepartments);
+    });
+  }
+
+  /**
+   * Update department field options
+   */
+  private updateDepartmentOptions(departments: Department[]): void {
+    const departmentOptions: SelectOption[] = departments.map(dept => ({
+      value: parseInt(dept.id),
+      label: `${dept.name} (${dept.code})`
+    }));
+
+    const departmentField = this.formConfig.fields.find(f => f.key === 'departmentId');
+    if (departmentField) {
+      departmentField.options = departmentOptions;
+    }
+  }
+
+  /**
+   * Load position options from backend
+   * Always refreshes to ensure latest data is available
+   */
+  private loadPositionOptions(): void {
+    // Always reload positions to get the latest data
+    // This ensures if user added a new position in another component,
+    // it will be available in the dropdown
+    this.positionFacade.loadPositions();
+    
+    // Wait for positions to load, then update options
+    this.positionFacade.positions$.pipe(
+      takeUntil(this.destroy$),
+      filter(positions => positions.length > 0),
+      take(1)
+    ).subscribe(loadedPositions => {
+      this.updatePositionOptions(loadedPositions);
+    });
+  }
+
+  /**
+   * Update position field options
+   */
+  private updatePositionOptions(positions: Position[]): void {
+    const positionOptions: SelectOption[] = positions.map(pos => ({
+      value: parseInt(pos.id),
+      label: `${pos.title} (${pos.code})`
+    }));
+
+    const positionField = this.formConfig.fields.find(f => f.key === 'positionId');
+    if (positionField) {
+      positionField.options = positionOptions;
+    }
+  }
 
   /**
    * Load manager options from employees list
