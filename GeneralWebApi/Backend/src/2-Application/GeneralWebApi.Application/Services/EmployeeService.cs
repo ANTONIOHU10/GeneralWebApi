@@ -83,7 +83,7 @@ public class EmployeeService : IEmployeeService
         return _mapper.Map<EmployeeDto>(employee);
     }
 
-    public async Task<PagedResult<EmployeeListDto>> GetPagedAsync(EmployeeSearchDto searchDto, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<EmployeeDto>> GetPagedAsync(EmployeeSearchDto searchDto, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting paged employees with search term: {SearchTerm}", searchDto.SearchTerm);
 
@@ -100,9 +100,9 @@ public class EmployeeService : IEmployeeService
             searchDto.SortDescending,
             cancellationToken);
 
-        // manually map PagedResult
-        var mappedItems = _mapper.Map<List<EmployeeListDto>>(employees.Items);
-        var result = new PagedResult<EmployeeListDto>(mappedItems, employees.TotalCount, employees.PageNumber, employees.PageSize);
+        // manually map PagedResult - use EmployeeDto instead of EmployeeListDto for complete data
+        var mappedItems = _mapper.Map<List<EmployeeDto>>(employees.Items);
+        var result = new PagedResult<EmployeeDto>(mappedItems, employees.TotalCount, employees.PageNumber, employees.PageSize);
 
         _logger.LogInformation("Found {Count} employees", result.TotalCount);
         return result;

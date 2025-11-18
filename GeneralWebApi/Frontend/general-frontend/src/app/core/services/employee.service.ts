@@ -31,7 +31,14 @@ export class EmployeeService extends BaseHttpService {
   // 转换后端数据格式到前端格式
   private transformBackendEmployee(backendEmployee: BackendEmployee): Employee {
     // Transform address fields
-    const address = backendEmployee.address || backendEmployee.city || backendEmployee.postalCode || backendEmployee.country
+    // Check if any address field has a value (not empty string)
+    const hasAddressData = 
+      (backendEmployee.address && backendEmployee.address.trim() !== '') ||
+      (backendEmployee.city && backendEmployee.city.trim() !== '') ||
+      (backendEmployee.postalCode && backendEmployee.postalCode.trim() !== '') ||
+      (backendEmployee.country && backendEmployee.country.trim() !== '');
+    
+    const address = hasAddressData
       ? {
           street: backendEmployee.address || '',
           city: backendEmployee.city || '',
@@ -42,7 +49,13 @@ export class EmployeeService extends BaseHttpService {
       : undefined;
 
     // Transform emergency contact
-    const emergencyContact = backendEmployee.emergencyContactName || backendEmployee.emergencyContactPhone || backendEmployee.emergencyContactRelation
+    // Check if any emergency contact field has a value (not empty string)
+    const hasEmergencyContactData = 
+      (backendEmployee.emergencyContactName && backendEmployee.emergencyContactName.trim() !== '') ||
+      (backendEmployee.emergencyContactPhone && backendEmployee.emergencyContactPhone.trim() !== '') ||
+      (backendEmployee.emergencyContactRelation && backendEmployee.emergencyContactRelation.trim() !== '');
+    
+    const emergencyContact = hasEmergencyContactData
       ? {
           name: backendEmployee.emergencyContactName || '',
           phone: backendEmployee.emergencyContactPhone || '',
@@ -155,12 +168,59 @@ export class EmployeeService extends BaseHttpService {
     );
   }
 
-  // 更新员工 - 自动提取 data
+  // 转换前端 Employee 格式到后端 UpdateEmployeeDto 格式
+  private transformEmployeeToUpdateDto(
+    id: string,
+    employee: Partial<Employee>
+  ): any {
+    // 确保日期格式正确（ISO 8601）
+    const formatDate = (dateStr: string | undefined | null): string => {
+      if (!dateStr) return '';
+      // 如果已经是 ISO 格式（包含 T），直接返回
+      if (dateStr.includes('T')) return dateStr;
+      // 否则转换为 ISO 格式
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return '';
+      return date.toISOString();
+    };
+
+    return {
+      Id: parseInt(id, 10),
+      FirstName: employee.firstName || '',
+      LastName: employee.lastName || '',
+      EmployeeNumber: employee.employeeNumber || '',
+      Email: employee.email || '',
+      // PhoneNumber: 实体中没有此字段，但 DTO 中有，保留以保持兼容性
+      PhoneNumber: employee.phone || '',
+      DepartmentId: employee.departmentId ?? null,
+      PositionId: employee.positionId ?? null,
+      ManagerId: employee.managerId ? parseInt(employee.managerId, 10) : null,
+      HireDate: formatDate(employee.hireDate),
+      TerminationDate: employee.terminationDate ? formatDate(employee.terminationDate) : null,
+      EmploymentStatus: employee.status || '',
+      EmploymentType: employee.employmentType || '',
+      CurrentSalary: employee.salary ?? null,
+      SalaryCurrency: employee.salaryCurrency || null,
+      Address: employee.address?.street || '',
+      City: employee.address?.city || '',
+      PostalCode: employee.address?.zipCode || '',
+      Country: employee.address?.country || '',
+      EmergencyContactName: employee.emergencyContact?.name || '',
+      EmergencyContactPhone: employee.emergencyContact?.phone || '',
+      EmergencyContactRelation: employee.emergencyContact?.relation || '',
+      // TaxCode: 如果前端提供了，则包含；否则不包含（更新时保留原有值）
+      ...(employee.taxCode ? { TaxCode: employee.taxCode } : {}),
+    };
+  }
+
+  // 更新员工 - 自动提取 data，转换数据格式以匹配后端 UpdateEmployeeDto
   updateEmployee(
     id: string,
     employee: Partial<Employee>
   ): Observable<Employee> {
-    return this.put<BackendEmployee>(`${this.endpoint}/${id}`, employee).pipe(
+    // Convert Employee format to UpdateEmployeeDto format
+    const updateDto = this.transformEmployeeToUpdateDto(id, employee);
+    return this.put<BackendEmployee>(`${this.endpoint}/${id}`, updateDto).pipe(
       map(backendEmployee => this.transformBackendEmployee(backendEmployee))
     );
   }

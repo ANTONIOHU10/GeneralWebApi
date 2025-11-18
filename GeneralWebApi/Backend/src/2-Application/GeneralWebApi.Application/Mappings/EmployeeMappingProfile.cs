@@ -14,6 +14,7 @@ public class EmployeeMappingProfile : Profile
             .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department != null ? src.Department.Name : null))
             .ForMember(dest => dest.PositionTitle, opt => opt.MapFrom(src => src.Position != null ? src.Position.Title : null))
             .ForMember(dest => dest.ManagerName, opt => opt.MapFrom(src => src.Manager != null ? $"{src.Manager.FirstName} {src.Manager.LastName}" : null))
+            // PhoneNumber is now mapped directly from Employee entity
             .AfterMap((src, dest) =>
             {
                 // Map contract end date from active contracts
@@ -75,6 +76,7 @@ public class EmployeeMappingProfile : Profile
             .ForMember(dest => dest.EmployeeRoles, opt => opt.Ignore());
 
         CreateMap<UpdateEmployeeDto, Employee>()
+            // Note: TaxCode is not in UpdateEmployeeDto, so it will preserve existing value
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
@@ -87,6 +89,8 @@ public class EmployeeMappingProfile : Profile
             .ForMember(dest => dest.Contracts, opt => opt.Ignore())
             .ForMember(dest => dest.Educations, opt => opt.Ignore())
             .ForMember(dest => dest.Certifications, opt => opt.Ignore())
-            .ForMember(dest => dest.EmployeeRoles, opt => opt.Ignore());
+            .ForMember(dest => dest.EmployeeRoles, opt => opt.Ignore())
+            // Preserve TaxCode if not provided in UpdateEmployeeDto
+            .ForMember(dest => dest.TaxCode, opt => opt.Ignore());
     }
 }

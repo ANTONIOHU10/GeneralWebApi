@@ -11,6 +11,7 @@ public class Employee : BaseEntity
     public string LastName { get; set; } = string.Empty;
     public string EmployeeNumber { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
     public int? DepartmentId { get; set; }
     public int? PositionId { get; set; }
     public int? ManagerId { get; set; }

@@ -14,7 +14,7 @@ import {
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { takeUntil, filter, take, pairwise, debounceTime } from 'rxjs/operators';
+import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs/operators';
 
 /**
  * EmployeeDetailComponent - Modal component for displaying detailed employee information
@@ -51,6 +51,9 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() closeEvent = new EventEmitter<void>();
   // send here the employee data to the parent component (list employee) to update the employee
   @Output() employeeUpdated = new EventEmitter<Employee>();
+
+  // Loading state for form - tracks update operation progress
+  loading = false;
 
   // Form data
   formData: Record<string, unknown> = {};
@@ -338,27 +341,47 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   };
 
   ngOnInit(): void {
-    // Initialize form config for current mode
+    // Initialize form config for current mode (edit/view)
     this.updateFormConfigForMode();
 
-    // Listen for successful update operation completion
+    // Subscribe to operation progress to update loading state for form (loading)
+    this.employeeFacade.operationInProgress$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(operationState => {
+      // Update loading state when update operation is in progress
+      this.loading = operationState.loading && operationState.operation === 'update';
+    });
+
+    // Listen for successful update operation completion (success/ failed)
+    // Use combineLatest to check BOTH operation state AND error state together
     combineLatest([
-      this.employeeFacade.operationInProgress$,
-      this.employeeFacade.error$
+      this.employeeFacade.operationInProgress$.pipe(
+        startWith({ loading: false, operation: null })
+      ),
+      this.employeeFacade.error$.pipe(
+        startWith(null)
+      )
     ]).pipe(
       takeUntil(this.destroy$),
-      pairwise(),
-      debounceTime(50),
+      pairwise(), // Compare current with previous state
       filter(([prev, curr]) => {
+        // Previous state: operation was in progress
         const wasUpdating = prev[0].loading === true && prev[0].operation === 'update';
+        // Current state: operation completed
         const isCompleted = curr[0].loading === false && curr[0].operation === null;
+        // Current state: no error
         const hasNoError = curr[1] === null;
+        
+        // Only trigger if all conditions are met
         return wasUpdating && isCompleted && hasNoError;
-      })
+      }),
+      debounceTime(150) // Wait 150ms for Store state to stabilize after filter
     ).subscribe(() => {
-      // Operation completed successfully - close modal and emit event
-      this.employeeUpdated.emit(this.employee!);
-      this.onClose();
+      // Operation completed successfully without errors - close modal and emit event
+      if (this.employee) {
+        this.employeeUpdated.emit(this.employee);
+        this.onClose();
+      }
     });
 
     // Load employees for manager dropdown

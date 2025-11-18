@@ -5,7 +5,7 @@ using MediatR;
 
 namespace GeneralWebApi.Application.Features.Employees.Handlers;
 
-public class GetEmployeesByDepartmentQueryHandler : IRequestHandler<GetEmployeesByDepartmentQuery, List<EmployeeListDto>>
+public class GetEmployeesByDepartmentQueryHandler : IRequestHandler<GetEmployeesByDepartmentQuery, List<EmployeeDto>>
 {
     private readonly IEmployeeService _employeeService;
 
@@ -14,14 +14,14 @@ public class GetEmployeesByDepartmentQueryHandler : IRequestHandler<GetEmployees
         _employeeService = employeeService;
     }
 
-    public async Task<List<EmployeeListDto>> Handle(GetEmployeesByDepartmentQuery request, CancellationToken cancellationToken)
+    public async Task<List<EmployeeDto>> Handle(GetEmployeesByDepartmentQuery request, CancellationToken cancellationToken)
     {
         // create search conditions
         var searchDto = new EmployeeSearchDto
         {
             DepartmentId = request.DepartmentId,
             PageNumber = 1,
-            PageSize = int.MaxValue // 
+            PageSize = int.MaxValue // Get all employees in the department
         };
 
         var result = await _employeeService.GetPagedAsync(searchDto, cancellationToken);

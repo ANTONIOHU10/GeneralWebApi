@@ -12,6 +12,48 @@ namespace GeneralWebApi.Integration.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EntityType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EntityId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EntityName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    UserAgent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    RequestPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    HttpMethod = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    RequestId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    OldValues = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
+                    NewValues = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
+                    Severity = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Info"),
+                    Category = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "General"),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    DurationMs = table.Column<long>(type: "bigint", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Departments",
                 columns: table => new
                 {
@@ -43,6 +85,48 @@ namespace GeneralWebApi.Integration.Migrations
                         column: x => x.ParentDepartmentId,
                         principalTable: "Departments",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeAuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    EmployeeNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FieldName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    OldValue = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    NewValue = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    RequestPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    Reason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Severity = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Info"),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeAuditLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -111,6 +195,51 @@ namespace GeneralWebApi.Integration.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FileDocuments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PermissionAuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TargetUserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TargetUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: true),
+                    RoleName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    PermissionId = table.Column<int>(type: "int", nullable: true),
+                    PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Resource = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ResourceAction = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    RequestPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    Reason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Severity = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Info"),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionAuditLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -258,6 +387,7 @@ namespace GeneralWebApi.Integration.Migrations
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     EmployeeNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: true),
                     PositionId = table.Column<int>(type: "int", nullable: true),
                     ManagerId = table.Column<int>(type: "int", nullable: true),
@@ -538,6 +668,48 @@ namespace GeneralWebApi.Integration.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContractApprovals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContractId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    RequestedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    RequestedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RejectedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RejectedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RejectionReason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CurrentApprovalLevel = table.Column<int>(type: "int", nullable: false),
+                    MaxApprovalLevel = table.Column<int>(type: "int", nullable: false),
+                    ApprovalWorkflow = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContractApprovals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContractApprovals_Contracts_ContractId",
+                        column: x => x.ContractId,
+                        principalTable: "Contracts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -624,6 +796,97 @@ namespace GeneralWebApi.Integration.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ContractApprovalSteps",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContractApprovalId = table.Column<int>(type: "int", nullable: false),
+                    StepOrder = table.Column<int>(type: "int", nullable: false),
+                    StepName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ApproverRole = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ApproverUserId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ApproverUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    ProcessedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProcessedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TimeLimitHours = table.Column<int>(type: "int", nullable: true),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContractApprovalSteps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContractApprovalSteps_ContractApprovals_ContractApprovalId",
+                        column: x => x.ContractApprovalId,
+                        principalTable: "ContractApprovals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_Action",
+                table: "AuditLogs",
+                column: "Action");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_Category",
+                table: "AuditLogs",
+                column: "Category");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_CreatedAt",
+                table: "AuditLogs",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_EntityId",
+                table: "AuditLogs",
+                column: "EntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_EntityType",
+                table: "AuditLogs",
+                column: "EntityType");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_EntityType_EntityId",
+                table: "AuditLogs",
+                columns: new[] { "EntityType", "EntityId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_IsSuccess",
+                table: "AuditLogs",
+                column: "IsSuccess");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_Severity",
+                table: "AuditLogs",
+                column: "Severity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_UserId",
+                table: "AuditLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_UserId_CreatedAt",
+                table: "AuditLogs",
+                columns: new[] { "UserId", "CreatedAt" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Certifications_EmployeeId",
                 table: "Certifications",
@@ -643,6 +906,31 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "IX_Certifications_Name",
                 table: "Certifications",
                 column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractApprovals_ContractId",
+                table: "ContractApprovals",
+                column: "ContractId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractApprovals_IsDeleted_IsActive",
+                table: "ContractApprovals",
+                columns: new[] { "IsDeleted", "IsActive" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractApprovals_Status",
+                table: "ContractApprovals",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractApprovalSteps_ContractApprovalId_StepOrder",
+                table: "ContractApprovalSteps",
+                columns: new[] { "ContractApprovalId", "StepOrder" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractApprovalSteps_Status",
+                table: "ContractApprovalSteps",
+                column: "Status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contracts_ContractType",
@@ -704,6 +992,61 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "IX_Educations_Institution",
                 table: "Educations",
                 column: "Institution");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_Action",
+                table: "EmployeeAuditLogs",
+                column: "Action");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_CreatedAt",
+                table: "EmployeeAuditLogs",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_EmployeeId",
+                table: "EmployeeAuditLogs",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_EmployeeId_CreatedAt",
+                table: "EmployeeAuditLogs",
+                columns: new[] { "EmployeeId", "CreatedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_EmployeeNumber",
+                table: "EmployeeAuditLogs",
+                column: "EmployeeNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_FieldName",
+                table: "EmployeeAuditLogs",
+                column: "FieldName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_IsApproved",
+                table: "EmployeeAuditLogs",
+                column: "IsApproved");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_IsSuccess",
+                table: "EmployeeAuditLogs",
+                column: "IsSuccess");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_Severity",
+                table: "EmployeeAuditLogs",
+                column: "Severity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_UserId",
+                table: "EmployeeAuditLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAuditLogs_UserId_CreatedAt",
+                table: "EmployeeAuditLogs",
+                columns: new[] { "UserId", "CreatedAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeRoles_EmployeeId",
@@ -822,6 +1165,71 @@ namespace GeneralWebApi.Integration.Migrations
                 column: "IssuingCountry");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_Action",
+                table: "PermissionAuditLogs",
+                column: "Action");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_CreatedAt",
+                table: "PermissionAuditLogs",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_ExpiryDate",
+                table: "PermissionAuditLogs",
+                column: "ExpiryDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_IsApproved",
+                table: "PermissionAuditLogs",
+                column: "IsApproved");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_IsSuccess",
+                table: "PermissionAuditLogs",
+                column: "IsSuccess");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_PermissionId",
+                table: "PermissionAuditLogs",
+                column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_Resource",
+                table: "PermissionAuditLogs",
+                column: "Resource");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_RoleId",
+                table: "PermissionAuditLogs",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_Severity",
+                table: "PermissionAuditLogs",
+                column: "Severity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_TargetUserId",
+                table: "PermissionAuditLogs",
+                column: "TargetUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_TargetUserId_CreatedAt",
+                table: "PermissionAuditLogs",
+                columns: new[] { "TargetUserId", "CreatedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_UserId",
+                table: "PermissionAuditLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionAuditLogs_UserId_CreatedAt",
+                table: "PermissionAuditLogs",
+                columns: new[] { "UserId", "CreatedAt" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_Action",
                 table: "Permissions",
                 column: "Action");
@@ -928,13 +1336,19 @@ namespace GeneralWebApi.Integration.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AuditLogs");
+
+            migrationBuilder.DropTable(
                 name: "Certifications");
 
             migrationBuilder.DropTable(
-                name: "Contracts");
+                name: "ContractApprovalSteps");
 
             migrationBuilder.DropTable(
                 name: "Educations");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeAuditLogs");
 
             migrationBuilder.DropTable(
                 name: "EmployeeRoles");
@@ -949,6 +1363,9 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "IdentityDocuments");
 
             migrationBuilder.DropTable(
+                name: "PermissionAuditLogs");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
@@ -961,6 +1378,9 @@ namespace GeneralWebApi.Integration.Migrations
                 name: "UserSessions");
 
             migrationBuilder.DropTable(
+                name: "ContractApprovals");
+
+            migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
@@ -968,6 +1388,9 @@ namespace GeneralWebApi.Integration.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Contracts");
 
             migrationBuilder.DropTable(
                 name: "Employees");

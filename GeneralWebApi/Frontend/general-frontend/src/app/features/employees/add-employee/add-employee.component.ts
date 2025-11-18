@@ -219,6 +219,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
         colSpan: 1,
         searchable: true,
         options: [
+          { value: null, label: '' },
           { value: 1, label: 'Human Resources' },
           { value: 2, label: 'Information Technology' },
           { value: 3, label: 'Finance' },
@@ -235,6 +236,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
         order: 4,
         colSpan: 1,
         options: [
+          { value: null, label: '' },
           { value: 1, label: 'Manager' },
           { value: 2, label: 'Developer' },
           { value: 3, label: 'Analyst' },

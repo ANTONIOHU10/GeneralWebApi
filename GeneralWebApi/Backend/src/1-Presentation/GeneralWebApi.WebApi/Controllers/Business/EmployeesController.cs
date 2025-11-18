@@ -28,16 +28,16 @@ public class EmployeesController : BaseController
     /// Get paginated list of employees
     /// </summary>
     /// <param name="searchDto">Search criteria</param>
-    /// <returns>Paginated employee list</returns>
+    /// <returns>Paginated employee list with complete employee data</returns>
     [HttpGet]
     [Authorize(Policy = "AllRoles")] // All authenticated users can view employees
-    public async Task<ActionResult<ApiResponse<PagedResult<EmployeeListDto>>>> GetEmployees([FromQuery] EmployeeSearchDto searchDto)
+    public async Task<ActionResult<ApiResponse<PagedResult<EmployeeDto>>>> GetEmployees([FromQuery] EmployeeSearchDto searchDto)
     {
         return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
         {
             var query = new GetEmployeesQuery { EmployeeSearchDto = validatedDto };
             var result = await _mediator.Send(query);
-            return Ok(ApiResponse<PagedResult<EmployeeListDto>>.SuccessResult(result, "Employees retrieved successfully"));
+            return Ok(ApiResponse<PagedResult<EmployeeDto>>.SuccessResult(result, "Employees retrieved successfully"));
         });
     }
 
@@ -114,16 +114,16 @@ public class EmployeesController : BaseController
     /// Get employees by department
     /// </summary>
     /// <param name="departmentId">Department ID</param>
-    /// <returns>List of employees in the department</returns>
+    /// <returns>List of employees in the department with complete employee data</returns>
     [HttpGet("department/{departmentId}")]
     [Authorize(Policy = "AllRoles")] // All authenticated users can view department employees
-    public async Task<ActionResult<ApiResponse<List<EmployeeListDto>>>> GetEmployeesByDepartment(int departmentId)
+    public async Task<ActionResult<ApiResponse<List<EmployeeDto>>>> GetEmployeesByDepartment(int departmentId)
     {
         return await ValidateAndExecuteAsync(departmentId, async (validatedId) =>
         {
             var query = new GetEmployeesByDepartmentQuery { DepartmentId = validatedId };
             var result = await _mediator.Send(query);
-            return Ok(ApiResponse<List<EmployeeListDto>>.SuccessResult(result, "Department employees retrieved successfully"));
+            return Ok(ApiResponse<List<EmployeeDto>>.SuccessResult(result, "Department employees retrieved successfully"));
         });
     }
 }

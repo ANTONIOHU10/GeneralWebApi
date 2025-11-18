@@ -23,7 +23,7 @@
 | 字段名 | 类型 | 验证规则 | 默认值/说明 |
 |--------|------|----------|-------------|
 | `EmployeeNumber` | string? | MaxLength(20) | **可选**：如果未提供，后端会自动生成唯一编号 |
-| `PhoneNumber` | string | MaxLength(20) | 电话号码（注意：Employee 实体中没有此字段，可能映射到其他字段） |
+| `PhoneNumber` | string | MaxLength(20) | 电话号码（✅ 已添加到 Employee 实体） |
 | `DepartmentId` | int? | - | 部门ID |
 | `PositionId` | int? | - | 职位ID |
 | `ManagerId` | int? | - | 上级经理ID |
@@ -132,7 +132,7 @@
 ## ⚠️ 注意事项
 
 1. **EmployeeNumber 自动生成**：如果前端不传 `employeeNumber`，后端会自动生成唯一编号（格式：`EMP` + 8位随机字符）
-2. **PhoneNumber 字段**：`CreateEmployeeDto` 中有 `PhoneNumber`，但 `Employee` 实体中没有对应字段，可能需要检查 AutoMapper 配置或数据库迁移
+2. **PhoneNumber 字段**：✅ 已添加到 `Employee` 实体，需要执行数据库迁移（参见 `PHONENUMBER_MIGRATION_GUIDE.md`）
 3. **TaxCode 字段**：数据库列不允许 NULL，因此是**必填字段**，前端必须提供
 4. **唯一性检查范围**：唯一性检查只针对 `IsDeleted = false` 且 `IsActive = true` 的员工，已删除或未激活的员工不会影响唯一性判断
 
@@ -146,7 +146,7 @@
 | LastName | LastName | ✅ 直接映射 |
 | EmployeeNumber | EmployeeNumber | ✅ 直接映射（可选，可自动生成） |
 | Email | Email | ✅ 直接映射 |
-| PhoneNumber | ❓ | ⚠️ Employee 实体中没有此字段 |
+| PhoneNumber | PhoneNumber | ✅ 直接映射（已添加到实体） |
 | DepartmentId | DepartmentId | ✅ 直接映射 |
 | PositionId | PositionId | ✅ 直接映射 |
 | ManagerId | ManagerId | ✅ 直接映射 |

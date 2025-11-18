@@ -23,6 +23,7 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.Property(e => e.LastName).HasMaxLength(50).IsRequired();
               builder.Property(e => e.EmployeeNumber).HasMaxLength(20).IsRequired();
               builder.Property(e => e.Email).HasMaxLength(100).IsRequired();
+              builder.Property(e => e.PhoneNumber).HasMaxLength(20);
               builder.Property(e => e.TaxCode).HasMaxLength(16);
 
               // organizational structure relationship

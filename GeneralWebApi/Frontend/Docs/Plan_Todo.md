@@ -1,86 +1,102 @@
---- global tasks ---
-TODO - lazy loading route
-检查现有组件并分析是否缺少基础复用组件：
+可以添加的功能
 
-
-[2 tools called]
-
-## 📊 **现有组件分析**
-
-你已拥有的组件：
-- 布局：BasePageHeader, BaseCard, BaseContainer, BaseGrid
-- 表单：BaseButton, BaseInput, BaseSelect, BaseCheckbox, BaseSearch
-- 数据展示：BaseTable, BasePagination
-- 反馈：BaseLoading, BaseError, BaseEmpty, BaseModal, BaseToast, BaseNotification
-- 导航：BaseTabs
-
-## 🔍 **可能缺少的组件**
-
-根据常见企业级应用需求，可能需要以下组件。
-
-### 1️⃣ 表单类组件
-- BaseTextarea: 多行文本输入
-- BaseDatePicker: 日期选择器
-- BaseFileUpload: 文件上传
-- BaseRadio: 单选组
-- BaseSwitch/Toggle: 开关切换
-
-### 2️⃣ 数据显示组件
-- BaseBadge: 徽章/标签
-- BaseTag: 标签
-- BaseAvatar: 头像
-- BaseList: 列表
-- BaseTimeline: 时间线
-
-### 3️⃣ 布局组件
-- BaseDrawer: 抽屉/侧边栏
-- BaseBreadcrumb: 面包屑导航
-- BaseSkeleton: 骨架屏（加载）
-
-### 4️⃣ 高级组件
-- BaseDropdown: 下拉菜单
-- BasePopover: 气泡提示
-- BaseTooltip: 工具提示
-- BaseConfirmDialog: 确认对话框
-
-## 💡 **建议**
-
-优先补齐：
-1. BaseTextarea
-2. BaseFileUpload
-3. BaseDatePicker
-4. BaseAvatar
-5. BaseBadge
-
-这些最常出现在表单和数据展示场景，建议从实际业务需求评估优先级。
-
-### 第二阶段：认证与安全系统 (1-2 周)
-
-#### 2.1 认证服务实现
-
-- [ ] JWT Token 管理服务 OK
-- [ ] 用户认证服务 OK
-- [ ] 权限验证服务 
-- [ ] 会话管理服务
-
-#### 2.2 路由守卫实现
-
-- [ ] 认证守卫 (AuthGuard) OK
-- [ ] 权限守卫 (RoleGuard) OK
-- [ ] 路由权限控制
-
-#### 2.3 登录界面实现
-
-- [ ] 登录表单组件 OK
-- [ ] 表单验证 OK
-- [ ] 错误处理 OK
-- [ ] 记住登录状态 ?
-
-#### 2.4 HTTP 拦截器
-
-- [ ] 请求拦截器 (添加 Token) DONE
-- [ ] 响应拦截器 (处理错误)
-- [ ] 加载状态管理
+1. 按部门查看员工（未实现）
+   使用 API: GET /api/v1/employees/department/{departmentId}
+   功能建议：
+   在部门管理页面添加“查看员工”按钮
+   在员工列表中添加“按部门筛选”功能
+   创建“部门员工视图”组件
+   实现示例：
+   // 在 employee.service.ts 中添加 getEmployeesByDepartment(departmentId: number): Observable<Employee[]> { return this.get<BackendEmployee[]>( `${this.endpoint}/department/${departmentId}` ).pipe( map(employees => employees.map(emp => this.transformBackendEmployee(emp))) );}
+2. 员工导出功能
+   功能：
+   导出为 Excel/CSV
+   支持筛选后的数据导出
+   自定义导出字段
+   实现位置：
+   在 employee-list.component.ts 中添加导出按钮
+   使用 xlsx 或 papaparse 库
+3. 员工导入功能
+   功能：
+   Excel/CSV 批量导入
+   数据验证和错误提示
+   导入预览和确认
+4. 员工统计仪表板
+   功能：
+   按部门统计员工数量
+   按状态统计（Active/Inactive/Terminated）
+   按职位统计
+   入职/离职趋势图表
+   薪资统计
+   实现位置：
+   增强 employee-reports.component.ts
+   使用图表库（如 Chart.js、ng2-charts）
+5. 员工组织架构图
+   功能：
+   树形结构展示
+   显示上下级关系
+   点击查看详情
+   支持缩放和拖拽
+   实现：
+   使用 d3.js 或 vis.js
+   创建 employee-org-chart.component.ts
+6. 员工历史记录/变更日志
+   功能：
+   显示员工信息变更历史
+   显示操作者、时间、变更内容
+   支持回滚（如果后端支持）
+7. 员工照片上传
+   功能：
+   头像上传
+   图片裁剪
+   预览功能
+   实现：
+   在 employee-detail.component.ts 中添加上传功能
+   使用 ngx-image-cropper 或类似库
+8. 高级筛选器
+   功能：
+   多条件组合筛选
+   保存筛选条件
+   筛选预设（如“本月入职员工”）
+   实现位置：
+   增强 employee-list.component.ts 的筛选功能
+9. 员工对比功能
+   功能：
+   选择多个员工进行对比
+   并排显示关键信息
+   导出对比结果
+   实现：
+   创建 employee-compare.component.ts
+10. 员工快速操作菜单
+    功能：
+    右键菜单
+    快速操作（发送邮件、查看合同、查看文档等）
+    快捷键支持
+11. 员工搜索增强
+    功能：
+    全局搜索（跨页面）
+    搜索历史
+    搜索建议/自动完成
+    高级搜索（多字段）
+12. 员工卡片增强
+    功能：
+    悬停显示更多信息
+    快速编辑
+    拖拽排序
+    自定义卡片布局
+    优先级建议
+    高优先级：
+    按部门查看员工（API 已存在但未使用）
+    员工导出功能
+    员工统计仪表板增强
+    中优先级：
+    员工组织架构图
+    高级筛选器
+    员工照片上传
+    低优先级：
+    员工导入功能
+    员工对比功能
+    员工历史记录
 
 ### 第三阶段：核心业务模块 (3-4 周)
 

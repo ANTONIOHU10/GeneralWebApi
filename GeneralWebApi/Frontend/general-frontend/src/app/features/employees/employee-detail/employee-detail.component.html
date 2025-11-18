@@ -45,6 +45,7 @@
       <app-base-form
         [config]="formConfig"
         [formData]="formData"
+        [loading]="loading"
         (formSubmit)="onFormSubmit($event)"
         (formCancel)="onFormCancel()"
       ></app-base-form>

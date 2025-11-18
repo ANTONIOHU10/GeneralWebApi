@@ -4,13 +4,14 @@
   subtitle="Manage and view all employees in the system"
   icon="people"
   [showTabs]="true"
-  [showSearch]="true"
+  [showSearch]="activeTab() === 'list'"
   [tabs]="tabs"
   [activeTabId]="activeTab()"
   (tabChange)="onTabChange($event)"
 >
-  <!-- Search in header -->
+  <!-- Search in header - only shown when list tab is active -->
   <app-base-search
+    *ngIf="activeTab() === 'list'"
     slot="search"
     [config]="{
       placeholder: 'Search employees...',
