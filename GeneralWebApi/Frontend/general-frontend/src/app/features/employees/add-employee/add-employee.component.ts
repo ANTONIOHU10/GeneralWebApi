@@ -439,7 +439,9 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
           managerId: data['managerId'] as number,
         } : {}),
         ...(data['currentSalary'] ? {
-          currentSalary: data['currentSalary'] as number,
+          // Format salary to ensure precision (2 decimal places)
+          // This prevents floating point precision issues with JavaScript number type
+          currentSalary: parseFloat(Number(data['currentSalary'] as number).toFixed(2)),
         } : {}),
         ...((data['salaryCurrency'] as string)?.trim() ? {
           salaryCurrency: (data['salaryCurrency'] as string).trim(),

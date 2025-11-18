@@ -113,7 +113,7 @@ public class EmployeeService : IEmployeeService
         _logger.LogInformation("Updating employee with ID: {EmployeeId}", id);
 
         var existingEmployee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
-        if (existingEmployee == null)
+        if (existingEmployee == null)   
         {
             _logger.LogWarning("Employee with ID {EmployeeId} not found for update", id);
             throw new KeyNotFoundException($"Employee with ID {id} not found");

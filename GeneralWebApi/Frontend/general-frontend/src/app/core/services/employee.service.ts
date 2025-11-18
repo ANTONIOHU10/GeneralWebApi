@@ -163,7 +163,22 @@ export class EmployeeService extends BaseHttpService {
   // 创建员工 - 自动提取 data
   // Accepts CreateEmployeeRequest which matches backend CreateEmployeeDto
   createEmployee(employee: Omit<Employee, 'id'> | any): Observable<Employee> {
-    return this.post<BackendEmployee>(this.endpoint, employee).pipe(
+    // Format salary to ensure precision before sending to backend
+    // This prevents floating point precision issues with JavaScript number type
+    const formatSalary = (salary: number | undefined | null): number | null => {
+      if (salary === null || salary === undefined) return null;
+      return parseFloat(Number(salary).toFixed(2));
+    };
+
+    // Ensure salary precision in the request object
+    const formattedEmployee = {
+      ...employee,
+      ...(employee.currentSalary !== undefined && employee.currentSalary !== null
+        ? { currentSalary: formatSalary(employee.currentSalary) }
+        : {}),
+    };
+
+    return this.post<BackendEmployee>(this.endpoint, formattedEmployee).pipe(
       map(backendEmployee => this.transformBackendEmployee(backendEmployee))
     );
   }
@@ -184,6 +199,14 @@ export class EmployeeService extends BaseHttpService {
       return date.toISOString();
     };
 
+    // 确保薪资精度（保留2位小数，避免浮点数精度问题）
+    const formatSalary = (salary: number | undefined | null): number | null => {
+      if (salary === null || salary === undefined) return null;
+      // 使用 toFixed(2) 确保2位小数，然后转换回 number
+      // 这样可以避免 JavaScript number 类型的浮点数精度问题
+      return parseFloat(Number(salary).toFixed(2));
+    };
+
     return {
       Id: parseInt(id, 10),
       FirstName: employee.firstName || '',
@@ -199,7 +222,7 @@ export class EmployeeService extends BaseHttpService {
       TerminationDate: employee.terminationDate ? formatDate(employee.terminationDate) : null,
       EmploymentStatus: employee.status || '',
       EmploymentType: employee.employmentType || '',
-      CurrentSalary: employee.salary ?? null,
+      CurrentSalary: formatSalary(employee.salary),
       SalaryCurrency: employee.salaryCurrency || null,
       Address: employee.address?.street || '',
       City: employee.address?.city || '',

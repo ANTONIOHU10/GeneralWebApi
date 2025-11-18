@@ -582,7 +582,11 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         departmentId: data['departmentId'] as number || null,
         positionId: data['positionId'] as number || null,
         managerId: data['managerId'] ? (data['managerId'] as number).toString() : null,
-        salary: data['currentSalary'] as number || undefined,
+        // Format salary to ensure precision (2 decimal places)
+        // This prevents floating point precision issues with JavaScript number type
+        salary: data['currentSalary'] 
+          ? parseFloat(Number(data['currentSalary'] as number).toFixed(2))
+          : undefined,
         salaryCurrency: (data['salaryCurrency'] as string)?.trim() || undefined,
         address: {
           street: (data['address'] as string)?.trim() || '',
