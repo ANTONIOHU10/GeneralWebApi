@@ -35,6 +35,8 @@ import {
   SelectOption,
   RadioOption,
 } from '../index';
+// Direct import to avoid circular dependency issues
+import { BaseLoadingComponent } from '../base-loading/base-loading.component';
 
 /**
  * Form field type definitions
@@ -163,6 +165,7 @@ export interface FormConfig {
     BaseDatepickerComponent,
     BaseButtonComponent,
     BaseSwitchComponent,
+    BaseLoadingComponent,
   ],
   templateUrl: './base-form.component.html',
   styleUrls: ['./base-form.component.scss'],

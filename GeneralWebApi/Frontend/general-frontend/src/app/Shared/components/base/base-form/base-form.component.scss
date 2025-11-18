@@ -1,10 +1,34 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-form/base-form.component.scss
+@use '../../../../../styles/core/variable' as *;
+
 .base-form {
   width: 100%;
+  position: relative;
 
+  // pointer-events: none to disable all interactions with the form when loading
+  // when the loading state is on
   &.loading {
     pointer-events: none;
     opacity: 0.7;
+  }
+
+  // Loading overlay - covers the entire form when loading
+  // Uses theme gray color with transparency
+  .form-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    // Use theme gray color (gray-100) with 85% opacity
+    // SCSS rgba() function works with color variables
+    background-color: rgba($gray-100, 0.85);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
   }
 
   .form-section {

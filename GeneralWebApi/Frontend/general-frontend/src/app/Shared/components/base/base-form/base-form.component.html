@@ -1,5 +1,15 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-form/base-form.component.html -->
 <form class="base-form" [class.loading]="loading" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <!-- Loading Overlay - Only shows when loading is true -->
+  <div *ngIf="loading" class="form-loading-overlay">
+    <app-base-loading
+      [message]="'Processing...'"
+      [size]="'md'"
+      [type]="'spinner'"
+      [centered]="false"
+    ></app-base-loading>
+  </div>
+
   <!-- Render sections if configured -->
   <ng-container *ngIf="sections.length > 0">
     <div

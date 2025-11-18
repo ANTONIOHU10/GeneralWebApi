@@ -34,6 +34,9 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
    */
   @Output() employeeCreated = new EventEmitter<void>();
 
+  // Loading state for form - tracks create operation progress
+  loading = false;
+
   // Form data - matches backend CreateEmployeeDto requirements
   formData: Record<string, unknown> = {
     // Required fields
@@ -335,6 +338,14 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Note: OperationNotificationService is already setup in parent component (employee-list)
     // No need to setup again here to avoid duplicate notifications
+
+    // Subscribe to operation progress to update loading state for form
+    this.employeeFacade.operationInProgress$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(operationState => {
+      // Update loading state when create operation is in progress
+      this.loading = operationState.loading && operationState.operation === 'create';
+    });
 
     // Listen for successful create operation completion
     // Use combineLatest to check BOTH operation state AND error state together
