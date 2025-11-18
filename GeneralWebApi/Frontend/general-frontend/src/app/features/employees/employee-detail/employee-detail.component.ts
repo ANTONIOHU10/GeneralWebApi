@@ -255,7 +255,6 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         section: 'Work Information',
         order: 7,
         colSpan: 1,
-        step: 0.01,
         min: 0,
       },
       {
@@ -582,11 +581,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         departmentId: data['departmentId'] as number || null,
         positionId: data['positionId'] as number || null,
         managerId: data['managerId'] ? (data['managerId'] as number).toString() : null,
-        // Format salary to ensure precision (2 decimal places)
-        // This prevents floating point precision issues with JavaScript number type
-        salary: data['currentSalary'] 
-          ? parseFloat(Number(data['currentSalary'] as number).toFixed(2))
-          : undefined,
+        salary: data['currentSalary'] as number || undefined,
         salaryCurrency: (data['salaryCurrency'] as string)?.trim() || undefined,
         address: {
           street: (data['address'] as string)?.trim() || '',
