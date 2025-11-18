@@ -1,0 +1,24 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/department-list/department-list.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+.department-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-4;
+  padding: $spacing-4 0;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .department-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .department-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+

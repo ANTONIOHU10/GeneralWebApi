@@ -1,0 +1,30 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/department-detail/department-detail.component.html -->
+<app-base-modal
+  [isOpen]="isOpen && department !== null"
+  [title]="mode === 'edit' ? 'Edit Department' : 'Department Details'"
+  [icon]="mode === 'edit' ? 'edit' : 'business'"
+  [config]="{
+    size: 'large',
+    closable: true,
+    backdrop: true,
+    keyboard: true,
+    animation: true,
+    centered: true,
+    scrollable: true
+  }"
+  (closeEvent)="onClose()"
+  (backdropClick)="onBackdropClick()"
+>
+  <div class="department-detail-content" *ngIf="department">
+    <div class="department-form-container">
+      <app-base-form
+        [config]="formConfig"
+        [formData]="formData"
+        [loading]="loading"
+        (formSubmit)="onFormSubmit($event)"
+        (formCancel)="onFormCancel()"
+      ></app-base-form>
+    </div>
+  </div>
+</app-base-modal>
+

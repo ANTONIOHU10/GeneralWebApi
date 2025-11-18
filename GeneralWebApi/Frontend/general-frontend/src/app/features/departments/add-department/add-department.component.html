@@ -1,0 +1,11 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/add-department/add-department.component.html -->
+<div class="add-department-container">
+  <app-base-form
+    [config]="formConfig"
+    [formData]="formData"
+    [loading]="loading"
+    (formSubmit)="onFormSubmit($event)"
+    (formCancel)="onFormCancel()"
+  ></app-base-form>
+</div>
+

@@ -1,0 +1,112 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/department-card/department-card.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+// Department card specific styles
+// Most layout styles are now handled by BaseCardComponent
+
+.department-card {
+  height: fit-content;
+  min-height: 180px;
+  position: relative;
+}
+
+.department-card-content {
+  .department-info-header {
+    margin-bottom: $spacing-4;
+  }
+
+  .department-name-section {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .department-name {
+    margin: 0 0 $spacing-2 0;
+    color: var(--text-primary);
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    line-height: 1.2;
+  }
+
+  .department-code {
+    margin: 0 0 $spacing-1 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    line-height: 1.4;
+    font-family: monospace;
+  }
+
+  .department-parent {
+    margin: 0;
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
+    line-height: 1.4;
+  }
+}
+
+.description-info {
+  margin-top: $spacing-4;
+  padding-top: $spacing-4;
+  border-top: 1px solid var(--border-primary);
+
+  .description-text {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    line-height: 1.5;
+  }
+}
+
+.path-info {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  margin-top: $spacing-3;
+  padding-top: $spacing-3;
+  border-top: 1px solid var(--border-primary);
+  font-size: $font-size-xs;
+  color: var(--text-tertiary);
+
+  .material-icons {
+    font-size: $font-size-base;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .path-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.department-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-2;
+  flex-wrap: wrap;
+}
+
+// Responsive design
+@include mobile-only {
+  .department-card-content {
+    .department-info-header {
+      text-align: center;
+    }
+  }
+
+  .department-card-footer {
+    flex-direction: column;
+
+    app-base-button {
+      width: 100%;
+    }
+  }
+}
+
