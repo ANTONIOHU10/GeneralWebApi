@@ -7,6 +7,7 @@ import { EmployeeCardComponent } from '../employee-card/employee-card.component'
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
 import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
+import { EmployeeDetailComponent } from '../employee-detail/employee-detail.component';
 import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
@@ -31,6 +32,7 @@ import {
     AddEmployeeComponent,
     EmployeeReportsComponent,
     EmployeeSettingsComponent,
+    EmployeeDetailComponent,
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
@@ -56,6 +58,9 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   // Local state
   activeTab = signal<'list' | 'add' | 'reports' | 'settings'>('list');
+  selectedEmployeeForDetail: Employee | null = null;
+  isDetailModalOpen = false;
+  detailMode: 'edit' | 'view' = 'view'; // Default to view mode
 
   // Tab configuration
   tabs: TabItem[] = [
@@ -97,36 +102,14 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle edit employee action with confirmation if needed
-   * Uses Observable pattern for dialog confirmation
+   * Handle edit employee action
+   * Opens employee detail modal in edit mode
    */
   onEditEmployee(employee: Employee) {
-    // Check if employee is active before editing
-    if (employee.status?.toLowerCase() === 'terminated') {
-      const confirm$: Observable<boolean> = this.dialogService.confirm({
-        title: 'Edit Terminated Employee',
-        message: `This employee is terminated. Do you want to continue editing?`,
-        confirmText: 'Continue',
-        cancelText: 'Cancel',
-        confirmVariant: 'warning',
-        icon: 'warning',
-      });
-      
-      confirm$.pipe(
-          take(1),
-          takeUntil(this.destroy$),
-        filter((confirmed: boolean) => confirmed)
-        )
-        .subscribe(() => {
-          this.employeeFacade.selectEmployee(employee);
-          this.notificationService.info('Edit Employee', `Editing ${employee.firstName} ${employee.lastName}`);
-          // TODO: Navigate to edit page or open edit modal
-        });
-    } else {
-      this.employeeFacade.selectEmployee(employee);
-      this.notificationService.info('Edit Employee', `Editing ${employee.firstName} ${employee.lastName}`);
-      // TODO: Navigate to edit page or open edit modal
-    }
+    this.employeeFacade.selectEmployee(employee);
+    this.selectedEmployeeForDetail = employee;
+    this.detailMode = 'edit';
+    this.isDetailModalOpen = true;
   }
 
   /**
@@ -166,10 +149,31 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   /**
    * Handle view employee action
+   * Opens employee detail modal in view mode (read-only)
    */
   onViewEmployee(employee: Employee) {
     this.employeeFacade.selectEmployee(employee);
-    // TODO: Navigate to employee detail page
+    this.selectedEmployeeForDetail = employee;
+    this.detailMode = 'view';
+    this.isDetailModalOpen = true;
+  }
+
+  /**
+   * Handle close employee detail modal
+   */
+  onCloseDetailModal() {
+    this.isDetailModalOpen = false;
+    this.selectedEmployeeForDetail = null;
+    this.detailMode = 'view'; // Reset to default
+  }
+
+  /**
+   * Handle employee updated event
+   * Reload employees to reflect changes
+   */
+  onEmployeeUpdated(employee: Employee) {
+    // Reload employees to get updated data
+    this.loadEmployees();
   }
 
   /**

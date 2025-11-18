@@ -25,13 +25,31 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
             .AnyAsync(e => e.Email == email, cancellationToken);
     }
 
+    public override async Task<Employee> GetByIdAsync(object id, CancellationToken cancellationToken = default)
+    {
+        var employee = await GetActiveAndEnabledEntities()
+            .Include(e => e.Department)
+            .Include(e => e.Position)
+            .Include(e => e.Manager)
+            .Include(e => e.Contracts)
+            .FirstOrDefaultAsync(e => e.Id.Equals(id), cancellationToken);
 
+        if (employee == null)
+        {
+            _logger.LogWarning("Employee with ID {EmployeeId} not found", id);
+            throw new KeyNotFoundException($"Employee with ID {id} not found");
+        }
+
+        return employee;
+    }
 
     public async Task<PagedResult<Employee>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? positionId = null, string? employmentStatus = null, DateTime? hireDateFrom = null, DateTime? hireDateTo = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
         var query = GetActiveAndEnabledEntities()
             .Include(e => e.Department)
             .Include(e => e.Position)
+            .Include(e => e.Manager)
+            .Include(e => e.Contracts)
             .AsQueryable();
 
         // Apply search filters

@@ -1,5 +1,5 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-form/base-form.component.html -->
-<form class="base-form" [class.loading]="loading">
+<form class="base-form" [class.loading]="loading" [formGroup]="form" (ngSubmit)="onSubmit()">
   <!-- Render sections if configured -->
   <ng-container *ngIf="sections.length > 0">
     <div
@@ -13,7 +13,12 @@
         *ngIf="section.title"
         class="section-header"
         [class.clickable]="section.collapsible"
-        (click)="toggleSection(section)"
+        [attr.tabindex]="section.collapsible ? 0 : null"
+        [attr.role]="section.collapsible ? 'button' : null"
+        [attr.aria-expanded]="section.collapsible ? !section.collapsed : null"
+        (click)="section.collapsible && toggleSection(section)"
+        (keyup.enter)="section.collapsible && toggleSection(section)"
+        (keyup.space)="section.collapsible && toggleSection(section)"
       >
         <h3 class="section-title">{{ section.title }}</h3>
         <span
@@ -58,9 +63,7 @@
               [clearable]="field.clearable || false"
               [step]="field.step ?? ''"
               [customClass]="field.customClass || ''"
-              [(ngModel)]="internalFormData[field.key]"
-              [ngModelOptions]="{ standalone: true }"
-              (inputChange)="onFieldChange(field.key, $event)"
+              [formControlName]="field.key"
             >
             </app-base-input>
           </div>
@@ -83,9 +86,7 @@
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
               [customClass]="field.customClass || ''"
-              [(ngModel)]="internalFormData[field.key]"
-              [ngModelOptions]="{ standalone: true }"
-              (selectionChange)="onSelectChange(field.key, $event)"
+              [formControlName]="field.key"
             >
             </app-base-select>
           </div>
@@ -108,9 +109,7 @@
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
               [customClass]="field.customClass || ''"
-              [(ngModel)]="internalFormData[field.key]"
-              [ngModelOptions]="{ standalone: true }"
-              (inputChange)="onFieldChange(field.key, $event)"
+              [formControlName]="field.key"
             >
             </app-base-textarea>
           </div>
@@ -126,9 +125,7 @@
               [label]="field.label"
               [required]="field.required || false"
               [disabled]="field.disabled || loading"
-              [(ngModel)]="internalFormData[field.key]"
-              [ngModelOptions]="{ standalone: true }"
-              (valueChange)="onFieldChange(field.key, $event)"
+              [formControlName]="field.key"
             >
             </app-base-checkbox>
           </div>
@@ -148,9 +145,7 @@
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
               [customClass]="field.customClass || ''"
-              [(ngModel)]="internalFormData[field.key]"
-              [ngModelOptions]="{ standalone: true }"
-              (selectionChange)="onFieldChange(field.key, $event)"
+              [formControlName]="field.key"
             >
             </app-base-radio>
           </div>
@@ -170,9 +165,7 @@
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
               [customClass]="field.customClass || ''"
-              [(ngModel)]="internalFormData[field.key]"
-              [ngModelOptions]="{ standalone: true }"
-              (inputChange)="onFieldChange(field.key, $event)"
+              [formControlName]="field.key"
             >
             </app-base-datepicker>
           </div>
@@ -190,9 +183,7 @@
               [disabled]="field.disabled || loading"
               [hint]="field.hint || ''"
               [customClass]="field.customClass || ''"
-              [(ngModel)]="internalFormData[field.key]"
-              [ngModelOptions]="{ standalone: true }"
-              (valueChange)="onFieldChange(field.key, $event)"
+              [formControlName]="field.key"
             >
             </app-base-switch>
           </div>
@@ -231,9 +222,7 @@
             [clearable]="field.clearable || false"
             [step]="field.step ?? ''"
             [customClass]="field.customClass || ''"
-            [(ngModel)]="internalFormData[field.key]"
-            [ngModelOptions]="{ standalone: true }"
-            (inputChange)="onFieldChange(field.key, $event)"
+            [formControlName]="field.key"
           >
           </app-base-input>
         </div>
@@ -256,9 +245,7 @@
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
             [customClass]="field.customClass || ''"
-            [(ngModel)]="internalFormData[field.key]"
-            [ngModelOptions]="{ standalone: true }"
-            (selectionChange)="onSelectChange(field.key, $event)"
+            [formControlName]="field.key"
           >
           </app-base-select>
         </div>
@@ -281,9 +268,7 @@
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
             [customClass]="field.customClass || ''"
-            [(ngModel)]="internalFormData[field.key]"
-            [ngModelOptions]="{ standalone: true }"
-            (inputChange)="onFieldChange(field.key, $event)"
+            [formControlName]="field.key"
           >
           </app-base-textarea>
         </div>
@@ -299,9 +284,7 @@
             [label]="field.label"
             [required]="field.required || false"
             [disabled]="field.disabled || loading"
-            [(ngModel)]="internalFormData[field.key]"
-            [ngModelOptions]="{ standalone: true }"
-            (valueChange)="onFieldChange(field.key, $event)"
+            [formControlName]="field.key"
           >
           </app-base-checkbox>
         </div>
@@ -321,9 +304,7 @@
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
             [customClass]="field.customClass || ''"
-            [(ngModel)]="internalFormData[field.key]"
-            [ngModelOptions]="{ standalone: true }"
-            (selectionChange)="onFieldChange(field.key, $event)"
+            [formControlName]="field.key"
           >
           </app-base-radio>
         </div>
@@ -343,9 +324,7 @@
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
             [customClass]="field.customClass || ''"
-            [(ngModel)]="internalFormData[field.key]"
-            [ngModelOptions]="{ standalone: true }"
-            (inputChange)="onFieldChange(field.key, $event)"
+            [formControlName]="field.key"
           >
           </app-base-datepicker>
         </div>
@@ -363,9 +342,7 @@
             [disabled]="field.disabled || loading"
             [hint]="field.hint || ''"
             [customClass]="field.customClass || ''"
-            [(ngModel)]="internalFormData[field.key]"
-            [ngModelOptions]="{ standalone: true }"
-            (valueChange)="onFieldChange(field.key, $event)"
+            [formControlName]="field.key"
           >
           </app-base-switch>
         </div>

@@ -788,3 +788,6 @@ export class MyComponent implements OnInit, OnDestroy {
 - [Promise vs Observable](https://stackoverflow.com/questions/37364973/what-is-the-difference-between-promises-and-observables)
 
 
+
+
+

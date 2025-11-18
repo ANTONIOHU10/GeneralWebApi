@@ -30,29 +30,78 @@ export class EmployeeService extends BaseHttpService {
 
   // 转换后端数据格式到前端格式
   private transformBackendEmployee(backendEmployee: BackendEmployee): Employee {
+    // Transform address fields
+    const address = backendEmployee.address || backendEmployee.city || backendEmployee.postalCode || backendEmployee.country
+      ? {
+          street: backendEmployee.address || '',
+          city: backendEmployee.city || '',
+          state: '', // Backend doesn't have state field
+          zipCode: backendEmployee.postalCode || '',
+          country: backendEmployee.country || '',
+        }
+      : undefined;
+
+    // Transform emergency contact
+    const emergencyContact = backendEmployee.emergencyContactName || backendEmployee.emergencyContactPhone || backendEmployee.emergencyContactRelation
+      ? {
+          name: backendEmployee.emergencyContactName || '',
+          phone: backendEmployee.emergencyContactPhone || '',
+          relation: backendEmployee.emergencyContactRelation || '',
+        }
+      : undefined;
+
     return {
       id: backendEmployee.id.toString(),
       firstName: backendEmployee.firstName || '',
       lastName: backendEmployee.lastName || '',
+      employeeNumber: backendEmployee.employeeNumber || undefined,
       email: backendEmployee.email || '',
-      phone: backendEmployee.phone || '',
-      department: backendEmployee.departmentName || '',
-      position: backendEmployee.positionTitle || '',
+      phone: backendEmployee.phoneNumber || undefined,
+      departmentId: backendEmployee.departmentId || null,
+      department: backendEmployee.departmentName || undefined,
+      positionId: backendEmployee.positionId || null,
+      position: backendEmployee.positionTitle || undefined,
+      managerId: backendEmployee.managerId ? backendEmployee.managerId.toString() : null,
+      managerName: backendEmployee.managerName || undefined,
       hireDate: backendEmployee.hireDate
         ? new Date(backendEmployee.hireDate).toISOString().split('T')[0]
-        : '',
+        : undefined,
+      terminationDate: backendEmployee.terminationDate
+        ? new Date(backendEmployee.terminationDate).toISOString().split('T')[0]
+        : undefined,
       status:
         backendEmployee.employmentStatus === 'Active'
           ? 'Active'
           : backendEmployee.employmentStatus === 'Inactive'
             ? 'Inactive'
             : 'Terminated',
-      avatar: backendEmployee.avatar || '',
-      managerId: backendEmployee.managerId
-        ? backendEmployee.managerId.toString()
-        : null,
-      salary: backendEmployee.salary || 0,
-      address: (backendEmployee.address as Employee['address']) || undefined,
+      employmentType: backendEmployee.employmentType || undefined,
+      isManager: backendEmployee.isManager || false,
+      workingHoursPerWeek: backendEmployee.workingHoursPerWeek || null,
+      salary: backendEmployee.currentSalary || undefined,
+      salaryCurrency: backendEmployee.salaryCurrency || undefined,
+      lastSalaryIncreaseDate: backendEmployee.lastSalaryIncreaseDate
+        ? new Date(backendEmployee.lastSalaryIncreaseDate).toISOString().split('T')[0]
+        : undefined,
+      nextSalaryIncreaseDate: backendEmployee.nextSalaryIncreaseDate
+        ? new Date(backendEmployee.nextSalaryIncreaseDate).toISOString().split('T')[0]
+        : undefined,
+      contractEndDate: backendEmployee.contractEndDate
+        ? new Date(backendEmployee.contractEndDate).toISOString().split('T')[0]
+        : undefined,
+      contractType: backendEmployee.contractType || undefined,
+      avatar: backendEmployee.avatar || undefined,
+      address,
+      emergencyContact,
+      taxCode: backendEmployee.taxCode || undefined,
+      createdAt: backendEmployee.createdAt || undefined,
+      createdBy: backendEmployee.createdBy || undefined,
+      updatedAt: backendEmployee.updatedAt || null,
+      updatedBy: backendEmployee.updatedBy || null,
+      isActive: backendEmployee.isActive !== undefined ? backendEmployee.isActive : true,
+      version: backendEmployee.version || undefined,
+      sortOrder: backendEmployee.sortOrder || undefined,
+      remarks: backendEmployee.remarks || null,
     };
   }
 
@@ -77,7 +126,7 @@ export class EmployeeService extends BaseHttpService {
         }
         return {
           ...response,
-          data: response.data.items.map((item: BackendEmployee) =>
+        data: response.data.items.map((item: BackendEmployee) =>
             this.transformBackendEmployee(item)
           ),
           pagination: {
@@ -88,7 +137,7 @@ export class EmployeeService extends BaseHttpService {
           },
         };
       })
-    );
+      );
   }
 
   // 根据ID获取员工 - 自动提取 data

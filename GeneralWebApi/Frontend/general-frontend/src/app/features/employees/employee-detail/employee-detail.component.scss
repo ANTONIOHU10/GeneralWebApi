@@ -1,0 +1,146 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-detail/employee-detail.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+.employee-detail-content {
+  width: 100%;
+  max-width: 100%;
+}
+
+.employee-detail-card {
+  border: none;
+  box-shadow: none;
+}
+
+.employee-detail-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-6;
+  padding-bottom: $spacing-6;
+  margin-bottom: $spacing-6;
+  border-bottom: 1px solid var(--border-primary);
+
+  .employee-header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    .employee-name {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .employee-position {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .employee-department {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+    }
+  }
+}
+
+.employee-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: $spacing-6;
+  
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding-bottom: $spacing-2;
+    border-bottom: 1px solid var(--border-secondary);
+
+    .material-icons {
+      font-size: 1.25rem;
+      color: var(--color-primary-500);
+    }
+  }
+
+  .detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: center;
+      gap: $spacing-4;
+    }
+
+    .detail-label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      min-width: 120px;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      flex: 1;
+
+      a {
+        color: var(--color-primary-500);
+        text-decoration: none;
+        transition: color $duration-200 $ease-in-out;
+
+        &:hover {
+          color: var(--color-primary-600);
+          text-decoration: underline;
+        }
+      }
+
+      .currency-code {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+        margin-left: $spacing-1;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .employee-details-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-4;
+  }
+
+  .employee-detail-header {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-4;
+  }
+}
+

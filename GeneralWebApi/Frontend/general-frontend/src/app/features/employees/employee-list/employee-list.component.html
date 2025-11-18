@@ -66,3 +66,12 @@
     <app-employee-settings></app-employee-settings>
   </div>
 </app-base-private-page-container>
+
+<!-- Employee Detail Modal -->
+<app-employee-detail
+  [employee]="selectedEmployeeForDetail"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (employeeUpdated)="onEmployeeUpdated($event)"
+></app-employee-detail>

@@ -6,10 +6,23 @@ import {
   EventEmitter,
   OnInit,
   OnChanges,
+  OnDestroy,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   BaseInputComponent,
   BaseSelectComponent,
@@ -82,7 +95,8 @@ export interface FormField {
   rows?: number;
 
   // Custom validation
-  validator?: (value: unknown) => string | null; // Returns error message or null
+  validator?: (value: unknown) => string | null; // Returns error message or null (for backward compatibility)
+  validators?: ValidatorFn[]; // Angular validators (preferred)
   customClass?: string;
 }
 
@@ -140,7 +154,7 @@ export interface FormConfig {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     BaseInputComponent,
     BaseSelectComponent,
     BaseTextareaComponent,
@@ -153,7 +167,10 @@ export interface FormConfig {
   templateUrl: './base-form.component.html',
   styleUrls: ['./base-form.component.scss'],
 })
-export class BaseFormComponent implements OnInit, OnChanges {
+export class BaseFormComponent implements OnInit, OnChanges, OnDestroy {
+  private fb = inject(FormBuilder);
+  private destroy$ = new Subject<void>();
+
   @Input() config!: FormConfig;
   @Input() formData: Record<string, unknown> = {};
   @Input() loading = false;
@@ -163,9 +180,10 @@ export class BaseFormComponent implements OnInit, OnChanges {
   @Output() fieldChange = new EventEmitter<{ key: string; value: unknown }>();
   @Output() formValid = new EventEmitter<boolean>();
 
-  // Internal form data
-  internalFormData: Record<string, unknown> = {};
-  fieldErrors: Record<string, string> = {};
+  // Reactive Form
+  form!: FormGroup;
+  
+  // Internal state
   sections: FormSection[] = [];
   fieldsBySection: Record<string, FormField[]> = {};
 
@@ -182,10 +200,52 @@ export class BaseFormComponent implements OnInit, OnChanges {
     this.initializeForm();
   }
 
+  // 这个钩子 初始化第一次接受父组件传递的配置，然后当父组件传递的配置发生变化时，重新初始化表单
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['config'] || changes['formData']) {
+    if (changes['config'] && this.config) {
       this.initializeForm();
+    } else if (changes['formData'] && this.form && this.formData) {
+      // Update form values when formData changes
+      this.updateFormValues(this.formData);
     }
+    
+    // Update disabled state when loading changes
+    if (changes['loading'] && this.form) {
+      this.updateDisabledState();
+    }
+  }
+
+  /**
+   * Update disabled state of form controls based on loading state
+   */
+  private updateDisabledState(): void {
+    if (!this.form || !this.config) return;
+
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.get(key);
+      const field = this.config.fields.find(f => f.key === key);
+      
+      if (control && field) {
+        const shouldDisable = field.disabled || this.loading;
+        if (shouldDisable && !control.disabled) {
+          control.disable();
+        } else if (!shouldDisable && control.disabled && !field.readonly) {
+          control.enable();
+        }
+      }
+    });
+  }
+
+  /**
+   * Update form values from external formData
+   */
+  private updateFormValues(data: Record<string, unknown>): void {
+    Object.keys(data).forEach(key => {
+      const control = this.form.get(key);
+      if (control && control.value !== data[key]) {
+        control.setValue(data[key], { emitEvent: false });
+      }
+    });
   }
 
   /**
@@ -197,8 +257,8 @@ export class BaseFormComponent implements OnInit, OnChanges {
     // Merge layout config
     this.layout = { ...this.layout, ...this.config.layout };
 
-    // Initialize form data
-    this.internalFormData = { ...this.formData };
+    // Build FormGroup from config
+    this.buildFormGroup();
 
     // Initialize sections
     this.initializeSections();
@@ -206,8 +266,135 @@ export class BaseFormComponent implements OnInit, OnChanges {
     // Group fields by section
     this.groupFieldsBySection();
 
-    // Initialize field errors
-    this.fieldErrors = {};
+    // Subscribe to form value changes
+    this.subscribeToFormChanges();
+  }
+
+  /**
+   * Build FormGroup from field configuration
+   */
+  private buildFormGroup(): void {
+    const formControls: Record<string, FormControl> = {};
+
+    this.config.fields.forEach(field => {
+      if (field.hidden) return;
+
+      // Get initial value from formData or field default
+      const initialValue = this.formData[field.key] ?? this.getDefaultValue(field);
+
+      // Build validators array
+      const validators: ValidatorFn[] = [];
+
+      // Add required validator
+      if (field.required) {
+        validators.push(Validators.required);
+      }
+
+      // Add Angular validators if provided
+      if (field.validators && field.validators.length > 0) {
+        validators.push(...field.validators);
+      }
+
+      // Convert custom validator function to ValidatorFn if provided
+      if (field.validator) {
+        validators.push(this.createValidatorFromFunction(field.validator));
+      }
+
+      // Add type-specific validators
+      if (field.inputType === 'email') {
+        validators.push(Validators.email);
+      }
+
+      if (field.maxLength) {
+        validators.push(Validators.maxLength(field.maxLength));
+      }
+
+      if (field.min !== undefined) {
+        validators.push(Validators.min(field.min));
+      }
+
+      if (field.max !== undefined) {
+        validators.push(Validators.max(field.max));
+      }
+
+      // Create FormControl
+      // Note: readonly fields should not be disabled in Reactive Forms
+      // Instead, we'll handle readonly state in the template
+      const control = new FormControl(
+        {
+          value: initialValue,
+          disabled: field.disabled || false,
+        },
+        validators.length > 0 ? validators : null
+      );
+
+      formControls[field.key] = control;
+    });
+
+    // Create FormGroup
+    this.form = this.fb.group(formControls);
+  }
+
+  /**
+   * Get default value for a field based on its type
+   */
+  private getDefaultValue(field: FormField): unknown {
+    switch (field.type) {
+      case 'checkbox':
+      case 'switch':
+        return false;
+      case 'number':
+        return null;
+      case 'select':
+        return field.multiple ? [] : null;
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Convert custom validator function to Angular ValidatorFn
+   */
+  private createValidatorFromFunction(
+    validatorFn: (value: unknown) => string | null
+  ): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const error = validatorFn(control.value);
+      return error ? { custom: { message: error } } : null;
+    };
+  }
+
+  /**
+   * Subscribe to form value changes and validity changes
+   */
+  private subscribeToFormChanges(): void {
+    if (!this.form) return;
+
+    // Subscribe to form value changes, it will emit the value of the form when it changes
+    // every field will be emitted, not only the changed field
+    this.form.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        // Emit field change for each changed field
+        Object.keys(value).forEach(key => {
+          this.fieldChange.emit({ key, value: value[key] });
+        });
+      });
+
+    // Subscribe to form status changes
+    this.form.statusChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.formValid.emit(this.form.valid);
+      });
+
+    // Initial validity check
+    this.formValid.emit(this.form.valid);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
@@ -243,9 +430,12 @@ export class BaseFormComponent implements OnInit, OnChanges {
       if (field.hidden) return;
 
       const sectionName = field.section || 'default';
+
+      // if the section is not created, create it (init)
       if (!this.fieldsBySection[sectionName]) {
         this.fieldsBySection[sectionName] = [];
       }
+      // add the field to the section
       this.fieldsBySection[sectionName].push(field);
     });
 
@@ -270,26 +460,15 @@ export class BaseFormComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Handle field value change
+   * Handle field value change (for backward compatibility)
+   * Note: With Reactive Forms, changes are handled automatically via form.valueChanges
    */
   onFieldChange(key: string, value: unknown): void {
-    this.internalFormData[key] = value;
-    this.fieldErrors[key] = '';
-
-    // Run custom validator if exists
-    const field = this.config.fields.find(f => f.key === key);
-    if (field?.validator) {
-      const error = field.validator(value);
-      if (error) {
-        this.fieldErrors[key] = error;
-      }
+    // Update form control value if needed
+    const control = this.form.get(key);
+    if (control && control.value !== value) {
+      control.setValue(value, { emitEvent: false });
     }
-
-    // Emit field change event
-    this.fieldChange.emit({ key, value });
-
-    // Check form validity
-    this.checkFormValidity();
   }
 
   /**
@@ -306,51 +485,35 @@ export class BaseFormComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Validate form
+   * Validate form (using Reactive Forms validation)
    */
   private validateForm(): boolean {
-    let isValid = true;
-    this.fieldErrors = {};
-
-    this.config.fields.forEach(field => {
-      if (field.hidden) return;
-
-      const value = this.internalFormData[field.key];
-
-      // Check required fields
-      if (field.required && (value === null || value === undefined || value === '')) {
-        this.fieldErrors[field.key] = `${field.label} is required`;
-        isValid = false;
-        return;
-      }
-
-      // Run custom validator
-      if (field.validator) {
-        const error = field.validator(value);
-        if (error) {
-          this.fieldErrors[field.key] = error;
-          isValid = false;
-        }
+    // Mark all fields as touched to show errors
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.get(key);
+      if (control) {
+        control.markAsTouched();
       }
     });
 
-    return isValid;
-  }
-
-  /**
-   * Check form validity and emit event
-   */
-  private checkFormValidity(): void {
-    const isValid = this.validateForm();
-    this.formValid.emit(isValid);
+    return this.form.valid;
   }
 
   /**
    * Handle form submit
    */
   onSubmit(): void {
-    if (this.validateForm()) {
-      this.formSubmit.emit({ ...this.internalFormData });
+    // use the validator of every control, touched, format ecc.
+
+    // if 
+    // all fields are filled and valid, then the form is valid
+    if (this.form.valid) {
+      // Get form value (including disabled fields)
+      const formValue = this.form.getRawValue();
+      this.formSubmit.emit(formValue);
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.validateForm();
     }
   }
 
@@ -362,10 +525,61 @@ export class BaseFormComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Get field error message
+   * Get field error message from Reactive Forms
    */
   getFieldError(key: string): string {
-    return this.fieldErrors[key] || '';
+    const control = this.form.get(key);
+    if (!control || !control.errors || !control.touched) {
+      return '';
+    }
+
+    const errors = control.errors;
+
+    // Check for custom validator error
+    if (errors['custom'] && errors['custom'].message) {
+      return errors['custom'].message;
+    }
+
+    // Check for standard Angular validators
+    if (errors['required']) {
+      const field = this.config.fields.find(f => f.key === key);
+      return `${field?.label || key} is required`;
+    }
+
+    if (errors['email']) {
+      return 'Invalid email format';
+    }
+
+    if (errors['minlength']) {
+      return `Minimum length is ${errors['minlength'].requiredLength}`;
+    }
+
+    if (errors['maxlength']) {
+      return `Maximum length is ${errors['maxlength'].requiredLength}`;
+    }
+
+    if (errors['min']) {
+      return `Minimum value is ${errors['min'].min}`;
+    }
+
+    if (errors['max']) {
+      return `Maximum value is ${errors['max'].max}`;
+    }
+
+    // Return first error message if available
+    const errorKeys = Object.keys(errors);
+    if (errorKeys.length > 0) {
+      return `Invalid ${key}`;
+    }
+
+    return '';
+  }
+
+  /**
+   * Get FormControl for a field key
+   */
+  getFormControl(key: string): FormControl | null {
+    return this.form.get(key) as FormControl | null;
   }
 
   /**
@@ -382,8 +596,6 @@ export class BaseFormComponent implements OnInit, OnChanges {
    */
   getGridColumnClass(field: FormField): string {
     const colSpan = field.colSpan || 1;
-    const totalColumns = this.layout.columns || 2;
-    const percentage = (colSpan / totalColumns) * 100;
     return `col-span-${colSpan}`;
   }
 
@@ -402,7 +614,7 @@ export class BaseFormComponent implements OnInit, OnChanges {
     return [
       {
         label: this.config.cancelButtonText || 'Cancel',
-        type: 'button',
+        type: 'reset', // Use 'reset' type to trigger onCancel() when clicked
         variant: this.config.cancelButtonVariant || 'secondary',
       },
       {

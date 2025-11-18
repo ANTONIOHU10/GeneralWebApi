@@ -1,19 +1,46 @@
-// 后端返回的员工数据格式
+// 后端返回的员工数据格式 - matches EmployeeDto
 export interface BackendEmployee {
   id: number;
   firstName: string;
   lastName: string;
   employeeNumber: string;
   email: string;
-  departmentName: string | null;
-  positionTitle: string | null;
-  employmentStatus: string;
-  hireDate: string;
-  phone?: string;
-  avatar?: string;
+  phoneNumber: string;
+  departmentId?: number | null;
+  departmentName?: string | null;
+  positionId?: number | null;
+  positionTitle?: string | null;
   managerId?: number | null;
-  salary?: number;
-  address?: unknown;
+  managerName?: string | null;
+  hireDate: string;
+  terminationDate?: string | null;
+  employmentStatus: string;
+  employmentType: string;
+  isManager: boolean;
+  workingHoursPerWeek?: number | null;
+  currentSalary?: number | null;
+  salaryCurrency?: string | null;
+  lastSalaryIncreaseDate?: string | null;
+  nextSalaryIncreaseDate?: string | null;
+  contractEndDate?: string | null;
+  contractType?: string | null;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelation?: string;
+  taxCode: string;
+  createdAt: string;
+  createdBy: string;
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  isActive: boolean;
+  version: number;
+  sortOrder: number;
+  remarks?: string | null;
+  avatar?: string;
 }
 
 // 前端使用的员工数据格式
@@ -21,15 +48,28 @@ export interface Employee {
   id: string;
   firstName: string;
   lastName: string;
+  employeeNumber?: string;
   email: string;
   phone?: string;
+  departmentId?: number | null;
   department?: string;
+  positionId?: number | null;
   position?: string;
-  hireDate?: string;
-  status: 'Active' | 'Inactive' | 'Terminated';
-  avatar?: string;
   managerId?: string | null;
+  managerName?: string | null;
+  hireDate?: string;
+  terminationDate?: string | null;
+  status: 'Active' | 'Inactive' | 'Terminated';
+  employmentType?: string;
+  isManager?: boolean;
+  workingHoursPerWeek?: number | null;
   salary?: number;
+  salaryCurrency?: string;
+  lastSalaryIncreaseDate?: string;
+  nextSalaryIncreaseDate?: string;
+  contractEndDate?: string;
+  contractType?: string;
+  avatar?: string;
   address?: {
     street: string;
     city: string;
@@ -37,6 +77,20 @@ export interface Employee {
     zipCode: string;
     country: string;
   };
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relation: string;
+  };
+  taxCode?: string;
+  createdAt?: string;
+  createdBy?: string;
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  isActive?: boolean;
+  version?: number;
+  sortOrder?: number;
+  remarks?: string | null;
 }
 
 // 分页响应数据

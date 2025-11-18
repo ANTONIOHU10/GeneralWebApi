@@ -1,0 +1,54 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-detail/employee-detail.component.html -->
+<app-base-modal
+  [isOpen]="isOpen && employee !== null"
+  [title]="mode === 'edit' ? 'Edit Employee' : 'Employee Details'"
+  [icon]="mode === 'edit' ? 'edit' : 'person'"
+  [config]="{
+    size: 'large',
+    closable: true,
+    backdrop: true,
+    keyboard: true,
+    animation: true,
+    centered: true,
+    scrollable: true
+  }"
+  (closeEvent)="onClose()"
+  (backdropClick)="onBackdropClick()"
+>
+  <div class="employee-detail-content" *ngIf="employee">
+    <!-- Employee Header Section -->
+    <div class="employee-detail-header">
+      <app-base-avatar
+        [src]="employee.avatar || ''"
+        [fallbackText]="getInitials()"
+        [alt]="getFullName()"
+        size="large"
+        shape="circle"
+      ></app-base-avatar>
+      <div class="employee-header-info">
+        <h2 class="employee-name">{{ getFullName() }}</h2>
+        <div class="employee-badges">
+          <app-base-badge
+            [text]="employee.status | titlecase"
+            [variant]="getStatusVariant()"
+            size="small"
+          ></app-base-badge>
+          <span class="employee-id" *ngIf="employee.employeeNumber">
+            ID: {{ employee.employeeNumber }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Edit Form -->
+    <div class="employee-form-container">
+      <app-base-form
+        [config]="formConfig"
+        [formData]="formData"
+        (formSubmit)="onFormSubmit($event)"
+        (formCancel)="onFormCancel()"
+      ></app-base-form>
+    </div>
+  </div>
+</app-base-modal>
+
