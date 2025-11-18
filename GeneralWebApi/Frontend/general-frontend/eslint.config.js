@@ -30,6 +30,7 @@ module.exports = tseslint.config(
           style: "kebab-case",
         },
       ],
+      "eol-last": "off", // Disable file ending newline requirement
     },
   },
   {

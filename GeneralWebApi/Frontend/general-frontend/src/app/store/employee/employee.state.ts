@@ -16,19 +16,19 @@ export interface EmployeeState {
 
   // 分页信息
   pagination: {
-    currentPage: number;
+    currentPage: number; // Keep currentPage for UI, but use pageNumber for API
     pageSize: number;
     totalItems: number;
     totalPages: number;
   };
 
-  // 搜索和过滤
+  // 搜索和过滤 - 使用后端格式
   filters: {
     searchTerm: string;
     department: string;
-    status: string;
+    employmentStatus: string; // Changed from status to match backend
     sortBy: string;
-    sortDirection: 'asc' | 'desc';
+    sortDescending: boolean; // Changed from sortDirection to match backend
   };
 
   // 操作状态
@@ -53,9 +53,9 @@ export const initialEmployeeState: EmployeeState = {
   filters: {
     searchTerm: '',
     department: '',
-    status: '',
+    employmentStatus: '',
     sortBy: 'firstName',
-    sortDirection: 'asc',
+    sortDescending: false, // false = ascending, true = descending
   },
   operationInProgress: {
     loading: false,

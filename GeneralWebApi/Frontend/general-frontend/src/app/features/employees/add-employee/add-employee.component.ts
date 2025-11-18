@@ -10,7 +10,7 @@ import {
 } from '../../../Shared/components/base';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { EmployeeFacade } from '@store/employee/employee.facade';
-import { CreateEmployeeRequest } from 'app/contracts/employees/employee.model';
+import { CreateEmployeeRequest, Employee } from 'app/contracts/employees/employee.model';
 
 @Component({
   selector: 'app-add-employee',
@@ -468,11 +468,46 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
         taxCode: (data['taxCode'] as string)?.trim() || '',
       };
 
+      // Convert CreateEmployeeRequest to Omit<Employee, 'id'> for Facade
+      // Facade uses Employee format, but we have CreateEmployeeRequest
+      const employeeData: Omit<Employee, 'id'> = {
+        firstName: createRequest.firstName,
+        lastName: createRequest.lastName,
+        email: createRequest.email,
+        employeeNumber: createRequest.employeeNumber,
+        phone: createRequest.phoneNumber,
+        departmentId: createRequest.departmentId,
+        positionId: createRequest.positionId,
+        managerId: createRequest.managerId ? createRequest.managerId.toString() : null,
+        hireDate: createRequest.hireDate,
+        status: createRequest.employmentStatus as 'Active' | 'Inactive' | 'Terminated',
+        employmentType: createRequest.employmentType,
+        salary: createRequest.currentSalary,
+        salaryCurrency: createRequest.salaryCurrency,
+        address: createRequest.address || createRequest.city || createRequest.postalCode || createRequest.country
+          ? {
+              street: createRequest.address || '',
+              city: createRequest.city || '',
+              state: '',
+              zipCode: createRequest.postalCode || '',
+              country: createRequest.country || '',
+            }
+          : undefined,
+        emergencyContact: createRequest.emergencyContactName || createRequest.emergencyContactPhone || createRequest.emergencyContactRelation
+          ? {
+              name: createRequest.emergencyContactName || '',
+              phone: createRequest.emergencyContactPhone || '',
+              relation: createRequest.emergencyContactRelation || '',
+            }
+          : undefined,
+        taxCode: createRequest.taxCode,
+      };
+
       // Dispatch action through Facade (NgRx architecture)
       // Effect will handle HTTP call, Reducer will update Store,
       // OperationNotificationService will show notifications
       // Form reset will be handled in ngOnInit subscription only on success
-      this.employeeFacade.createEmployee(createRequest as any);
+      this.employeeFacade.createEmployee(employeeData);
     });
   }
 

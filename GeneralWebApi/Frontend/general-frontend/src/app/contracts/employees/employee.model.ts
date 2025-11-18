@@ -133,3 +133,31 @@ export interface CreateEmployeeRequest {
   emergencyContactRelation?: string;
   taxCode: string; // Required: Tax code (fiscal code) - database does not allow NULL
 }
+
+// Request DTO for updating employee - matches backend UpdateEmployeeDto
+// Note: Uses PascalCase to match backend DTO format
+export interface UpdateEmployeeRequest {
+  Id: number;
+  FirstName: string;
+  LastName: string;
+  EmployeeNumber: string;
+  Email: string;
+  PhoneNumber: string;
+  DepartmentId?: number | null;
+  PositionId?: number | null;
+  ManagerId?: number | null;
+  HireDate: string; // ISO 8601 date string
+  TerminationDate?: string | null; // ISO 8601 date string
+  EmploymentStatus: string;
+  EmploymentType: string;
+  CurrentSalary?: number | null;
+  SalaryCurrency?: string | null;
+  Address: string;
+  City: string;
+  PostalCode: string;
+  Country: string;
+  EmergencyContactName: string;
+  EmergencyContactPhone: string;
+  EmergencyContactRelation: string;
+  TaxCode?: string; // Optional: if not provided, existing value is preserved
+}

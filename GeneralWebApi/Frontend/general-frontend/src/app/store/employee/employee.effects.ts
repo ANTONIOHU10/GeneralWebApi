@@ -11,6 +11,7 @@ import {
   selectEmployeeFilters,
   selectEmployeePagination,
 } from './employee.selectors';
+import { CreateEmployeeRequest } from 'app/contracts/employees/employee.model';
 
 @Injectable()
 export class EmployeeEffects {
@@ -27,14 +28,15 @@ export class EmployeeEffects {
         this.store.select(selectEmployeePagination)
       ),
       switchMap(([action, filters, pagination]) => {
+        // Use backend format directly - no conversion needed
         const params = {
-          page: action.page ?? pagination.currentPage,
+          pageNumber: action.pageNumber ?? pagination.currentPage,
           pageSize: action.pageSize ?? pagination.pageSize,
           searchTerm: action.searchTerm ?? filters.searchTerm,
           department: action.department ?? filters.department,
-          status: action.status ?? filters.status,
+          employmentStatus: action.employmentStatus ?? filters.employmentStatus,
           sortBy: action.sortBy ?? filters.sortBy,
-          sortDirection: action.sortDirection ?? filters.sortDirection,
+          sortDescending: action.sortDescending ?? filters.sortDescending,
         };
 
         return this.employeeService.getEmployees(params).pipe(
@@ -47,7 +49,7 @@ export class EmployeeEffects {
             return EmployeeActions.loadEmployeesSuccess({
               employees,
               totalItems,
-              currentPage: params.page ?? 1,
+              currentPage: params.pageNumber ?? 1,
               pageSize: params.pageSize ?? 10,
             });
           }),
@@ -86,8 +88,35 @@ export class EmployeeEffects {
   createEmployee$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.createEmployee),
-      switchMap(action =>
-        this.employeeService.createEmployee(action.employee).pipe(
+      switchMap(action => {
+        // Convert Omit<Employee, 'id'> to CreateEmployeeRequest
+        const employee = action.employee;
+        const createRequest: CreateEmployeeRequest = {
+          firstName: employee.firstName,
+          lastName: employee.lastName,
+          email: employee.email,
+          hireDate: employee.hireDate || new Date().toISOString().split('T')[0],
+          employmentStatus: employee.status || 'Active',
+          employmentType: employee.employmentType || 'FullTime',
+          taxCode: employee.taxCode || '',
+          // Optional fields
+          ...(employee.employeeNumber ? { employeeNumber: employee.employeeNumber } : {}),
+          ...(employee.phone ? { phoneNumber: employee.phone } : {}),
+          ...(employee.departmentId ? { departmentId: employee.departmentId } : {}),
+          ...(employee.positionId ? { positionId: employee.positionId } : {}),
+          ...(employee.managerId ? { managerId: parseInt(employee.managerId, 10) } : {}),
+          ...(employee.salary ? { currentSalary: employee.salary } : {}),
+          ...(employee.salaryCurrency ? { salaryCurrency: employee.salaryCurrency } : {}),
+          ...(employee.address?.street ? { address: employee.address.street } : {}),
+          ...(employee.address?.city ? { city: employee.address.city } : {}),
+          ...(employee.address?.zipCode ? { postalCode: employee.address.zipCode } : {}),
+          ...(employee.address?.country ? { country: employee.address.country } : {}),
+          ...(employee.emergencyContact?.name ? { emergencyContactName: employee.emergencyContact.name } : {}),
+          ...(employee.emergencyContact?.phone ? { emergencyContactPhone: employee.emergencyContact.phone } : {}),
+          ...(employee.emergencyContact?.relation ? { emergencyContactRelation: employee.emergencyContact.relation } : {}),
+        };
+        
+        return this.employeeService.createEmployee(createRequest).pipe(
           map(employee => {
             console.log('✅ Effect: Employee created successfully');
             return EmployeeActions.createEmployeeSuccess({ employee });
@@ -102,8 +131,8 @@ export class EmployeeEffects {
               })
             );
           })
-        )
-      )
+        );
+      })
     )
   );
 

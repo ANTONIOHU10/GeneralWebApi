@@ -318,11 +318,14 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   onStatusFilterChange(status: string) {
-    this.employeeFacade.setFilters({ status });
+    this.employeeFacade.setFilters({ employmentStatus: status });
   }
 
   onSortChange(sortBy: string, sortDirection: 'asc' | 'desc') {
-    this.employeeFacade.setFilters({ sortBy, sortDirection });
+    this.employeeFacade.setFilters({ 
+      sortBy, 
+      sortDescending: sortDirection === 'desc' 
+    });
   }
 
   onPageChange(page: number) {

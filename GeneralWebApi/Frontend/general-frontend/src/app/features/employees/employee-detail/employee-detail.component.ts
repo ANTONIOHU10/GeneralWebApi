@@ -382,12 +382,23 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         this.onClose();
       }
     });
-
-    // Load employees for manager dropdown
-    this.employeeFacade.loadEmployees();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // When modal opens (isOpen changes from false/undefined to true), load employees if needed
+    if (changes['isOpen'] && this.isOpen && changes['isOpen'].previousValue !== true) {
+      // Check if employees are already loaded in Store
+      this.employeeFacade.employees$.pipe(
+        take(1),
+        takeUntil(this.destroy$)
+      ).subscribe(employees => {
+        // Only load if no employees in Store
+        if (employees.length === 0) {
+          this.employeeFacade.loadEmployees();
+        }
+      });
+    }
+
     if (changes['employee'] && this.employee) {
       this.initializeFormData();
       this.loadManagerOptions();

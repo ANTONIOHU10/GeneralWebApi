@@ -6,13 +6,13 @@ import { Employee } from 'app/contracts/employees/employee.model';
 export const loadEmployees = createAction(
   '[Employee] Load Employees',
   props<{
-    page?: number;
+    pageNumber?: number;
     pageSize?: number;
     searchTerm?: string;
     department?: string;
-    status?: string;
+    employmentStatus?: string;
     sortBy?: string;
-    sortDirection?: 'asc' | 'desc';
+    sortDescending?: boolean;
   }>()
 );
 
@@ -112,9 +112,9 @@ export const setFilters = createAction(
   props<{
     searchTerm?: string;
     department?: string;
-    status?: string;
+    employmentStatus?: string;
     sortBy?: string;
-    sortDirection?: 'asc' | 'desc';
+    sortDescending?: boolean;
   }>()
 );
 

@@ -70,9 +70,9 @@ export const selectFilteredEmployees = createSelector(
     }
 
     // 按状态过滤
-    if (filters.status) {
+    if (filters.employmentStatus) {
       filtered = filtered.filter(
-        employee => employee.status === filters.status
+        employee => employee.status === filters.employmentStatus
       );
     }
 
@@ -90,8 +90,9 @@ export const selectFilteredEmployees = createSelector(
       const aStr = String(aValue ?? '');
       const bStr = String(bValue ?? '');
 
-      if (aStr < bStr) return filters.sortDirection === 'asc' ? -1 : 1;
-      if (aStr > bStr) return filters.sortDirection === 'asc' ? 1 : -1;
+      // sortDescending: false = ascending, true = descending
+      if (aStr < bStr) return filters.sortDescending ? 1 : -1;
+      if (aStr > bStr) return filters.sortDescending ? -1 : 1;
       return 0;
     });
 

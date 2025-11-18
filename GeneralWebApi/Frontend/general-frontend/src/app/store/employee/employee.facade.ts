@@ -30,15 +30,15 @@ export class EmployeeFacade {
   );
   employeeStats$ = this.store.select(EmployeeSelectors.selectEmployeeStats);
 
-  // 方法
+  // 方法 - 使用后端格式
   loadEmployees(params?: {
-    page?: number;
+    pageNumber?: number;
     pageSize?: number;
     searchTerm?: string;
     department?: string;
-    status?: string;
+    employmentStatus?: string;
     sortBy?: string;
-    sortDirection?: 'asc' | 'desc';
+    sortDescending?: boolean;
   }) {
     this.store.dispatch(EmployeeActions.loadEmployees(params || {}));
   }
@@ -70,9 +70,9 @@ export class EmployeeFacade {
   setFilters(filters: {
     searchTerm?: string;
     department?: string;
-    status?: string;
+    employmentStatus?: string;
     sortBy?: string;
-    sortDirection?: 'asc' | 'desc';
+    sortDescending?: boolean;
   }) {
     this.store.dispatch(EmployeeActions.setFilters(filters));
   }

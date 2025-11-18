@@ -191,9 +191,9 @@ export const employeeReducer = createReducer(
     filters: {
       searchTerm: '',
       department: '',
-      status: '',
+      employmentStatus: '',
       sortBy: 'firstName',
-      sortDirection: 'asc' as const,
+      sortDescending: false, // false = ascending
     },
     pagination: {
       ...state.pagination,

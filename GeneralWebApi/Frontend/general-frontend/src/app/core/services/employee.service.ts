@@ -7,6 +7,8 @@ import {
   Employee,
   BackendEmployee,
   PaginatedResponse,
+  CreateEmployeeRequest,
+  UpdateEmployeeRequest,
 } from 'app/contracts/employees/employee.model';
 import { ApiResponse } from 'app/contracts/common/api-response';
 
@@ -119,15 +121,17 @@ export class EmployeeService extends BaseHttpService {
   }
 
   // 获取所有员工 - 返回完整 ApiResponse（因为需要 pagination）
+  // 直接使用后端格式，无需转换
   getEmployees(params?: {
-    page?: number;
+    pageNumber?: number;
     pageSize?: number;
     searchTerm?: string;
     department?: string;
-    status?: string;
+    employmentStatus?: string;
     sortBy?: string;
-    sortDirection?: 'asc' | 'desc';
+    sortDescending?: boolean;
   }): Observable<ApiResponse<Employee[]>> {
+    // No conversion needed - params already match backend format
     return this.get<ApiResponse<PaginatedResponse<BackendEmployee>>>(
       this.endpoint,
       params,
@@ -162,7 +166,7 @@ export class EmployeeService extends BaseHttpService {
 
   // 创建员工 - 自动提取 data
   // Accepts CreateEmployeeRequest which matches backend CreateEmployeeDto
-  createEmployee(employee: Omit<Employee, 'id'> | any): Observable<Employee> {
+  createEmployee(employee: CreateEmployeeRequest): Observable<Employee> {
     return this.post<BackendEmployee>(this.endpoint, employee).pipe(
       map(backendEmployee => this.transformBackendEmployee(backendEmployee))
     );
@@ -172,7 +176,7 @@ export class EmployeeService extends BaseHttpService {
   private transformEmployeeToUpdateDto(
     id: string,
     employee: Partial<Employee>
-  ): any {
+  ): UpdateEmployeeRequest {
     // 确保日期格式正确（ISO 8601）
     const formatDate = (dateStr: string | undefined | null): string => {
       if (!dateStr) return '';
