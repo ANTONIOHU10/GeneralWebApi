@@ -20,6 +20,7 @@ import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { httpErrorInterceptor } from '@core/interceptors/http-error.interceptor';
 import { EmployeeEffects } from './store/employee/employee.effects';
 import { DepartmentEffects } from './store/department/department.effects';
+import { PositionEffects } from './store/position/position.effects';
 
 export const appConfig: ApplicationConfig = {
   // global dependencies injection for app.component.ts
@@ -41,7 +42,7 @@ export const appConfig: ApplicationConfig = {
 
     //ngrx for Ng19
     provideStore(reducers),
-    provideEffects([EmployeeEffects, DepartmentEffects]),
+    provideEffects([EmployeeEffects, DepartmentEffects, PositionEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,

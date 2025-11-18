@@ -1,0 +1,69 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-list/position-list.component.html -->
+<app-base-private-page-container
+  title="Position Management"
+  subtitle="Manage and view all positions in the system"
+  icon="work"
+  [showTabs]="true"
+  [showSearch]="activeTab() === 'list'"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header - only shown when list tab is active -->
+  <app-base-search
+    *ngIf="activeTab() === 'list'"
+    slot="search"
+    [config]="{
+      placeholder: 'Search positions...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true,
+    }"
+    (searchChange)="onSearchChange($event)"
+    inputId="position-search"
+  ></app-base-search>
+
+  <!-- Position List Tab Content -->
+  <div *ngIf="activeTab() === 'list'">
+    <app-base-async-state
+      [loading$]="loading$"
+      [error$]="error$"
+      [data$]="positions$"
+      loadingMessage="Loading positions..."
+      emptyTitle="No positions found"
+      emptyDescription="There are no positions to display at the moment"
+      emptyActionText="Add First Position"
+      [onRetry]="onRetryLoad"
+      [onEmptyAction]="onEmptyActionClick"
+    >
+      <!-- Success content: Position grid -->
+      <div class="position-grid">
+        <app-position-card
+          *ngFor="let position of positions$ | async"
+          [position]="position"
+          [showActions]="true"
+          (edit)="onEditPosition($event)"
+          (delete)="onDeletePosition($event)"
+          (view)="onViewPosition($event)"
+        >
+        </app-position-card>
+      </div>
+    </app-base-async-state>
+  </div>
+
+  <!-- Add Position Tab Content -->
+  <div *ngIf="activeTab() === 'add'">
+    <app-add-position (positionCreated)="onPositionCreated()"></app-add-position>
+  </div>
+</app-base-private-page-container>
+
+<!-- Position Detail Modal -->
+<app-position-detail
+  [position]="selectedPositionForDetail"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (positionUpdated)="onPositionUpdated($event)"
+></app-position-detail>
+
