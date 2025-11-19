@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-detail/position-detail.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Position } from 'app/contracts/positions/position.model';
 import {
@@ -11,8 +11,8 @@ import {
 import { PositionFacade } from '@store/position/position.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { filter, first, pairwise, debounceTime, startWith } from 'rxjs/operators';
 
 /**
  * PositionDetailComponent - Modal component for displaying detailed position information
@@ -28,12 +28,11 @@ import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs
   templateUrl: './position-detail.component.html',
   styleUrls: ['./position-detail.component.scss'],
 })
-export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
+export class PositionDetailComponent implements OnInit, OnChanges {
   private positionFacade = inject(PositionFacade);
   private departmentFacade = inject(DepartmentFacade);
   private dialogService = inject(DialogService);
   private operationNotification = inject(OperationNotificationService);
-  private destroy$ = new Subject<void>();
 
   @Input() position: Position | null = null;
   @Input() isOpen = false;
@@ -42,7 +41,7 @@ export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() closeEvent = new EventEmitter<void>();
   @Output() positionUpdated = new EventEmitter<Position>();
 
-  loading = false;
+  loading = signal(false);
   formData: Record<string, unknown> = {};
 
   formConfig: FormConfig = {
@@ -172,12 +171,13 @@ export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
     this.loadDepartmentOptions();
     this.loadParentPositionOptions();
 
-    this.positionFacade.operationInProgress$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(operationState => {
-      this.loading = operationState.loading && operationState.operation === 'update';
+    // Subscribe to operation progress to update loading state
+    // Simplified: Direct subscription without effect wrapper
+    this.positionFacade.operationInProgress$.subscribe(operationState => {
+      this.loading.set(operationState.loading && operationState.operation === 'update');
     });
 
+    // Listen for successful update operation completion
     combineLatest([
       this.positionFacade.operationInProgress$.pipe(
         startWith({ loading: false, operation: null })
@@ -186,7 +186,6 @@ export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
         startWith(null)
       )
     ]).pipe(
-      takeUntil(this.destroy$),
       pairwise(),
       filter(([prev, curr]) => {
         const wasUpdating = prev[0].loading === true && prev[0].operation === 'update';
@@ -215,10 +214,6 @@ export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
 
   onClose(): void {
     this.closeEvent.emit();
@@ -274,8 +269,7 @@ export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   private loadDepartmentOptions(): void {
     this.departmentFacade.departments$.pipe(
-      takeUntil(this.destroy$),
-      take(1)
+      first() // Simplified - only take first emission
     ).subscribe(departments => {
       const departmentOptions: SelectOption[] = departments.map(dept => ({
         value: parseInt(dept.id),
@@ -291,8 +285,7 @@ export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   private loadParentPositionOptions(): void {
     this.positionFacade.positions$.pipe(
-      takeUntil(this.destroy$),
-      take(1)
+      first() // Simplified - only take first emission
     ).subscribe(positions => {
       const parentOptions: SelectOption[] = positions
         .filter(pos => pos.id !== this.position?.id)
@@ -323,8 +316,7 @@ export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     confirm$.pipe(
-      take(1),
-      takeUntil(this.destroy$),
+      first(), // Simplified - only take first emission
       filter((confirmed: boolean) => confirmed)
     ).subscribe(() => {
       this.operationNotification.trackOperation({

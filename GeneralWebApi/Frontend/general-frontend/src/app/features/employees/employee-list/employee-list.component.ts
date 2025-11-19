@@ -7,6 +7,7 @@ import { EmployeeCardComponent } from '../employee-card/employee-card.component'
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
 import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
+import { SearchEmployeeComponent } from '../search-employee/search-employee.component';
 import { EmployeeDetailComponent } from '../employee-detail/employee-detail.component';
 import {
   BasePrivatePageContainerComponent,
@@ -32,6 +33,7 @@ import {
     AddEmployeeComponent,
     EmployeeReportsComponent,
     EmployeeSettingsComponent,
+    SearchEmployeeComponent,
     EmployeeDetailComponent,
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
@@ -57,7 +59,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   operationInProgress$ = this.employeeFacade.operationInProgress$;
 
   // Local state
-  activeTab = signal<'list' | 'add' | 'reports' | 'settings'>('list');
+  activeTab = signal<'list' | 'add' | 'reports' | 'settings' | 'byDepartment'>('list');
   selectedEmployeeForDetail: Employee | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view'; // Default to view mode
@@ -66,6 +68,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   tabs: TabItem[] = [
     { id: 'list', label: 'Employee List', icon: 'list' },
     { id: 'add', label: 'Add Employee', icon: 'person_add' },
+    { id: 'byDepartment', label: 'Search Employee', icon: 'search' },
     { id: 'reports', label: 'Reports', icon: 'assessment' },
     { id: 'settings', label: 'Settings', icon: 'settings' },
   ];
@@ -171,6 +174,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
    * Handle employee updated event
    * Reload employees to reflect changes
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEmployeeUpdated(employee: Employee) {
     // Reload employees to get updated data
     this.loadEmployees();
@@ -282,7 +286,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   /**
    * 设置活动标签页
    */
-  setActiveTab(tab: 'list' | 'add' | 'reports' | 'settings'): void {
+  setActiveTab(tab: 'list' | 'add' | 'reports' | 'settings' | 'byDepartment'): void {
     this.activeTab.set(tab);
   }
 
@@ -291,7 +295,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
    * Clear error state when switching to list tab (unless there's an active operation)
    */
   onTabChange(tabId: string): void {
-    const newTab = tabId as 'list' | 'add' | 'reports' | 'settings';
+    const newTab = tabId as 'list' | 'add' | 'reports' | 'settings' | 'byDepartment';
     this.setActiveTab(newTab);
     
     // Clear error when switching to list tab

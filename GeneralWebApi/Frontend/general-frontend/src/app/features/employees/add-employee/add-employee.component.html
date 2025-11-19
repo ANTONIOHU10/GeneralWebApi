@@ -12,9 +12,11 @@
     <app-base-form
       [config]="formConfig"
       [formData]="formData"
-      [loading]="loading"
+      [loading]="loading()"
+      [fieldLoading]="fieldLoading()"
       (formSubmit)="onFormSubmit($event)"
       (formCancel)="onFormCancel()"
+      (fieldDropdownOpen)="onFieldDropdownOpen($event.key)"
     >
     </app-base-form>
   </div>

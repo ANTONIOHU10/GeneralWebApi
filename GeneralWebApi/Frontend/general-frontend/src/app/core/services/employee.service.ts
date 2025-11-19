@@ -164,6 +164,13 @@ export class EmployeeService extends BaseHttpService {
     );
   }
 
+  // 根据部门ID获取员工列表
+  getEmployeesByDepartment(departmentId: number): Observable<Employee[]> {
+    return this.get<BackendEmployee[]>(`${this.endpoint}/department/${departmentId}`).pipe(
+      map(backendEmployees => backendEmployees.map(emp => this.transformBackendEmployee(emp)))
+    );
+  }
+
   // 创建员工 - 自动提取 data
   // Accepts CreateEmployeeRequest which matches backend CreateEmployeeDto
   createEmployee(employee: CreateEmployeeRequest): Observable<Employee> {

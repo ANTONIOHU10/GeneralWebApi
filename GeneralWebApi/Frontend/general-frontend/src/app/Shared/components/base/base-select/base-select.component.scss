@@ -131,6 +131,14 @@
   overflow-y: auto;
 }
 
+.dropdown-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-4;
+  min-height: 100px;
+}
+
 .option-group {
   .group-header {
     padding: $spacing-2 $spacing-3;

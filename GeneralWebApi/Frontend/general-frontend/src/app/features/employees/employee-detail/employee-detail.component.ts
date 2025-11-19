@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-detail/employee-detail.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Employee } from 'app/contracts/employees/employee.model';
 import {
@@ -15,8 +15,8 @@ import { EmployeeFacade } from '@store/employee/employee.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs/operators';
+import { Observable, combineLatest, of } from 'rxjs';
+import { filter, first, pairwise, debounceTime, startWith, catchError } from 'rxjs/operators';
 import { Department } from 'app/contracts/departments/department.model';
 import { Position } from 'app/contracts/positions/position.model';
 
@@ -42,13 +42,13 @@ import { Position } from 'app/contracts/positions/position.model';
   templateUrl: './employee-detail.component.html',
   styleUrls: ['./employee-detail.component.scss'],
 })
-export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
+export class EmployeeDetailComponent implements OnInit, OnChanges {
   private employeeFacade = inject(EmployeeFacade);
   private departmentFacade = inject(DepartmentFacade);
   private positionFacade = inject(PositionFacade);
   private dialogService = inject(DialogService);
   private operationNotification = inject(OperationNotificationService);
-  private destroy$ = new Subject<void>();
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() employee: Employee | null = null;
   @Input() isOpen = false;
@@ -58,8 +58,15 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   // send here the employee data to the parent component (list employee) to update the employee
   @Output() employeeUpdated = new EventEmitter<Employee>();
 
-  // Loading state for form - tracks update operation progress
-  loading = false;
+  // Loading state for form - tracks update operation progress (using signal for reactive updates)
+  loading = signal(false);
+
+  // Loading states for individual fields (for dropdown options loading)
+  fieldLoading = signal<Record<string, boolean>>({
+    departmentId: false,
+    positionId: false,
+    managerId: false,
+  });
 
   // Form data
   formData: Record<string, unknown> = {};
@@ -338,16 +345,13 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
     // Initialize form config for current mode (edit/view)
     this.updateFormConfigForMode();
 
-    // Subscribe to operation progress to update loading state for form (loading)
-    this.employeeFacade.operationInProgress$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(operationState => {
-      // Update loading state when update operation is in progress
-      this.loading = operationState.loading && operationState.operation === 'update';
+    // Subscribe to operation progress to update loading state
+    // Simplified: Direct subscription without effect wrapper
+    this.employeeFacade.operationInProgress$.subscribe(operationState => {
+      this.loading.set(operationState.loading && operationState.operation === 'update');
     });
 
-    // Listen for successful update operation completion (success/ failed)
-    // Use combineLatest to check BOTH operation state AND error state together
+    // Listen for successful update operation completion
     combineLatest([
       this.employeeFacade.operationInProgress$.pipe(
         startWith({ loading: false, operation: null })
@@ -356,7 +360,6 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         startWith(null)
       )
     ]).pipe(
-      takeUntil(this.destroy$),
       pairwise(), // Compare current with previous state
       filter(([prev, curr]) => {
         // Previous state: operation was in progress
@@ -391,8 +394,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
 
       // Check if employees are already loaded in Store (for manager dropdown)
       this.employeeFacade.employees$.pipe(
-        take(1),
-        takeUntil(this.destroy$)
+        first() // Simplified - only check once
       ).subscribe(employees => {
         // Only load if no employees in Store
         if (employees.length === 0) {
@@ -406,17 +408,25 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
       this.loadManagerOptions();
     }
     if (changes['mode'] || (changes['employee'] && this.employee)) {
-      // Use setTimeout to ensure formConfig is updated after Angular change detection
-      setTimeout(() => {
-        this.updateFormConfigForMode();
-      }, 0);
+      // Update form config for mode
+      this.updateFormConfigForMode();
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  /**
+   * Handle field dropdown open event
+   * Load data when user clicks on department, position, or manager dropdown
+   */
+  onFieldDropdownOpen(key: string): void {
+    if (key === 'departmentId') {
+      this.loadDepartmentOptionsIfNeeded();
+    } else if (key === 'positionId') {
+      this.loadPositionOptionsIfNeeded();
+    } else if (key === 'managerId') {
+      this.loadManagerOptionsIfNeeded();
+    }
   }
+
 
   getFullName(): string {
     if (!this.employee) return '';
@@ -504,12 +514,13 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         readonly: isReadOnly || alwaysReadonly,
         // In edit mode: disabled only if field is always readonly
         // In view mode: all fields are disabled
+        // Note: disabled state will be managed by FormControl, not template binding
         disabled: isReadOnly || alwaysReadonly,
       };
     });
 
-    // Create a completely new formConfig object to trigger change detection
-    // This ensures base-form component detects the change
+    // Create a new formConfig object to trigger change detection
+    // This ensures BaseFormComponent detects the change and updates FormControl disabled states
     this.formConfig = {
       ...this.formConfig,
       fields: updatedFields, // New array reference
@@ -523,8 +534,38 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         },
       ] : undefined, // Use default buttons in edit mode
     };
+
+    // Manually trigger change detection
+    this.cdr.markForCheck();
   }
 
+
+  /**
+   * Load department options from backend when user clicks dropdown
+   */
+  private loadDepartmentOptionsIfNeeded(): void {
+    // Set loading state
+    this.fieldLoading.update(loading => ({ ...loading, departmentId: true }));
+    
+    // Always load from API to ensure latest data
+    this.departmentFacade.loadDepartments();
+    
+    // Wait for departments to load, then update options
+    this.departmentFacade.departments$.pipe(
+      filter(loadedDepts => loadedDepts.length > 0),
+      first(),
+      catchError(error => {
+        console.error('❌ Error loading departments:', error);
+        this.fieldLoading.update(loading => ({ ...loading, departmentId: false }));
+        return of([]);
+      })
+    ).subscribe(loadedDepartments => {
+      if (loadedDepartments.length > 0) {
+        this.updateDepartmentOptions(loadedDepartments);
+      }
+      this.fieldLoading.update(loading => ({ ...loading, departmentId: false }));
+    });
+  }
 
   /**
    * Load department options from backend
@@ -538,9 +579,8 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
     
     // Wait for departments to load, then update options
     this.departmentFacade.departments$.pipe(
-      takeUntil(this.destroy$),
       filter(depts => depts.length > 0),
-      take(1)
+      first() // Simplified - only take first emission
     ).subscribe(loadedDepartments => {
       this.updateDepartmentOptions(loadedDepartments);
     });
@@ -557,8 +597,37 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
 
     const departmentField = this.formConfig.fields.find(f => f.key === 'departmentId');
     if (departmentField) {
-      departmentField.options = departmentOptions;
+      // Update options directly - Angular will detect the change
+      departmentField.options = [...departmentOptions];
     }
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Load position options from backend when user clicks dropdown
+   */
+  private loadPositionOptionsIfNeeded(): void {
+    // Set loading state
+    this.fieldLoading.update(loading => ({ ...loading, positionId: true }));
+    
+    // Always load from API to ensure latest data
+    this.positionFacade.loadPositions();
+    
+    // Wait for positions to load, then update options
+    this.positionFacade.positions$.pipe(
+      filter(loadedPos => loadedPos.length > 0),
+      first(),
+      catchError(error => {
+        console.error('❌ Error loading positions:', error);
+        this.fieldLoading.update(loading => ({ ...loading, positionId: false }));
+        return of([]);
+      })
+    ).subscribe(loadedPositions => {
+      if (loadedPositions.length > 0) {
+        this.updatePositionOptions(loadedPositions);
+      }
+      this.fieldLoading.update(loading => ({ ...loading, positionId: false }));
+    });
   }
 
   /**
@@ -573,9 +642,8 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
     
     // Wait for positions to load, then update options
     this.positionFacade.positions$.pipe(
-      takeUntil(this.destroy$),
       filter(positions => positions.length > 0),
-      take(1)
+      first() // Simplified - only take first emission
     ).subscribe(loadedPositions => {
       this.updatePositionOptions(loadedPositions);
     });
@@ -592,8 +660,46 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
 
     const positionField = this.formConfig.fields.find(f => f.key === 'positionId');
     if (positionField) {
-      positionField.options = positionOptions;
+      // Update options directly - Angular will detect the change
+      positionField.options = [...positionOptions];
     }
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Load manager options from employees list when user clicks dropdown
+   */
+  private loadManagerOptionsIfNeeded(): void {
+    // Set loading state
+    this.fieldLoading.update(loading => ({ ...loading, managerId: true }));
+    
+    // Check if employees are already loaded
+    this.employeeFacade.employees$.pipe(
+      first()
+    ).subscribe(employees => {
+      if (employees.length === 0) {
+        // Load employees if not loaded
+        this.employeeFacade.loadEmployees();
+        
+        // Wait for employees to load
+        this.employeeFacade.employees$.pipe(
+          filter(loadedEmps => loadedEmps.length > 0),
+          first(),
+          catchError(error => {
+            console.error('❌ Error loading employees:', error);
+            this.fieldLoading.update(loading => ({ ...loading, managerId: false }));
+            return of([]);
+          })
+        ).subscribe(loadedEmployees => {
+          this.updateManagerOptions(loadedEmployees);
+          this.fieldLoading.update(loading => ({ ...loading, managerId: false }));
+        });
+      } else {
+        // Employees already loaded
+        this.updateManagerOptions(employees);
+        this.fieldLoading.update(loading => ({ ...loading, managerId: false }));
+      }
+    });
   }
 
   /**
@@ -601,22 +707,29 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
    */
   private loadManagerOptions(): void {
     this.employeeFacade.employees$.pipe(
-      takeUntil(this.destroy$),
-      take(1)
+      first() // Simplified - only take first emission
     ).subscribe(employees => {
-      const managerOptions: SelectOption[] = employees
-        .filter(emp => emp.id !== this.employee?.id && emp.isManager)
-        .map(emp => ({
-          value: parseInt(emp.id),
-          label: `${emp.firstName} ${emp.lastName}`
-        }));
-      
-      // Update manager field options
-      const managerField = this.formConfig.fields.find(f => f.key === 'managerId');
-      if (managerField) {
-        managerField.options = managerOptions;
-      }
+      this.updateManagerOptions(employees);
     });
+  }
+
+  /**
+   * Update manager field options
+   */
+  private updateManagerOptions(employees: Employee[]): void {
+    const managerOptions: SelectOption[] = employees
+      .filter(emp => emp.id !== this.employee?.id && emp.isManager)
+      .map(emp => ({
+        value: parseInt(emp.id),
+        label: `${emp.firstName} ${emp.lastName}`
+      }));
+
+    const managerField = this.formConfig.fields.find(f => f.key === 'managerId');
+    if (managerField) {
+      // Update options directly - Angular will detect the change
+      managerField.options = [...managerOptions];
+    }
+    this.cdr.markForCheck();
   }
 
   /**
@@ -640,8 +753,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     confirm$.pipe(
-      take(1),
-      takeUntil(this.destroy$),
+      first(), // Simplified - only take first emission
       filter((confirmed: boolean) => confirmed)
     ).subscribe(() => {
       // Track operation for success notification

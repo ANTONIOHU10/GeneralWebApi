@@ -1,0 +1,82 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/search-employee/search-employee.component.html -->
+<div class="search-employee-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">search</span>
+      Search Employee
+    </h2>
+    <p>Search and filter employees by various criteria</p>
+  </div>
+
+  <!-- Search Form Section -->
+  <div class="search-section">
+    <app-base-card
+      [title]="'Search & Filter Employees'"
+      [icon]="'search'"
+      [variant]="'elevated'"
+    >
+      <div class="search-stats" *ngIf="allEmployees().length > 0">
+        <span class="stat-text">
+          Showing {{ filteredEmployees().length }} of {{ allEmployees().length }} employees
+        </span>
+      </div>
+
+      <div class="search-form-container">
+        <app-base-form
+          [config]="searchFormConfig"
+          [formData]="searchFilters()"
+          [loading]="loading()"
+          [fieldLoading]="fieldLoading()"
+          (formSubmit)="onSearchFormSubmit($event)"
+          (formCancel)="onSearchFormCancel()"
+          (fieldDropdownOpen)="onFieldDropdownOpen($event.key)"
+        ></app-base-form>
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Employees List -->
+  <div class="employees-section" *ngIf="selectedDepartmentId()">
+    <app-base-async-state
+      [loading$]="loading$"
+      [error$]="error$"
+      [data$]="employees$"
+      loadingMessage="Loading employees..."
+      emptyTitle="No employees found"
+      [emptyDescription]="filteredEmployees().length === 0 && allEmployees().length > 0 ? 'No employees match your search criteria' : 'There are no employees in the selected department'"
+      [onRetry]="onRetryLoad"
+    >
+      <!-- Success content: Employee grid -->
+      <div class="employee-grid">
+        <app-employee-card
+          *ngFor="let employee of filteredEmployees()"
+          [employee]="employee"
+          [showActions]="true"
+          (edit)="onEditEmployee($event)"
+          (delete)="onDeleteEmployee($event)"
+          (view)="onViewEmployee($event)"
+        >
+        </app-employee-card>
+      </div>
+    </app-base-async-state>
+  </div>
+
+  <!-- Empty State - No Department Selected -->
+  <div class="empty-state" *ngIf="!selectedDepartmentId()">
+    <div class="empty-state-content">
+      <span class="material-icons empty-icon">search</span>
+      <h3>No Results</h3>
+      <p>Use the form above to search for employees</p>
+    </div>
+  </div>
+</div>
+
+<!-- Employee Detail Modal -->
+<app-employee-detail
+  [employee]="selectedEmployeeForDetail"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (employeeUpdated)="onEmployeeUpdated($event)"
+></app-employee-detail>
+

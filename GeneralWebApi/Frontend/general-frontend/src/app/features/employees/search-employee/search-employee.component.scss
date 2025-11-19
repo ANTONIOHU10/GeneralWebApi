@@ -1,0 +1,116 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/search-employee/search-employee.component.scss */
+@use '../../../../styles/core/variable' as *;
+
+.search-employee-container {
+  padding: $spacing-4 0;
+}
+
+.page-header {
+  margin-bottom: $spacing-6;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    margin: 0 0 $spacing-2 0;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+
+    .material-icons {
+      font-size: $font-size-2xl;
+      color: var(--primary-color);
+    }
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: $font-size-base;
+  }
+}
+
+.search-section {
+  margin-bottom: $spacing-6;
+
+  .search-stats {
+    display: flex;
+    justify-content: flex-end;
+    padding: $spacing-3 0;
+    margin-bottom: $spacing-4;
+    border-bottom: 1px solid var(--border-color);
+
+    .stat-text {
+      color: var(--text-secondary);
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-form-container {
+    padding-top: $spacing-4;
+  }
+}
+
+.employees-section {
+  margin-top: $spacing-6;
+}
+
+.employee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-4;
+  padding: $spacing-4 0;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: $spacing-8;
+
+  .empty-state-content {
+    text-align: center;
+    max-width: 400px;
+
+    .empty-icon {
+      font-size: 64px;
+      color: var(--text-tertiary);
+      margin-bottom: $spacing-4;
+    }
+
+    h3 {
+      margin: 0 0 $spacing-2 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: $font-size-base;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .employee-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    h2 {
+      font-size: $font-size-xl;
+    }
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .employee-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+

@@ -6,6 +6,7 @@ import {
   EventEmitter,
   forwardRef,
   OnInit,
+  OnChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -13,6 +14,8 @@ import {
   NG_VALUE_ACCESSOR,
   FormsModule,
 } from '@angular/forms';
+// Direct import to avoid circular dependency issues
+import { BaseLoadingComponent } from '../base-loading/base-loading.component';
 
 export interface SelectOption {
   value: unknown;
@@ -25,7 +28,7 @@ export interface SelectOption {
 @Component({
   selector: 'app-base-select',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BaseLoadingComponent],
   templateUrl: './base-select.component.html',
   styleUrls: ['./base-select.component.scss'],
   providers: [
@@ -36,7 +39,7 @@ export interface SelectOption {
     },
   ],
 })
-export class BaseSelectComponent implements ControlValueAccessor, OnInit {
+export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label = '';
   @Input() placeholder = 'Select an option';
   @Input() options: SelectOption[] = [];
@@ -49,6 +52,7 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit {
   @Input() error = '';
   @Input() customClass = '';
   @Input() selectId = `select-liquid-${Math.random().toString(36).slice(2, 11)}`;
+  @Input() loading = false;
 
   @Output() selectionChange = new EventEmitter<SelectOption | SelectOption[]>();
   @Output() dropdownOpen = new EventEmitter<void>();
@@ -102,11 +106,17 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit {
     this.updateFilteredOptions();
   }
 
+  ngOnChanges(): void {
+    // Update filtered options when options change
+    this.updateFilteredOptions();
+  }
+
   toggleDropdown(): void {
     if (this.disabled) return;
 
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
+      console.log('🎯 BaseSelectComponent: dropdown opened');
       this.dropdownOpen.emit();
     } else {
       this.dropdownClose.emit();

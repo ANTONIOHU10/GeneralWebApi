@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/department-detail/department-detail.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Department } from 'app/contracts/departments/department.model';
 import {
@@ -10,8 +10,8 @@ import {
 } from '../../../Shared/components/base';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { filter, first, pairwise, debounceTime, startWith } from 'rxjs/operators';
 
 /**
  * DepartmentDetailComponent - Modal component for displaying detailed department information
@@ -27,11 +27,10 @@ import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs
   templateUrl: './department-detail.component.html',
   styleUrls: ['./department-detail.component.scss'],
 })
-export class DepartmentDetailComponent implements OnInit, OnChanges, OnDestroy {
+export class DepartmentDetailComponent implements OnInit, OnChanges {
   private departmentFacade = inject(DepartmentFacade);
   private dialogService = inject(DialogService);
   private operationNotification = inject(OperationNotificationService);
-  private destroy$ = new Subject<void>();
 
   @Input() department: Department | null = null;
   @Input() isOpen = false;
@@ -40,8 +39,8 @@ export class DepartmentDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() closeEvent = new EventEmitter<void>();
   @Output() departmentUpdated = new EventEmitter<Department>();
 
-  // Loading state for form
-  loading = false;
+  // Loading state for form (using signal for reactive updates)
+  loading = signal(false);
 
   // Form data
   formData: Record<string, unknown> = {};
@@ -125,14 +124,13 @@ export class DepartmentDetailComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     this.updateFormConfigForMode();
 
-    // Subscribe to operation progress
-    this.departmentFacade.operationInProgress$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(operationState => {
-      this.loading = operationState.loading && operationState.operation === 'update';
+    // Subscribe to operation progress to update loading state
+    // Simplified: Direct subscription without effect wrapper
+    this.departmentFacade.operationInProgress$.subscribe(operationState => {
+      this.loading.set(operationState.loading && operationState.operation === 'update');
     });
 
-    // Listen for successful update
+    // Listen for successful update operation completion
     combineLatest([
       this.departmentFacade.operationInProgress$.pipe(
         startWith({ loading: false, operation: null })
@@ -141,7 +139,6 @@ export class DepartmentDetailComponent implements OnInit, OnChanges, OnDestroy {
         startWith(null)
       )
     ]).pipe(
-      takeUntil(this.destroy$),
       pairwise(),
       filter(([prev, curr]) => {
         const wasUpdating = prev[0].loading === true && prev[0].operation === 'update';
@@ -170,10 +167,6 @@ export class DepartmentDetailComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
 
   onClose(): void {
     this.closeEvent.emit();
@@ -225,8 +218,7 @@ export class DepartmentDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   private loadParentDepartmentOptions(): void {
     this.departmentFacade.departments$.pipe(
-      takeUntil(this.destroy$),
-      take(1)
+      first() // Simplified - only take first emission
     ).subscribe(departments => {
       const parentOptions: SelectOption[] = departments
         .filter(dept => dept.id !== this.department?.id)
@@ -257,8 +249,7 @@ export class DepartmentDetailComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     confirm$.pipe(
-      take(1),
-      takeUntil(this.destroy$),
+      first(), // Simplified - only take first emission
       filter((confirmed: boolean) => confirmed)
     ).subscribe(() => {
       this.operationNotification.trackOperation({

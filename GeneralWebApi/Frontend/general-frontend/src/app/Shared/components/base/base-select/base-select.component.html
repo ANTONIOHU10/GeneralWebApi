@@ -53,33 +53,46 @@
     </div>
 
     <div class="dropdown-content">
-      <div *ngFor="let group of groupedOptions" class="option-group">
-        <div *ngIf="group.name" class="group-header">{{ group.name }}</div>
-        <div
-          *ngFor="let option of group.options"
-          class="select-option"
-          [class.selected]="isSelected(option)"
-          [class.disabled]="option.disabled"
-          (click)="selectOption(option)"
-          (keydown.enter)="selectOption(option)"
-          (keydown.space)="selectOption(option)"
-          tabindex="0"
-          role="option"
-          [attr.aria-selected]="isSelected(option)"
-        >
-          <span *ngIf="option.icon" class="option-icon material-icons">
-            {{ option.icon }}
-          </span>
-          <span class="option-label">{{ option.label }}</span>
-          <span *ngIf="isSelected(option)" class="check-icon material-icons">
-            check
-          </span>
-        </div>
+      <!-- Loading State -->
+      <div *ngIf="loading" class="dropdown-loading">
+        <app-base-loading
+          [message]="'Loading options...'"
+          [size]="'sm'"
+          [type]="'spinner'"
+          [centered]="false"
+        ></app-base-loading>
       </div>
 
-      <div *ngIf="filteredOptions.length === 0" class="no-options">
-        No options found
-      </div>
+      <!-- Options List -->
+      <ng-container *ngIf="!loading">
+        <div *ngFor="let group of groupedOptions" class="option-group">
+          <div *ngIf="group.name" class="group-header">{{ group.name }}</div>
+          <div
+            *ngFor="let option of group.options"
+            class="select-option"
+            [class.selected]="isSelected(option)"
+            [class.disabled]="option.disabled"
+            (click)="selectOption(option)"
+            (keydown.enter)="selectOption(option)"
+            (keydown.space)="selectOption(option)"
+            tabindex="0"
+            role="option"
+            [attr.aria-selected]="isSelected(option)"
+          >
+            <span *ngIf="option.icon" class="option-icon material-icons">
+              {{ option.icon }}
+            </span>
+            <span class="option-label">{{ option.label }}</span>
+            <span *ngIf="isSelected(option)" class="check-icon material-icons">
+              check
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="filteredOptions.length === 0 && !loading" class="no-options">
+          No options found
+        </div>
+      </ng-container>
     </div>
   </div>
 

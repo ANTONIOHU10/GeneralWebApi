@@ -177,11 +177,13 @@ export class BaseFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input() config!: FormConfig;
   @Input() formData: Record<string, unknown> = {};
   @Input() loading = false;
+  @Input() fieldLoading: Record<string, boolean> = {}; // Field-specific loading states
 
   @Output() formSubmit = new EventEmitter<Record<string, unknown>>();
   @Output() formCancel = new EventEmitter<void>();
   @Output() fieldChange = new EventEmitter<{ key: string; value: unknown }>();
   @Output() formValid = new EventEmitter<boolean>();
+  @Output() fieldDropdownOpen = new EventEmitter<{ key: string }>();
 
   // Reactive Form
   form!: FormGroup;
@@ -205,15 +207,17 @@ export class BaseFormComponent implements OnInit, OnChanges, OnDestroy {
 
   // 这个钩子 初始化第一次接受父组件传递的配置，然后当父组件传递的配置发生变化时，重新初始化表单
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['config'] && this.config) {
+    // Only reinitialize if config reference changes (not if fields are updated)
+    // This prevents reinitialization when options are dynamically updated
+    if (changes['config'] && this.config && changes['config'].firstChange) {
       this.initializeForm();
     } else if (changes['formData'] && this.form && this.formData) {
       // Update form values when formData changes
       this.updateFormValues(this.formData);
     }
     
-    // Update disabled state when loading changes
-    if (changes['loading'] && this.form) {
+    // Update disabled state when loading or config changes
+    if ((changes['loading'] || changes['config']) && this.form) {
       this.updateDisabledState();
     }
   }
@@ -485,6 +489,14 @@ export class BaseFormComponent implements OnInit, OnChanges, OnDestroy {
       value = option.value;
     }
     this.onFieldChange(key, value);
+  }
+
+  /**
+   * Handle dropdown open event from select field
+   */
+  onFieldDropdownOpen(key: string): void {
+    console.log('📤 BaseFormComponent: dropdown opened for field:', key);
+    this.fieldDropdownOpen.emit({ key });
   }
 
   /**

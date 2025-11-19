@@ -64,7 +64,6 @@
               [type]="field.inputType || (field.type === 'number' ? 'number' : 'text')"
               [placeholder]="field.placeholder || ''"
               [required]="field.required || false"
-              [disabled]="field.disabled || loading"
               [readonly]="field.readonly || false"
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
@@ -90,13 +89,14 @@
               [placeholder]="field.placeholder || 'Select an option'"
               [options]="field.options || []"
               [required]="field.required || false"
-              [disabled]="field.disabled || loading"
               [searchable]="field.searchable || false"
               [multiple]="field.multiple || false"
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
               [customClass]="field.customClass || ''"
+              [loading]="fieldLoading[field.key] || false"
               [formControlName]="field.key"
+              (dropdownOpen)="onFieldDropdownOpen(field.key)"
             >
             </app-base-select>
           </div>
@@ -112,7 +112,6 @@
               [label]="field.label"
               [placeholder]="field.placeholder || ''"
               [required]="field.required || false"
-              [disabled]="field.disabled || loading"
               [readonly]="field.readonly || false"
               [rows]="field.rows || 4"
               [maxLength]="field.maxLength ?? null"
@@ -134,7 +133,6 @@
             <app-base-checkbox
               [label]="field.label"
               [required]="field.required || false"
-              [disabled]="field.disabled || loading"
               [formControlName]="field.key"
             >
             </app-base-checkbox>
@@ -151,7 +149,6 @@
               [label]="field.label"
               [options]="field.radioOptions || []"
               [required]="field.required || false"
-              [disabled]="field.disabled || loading"
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
               [customClass]="field.customClass || ''"
@@ -171,7 +168,6 @@
               [label]="field.label"
               [placeholder]="field.placeholder || ''"
               [required]="field.required || false"
-              [disabled]="field.disabled || loading"
               [hint]="field.hint || ''"
               [error]="getFieldError(field.key)"
               [customClass]="field.customClass || ''"
@@ -190,7 +186,6 @@
             <app-base-switch
               [label]="field.label"
               [required]="field.required || false"
-              [disabled]="field.disabled || loading"
               [hint]="field.hint || ''"
               [customClass]="field.customClass || ''"
               [formControlName]="field.key"
@@ -223,7 +218,6 @@
             [type]="field.inputType || (field.type === 'number' ? 'number' : 'text')"
             [placeholder]="field.placeholder || ''"
             [required]="field.required || false"
-            [disabled]="field.disabled || loading"
             [readonly]="field.readonly || false"
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
@@ -249,13 +243,14 @@
             [placeholder]="field.placeholder || 'Select an option'"
             [options]="field.options || []"
             [required]="field.required || false"
-            [disabled]="field.disabled || loading"
             [searchable]="field.searchable || false"
             [multiple]="field.multiple || false"
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
             [customClass]="field.customClass || ''"
+            [loading]="fieldLoading[field.key] || false"
             [formControlName]="field.key"
+            (dropdownOpen)="onFieldDropdownOpen(field.key)"
           >
           </app-base-select>
         </div>
@@ -271,7 +266,6 @@
             [label]="field.label"
             [placeholder]="field.placeholder || ''"
             [required]="field.required || false"
-            [disabled]="field.disabled || loading"
             [readonly]="field.readonly || false"
             [rows]="field.rows || 4"
             [maxLength]="field.maxLength ?? null"
@@ -293,7 +287,6 @@
           <app-base-checkbox
             [label]="field.label"
             [required]="field.required || false"
-            [disabled]="field.disabled || loading"
             [formControlName]="field.key"
           >
           </app-base-checkbox>
@@ -310,7 +303,6 @@
             [label]="field.label"
             [options]="field.radioOptions || []"
             [required]="field.required || false"
-            [disabled]="field.disabled || loading"
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
             [customClass]="field.customClass || ''"
@@ -330,7 +322,6 @@
             [label]="field.label"
             [placeholder]="field.placeholder || ''"
             [required]="field.required || false"
-            [disabled]="field.disabled || loading"
             [hint]="field.hint || ''"
             [error]="getFieldError(field.key)"
             [customClass]="field.customClass || ''"
@@ -349,7 +340,6 @@
           <app-base-switch
             [label]="field.label"
             [required]="field.required || false"
-            [disabled]="field.disabled || loading"
             [hint]="field.hint || ''"
             [customClass]="field.customClass || ''"
             [formControlName]="field.key"

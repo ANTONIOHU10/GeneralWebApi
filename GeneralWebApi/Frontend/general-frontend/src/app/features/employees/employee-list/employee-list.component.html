@@ -57,6 +57,11 @@
     <app-add-employee (employeeCreated)="onEmployeeCreated()"></app-add-employee>
   </div>
 
+  <!-- Search Employee Tab Content -->
+  <div *ngIf="activeTab() === 'byDepartment'">
+    <app-search-employee></app-search-employee>
+  </div>
+
   <!-- Reports Tab Content -->
   <div *ngIf="activeTab() === 'reports'">
     <app-employee-reports></app-employee-reports>

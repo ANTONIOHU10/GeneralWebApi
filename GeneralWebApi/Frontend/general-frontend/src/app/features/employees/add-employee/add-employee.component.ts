@@ -1,8 +1,9 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/add-employee/add-employee.component.ts
-import { Component, inject, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, inject, OnInit, Output, EventEmitter, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, filter, take, pairwise, debounceTime } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { filter, first, pairwise, debounceTime, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import {
   BaseFormComponent,
   FormConfig,
@@ -10,7 +11,11 @@ import {
 } from '../../../Shared/components/base';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { EmployeeFacade } from '@store/employee/employee.facade';
+import { DepartmentFacade } from '@store/department/department.facade';
+import { PositionFacade } from '@store/position/position.facade';
 import { CreateEmployeeRequest, Employee } from 'app/contracts/employees/employee.model';
+import { Department } from 'app/contracts/departments/department.model';
+import { Position } from 'app/contracts/positions/position.model';
 
 @Component({
   selector: 'app-add-employee',
@@ -22,11 +27,13 @@ import { CreateEmployeeRequest, Employee } from 'app/contracts/employees/employe
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'],
 })
-export class AddEmployeeComponent implements OnInit, OnDestroy {
+export class AddEmployeeComponent implements OnInit {
   private dialogService = inject(DialogService);
   private employeeFacade = inject(EmployeeFacade);
+  private departmentFacade = inject(DepartmentFacade);
+  private positionFacade = inject(PositionFacade);
   private operationNotification = inject(OperationNotificationService);
-  private destroy$ = new Subject<void>();
+  private cdr = inject(ChangeDetectorRef);
 
   /**
    * Event emitted when employee is successfully created
@@ -34,8 +41,14 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
    */
   @Output() employeeCreated = new EventEmitter<void>();
 
-  // Loading state for form - tracks create operation progress
-  loading = false;
+  // Loading state for form - tracks create operation progress (using signal for reactive updates)
+  loading = signal(false);
+
+  // Loading states for individual fields (for dropdown options loading)
+  fieldLoading = signal<Record<string, boolean>>({
+    departmentId: false,
+    positionId: false,
+  });
 
   // Form data - matches backend CreateEmployeeDto requirements
   formData: Record<string, unknown> = {
@@ -218,14 +231,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
         order: 3,
         colSpan: 1,
         searchable: true,
-        options: [
-          { value: null, label: '' },
-          { value: 1, label: 'Human Resources' },
-          { value: 2, label: 'Information Technology' },
-          { value: 3, label: 'Finance' },
-          { value: 4, label: 'Marketing' },
-          { value: 5, label: 'Sales' },
-        ] as SelectOption[],
+        options: [] as SelectOption[], // Will be populated dynamically
       },
       {
         key: 'positionId',
@@ -235,14 +241,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
         section: 'Work Information',
         order: 4,
         colSpan: 1,
-        options: [
-          { value: null, label: '' },
-          { value: 1, label: 'Manager' },
-          { value: 2, label: 'Developer' },
-          { value: 3, label: 'Analyst' },
-          { value: 4, label: 'Designer' },
-          { value: 5, label: 'Coordinator' },
-        ] as SelectOption[],
+        options: [] as SelectOption[], // Will be populated dynamically
       },
       {
         key: 'currentSalary',
@@ -340,22 +339,17 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     // Note: OperationNotificationService is already setup in parent component (employee-list)
     // No need to setup again here to avoid duplicate notifications
 
-    // Subscribe to operation progress to update loading state for form
-    this.employeeFacade.operationInProgress$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(operationState => {
-      // Update loading state when create operation is in progress
-      this.loading = operationState.loading && operationState.operation === 'create';
+    // Subscribe to operation progress to update loading state
+    // Simplified: Direct subscription without effect wrapper
+    this.employeeFacade.operationInProgress$.subscribe(operationState => {
+      this.loading.set(operationState.loading && operationState.operation === 'create');
     });
 
     // Listen for successful create operation completion
-    // Use combineLatest to check BOTH operation state AND error state together
-    // Add debounceTime to wait for Store state to stabilize after operation completion
     combineLatest([
       this.employeeFacade.operationInProgress$,
       this.employeeFacade.error$
     ]).pipe(
-      takeUntil(this.destroy$),
       pairwise(), // Compare current with previous state
       debounceTime(50), // Wait 50ms for Store state to stabilize
       filter(([prev, curr]) => {
@@ -375,11 +369,6 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       // Emit event to parent component
       this.employeeCreated.emit();
     });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   /**
@@ -402,8 +391,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     });
     
     confirm$.pipe(
-      take(1),
-      takeUntil(this.destroy$),
+      first(), // Simplified - only take first emission
       filter((confirmed: boolean) => confirmed)
     ).subscribe(() => {
       // Track operation for success notification
@@ -509,6 +497,169 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       // Form reset will be handled in ngOnInit subscription only on success
       this.employeeFacade.createEmployee(employeeData);
     });
+  }
+
+  /**
+   * Handle field dropdown open event
+   * Load data when user clicks on department or position dropdown
+   */
+  onFieldDropdownOpen(key: string): void {
+    console.log('🔍 Dropdown opened for field:', key);
+    if (key === 'departmentId') {
+      console.log('📥 Loading departments...');
+      this.loadDepartmentOptionsIfNeeded();
+    } else if (key === 'positionId') {
+      console.log('📥 Loading positions...');
+      this.loadPositionOptionsIfNeeded();
+    }
+  }
+
+  /**
+   * Load department options from backend when user clicks dropdown
+   * Always loads to ensure latest data
+   */
+  private loadDepartmentOptionsIfNeeded(): void {
+    console.log('🔍 loadDepartmentOptionsIfNeeded called');
+    
+    // Set loading state
+    this.fieldLoading.update(loading => ({ ...loading, departmentId: true }));
+    
+    // Always load from API to ensure latest data
+    console.log('🚀 Loading departments from API...');
+    this.departmentFacade.loadDepartments();
+    
+    // Wait for departments to load, then update options
+    this.departmentFacade.departments$.pipe(
+      filter(loadedDepts => loadedDepts.length > 0),
+      first(), // Simplified - only take first emission
+      catchError(error => {
+        console.error('❌ Error loading departments:', error);
+        // Clear loading state on error
+        this.fieldLoading.update(loading => ({ ...loading, departmentId: false }));
+        return of([]);
+      })
+    ).subscribe(loadedDepartments => {
+      if (loadedDepartments.length > 0) {
+        console.log('✅ Departments loaded:', loadedDepartments.length);
+        this.updateDepartmentOptions(loadedDepartments);
+      }
+      // Clear loading state
+      this.fieldLoading.update(loading => ({ ...loading, departmentId: false }));
+    });
+  }
+
+  /**
+   * Load department options from backend
+   * Always refreshes to ensure latest data is available
+   */
+  private loadDepartmentOptions(): void {
+    // Always reload departments to get the latest data
+    this.departmentFacade.loadDepartments();
+    
+    // Wait for departments to load, then update options
+    this.departmentFacade.departments$.pipe(
+      filter(depts => depts.length > 0),
+      first() // Simplified - only take first emission
+    ).subscribe(loadedDepartments => {
+      this.updateDepartmentOptions(loadedDepartments);
+    });
+  }
+
+  /**
+   * Update department field options
+   * Updates the field options directly without recreating the entire formConfig
+   * This prevents form reinitialization and dropdown closing
+   */
+  private updateDepartmentOptions(departments: Department[]): void {
+    const departmentOptions: SelectOption[] = departments.map(dept => ({
+      value: parseInt(dept.id),
+      label: `${dept.name} (${dept.code})`
+    }));
+
+    // Find and update the department field directly
+    const departmentField = this.formConfig.fields.find(f => f.key === 'departmentId');
+    if (departmentField) {
+      // Update options directly - Angular will detect the change
+      departmentField.options = [...departmentOptions];
+      console.log('🔄 Updated department options:', departmentOptions.length);
+    }
+    
+    // Manually trigger change detection
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Load position options from backend when user clicks dropdown
+   * Always loads to ensure latest data
+   */
+  private loadPositionOptionsIfNeeded(): void {
+    console.log('🔍 loadPositionOptionsIfNeeded called');
+    
+    // Set loading state
+    this.fieldLoading.update(loading => ({ ...loading, positionId: true }));
+    
+    // Always load from API to ensure latest data
+    console.log('🚀 Loading positions from API...');
+    this.positionFacade.loadPositions();
+    
+    // Wait for positions to load, then update options
+    this.positionFacade.positions$.pipe(
+      filter(loadedPos => loadedPos.length > 0),
+      first(), // Simplified - only take first emission
+      catchError(error => {
+        console.error('❌ Error loading positions:', error);
+        // Clear loading state on error
+        this.fieldLoading.update(loading => ({ ...loading, positionId: false }));
+        return of([]);
+      })
+    ).subscribe(loadedPositions => {
+      if (loadedPositions.length > 0) {
+        console.log('✅ Positions loaded:', loadedPositions.length);
+        this.updatePositionOptions(loadedPositions);
+      }
+      // Clear loading state
+      this.fieldLoading.update(loading => ({ ...loading, positionId: false }));
+    });
+  }
+
+  /**
+   * Load position options from backend
+   * Always refreshes to ensure latest data is available
+   */
+  private loadPositionOptions(): void {
+    // Always reload positions to get the latest data
+    this.positionFacade.loadPositions();
+    
+    // Wait for positions to load, then update options
+    this.positionFacade.positions$.pipe(
+      filter(positions => positions.length > 0),
+      first() // Simplified - only take first emission
+    ).subscribe(loadedPositions => {
+      this.updatePositionOptions(loadedPositions);
+    });
+  }
+
+  /**
+   * Update position field options
+   * Updates the field options directly without recreating the entire formConfig
+   * This prevents form reinitialization and dropdown closing
+   */
+  private updatePositionOptions(positions: Position[]): void {
+    const positionOptions: SelectOption[] = positions.map(pos => ({
+      value: parseInt(pos.id),
+      label: `${pos.title} (${pos.code})`
+    }));
+
+    // Find and update the position field directly
+    const positionField = this.formConfig.fields.find(f => f.key === 'positionId');
+    if (positionField) {
+      // Update options directly - Angular will detect the change
+      positionField.options = [...positionOptions];
+      console.log('🔄 Updated position options:', positionOptions.length);
+    }
+    
+    // Manually trigger change detection
+    this.cdr.markForCheck();
   }
 
   /**
