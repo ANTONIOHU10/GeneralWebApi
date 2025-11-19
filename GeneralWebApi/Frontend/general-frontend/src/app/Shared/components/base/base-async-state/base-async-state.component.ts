@@ -114,41 +114,6 @@ export class BaseAsyncStateComponent<T> implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Computed values
-  get isLoading(): boolean {
-    if (this.loading !== undefined) {
-      return this.loading;
-    }
-    // For Observable, we'll use async pipe in template
-    return false;
-  }
-
-  get hasError(): boolean {
-    if (this.error !== undefined) {
-      return !!this.error;
-    }
-    // For Observable, we'll use async pipe in template
-    return false;
-  }
-
-  get errorMessage(): string | null {
-    if (this.error !== undefined) {
-      return this.error;
-    }
-    return null;
-  }
-
-  get isDataEmpty(): boolean {
-    if (this.isEmpty !== undefined) {
-      return this.isEmpty;
-    }
-    if (this.data !== undefined) {
-      return !this.data || this.data.length === 0;
-    }
-    // For Observable, we'll use async pipe in template
-    return false;
-  }
-
   // Default configs
   get defaultLoadingConfig(): LoadingConfig {
     return {

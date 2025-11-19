@@ -19,6 +19,7 @@ export interface AppState {
 }
 
 export const reducers: ActionReducerMap<AppState> = {
+  // example reducer function, return the input state
   example: (state = 'example') => {
     return state;
   },
