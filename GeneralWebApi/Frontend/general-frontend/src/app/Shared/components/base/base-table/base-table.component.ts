@@ -38,6 +38,7 @@ export interface TableAction {
     | 'ghost';
   disabled?: (item: unknown) => boolean;
   visible?: (item: unknown) => boolean;
+  showLabel?: boolean; // Whether to show label text (default: false for icon-only buttons)
   onClick: (item: unknown) => void;
 }
 
@@ -288,6 +289,8 @@ export class BaseTableComponent implements OnInit, OnChanges {
   getActionClass(action: TableAction): string {
     const classes = ['action-btn'];
     if (action.variant) classes.push(action.variant);
+    // Add icon-only class if label is not shown
+    if (!action.showLabel) classes.push('icon-only');
     return classes.join(' ');
   }
 
@@ -317,7 +320,10 @@ export class BaseTableComponent implements OnInit, OnChanges {
   }
 
   get actionsWidth(): string {
-    return `${this.actions.length * 120}px`;
+    // Calculate width based on icon-only buttons (more compact)
+    const iconButtonWidth = 40; // Width per icon button
+    const padding = 16; // Cell padding
+    return `${this.actions.length * iconButtonWidth + padding}px`;
   }
 
   private updateData(): void {

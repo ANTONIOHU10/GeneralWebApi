@@ -138,11 +138,13 @@
                 [disabled]="action.disabled?.(item)"
                 (click)="action.onClick(item)"
                 [attr.aria-label]="action.label"
+                [title]="action.label"
+                type="button"
               >
                 <span class="material-icons" *ngIf="action.icon">{{
                   action.icon
                 }}</span>
-                <span class="action-label" *ngIf="action.label">{{
+                <span class="action-label" *ngIf="action.showLabel">{{
                   action.label
                 }}</span>
               </button>

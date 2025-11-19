@@ -164,9 +164,61 @@ export class EmployeeService extends BaseHttpService {
     );
   }
 
-  // 根据部门ID获取员工列表
+  // 根据部门ID获取员工列表 (deprecated - use searchEmployees instead)
   getEmployeesByDepartment(departmentId: number): Observable<Employee[]> {
     return this.get<BackendEmployee[]>(`${this.endpoint}/department/${departmentId}`).pipe(
+      map(backendEmployees => backendEmployees.map(emp => this.transformBackendEmployee(emp)))
+    );
+  }
+
+  // Search employees with advanced filters
+  searchEmployeesWithFilters(searchParams: {
+    departmentId?: number | null;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    employeeNumber?: string;
+    phone?: string;
+    positionId?: number | null;
+    employmentStatus?: string;
+    hireDateFrom?: string;
+    hireDateTo?: string;
+  }): Observable<Employee[]> {
+    // Build query parameters, only including non-empty values
+    const params: Record<string, string> = {};
+    
+    if (searchParams.departmentId !== null && searchParams.departmentId !== undefined) {
+      params['departmentId'] = searchParams.departmentId.toString();
+    }
+    if (searchParams.firstName && searchParams.firstName.trim()) {
+      params['firstName'] = searchParams.firstName.trim();
+    }
+    if (searchParams.lastName && searchParams.lastName.trim()) {
+      params['lastName'] = searchParams.lastName.trim();
+    }
+    if (searchParams.email && searchParams.email.trim()) {
+      params['email'] = searchParams.email.trim();
+    }
+    if (searchParams.employeeNumber && searchParams.employeeNumber.trim()) {
+      params['employeeNumber'] = searchParams.employeeNumber.trim();
+    }
+    if (searchParams.phone && searchParams.phone.trim()) {
+      params['phone'] = searchParams.phone.trim();
+    }
+    if (searchParams.positionId !== null && searchParams.positionId !== undefined) {
+      params['positionId'] = searchParams.positionId.toString();
+    }
+    if (searchParams.employmentStatus && searchParams.employmentStatus.trim()) {
+      params['employmentStatus'] = searchParams.employmentStatus.trim();
+    }
+    if (searchParams.hireDateFrom && searchParams.hireDateFrom.trim()) {
+      params['hireDateFrom'] = searchParams.hireDateFrom.trim();
+    }
+    if (searchParams.hireDateTo && searchParams.hireDateTo.trim()) {
+      params['hireDateTo'] = searchParams.hireDateTo.trim();
+    }
+
+    return this.get<BackendEmployee[]>(`${this.endpoint}/search`, params).pipe(
       map(backendEmployees => backendEmployees.map(emp => this.transformBackendEmployee(emp)))
     );
   }

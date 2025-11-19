@@ -7,6 +7,12 @@ public class EmployeeSearchDto
     public string? EmploymentStatus { get; set; }
     public DateTime? HireDateFrom { get; set; }
     public DateTime? HireDateTo { get; set; }
+    // Individual field filters for advanced search
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Email { get; set; }
+    public string? EmployeeNumber { get; set; }
+    public string? Phone { get; set; }
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
     public string? SortBy { get; set; }

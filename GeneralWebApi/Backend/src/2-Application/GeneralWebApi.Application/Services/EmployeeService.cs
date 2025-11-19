@@ -96,6 +96,11 @@ public class EmployeeService : IEmployeeService
             searchDto.EmploymentStatus,
             searchDto.HireDateFrom,
             searchDto.HireDateTo,
+            searchDto.FirstName,
+            searchDto.LastName,
+            searchDto.Email,
+            searchDto.EmployeeNumber,
+            searchDto.Phone,
             searchDto.SortBy,
             searchDto.SortDescending,
             cancellationToken);

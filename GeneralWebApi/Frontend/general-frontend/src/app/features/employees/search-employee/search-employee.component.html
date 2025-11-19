@@ -39,25 +39,33 @@
   <div class="employees-section" *ngIf="selectedDepartmentId()">
     <app-base-async-state
       [loading$]="loading$"
-      [error$]="error$"
       [data$]="employees$"
       loadingMessage="Loading employees..."
       emptyTitle="No employees found"
-      [emptyDescription]="filteredEmployees().length === 0 && allEmployees().length > 0 ? 'No employees match your search criteria' : 'There are no employees in the selected department'"
+      emptyDescription="No employees match your search criteria"
       [onRetry]="onRetryLoad"
     >
-      <!-- Success content: Employee grid -->
-      <div class="employee-grid">
-        <app-employee-card
-          *ngFor="let employee of filteredEmployees()"
-          [employee]="employee"
-          [showActions]="true"
-          (edit)="onEditEmployee($event)"
-          (delete)="onDeleteEmployee($event)"
-          (view)="onViewEmployee($event)"
-        >
-        </app-employee-card>
-      </div>
+      <!-- Success content: Employee table -->
+      <app-base-table
+        [data]="filteredEmployees()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{
+          showHeader: true,
+          showFooter: true,
+          showPagination: true,
+          showSearch: false,
+          showActions: true,
+          striped: true,
+          hoverable: true,
+          bordered: false,
+          size: 'medium',
+          loading: false,
+          emptyMessage: 'No employees match your search criteria'
+        }"
+        [pageSize]="10"
+        (rowClick)="onRowClick($event)"
+      ></app-base-table>
     </app-base-async-state>
   </div>
 

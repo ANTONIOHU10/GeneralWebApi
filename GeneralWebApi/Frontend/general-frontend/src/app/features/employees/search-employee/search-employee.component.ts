@@ -2,20 +2,25 @@
 import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, of } from 'rxjs';
-import { filter, startWith, first, catchError } from 'rxjs/operators';
-import { EmployeeCardComponent } from '../employee-card/employee-card.component';
+import { BehaviorSubject, of, Observable } from 'rxjs';
+import { filter, startWith, first, catchError, take } from 'rxjs/operators';
 import { EmployeeDetailComponent } from '../employee-detail/employee-detail.component';
 import {
   BaseCardComponent,
   BaseAsyncStateComponent,
   BaseFormComponent,
+  BaseTableComponent,
   SelectOption,
   FormConfig,
+  TableColumn,
+  TableAction,
 } from '../../../Shared/components/base';
 import { EmployeeService } from '@core/services/employee.service';
+import { EmployeeFacade } from '@store/employee/employee.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
+import { NotificationService } from '../../../Shared/services/notification.service';
+import { DialogService } from '../../../Shared/services/dialog.service';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { Department } from 'app/contracts/departments/department.model';
 import { Position } from 'app/contracts/positions/position.model';
@@ -26,19 +31,22 @@ import { Position } from 'app/contracts/positions/position.model';
   imports: [
     CommonModule,
     FormsModule,
-    EmployeeCardComponent,
     EmployeeDetailComponent,
     BaseCardComponent,
     BaseAsyncStateComponent,
     BaseFormComponent,
+    BaseTableComponent,
   ],
   templateUrl: './search-employee.component.html',
   styleUrls: ['./search-employee.component.scss'],
 })
 export class SearchEmployeeComponent implements OnInit {
   private employeeService = inject(EmployeeService);
+  private employeeFacade = inject(EmployeeFacade);
   private departmentFacade = inject(DepartmentFacade);
   private positionFacade = inject(PositionFacade);
+  private notificationService = inject(NotificationService);
+  private dialogService = inject(DialogService);
 
   // State
   selectedDepartmentId = signal<number | null>(null);
@@ -66,12 +74,10 @@ export class SearchEmployeeComponent implements OnInit {
     hireDateTo: '',
   });
 
-  // Filtered employees based on search criteria
+  // Employees from backend (already filtered by backend)
+  // No need for frontend filtering anymore - backend handles all filtering
   filteredEmployees = computed(() => {
-    const employees = this.allEmployees();
-    const filters = this.searchFilters();
-    
-    return this.applyFilters(employees, filters);
+    return this.allEmployees();
   });
 
   // Observables from NgRx Store (for async pipe - automatically managed)
@@ -79,13 +85,50 @@ export class SearchEmployeeComponent implements OnInit {
   positions$ = this.positionFacade.positions$;
 
   // Observables for BaseAsyncStateComponent
+  // Note: error$ removed - errors will be shown via NotificationService instead
   loading$ = new BehaviorSubject<boolean>(false);
-  error$ = new BehaviorSubject<string | null>(null);
   employees$ = new BehaviorSubject<Employee[] | null>(null);
 
   selectedEmployeeForDetail: Employee | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
+
+  // Table configuration
+  tableColumns: TableColumn[] = [
+    { key: 'employeeNumber', label: 'Employee Number', sortable: true, width: '120px' },
+    { key: 'firstName', label: 'First Name', sortable: true, width: '120px' },
+    { key: 'lastName', label: 'Last Name', sortable: true, width: '120px' },
+    { key: 'email', label: 'Email', sortable: true, width: '200px' },
+    { key: 'phone', label: 'Phone', sortable: false, width: '120px' },
+    { key: 'department', label: 'Department', sortable: true, width: '150px' },
+    { key: 'position', label: 'Position', sortable: true, width: '150px' },
+    { key: 'status', label: 'Status', sortable: true, width: '100px' },
+    { key: 'hireDate', label: 'Hire Date', sortable: true, type: 'date', width: '120px' },
+  ];
+
+  tableActions: TableAction[] = [
+    {
+      label: 'View',
+      icon: 'visibility',
+      variant: 'ghost',
+      showLabel: false, // Icon-only button
+      onClick: (item: unknown) => this.onViewEmployee(item as Employee),
+    },
+    {
+      label: 'Edit',
+      icon: 'edit',
+      variant: 'primary',
+      showLabel: false, // Icon-only button
+      onClick: (item: unknown) => this.onEditEmployee(item as Employee),
+    },
+    {
+      label: 'Delete',
+      icon: 'delete',
+      variant: 'danger',
+      showLabel: false, // Icon-only button
+      onClick: (item: unknown) => this.onDeleteEmployee(item as Employee),
+    },
+  ];
 
   // Search form configuration
   searchFormConfig: FormConfig = {
@@ -376,7 +419,7 @@ export class SearchEmployeeComponent implements OnInit {
       this.allEmployees.set([]);
       this.employees$.next([]);
       this.loading$.next(false);
-      this.error$.next(null);
+      this.error.set(null);
       return;
     }
 
@@ -384,124 +427,79 @@ export class SearchEmployeeComponent implements OnInit {
     // Don't auto-load here - wait for form submit
   }
 
-  private loadEmployeesByDepartment(departmentId: number): void {
+  private searchEmployeesWithBackend(filters: Record<string, unknown>): void {
     this.loading.set(true);
     this.loading$.next(true);
     this.error.set(null);
-    this.error$.next(null);
+
+    // Convert filters to search parameters
+    const searchParams = {
+      departmentId: filters['departmentId'] ? (typeof filters['departmentId'] === 'number' ? filters['departmentId'] : parseInt(filters['departmentId'] as string)) : null,
+      firstName: filters['firstName'] as string || '',
+      lastName: filters['lastName'] as string || '',
+      email: filters['email'] as string || '',
+      employeeNumber: filters['employeeNumber'] as string || '',
+      phone: filters['phone'] as string || '',
+      positionId: filters['positionId'] !== null && filters['positionId'] !== undefined ? (typeof filters['positionId'] === 'number' ? filters['positionId'] : parseInt(filters['positionId'] as string)) : null,
+      employmentStatus: filters['employmentStatus'] as string || '',
+      hireDateFrom: filters['hireDateFrom'] as string || '',
+      hireDateTo: filters['hireDateTo'] as string || '',
+    };
 
     // HTTP requests complete automatically, so no need for takeUntil
     // Using first() to ensure we only take the first value (HTTP emits once and completes)
-    this.employeeService.getEmployeesByDepartment(departmentId).pipe(
-      first()
-    ).subscribe({
-      next: (employees: Employee[]) => {
-        this.allEmployees.set(employees);
-        // Filtered employees will be updated automatically via computed signal and effect
-        this.loading.set(false);
-        this.loading$.next(false);
-      },
-      error: (err) => {
-        const errorMessage = err.message || 'Failed to load employees';
+    this.employeeService.searchEmployeesWithFilters(searchParams).pipe(
+      first(),
+      catchError(err => {
+        const errorMessage = err.message || 'Failed to search employees';
         this.error.set(errorMessage);
-        this.error$.next(errorMessage);
         this.loading.set(false);
         this.loading$.next(false);
         this.allEmployees.set([]);
         this.employees$.next([]);
+        
+        // Show error notification instead of displaying in page
+        this.notificationService.error(
+          'Search Failed',
+          errorMessage,
+          {
+            duration: 5000,
+            persistent: false,
+            autoClose: true,
+          }
+        );
+        
+        return of([]);
+      })
+    ).subscribe({
+      next: (employees: Employee[]) => {
+        this.allEmployees.set(employees);
+        // Update employees$ Observable for BaseAsyncStateComponent
+        this.employees$.next(employees);
+        // Employees are already filtered by backend
+        this.loading.set(false);
+        this.loading$.next(false);
+        
+        // Show success notification if employees found
+        if (employees.length > 0) {
+          this.notificationService.info(
+            'Search Completed',
+            `Found ${employees.length} employee(s) matching your criteria`,
+            {
+              duration: 3000,
+              autoClose: true,
+            }
+          );
+        }
       }
     });
   }
 
-  /**
-   * Apply search filters to employees (frontend virtual filtering)
-   */
-  private applyFilters(employees: Employee[], filters: Record<string, unknown>): Employee[] {
-    if (!employees || employees.length === 0) {
-      return [];
-    }
-
-    let filtered = [...employees];
-
-    // Filter by firstName
-    if (filters['firstName'] && typeof filters['firstName'] === 'string' && filters['firstName'].trim()) {
-      const searchTerm = filters['firstName'].toLowerCase().trim();
-      filtered = filtered.filter(emp => 
-        emp.firstName?.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Filter by lastName
-    if (filters['lastName'] && typeof filters['lastName'] === 'string' && filters['lastName'].trim()) {
-      const searchTerm = filters['lastName'].toLowerCase().trim();
-      filtered = filtered.filter(emp => 
-        emp.lastName?.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Filter by email
-    if (filters['email'] && typeof filters['email'] === 'string' && filters['email'].trim()) {
-      const searchTerm = filters['email'].toLowerCase().trim();
-      filtered = filtered.filter(emp => 
-        emp.email?.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Filter by employeeNumber
-    if (filters['employeeNumber'] && typeof filters['employeeNumber'] === 'string' && filters['employeeNumber'].trim()) {
-      const searchTerm = filters['employeeNumber'].toLowerCase().trim();
-      filtered = filtered.filter(emp => 
-        emp.employeeNumber?.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Filter by phone
-    if (filters['phone'] && typeof filters['phone'] === 'string' && filters['phone'].trim()) {
-      const searchTerm = filters['phone'].toLowerCase().trim();
-      filtered = filtered.filter(emp => 
-        emp.phone?.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Filter by positionId
-    if (filters['positionId'] !== null && filters['positionId'] !== undefined && filters['positionId'] !== '') {
-      const positionId = typeof filters['positionId'] === 'number' 
-        ? filters['positionId'] 
-        : parseInt(filters['positionId'] as string);
-      filtered = filtered.filter(emp => emp.positionId === positionId);
-    }
-
-    // Filter by employmentStatus
-    if (filters['employmentStatus'] && typeof filters['employmentStatus'] === 'string' && filters['employmentStatus'].trim()) {
-      filtered = filtered.filter(emp => emp.status === filters['employmentStatus']);
-    }
-
-    // Filter by hireDateFrom
-    if (filters['hireDateFrom'] && typeof filters['hireDateFrom'] === 'string' && filters['hireDateFrom'].trim()) {
-      const fromDate = new Date(filters['hireDateFrom']);
-      filtered = filtered.filter(emp => {
-        if (!emp.hireDate) return false;
-        const hireDate = new Date(emp.hireDate);
-        return hireDate >= fromDate;
-      });
-    }
-
-    // Filter by hireDateTo
-    if (filters['hireDateTo'] && typeof filters['hireDateTo'] === 'string' && filters['hireDateTo'].trim()) {
-      const toDate = new Date(filters['hireDateTo']);
-      toDate.setHours(23, 59, 59, 999); // Include entire day
-      filtered = filtered.filter(emp => {
-        if (!emp.hireDate) return false;
-        const hireDate = new Date(emp.hireDate);
-        return hireDate <= toDate;
-      });
-    }
-
-    return filtered;
-  }
+  // Frontend filtering removed - backend handles all filtering now
 
   /**
    * Handle search form submit
+   * Now uses backend search instead of frontend filtering
    */
   onSearchFormSubmit(data: Record<string, unknown>): void {
     const departmentId = data['departmentId'] ? (typeof data['departmentId'] === 'number' ? data['departmentId'] : parseInt(data['departmentId'] as string)) : null;
@@ -520,17 +518,18 @@ export class SearchEmployeeComponent implements OnInit {
       hireDateTo: data['hireDateTo'] || '',
     });
     
-    // Load employees if department is selected
+    // Search employees using backend with all filters
     if (departmentId) {
       this.selectedDepartmentId.set(departmentId);
-      this.loadEmployeesByDepartment(departmentId);
+      this.searchEmployeesWithBackend(this.searchFilters());
     } else {
       // Clear employees if no department selected
       this.selectedDepartmentId.set(null);
       this.allEmployees.set([]);
       this.employees$.next([]);
+      this.loading.set(false);
+      this.loading$.next(false);
     }
-    // Filtered employees will be updated automatically via computed signal and effect
   }
 
   /**
@@ -564,15 +563,60 @@ export class SearchEmployeeComponent implements OnInit {
     this.isDetailModalOpen = true;
   }
 
+  /**
+   * Handle delete employee action with confirmation
+   * Uses NgRx architecture: Dialog → Facade → Effect → Store → Notification
+   */
   onDeleteEmployee(employee: Employee): void {
-    // This will be handled by parent component if needed
-    console.log('Delete employee:', employee);
+    const employeeName = `${employee.firstName} ${employee.lastName}`;
+    
+    // Show confirmation dialog first
+    const confirm$: Observable<boolean> = this.dialogService.confirm({
+      title: 'Confirm Delete',
+      message: `Are you sure you want to delete ${employeeName}? This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      confirmVariant: 'danger',
+      icon: 'warning',
+    });
+    
+    confirm$.pipe(
+      take(1),
+      filter((confirmed: boolean) => confirmed)
+    ).subscribe(() => {
+      // Delete employee through Facade (NgRx architecture)
+      this.employeeFacade.deleteEmployee(employee.id);
+      
+      // Show success notification
+      this.notificationService.success(
+        'Employee Deleted',
+        `${employeeName} has been deleted successfully.`,
+        {
+          duration: 3000,
+          autoClose: true,
+        }
+      );
+      
+      // Reload employees with current search filters after a short delay
+      // to allow the backend to process the deletion
+      setTimeout(() => {
+        this.searchEmployeesWithBackend(this.searchFilters());
+      }, 500);
+    });
   }
 
   onViewEmployee(employee: Employee): void {
     this.selectedEmployeeForDetail = employee;
     this.detailMode = 'view';
     this.isDetailModalOpen = true;
+  }
+
+  /**
+   * Handle table row click event
+   * Converts unknown to Employee type
+   */
+  onRowClick(item: unknown): void {
+    this.onViewEmployee(item as Employee);
   }
 
   onCloseDetailModal(): void {
@@ -583,19 +627,14 @@ export class SearchEmployeeComponent implements OnInit {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEmployeeUpdated(employee: Employee): void {
-    // Reload employees for the selected department
+    // Reload employees with current search filters
     // employee parameter kept for interface compatibility
-    const departmentId = this.selectedDepartmentId();
-    if (departmentId) {
-      this.loadEmployeesByDepartment(departmentId);
-    }
+    this.searchEmployeesWithBackend(this.searchFilters());
   }
 
   onRetryLoad = (): void => {
-    const departmentId = this.selectedDepartmentId();
-    if (departmentId) {
-      this.loadEmployeesByDepartment(departmentId);
-    }
+    // Retry search with current filters
+    this.searchEmployeesWithBackend(this.searchFilters());
   };
 }
 

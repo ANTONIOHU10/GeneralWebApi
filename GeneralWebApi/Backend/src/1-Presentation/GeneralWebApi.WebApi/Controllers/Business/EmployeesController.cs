@@ -42,11 +42,28 @@ public class EmployeesController : BaseController
     }
 
     /// <summary>
+    /// Search employees with advanced filters
+    /// </summary>
+    /// <param name="searchDto">Search criteria including department, position, status, dates, and individual field filters</param>
+    /// <returns>List of employees matching the search criteria with complete employee data</returns>
+    [HttpGet("search")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can search employees
+    public async Task<ActionResult<ApiResponse<List<EmployeeDto>>>> SearchEmployees([FromQuery] EmployeeSearchDto searchDto)
+    {
+        return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
+        {
+            var query = new SearchEmployeesQuery { EmployeeSearchDto = validatedDto };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<EmployeeDto>>.SuccessResult(result, "Employees retrieved successfully"));
+        });
+    }
+
+    /// <summary>
     /// Get employee by ID
     /// </summary>
     /// <param name="id">Employee ID</param>
     /// <returns>Employee details</returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     [Authorize(Policy = "AllRoles")] // All authenticated users can view employee details
     public async Task<ActionResult<ApiResponse<EmployeeDto>>> GetEmployee(int id)
     {
@@ -81,7 +98,7 @@ public class EmployeesController : BaseController
     /// </summary>
     /// <param name="updateDto">Employee update data</param>
     /// <returns>Updated employee</returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can update employees
     public async Task<ActionResult<ApiResponse<EmployeeDto>>> UpdateEmployee([FromBody] UpdateEmployeeDto updateDto)
     {
@@ -98,7 +115,7 @@ public class EmployeesController : BaseController
     /// </summary>
     /// <param name="id">Employee ID</param>
     /// <returns>Deleted employee</returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     [Authorize(Policy = "AdminOnly")] // Only admins can delete employees
     public async Task<ActionResult<ApiResponse<EmployeeDto>>> DeleteEmployee(int id)
     {
@@ -110,20 +127,4 @@ public class EmployeesController : BaseController
         });
     }
 
-    /// <summary>
-    /// Get employees by department
-    /// </summary>
-    /// <param name="departmentId">Department ID</param>
-    /// <returns>List of employees in the department with complete employee data</returns>
-    [HttpGet("department/{departmentId}")]
-    [Authorize(Policy = "AllRoles")] // All authenticated users can view department employees
-    public async Task<ActionResult<ApiResponse<List<EmployeeDto>>>> GetEmployeesByDepartment(int departmentId)
-    {
-        return await ValidateAndExecuteAsync(departmentId, async (validatedId) =>
-        {
-            var query = new GetEmployeesByDepartmentQuery { DepartmentId = validatedId };
-            var result = await _mediator.Send(query);
-            return Ok(ApiResponse<List<EmployeeDto>>.SuccessResult(result, "Department employees retrieved successfully"));
-        });
-    }
 }

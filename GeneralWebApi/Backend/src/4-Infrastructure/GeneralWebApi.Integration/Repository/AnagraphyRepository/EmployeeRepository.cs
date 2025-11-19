@@ -43,7 +43,7 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         return employee;
     }
 
-    public async Task<PagedResult<Employee>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? positionId = null, string? employmentStatus = null, DateTime? hireDateFrom = null, DateTime? hireDateTo = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Employee>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? positionId = null, string? employmentStatus = null, DateTime? hireDateFrom = null, DateTime? hireDateTo = null, string? firstName = null, string? lastName = null, string? email = null, string? employeeNumber = null, string? phone = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
         var query = GetActiveAndEnabledEntities()
             .Include(e => e.Department)
@@ -53,7 +53,7 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
             .AsQueryable();
 
         // Apply search filters
-        query = ApplySearchFilters(query, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo);
+        query = ApplySearchFilters(query, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo, firstName, lastName, email, employeeNumber, phone);
 
         // Apply sorting
         query = ApplySorting(query, sortBy, sortDescending);
@@ -73,14 +73,41 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 
     #region Private Helper Methods
 
-    private static IQueryable<Employee> ApplySearchFilters(IQueryable<Employee> query, string? searchTerm, int? departmentId, int? positionId, string? employmentStatus, DateTime? hireDateFrom, DateTime? hireDateTo)
+    private static IQueryable<Employee> ApplySearchFilters(IQueryable<Employee> query, string? searchTerm, int? departmentId, int? positionId, string? employmentStatus, DateTime? hireDateFrom, DateTime? hireDateTo, string? firstName = null, string? lastName = null, string? email = null, string? employeeNumber = null, string? phone = null)
     {
+        // General search term (searches across multiple fields)
         if (!string.IsNullOrEmpty(searchTerm))
         {
             query = query.Where(e => e.FirstName.Contains(searchTerm) ||
                                    e.LastName.Contains(searchTerm) ||
                                    e.EmployeeNumber.Contains(searchTerm) ||
                                    e.Email.Contains(searchTerm));
+        }
+
+        // Individual field filters (more specific than searchTerm)
+        if (!string.IsNullOrEmpty(firstName))
+        {
+            query = query.Where(e => e.FirstName.Contains(firstName));
+        }
+
+        if (!string.IsNullOrEmpty(lastName))
+        {
+            query = query.Where(e => e.LastName.Contains(lastName));
+        }
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            query = query.Where(e => e.Email.Contains(email));
+        }
+
+        if (!string.IsNullOrEmpty(employeeNumber))
+        {
+            query = query.Where(e => e.EmployeeNumber.Contains(employeeNumber));
+        }
+
+        if (!string.IsNullOrEmpty(phone))
+        {
+            query = query.Where(e => !string.IsNullOrEmpty(e.PhoneNumber) && e.PhoneNumber.Contains(phone));
         }
 
         if (departmentId.HasValue)
