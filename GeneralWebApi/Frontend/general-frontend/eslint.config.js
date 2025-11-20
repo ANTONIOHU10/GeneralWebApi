@@ -2,8 +2,13 @@
 const eslint = require("@eslint/js");
 const tseslint = require("typescript-eslint");
 const angular = require("angular-eslint");
+const prettierConfig = require("eslint-config-prettier");
 
 module.exports = tseslint.config(
+  {
+    // Ignore patterns
+    ignores: ["projects/**/*", "dist/**/*", "node_modules/**/*"],
+  },
   {
     files: ["**/*.ts"],
     extends: [
@@ -14,6 +19,7 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      // Angular-specific rules
       "@angular-eslint/directive-selector": [
         "error",
         {
@@ -30,7 +36,14 @@ module.exports = tseslint.config(
           style: "kebab-case",
         },
       ],
-      "eol-last": "off", // Disable file ending newline requirement
+      // TypeScript rules
+      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/no-explicit-any": "warn",
+      // General rules
+      "prefer-const": "error",
+      "eol-last": "off", // Disable file ending newline requirement (handled by Prettier)
+      // Prettier integration - disable conflicting rules
+      ...prettierConfig,
     },
   },
   {
