@@ -1,13 +1,5 @@
 可以添加的功能
 
-1. 按部门查看员工（未实现）
-   使用 API: GET /api/v1/employees/department/{departmentId}
-   功能建议：
-   在部门管理页面添加“查看员工”按钮
-   在员工列表中添加“按部门筛选”功能
-   创建“部门员工视图”组件
-   实现示例：
-   // 在 employee.service.ts 中添加 getEmployeesByDepartment(departmentId: number): Observable<Employee[]> { return this.get<BackendEmployee[]>( `${this.endpoint}/department/${departmentId}` ).pipe( map(employees => employees.map(emp => this.transformBackendEmployee(emp))) );}
 2. 员工导出功能
    功能：
    导出为 Excel/CSV

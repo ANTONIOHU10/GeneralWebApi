@@ -3,44 +3,291 @@
   <div class="page-header">
     <h2>
       <span class="material-icons">assessment</span>
-      Employee Reports
+      Employee Statistics & Reports
     </h2>
-    <p>Generate and view employee-related reports and analytics</p>
+    <p>Comprehensive analytics and insights about your workforce</p>
   </div>
 
   <div class="page-content">
-    <!-- 报告卡片网格 -->
-    <div class="grid grid--auto-fit">
-    
+    <app-base-async-state
+      [loading$]="loading$"
+      [error$]="error$"
+      [data$]="employees$"
+      (retry)="onRetryLoad()"
+    >
+      <ng-container *ngIf="statistics$ | async as stats">
+        <!-- Statistics Cards -->
+        <div class="statistics-grid">
+          <app-base-card
+            *ngFor="let stat of stats.statCards"
+            [title]="stat.title"
+            [icon]="stat.icon"
+            [customClass]="'stat-card stat-card--' + (stat.color || 'primary')"
+          >
+            <div class="stat-content">
+              <div class="stat-value">{{ stat.value }}</div>
+              <div class="stat-trend" *ngIf="stat.trend">
+                <span class="material-icons trend-icon" [class.positive]="stat.trend.positive" [class.negative]="!stat.trend.positive">
+                  {{ stat.trend.positive ? 'trending_up' : 'trending_down' }}
+                </span>
+                <span class="trend-text">{{ stat.trend.value }}% {{ stat.trend.label }}</span>
+              </div>
+            </div>
+          </app-base-card>
+        </div>
 
-
-    </div>
-
-    <!-- Employee Data Table -->
-    <div class="employee-data">
-      <h3>Employee Data (Test)</h3>
-
-      <app-base-async-state
-        [loading$]="loading$"
-        [error$]="error$"
-        [data$]="employees$"
-        (retry)="onRetryLoad()"
-      >
-        <ng-container *ngIf="employees$ | async as employees">
+        <!-- Department Distribution -->
+        <div class="statistics-section">
+          <h3>
+            <span class="material-icons">business</span>
+            Department Distribution
+          </h3>
           <app-base-table
-            [data]="employees"
-            [columns]="employeeColumns"
-            [actions]="employeeActions"
+            [data]="stats.departmentStats"
+            [columns]="departmentColumns"
             [config]="{
+              showHeader: true,
               striped: true,
               hoverable: true,
-              showPagination: true,
+              showPagination: false,
+              showSearch: false,
             }"
-            class="employee-table"
+            class="statistics-table"
           >
           </app-base-table>
-        </ng-container>
-      </app-base-async-state>
-    </div>
+        </div>
+
+        <!-- Status Distribution -->
+        <div class="statistics-section">
+          <h3>
+            <span class="material-icons">info</span>
+            Employment Status Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.statusStats"
+            [columns]="statusColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Position Distribution -->
+        <div class="statistics-section" *ngIf="stats.positionStats.length > 0">
+          <h3>
+            <span class="material-icons">work</span>
+            Position Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.positionStats"
+            [columns]="positionColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Salary Range Distribution -->
+        <div class="statistics-section" *ngIf="stats.salaryRangeStats.length > 0">
+          <h3>
+            <span class="material-icons">attach_money</span>
+            Salary Range Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.salaryRangeStats"
+            [columns]="salaryRangeColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Hiring Trends -->
+        <div class="statistics-section" *ngIf="stats.hiringTrendStats.length > 0">
+          <h3>
+            <span class="material-icons">trending_up</span>
+            Hiring Trends (Last 12 Months)
+          </h3>
+          <app-base-table
+            [data]="stats.hiringTrendStats"
+            [columns]="hiringTrendColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Employment Type Distribution -->
+        <div class="statistics-section" *ngIf="stats.employmentTypeStats.length > 0">
+          <h3>
+            <span class="material-icons">badge</span>
+            Employment Type Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.employmentTypeStats"
+            [columns]="employmentTypeColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- City Distribution -->
+        <div class="statistics-section" *ngIf="stats.cityStats.length > 0">
+          <h3>
+            <span class="material-icons">location_city</span>
+            Top Cities Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.cityStats"
+            [columns]="locationColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Country Distribution -->
+        <div class="statistics-section" *ngIf="stats.countryStats.length > 0">
+          <h3>
+            <span class="material-icons">public</span>
+            Country Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.countryStats"
+            [columns]="locationColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Contract Type Distribution -->
+        <div class="statistics-section" *ngIf="stats.contractTypeStats.length > 0">
+          <h3>
+            <span class="material-icons">description</span>
+            Contract Type Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.contractTypeStats"
+            [columns]="contractTypeColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Working Hours Distribution -->
+        <div class="statistics-section" *ngIf="stats.workingHoursStats.length > 0">
+          <h3>
+            <span class="material-icons">schedule</span>
+            Working Hours Distribution
+          </h3>
+          <app-base-table
+            [data]="stats.workingHoursStats"
+            [columns]="workingHoursColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Department Salary Comparison -->
+        <div class="statistics-section" *ngIf="stats.departmentSalaryStats.length > 0">
+          <h3>
+            <span class="material-icons">compare_arrows</span>
+            Department Salary Comparison
+          </h3>
+          <app-base-table
+            [data]="stats.departmentSalaryStats"
+            [columns]="departmentSalaryColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+
+        <!-- Recent Hires -->
+        <div class="statistics-section" *ngIf="stats.recentHires.length > 0">
+          <h3>
+            <span class="material-icons">person_add</span>
+            Recent Hires (Last 90 Days)
+          </h3>
+          <app-base-table
+            [data]="stats.recentHires"
+            [columns]="recentHiresColumns"
+            [config]="{
+              showHeader: true,
+              striped: true,
+              hoverable: true,
+              showPagination: false,
+              showSearch: false,
+            }"
+            class="statistics-table"
+          >
+          </app-base-table>
+        </div>
+      </ng-container>
+    </app-base-async-state>
   </div>
 </div>

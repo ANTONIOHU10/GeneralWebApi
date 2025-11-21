@@ -53,6 +53,7 @@
 
 .base-table {
   width: 100%;
+  table-layout: fixed; // Fixed table layout for consistent column widths
   border-collapse: separate;
   border-spacing: 0;
   background: var(--bg-surface);
@@ -98,6 +99,11 @@
 }
 
 .table-header-row {
+  th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   background: var(--bg-secondary);
 
   th {
@@ -194,6 +200,16 @@
     vertical-align: middle;
     font-size: $font-size-sm;
     line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    
+    // For number and percentage columns, prevent wrapping
+    &[style*="text-align: right"],
+    &[style*="text-align: center"] {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     &.actions-cell {
       text-align: center;
