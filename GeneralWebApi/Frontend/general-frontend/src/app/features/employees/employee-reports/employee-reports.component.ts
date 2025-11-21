@@ -1,115 +1,142 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-reports/employee-reports.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BehaviorSubject, catchError, of } from 'rxjs';
 import { BaseButtonComponent } from '../../../Shared/components/base/base-button/base-button.component';
 import { BaseCardComponent } from '../../../Shared/components/base/base-card/base-card.component';
 import { BaseTableComponent } from '../../../Shared/components/base/base-table/base-table.component';
+import { BaseAsyncStateComponent } from '../../../Shared/components/base/base-async-state/base-async-state.component';
+import { EmployeeService } from '@core/services/employee.service';
+import { NotificationService } from '../../../Shared/services/notification.service';
+import { Employee } from 'app/contracts/employees/employee.model';
+import { TableColumn, TableAction } from '../../../Shared/components/base';
 
 @Component({
   selector: 'app-employee-reports',
   standalone: true,
   imports: [
     CommonModule,
-    BaseButtonComponent,
-    BaseCardComponent,
     BaseTableComponent,
+    BaseAsyncStateComponent,
   ],
   templateUrl: './employee-reports.component.html',
   styleUrls: ['./employee-reports.component.scss'],
 })
-export class EmployeeReportsComponent {
-  // 报告卡片数据
-  reportCards = [
-    {
-      icon: 'people',
-      title: 'Department Overview',
-      description: 'Employee distribution by department',
-      action: 'Generate Report',
-    },
-    {
-      icon: 'trending_up',
-      title: 'Hiring Trends',
-      description: 'Monthly hiring statistics and trends',
-      action: 'Generate Report',
-    },
-    {
-      icon: 'attach_money',
-      title: 'Salary Analysis',
-      description: 'Salary distribution and analysis',
-      action: 'Generate Report',
-    },
-    {
-      icon: 'event',
-      title: 'Attendance Report',
-      description: 'Employee attendance and leave records',
-      action: 'Generate Report',
-    },
-    {
-      icon: 'gps_fixed',
-      title: 'Performance Review',
-      description: 'Employee performance evaluation reports',
-      action: 'Generate Report',
-    },
-    {
-      icon: 'description',
-      title: 'Custom Report',
-      description: 'Create custom reports with specific criteria',
-      action: 'Create Report',
-    },
-  ];
+export class EmployeeReportsComponent implements OnInit {
+  private employeeService = inject(EmployeeService);
+  private notificationService = inject(NotificationService);
 
-  // 最近报告数据
-  recentReports = [
-    {
-      id: 1,
-      title: 'Department Overview - December 2024',
-      generatedDate: 'Dec 19, 2024 at 10:30 AM',
-      status: 'completed',
-    },
-    {
-      id: 2,
-      title: 'Hiring Trends - Q4 2024',
-      generatedDate: 'Dec 15, 2024 at 2:15 PM',
-      status: 'completed',
-    },
-  ];
+  // Employee data state - using BehaviorSubject for Observable compatibility
+  employees$ = new BehaviorSubject<Employee[]>([]);
+  loading$ = new BehaviorSubject<boolean>(false);
+  error$ = new BehaviorSubject<string | null>(null);
+  
 
-  // 表格列定义
-  reportColumns = [
-    { key: 'title', label: 'Report Name', sortable: true },
-    { key: 'generatedDate', label: 'Generated', sortable: true },
+  // Table columns for employee data
+  employeeColumns: TableColumn[] = [
+    { key: 'firstName', label: 'First Name', sortable: true },
+    { key: 'lastName', label: 'Last Name', sortable: true },
+    { key: 'email', label: 'Email', sortable: true },
+    { key: 'employeeNumber', label: 'Employee Number', sortable: true },
+    { key: 'department', label: 'Department', sortable: true },
+    { key: 'position', label: 'Position', sortable: true },
     { key: 'status', label: 'Status', sortable: true },
   ];
 
-  // 表格操作
-  reportActions = [
+  // Table actions
+  employeeActions: TableAction[] = [
     {
       label: 'View',
       icon: 'visibility',
-      onClick: (item: unknown) => this.viewReport(item),
-    },
-    {
-      label: 'Download',
-      icon: 'download',
-      onClick: (item: unknown) => this.downloadReport(item),
+      variant: 'ghost',
+      showLabel: false,
+      onClick: (item: unknown) => this.viewEmployee(item as Employee),
     },
   ];
 
-  // 生成报告
-  generateReport(reportType: string) {
-    console.log('Generating report:', reportType);
-    // 这里添加实际的报告生成逻辑
+  ngOnInit(): void {
+    this.loadEmployees();
   }
 
-  // 查看报告
-  viewReport(report: unknown) {
-    console.log('Viewing report:', report);
-    // 这里添加查看报告的逻辑
+  /**
+   * Load employees from backend
+   */
+  loadEmployees(): void {
+    this.loading$.next(true);
+    this.error$.next(null);
+
+    this.employeeService.getEmployees({
+      pageNumber: 1,
+      pageSize: 100, // Load first 100 employees for testing
+    }).pipe(
+      catchError(err => {
+        const errorMessage = err.message || 'Failed to load employees';
+        this.error$.next(errorMessage);
+        this.loading$.next(false);
+        
+        this.notificationService.error(
+          'Load Failed',
+          errorMessage,
+          {
+            duration: 5000,
+            persistent: false,
+            autoClose: true,
+          }
+        );
+        
+        return of(null);
+      })
+    ).subscribe({
+      next: (response) => {
+        if (response?.data) {
+          this.employees$.next(response.data);
+          this.notificationService.success(
+            'Data Loaded',
+            `Successfully loaded ${response.data.length} employee(s)`,
+            {
+              duration: 3000,
+              autoClose: true,
+            }
+          );
+        }
+        this.loading$.next(false);
+      }
+    });
   }
 
-  // 下载报告
-  downloadReport(report: unknown) {
-    console.log('Downloading report:', report);
-    // 这里添加下载报告的逻辑
+  /**
+   * View employee details
+   */
+  viewEmployee(employee: Employee): void {
+    this.notificationService.info(
+      'View Employee',
+      `Viewing ${employee.firstName} ${employee.lastName}`,
+      {
+        duration: 3000,
+        autoClose: true,
+      }
+    );
   }
+
+  /**
+   * Generate report (reload data)
+   */
+  generateReport(reportType: string): void {
+    this.loadEmployees();
+    this.notificationService.info(
+      'Report Generated',
+      `${reportType} report has been generated successfully.`,
+      {
+        duration: 3000,
+        autoClose: true,
+      }
+    );
+  }
+
+  /**
+   * Retry loading employees
+   */
+  onRetryLoad = (): void => {
+    this.loadEmployees();
+  };
 }

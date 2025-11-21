@@ -11,39 +11,36 @@
   <div class="page-content">
     <!-- 报告卡片网格 -->
     <div class="grid grid--auto-fit">
-      <app-base-card
-        *ngFor="let card of reportCards"
-        [title]="card.title"
-        [icon]="card.icon"
-        [class]="'report-card'"
-      >
-        <p class="report-description">{{ card.description }}</p>
+    
 
-        <app-base-button
-          [variant]="'primary'"
-          [text]="card.action"
-          (click)="generateReport(card.title)"
-        >
-        </app-base-button>
-      </app-base-card>
+
     </div>
 
-    <!-- 最近报告表格 -->
-    <div class="recent-reports">
-      <h3>Recent Reports</h3>
+    <!-- Employee Data Table -->
+    <div class="employee-data">
+      <h3>Employee Data (Test)</h3>
 
-      <app-base-table
-        [data]="recentReports"
-        [columns]="reportColumns"
-        [actions]="reportActions"
-        [config]="{
-          striped: true,
-          hoverable: true,
-          showPagination: false,
-        }"
-        class="report-table"
+      <app-base-async-state
+        [loading$]="loading$"
+        [error$]="error$"
+        [data$]="employees$"
+        (retry)="onRetryLoad()"
       >
-      </app-base-table>
+        <ng-container *ngIf="employees$ | async as employees">
+          <app-base-table
+            [data]="employees"
+            [columns]="employeeColumns"
+            [actions]="employeeActions"
+            [config]="{
+              striped: true,
+              hoverable: true,
+              showPagination: true,
+            }"
+            class="employee-table"
+          >
+          </app-base-table>
+        </ng-container>
+      </app-base-async-state>
     </div>
   </div>
 </div>
