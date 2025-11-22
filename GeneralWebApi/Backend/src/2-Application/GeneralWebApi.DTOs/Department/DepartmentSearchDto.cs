@@ -7,6 +7,10 @@ public class DepartmentSearchDto
     public string? SearchTerm { get; set; }
     public int? ParentDepartmentId { get; set; }
     public int? Level { get; set; }
+    // Individual field filters for advanced search
+    public string? Name { get; set; }
+    public string? Code { get; set; }
+    public string? Description { get; set; }
     public string? SortBy { get; set; } = "Name";
     public bool SortDescending { get; set; } = false;
 }

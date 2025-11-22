@@ -121,5 +121,43 @@ export class PositionService extends BaseHttpService {
       )
     );
   }
+
+  // Search positions with advanced filters
+  searchPositionsWithFilters(searchParams: {
+    title?: string;
+    code?: string;
+    description?: string;
+    departmentId?: number | null;
+    level?: number | null;
+    isManagement?: boolean | null;
+  }): Observable<Position[]> {
+    // Build query parameters, only including non-empty values
+    const params: Record<string, string> = {};
+
+    if (searchParams.title && searchParams.title.trim()) {
+      params['title'] = searchParams.title.trim();
+    }
+    if (searchParams.code && searchParams.code.trim()) {
+      params['code'] = searchParams.code.trim();
+    }
+    if (searchParams.description && searchParams.description.trim()) {
+      params['description'] = searchParams.description.trim();
+    }
+    if (searchParams.departmentId !== null && searchParams.departmentId !== undefined) {
+      params['departmentId'] = searchParams.departmentId.toString();
+    }
+    if (searchParams.level !== null && searchParams.level !== undefined) {
+      params['level'] = searchParams.level.toString();
+    }
+    if (searchParams.isManagement !== null && searchParams.isManagement !== undefined) {
+      params['isManagement'] = searchParams.isManagement.toString();
+    }
+
+    return this.get<BackendPosition[]>(`${this.endpoint}/search`, params).pipe(
+      map(backendPositions =>
+        backendPositions.map(item => this.transformBackendPosition(item))
+      )
+    );
+  }
 }
 

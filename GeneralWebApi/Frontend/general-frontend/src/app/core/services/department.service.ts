@@ -123,5 +123,39 @@ export class DepartmentService extends BaseHttpService {
       )
     );
   }
+
+  // Search departments with advanced filters
+  searchDepartmentsWithFilters(searchParams: {
+    name?: string;
+    code?: string;
+    description?: string;
+    parentDepartmentId?: number | null;
+    level?: number | null;
+  }): Observable<Department[]> {
+    // Build query parameters, only including non-empty values
+    const params: Record<string, string> = {};
+
+    if (searchParams.name && searchParams.name.trim()) {
+      params['name'] = searchParams.name.trim();
+    }
+    if (searchParams.code && searchParams.code.trim()) {
+      params['code'] = searchParams.code.trim();
+    }
+    if (searchParams.description && searchParams.description.trim()) {
+      params['description'] = searchParams.description.trim();
+    }
+    if (searchParams.parentDepartmentId !== null && searchParams.parentDepartmentId !== undefined) {
+      params['parentDepartmentId'] = searchParams.parentDepartmentId.toString();
+    }
+    if (searchParams.level !== null && searchParams.level !== undefined) {
+      params['level'] = searchParams.level.toString();
+    }
+
+    return this.get<BackendDepartment[]>(`${this.endpoint}/search`, params).pipe(
+      map(backendDepartments =>
+        backendDepartments.map(item => this.transformBackendDepartment(item))
+      )
+    );
+  }
 }
 

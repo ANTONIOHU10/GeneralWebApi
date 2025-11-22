@@ -56,6 +56,11 @@
   <div *ngIf="activeTab() === 'add'">
     <app-add-department (departmentCreated)="onDepartmentCreated()"></app-add-department>
   </div>
+
+  <!-- Search Department Tab Content -->
+  <div *ngIf="activeTab() === 'search'">
+    <app-search-department></app-search-department>
+  </div>
 </app-base-private-page-container>
 
 <!-- Department Detail Modal -->

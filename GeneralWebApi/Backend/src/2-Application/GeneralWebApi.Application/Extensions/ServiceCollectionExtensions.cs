@@ -89,6 +89,7 @@ public static class ServiceCollectionExtensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetDepartmentsQueryHandler).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetDepartmentHierarchyQueryHandler).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetDepartmentsByParentQueryHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SearchDepartmentsQueryHandler).Assembly));
         services.AddScoped<IValidator<CreateDepartmentDto>, CreateDepartmentDtoValidator>();
         services.AddScoped<IValidator<UpdateDepartmentDto>, UpdateDepartmentDtoValidator>();
         services.AddScoped<IValidator<DepartmentSearchDto>, DepartmentSearchDtoValidator>();
@@ -103,6 +104,7 @@ public static class ServiceCollectionExtensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetPositionByIdQueryHandler).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetPositionsQueryHandler).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetPositionsByDepartmentQueryHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SearchPositionsQueryHandler).Assembly));
         services.AddScoped<IValidator<CreatePositionDto>, CreatePositionDtoValidator>();
         services.AddScoped<IValidator<UpdatePositionDto>, UpdatePositionDtoValidator>();
         services.AddScoped<IValidator<PositionSearchDto>, PositionSearchDtoValidator>();

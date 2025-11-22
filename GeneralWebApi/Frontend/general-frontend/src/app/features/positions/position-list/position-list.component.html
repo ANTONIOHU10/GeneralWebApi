@@ -56,6 +56,11 @@
   <div *ngIf="activeTab() === 'add'">
     <app-add-position (positionCreated)="onPositionCreated()"></app-add-position>
   </div>
+
+  <!-- Search Position Tab Content -->
+  <div *ngIf="activeTab() === 'search'">
+    <app-search-position></app-search-position>
+  </div>
 </app-base-private-page-container>
 
 <!-- Position Detail Modal -->

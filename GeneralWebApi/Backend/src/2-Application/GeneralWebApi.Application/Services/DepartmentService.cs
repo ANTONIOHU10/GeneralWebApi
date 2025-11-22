@@ -79,6 +79,9 @@ public class DepartmentService : IDepartmentService
             searchDto.SearchTerm,
             searchDto.ParentDepartmentId,
             searchDto.Level,
+            searchDto.Name,
+            searchDto.Code,
+            searchDto.Description,
             searchDto.SortBy,
             searchDto.SortDescending,
             cancellationToken);

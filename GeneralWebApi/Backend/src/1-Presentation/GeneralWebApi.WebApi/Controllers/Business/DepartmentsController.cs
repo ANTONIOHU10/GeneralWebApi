@@ -42,6 +42,23 @@ public class DepartmentsController : BaseController
     }
 
     /// <summary>
+    /// Search departments with advanced filters
+    /// </summary>
+    /// <param name="searchDto">Search criteria including name, code, description, parent department, and level</param>
+    /// <returns>List of departments matching the search criteria</returns>
+    [HttpGet("search")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can search departments
+    public async Task<ActionResult<ApiResponse<List<DepartmentDto>>>> SearchDepartments([FromQuery] DepartmentSearchDto searchDto)
+    {
+        return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
+        {
+            var query = new SearchDepartmentsQuery { DepartmentSearchDto = validatedDto };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<DepartmentDto>>.SuccessResult(result, "Departments retrieved successfully"));
+        });
+    }
+
+    /// <summary>
     /// Get department by ID
     /// </summary>
     /// <param name="id">Department ID</param>

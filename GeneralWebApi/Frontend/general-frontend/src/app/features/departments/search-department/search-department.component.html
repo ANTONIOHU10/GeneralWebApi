@@ -1,0 +1,81 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/search-department/search-department.component.html -->
+<div class="search-department-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">search</span>
+      Search Department
+    </h2>
+    <p>Search and filter departments by various criteria</p>
+  </div>
+
+  <!-- Search Form Section -->
+  <div class="search-section">
+    <app-base-card
+      [title]="'Search & Filter Departments'"
+      [icon]="'search'"
+      [variant]="'elevated'"
+    >
+      <div class="search-stats" *ngIf="allDepartments().length > 0">
+        <span class="stat-text">
+          Showing {{ allDepartments().length }} department(s)
+        </span>
+      </div>
+
+      <div class="search-form-container">
+        <app-base-form
+          [config]="searchFormConfig"
+          [formData]="searchFilters()"
+          [loading]="loading()"
+          [fieldLoading]="fieldLoading()"
+          (formSubmit)="onSearchFormSubmit($event)"
+          (formCancel)="onSearchFormCancel()"
+          (fieldDropdownOpen)="onFieldDropdownOpen($event.key)"
+        ></app-base-form>
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Departments List -->
+  <div class="departments-section">
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="departmentsData$"
+      loadingMessage="Loading departments..."
+      emptyTitle="No departments found"
+      emptyDescription="No departments match your search criteria"
+      [onRetry]="onRetryLoad"
+    >
+      <!-- Success content: Department table -->
+      <app-base-table
+        [data]="allDepartments()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{
+          showHeader: true,
+          showFooter: true,
+          showPagination: true,
+          showSearch: false,
+          showActions: true,
+          striped: true,
+          hoverable: true,
+          bordered: false,
+          size: 'medium',
+          loading: false,
+          emptyMessage: 'No departments match your search criteria'
+        }"
+        [pageSize]="10"
+        (rowClick)="onRowClick($event)"
+      ></app-base-table>
+    </app-base-async-state>
+  </div>
+</div>
+
+<!-- Department Detail Modal -->
+<app-department-detail
+  [department]="selectedDepartmentForDetail"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (departmentUpdated)="onDepartmentUpdated($event)"
+></app-department-detail>
+

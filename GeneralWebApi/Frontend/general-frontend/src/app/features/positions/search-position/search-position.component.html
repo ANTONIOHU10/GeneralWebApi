@@ -1,0 +1,81 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/search-position/search-position.component.html -->
+<div class="search-position-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">search</span>
+      Search Position
+    </h2>
+    <p>Search and filter positions by various criteria</p>
+  </div>
+
+  <!-- Search Form Section -->
+  <div class="search-section">
+    <app-base-card
+      [title]="'Search & Filter Positions'"
+      [icon]="'search'"
+      [variant]="'elevated'"
+    >
+      <div class="search-stats" *ngIf="allPositions().length > 0">
+        <span class="stat-text">
+          Showing {{ allPositions().length }} position(s)
+        </span>
+      </div>
+
+      <div class="search-form-container">
+        <app-base-form
+          [config]="searchFormConfig"
+          [formData]="searchFilters()"
+          [loading]="loading()"
+          [fieldLoading]="fieldLoading()"
+          (formSubmit)="onSearchFormSubmit($event)"
+          (formCancel)="onSearchFormCancel()"
+          (fieldDropdownOpen)="onFieldDropdownOpen($event.key)"
+        ></app-base-form>
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Positions List -->
+  <div class="positions-section">
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="positionsData$"
+      loadingMessage="Loading positions..."
+      emptyTitle="No positions found"
+      emptyDescription="No positions match your search criteria"
+      [onRetry]="onRetryLoad"
+    >
+      <!-- Success content: Position table -->
+      <app-base-table
+        [data]="allPositions()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{
+          showHeader: true,
+          showFooter: true,
+          showPagination: true,
+          showSearch: false,
+          showActions: true,
+          striped: true,
+          hoverable: true,
+          bordered: false,
+          size: 'medium',
+          loading: false,
+          emptyMessage: 'No positions match your search criteria'
+        }"
+        [pageSize]="10"
+        (rowClick)="onRowClick($event)"
+      ></app-base-table>
+    </app-base-async-state>
+  </div>
+</div>
+
+<!-- Position Detail Modal -->
+<app-position-detail
+  [position]="selectedPositionForDetail"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (positionUpdated)="onPositionUpdated($event)"
+></app-position-detail>
+

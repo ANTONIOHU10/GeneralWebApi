@@ -6,6 +6,7 @@ import { takeUntil, filter, take } from 'rxjs/operators';
 import { DepartmentCardComponent } from '../department-card/department-card.component';
 import { AddDepartmentComponent } from '../add-department/add-department.component';
 import { DepartmentDetailComponent } from '../department-detail/department-detail.component';
+import { SearchDepartmentComponent } from '../search-department/search-department.component';
 import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
@@ -28,6 +29,7 @@ import {
     DepartmentCardComponent,
     AddDepartmentComponent,
     DepartmentDetailComponent,
+    SearchDepartmentComponent,
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
@@ -51,7 +53,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
   operationInProgress$ = this.departmentFacade.operationInProgress$;
 
   // Local state
-  activeTab = signal<'list' | 'add'>('list');
+  activeTab = signal<'list' | 'add' | 'search'>('list');
   selectedDepartmentForDetail: Department | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
@@ -60,6 +62,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
   tabs: TabItem[] = [
     { id: 'list', label: 'Department List', icon: 'list' },
     { id: 'add', label: 'Add Department', icon: 'add' },
+    { id: 'search', label: 'Search Department', icon: 'search' },
   ];
 
   ngOnInit() {
@@ -140,12 +143,12 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
     // Don't reload - the store automatically adds the new department to the list
   }
 
-  setActiveTab(tab: 'list' | 'add'): void {
+  setActiveTab(tab: 'list' | 'add' | 'search'): void {
     this.activeTab.set(tab);
   }
 
   onTabChange(tabId: string): void {
-    const newTab = tabId as 'list' | 'add';
+    const newTab = tabId as 'list' | 'add' | 'search';
     this.setActiveTab(newTab);
 
     if (newTab === 'list') {

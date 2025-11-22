@@ -29,6 +29,22 @@ public class PositionsController : BaseController
         });
     }
 
+    /// <summary>
+    /// Search positions with advanced filters
+    /// </summary>
+    /// <param name="searchDto">Search criteria including title, code, description, department, level, and management status</param>
+    /// <returns>List of positions matching the search criteria</returns>
+    [HttpGet("search")]
+    public async Task<ActionResult<ApiResponse<List<PositionDto>>>> SearchPositions([FromQuery] PositionSearchDto searchDto)
+    {
+        return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
+        {
+            var query = new SearchPositionsQuery { PositionSearchDto = validatedDto };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<PositionDto>>.SuccessResult(result, "Positions retrieved successfully"));
+        });
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResponse<PositionDto>>> GetPosition(int id)
     {

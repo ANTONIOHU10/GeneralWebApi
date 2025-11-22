@@ -6,6 +6,7 @@ import { takeUntil, filter, take } from 'rxjs/operators';
 import { PositionCardComponent } from '../position-card/position-card.component';
 import { AddPositionComponent } from '../add-position/add-position.component';
 import { PositionDetailComponent } from '../position-detail/position-detail.component';
+import { SearchPositionComponent } from '../search-position/search-position.component';
 import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
@@ -28,6 +29,7 @@ import {
     PositionCardComponent,
     AddPositionComponent,
     PositionDetailComponent,
+    SearchPositionComponent,
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
@@ -51,7 +53,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
   operationInProgress$ = this.positionFacade.operationInProgress$;
 
   // Local state
-  activeTab = signal<'list' | 'add'>('list');
+  activeTab = signal<'list' | 'add' | 'search'>('list');
   selectedPositionForDetail: Position | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
@@ -60,6 +62,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
   tabs: TabItem[] = [
     { id: 'list', label: 'Position List', icon: 'list' },
     { id: 'add', label: 'Add Position', icon: 'add' },
+    { id: 'search', label: 'Search Position', icon: 'search' },
   ];
 
   ngOnInit() {
@@ -140,12 +143,12 @@ export class PositionListComponent implements OnInit, OnDestroy {
     // Don't reload - the store automatically adds the new position to the list
   }
 
-  setActiveTab(tab: 'list' | 'add'): void {
+  setActiveTab(tab: 'list' | 'add' | 'search'): void {
     this.activeTab.set(tab);
   }
 
   onTabChange(tabId: string): void {
-    const newTab = tabId as 'list' | 'add';
+    const newTab = tabId as 'list' | 'add' | 'search';
     this.setActiveTab(newTab);
 
     if (newTab === 'list') {

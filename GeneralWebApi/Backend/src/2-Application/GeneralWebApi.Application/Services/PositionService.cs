@@ -79,6 +79,9 @@ public class PositionService : IPositionService
             searchDto.DepartmentId,
             searchDto.Level,
             searchDto.IsManagement,
+            searchDto.Title,
+            searchDto.Code,
+            searchDto.Description,
             searchDto.SortBy,
             searchDto.SortDescending,
             cancellationToken);

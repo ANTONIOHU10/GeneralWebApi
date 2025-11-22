@@ -19,14 +19,14 @@ public class DepartmentRepository : BaseRepository<Department>, IDepartmentRepos
             .AnyAsync(d => d.Code == code, cancellationToken);
     }
 
-    public async Task<PagedResult<Department>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? parentDepartmentId = null, int? level = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Department>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? parentDepartmentId = null, int? level = null, string? name = null, string? code = null, string? description = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
         var query = GetActiveAndEnabledEntities()
             .Include(d => d.ParentDepartment)
             .AsQueryable();
 
         // Apply search filters
-        query = ApplySearchFilters(query, searchTerm, parentDepartmentId, level);
+        query = ApplySearchFilters(query, searchTerm, parentDepartmentId, level, name, code, description);
 
         // Apply sorting
         query = ApplySorting(query, sortBy, sortDescending);
@@ -64,13 +64,30 @@ public class DepartmentRepository : BaseRepository<Department>, IDepartmentRepos
 
     #region Private Helper Methods
 
-    private static IQueryable<Department> ApplySearchFilters(IQueryable<Department> query, string? searchTerm, int? parentDepartmentId, int? level)
+    private static IQueryable<Department> ApplySearchFilters(IQueryable<Department> query, string? searchTerm, int? parentDepartmentId, int? level, string? name = null, string? code = null, string? description = null)
     {
+        // General search term (searches across multiple fields)
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             query = query.Where(d => d.Name.Contains(searchTerm) ||
                                    d.Code.Contains(searchTerm) ||
                                    d.Description.Contains(searchTerm));
+        }
+
+        // Individual field filters (more specific than searchTerm)
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            query = query.Where(d => d.Name.Contains(name));
+        }
+
+        if (!string.IsNullOrWhiteSpace(code))
+        {
+            query = query.Where(d => d.Code.Contains(code));
+        }
+
+        if (!string.IsNullOrWhiteSpace(description))
+        {
+            query = query.Where(d => d.Description.Contains(description));
         }
 
         if (parentDepartmentId.HasValue)
