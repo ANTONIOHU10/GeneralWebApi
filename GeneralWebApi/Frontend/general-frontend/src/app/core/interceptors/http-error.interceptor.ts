@@ -14,12 +14,14 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       let message = 'Request error';
 
       // Extract error message from various formats
-      // Priority: message > error > validation errors > statusText
+      // Priority: message (detailed) > error (title) > validation errors > statusText
+      // Backend follows consistent format: error = short title, message = detailed errors
       if (error?.error) {
-        // Priority 1: Check for ApiResponse message format (most detailed)
-        if (error.error.message) {
+        // Priority 1: Check for ApiResponse message format (detailed error information)
+        // Backend now consistently puts detailed errors in message field
+        if (error.error.message && error.error.message.trim()) {
           message = error.error.message;
-          console.log('✅ Extracted from error.error.message (priority):', message);
+          console.log('✅ Extracted from error.error.message (priority - detailed):', message);
         }
         // Priority 2: Check for ASP.NET Core validation errors
         else if (error.error.errors && typeof error.error.errors === 'object') {
@@ -32,10 +34,11 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
           message = validationErrors;
           console.log('✅ Extracted validation errors:', message);
         }
-        // Priority 3: Check for ApiResponse error format (error title/type)
-        else if (error.error.error) {
+        // Priority 3: Check for ApiResponse error format (short title/type)
+        // Use error field as fallback if message is not available
+        else if (error.error.error && error.error.error.trim()) {
           message = error.error.error;
-          console.log('✅ Extracted from error.error.error:', message);
+          console.log('✅ Extracted from error.error.error (fallback - title):', message);
         }
         // Fallback to statusText
         else if (error.statusText) {

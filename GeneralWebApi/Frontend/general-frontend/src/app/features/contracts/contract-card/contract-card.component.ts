@@ -68,11 +68,11 @@ export class ContractCardComponent {
 
   getContractTypeLabel(type: string): string {
     const typeMap: Record<string, string> = {
-      'Indefinite': 'Indefinite (无限期)',
-      'Fixed': 'Fixed Term (固定期限)',
-      'PartTime': 'Part Time (兼职)',
-      'Temporary': 'Temporary (临时)',
-      'Internship': 'Internship (实习)',
+      'Indefinite': 'Indefinite',
+      'Fixed': 'Fixed Term',
+      'PartTime': 'Part Time',
+      'Temporary': 'Temporary',
+      'Internship': 'Internship',
     };
     return typeMap[type] || type;
   }

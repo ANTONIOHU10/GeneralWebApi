@@ -44,3 +44,21 @@ export interface RejectionActionRequest {
   reason: string;
 }
 
+// Backend contract approval data format - matches ContractApprovalDto
+export interface BackendContractApproval {
+  id: number;
+  contractId: number;
+  status: string;
+  comments?: string | null;
+  requestedBy: string;
+  requestedAt: string;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  rejectionReason?: string | null;
+  currentApprovalLevel: number;
+  maxApprovalLevel: number;
+  approvalSteps: ContractApprovalStep[];
+}
+

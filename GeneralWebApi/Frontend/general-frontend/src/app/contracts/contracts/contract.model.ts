@@ -57,18 +57,29 @@ export interface UpdateContractRequest {
 
 // Contract type options
 export const CONTRACT_TYPES = [
-  { value: 'Indefinite', label: 'Indefinite (无限期)' },
-  { value: 'Fixed', label: 'Fixed Term (固定期限)' },
-  { value: 'PartTime', label: 'Part Time (兼职)' },
-  { value: 'Temporary', label: 'Temporary (临时)' },
-  { value: 'Internship', label: 'Internship (实习)' },
+  { value: 'Indefinite', label: 'Indefinite' },
+  { value: 'Fixed', label: 'Fixed Term' },
+  { value: 'PartTime', label: 'Part Time' },
+  { value: 'Temporary', label: 'Temporary' },
+  { value: 'Internship', label: 'Internship' },
 ] as const;
 
 // Contract status options
 export const CONTRACT_STATUSES = [
-  { value: 'Active', label: 'Active (生效中)' },
-  { value: 'Expired', label: 'Expired (已过期)' },
-  { value: 'Terminated', label: 'Terminated (已终止)' },
-  { value: 'Pending', label: 'Pending (待生效)' },
+  { value: 'Active', label: 'Active' },
+  { value: 'Expired', label: 'Expired' },
+  { value: 'Terminated', label: 'Terminated' },
+  { value: 'Pending', label: 'Pending' },
 ] as const;
+
+// Paginated response data - matches backend PagedResult
+export interface PagedResult<T> {
+  items: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
 

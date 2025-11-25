@@ -1,8 +1,9 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-list/contract-approval-list.component.ts
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, delay, of } from 'rxjs';
-import { first, catchError, filter } from 'rxjs/operators';
+import { BehaviorSubject, of } from 'rxjs';
+import { first, catchError, filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import {
   BasePrivatePageContainerComponent,
   BaseAsyncStateComponent,
@@ -14,8 +15,9 @@ import {
   BadgeVariant,
 } from '../../../Shared/components/base';
 import { NotificationService, DialogService } from '../../../Shared/services';
-import { ContractApproval } from 'app/contracts/contract-approvals/contract-approval.model';
+import { ContractApproval, ApprovalActionRequest, RejectionActionRequest } from 'app/contracts/contract-approvals/contract-approval.model';
 import { ContractApprovalDetailComponent } from '../contract-approval-detail/contract-approval-detail.component';
+import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 
 @Component({
   selector: 'app-contract-approval-list',
@@ -32,12 +34,15 @@ import { ContractApprovalDetailComponent } from '../contract-approval-detail/con
   templateUrl: './contract-approval-list.component.html',
   styleUrls: ['./contract-approval-list.component.scss'],
 })
-export class ContractApprovalListComponent implements OnInit {
+export class ContractApprovalListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private contractApprovalService = inject(ContractApprovalService);
+  private destroy$ = new Subject<void>();
 
   approvals = signal<ContractApproval[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
+  error$ = new BehaviorSubject<string | null>(null);
   approvalsData$ = new BehaviorSubject<ContractApproval[] | null>(null);
   activeFilter = signal<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   filterOptions: ('all' | 'pending' | 'approved' | 'rejected')[] = ['all', 'pending', 'approved', 'rejected'];
@@ -45,97 +50,13 @@ export class ContractApprovalListComponent implements OnInit {
   selectedApproval: ContractApproval | null = null;
   isDetailModalOpen = false;
 
-  // Computed statistics
-  pendingCount = computed(() => this.allApprovals.filter(a => a.status === 'Pending').length);
-  approvedCount = computed(() => this.allApprovals.filter(a => a.status === 'Approved').length);
-  rejectedCount = computed(() => this.allApprovals.filter(a => a.status === 'Rejected').length);
+  // All approvals loaded from backend (for statistics and filtering)
+  private allApprovals = signal<ContractApproval[]>([]);
 
-  private allApprovals: ContractApproval[] = [
-    {
-      id: 1,
-      contractId: 2,
-      contractEmployeeName: 'Jane Smith',
-      contractType: 'Fixed',
-      status: 'Pending',
-      comments: 'New contract requires approval',
-      requestedBy: 'HR Manager',
-      requestedAt: '2024-12-15T10:00:00Z',
-      approvedBy: null,
-      approvedAt: null,
-      rejectedBy: null,
-      rejectedAt: null,
-      rejectionReason: null,
-      currentApprovalLevel: 1,
-      maxApprovalLevel: 2,
-      approvalSteps: [
-        { id: 1, stepOrder: 1, stepName: 'Department Manager Approval', approverRole: 'DepartmentManager', approverUserName: null, status: 'Pending', comments: null, processedAt: null, processedBy: null, dueDate: '2024-12-20T17:00:00Z' },
-        { id: 2, stepOrder: 2, stepName: 'HR Approval', approverRole: 'HRManager', approverUserName: null, status: 'Pending', comments: null, processedAt: null, processedBy: null, dueDate: null },
-      ],
-    },
-    {
-      id: 2,
-      contractId: 3,
-      contractEmployeeName: 'Bob Johnson',
-      contractType: 'PartTime',
-      status: 'Pending',
-      comments: 'Part-time contract renewal',
-      requestedBy: 'HR Manager',
-      requestedAt: '2024-12-16T09:30:00Z',
-      approvedBy: null,
-      approvedAt: null,
-      rejectedBy: null,
-      rejectedAt: null,
-      rejectionReason: null,
-      currentApprovalLevel: 2,
-      maxApprovalLevel: 2,
-      approvalSteps: [
-        { id: 3, stepOrder: 1, stepName: 'Department Manager Approval', approverRole: 'DepartmentManager', approverUserName: 'John Manager', status: 'Approved', comments: 'Approved', processedAt: '2024-12-16T14:00:00Z', processedBy: 'John Manager', dueDate: '2024-12-20T17:00:00Z' },
-        { id: 4, stepOrder: 2, stepName: 'HR Approval', approverRole: 'HRManager', approverUserName: null, status: 'Pending', comments: null, processedAt: null, processedBy: null, dueDate: null },
-      ],
-    },
-    {
-      id: 3,
-      contractId: 4,
-      contractEmployeeName: 'Alice Williams',
-      contractType: 'Fixed',
-      status: 'Approved',
-      comments: 'Contract approved',
-      requestedBy: 'HR Manager',
-      requestedAt: '2024-12-10T14:00:00Z',
-      approvedBy: 'HR Director',
-      approvedAt: '2024-12-12T16:00:00Z',
-      rejectedBy: null,
-      rejectedAt: null,
-      rejectionReason: null,
-      currentApprovalLevel: 2,
-      maxApprovalLevel: 2,
-      approvalSteps: [
-        { id: 5, stepOrder: 1, stepName: 'Department Manager Approval', approverRole: 'DepartmentManager', approverUserName: 'John Manager', status: 'Approved', comments: 'OK', processedAt: '2024-12-11T10:00:00Z', processedBy: 'John Manager', dueDate: '2024-12-15T17:00:00Z' },
-        { id: 6, stepOrder: 2, stepName: 'HR Approval', approverRole: 'HRManager', approverUserName: 'HR Director', status: 'Approved', comments: 'Approved', processedAt: '2024-12-12T16:00:00Z', processedBy: 'HR Director', dueDate: null },
-      ],
-    },
-    {
-      id: 4,
-      contractId: 5,
-      contractEmployeeName: 'Charlie Brown',
-      contractType: 'Temporary',
-      status: 'Rejected',
-      comments: 'Contract rejected',
-      requestedBy: 'HR Manager',
-      requestedAt: '2024-12-14T11:00:00Z',
-      approvedBy: null,
-      approvedAt: null,
-      rejectedBy: 'Department Manager',
-      rejectedAt: '2024-12-15T09:00:00Z',
-      rejectionReason: 'Budget constraints',
-      currentApprovalLevel: 1,
-      maxApprovalLevel: 2,
-      approvalSteps: [
-        { id: 7, stepOrder: 1, stepName: 'Department Manager Approval', approverRole: 'DepartmentManager', approverUserName: 'John Manager', status: 'Rejected', comments: 'Budget constraints', processedAt: '2024-12-15T09:00:00Z', processedBy: 'Department Manager', dueDate: '2024-12-16T17:00:00Z' },
-        { id: 8, stepOrder: 2, stepName: 'HR Approval', approverRole: 'HRManager', approverUserName: null, status: 'Pending', comments: null, processedAt: null, processedBy: null, dueDate: null },
-      ],
-    },
-  ];
+  // Computed statistics
+  pendingCount = computed(() => this.allApprovals().filter(a => a.status === 'Pending').length);
+  approvedCount = computed(() => this.allApprovals().filter(a => a.status === 'Approved').length);
+  rejectedCount = computed(() => this.allApprovals().filter(a => a.status === 'Rejected').length);
 
   tableColumns: TableColumn[] = [
     { key: 'contractEmployeeName', label: 'Employee', sortable: true, width: '150px' },
@@ -158,24 +79,64 @@ export class ContractApprovalListComponent implements OnInit {
 
   loadApprovals(): void {
     this.loading$.next(true);
-    of(this.allApprovals).pipe(delay(500), first(), catchError(err => {
-      this.loading$.next(false);
-      this.notificationService.error('Load Failed', err.message || 'Failed to load approvals', { duration: 5000 });
-      return of([]);
-    })).subscribe(approvals => {
-      const filter = this.activeFilter();
-      const filtered = filter === 'all' 
-        ? approvals 
-        : approvals.filter(a => a.status.toLowerCase() === filter);
-      this.approvals.set(filtered);
-      this.approvalsData$.next(filtered);
-      this.loading$.next(false);
+    this.error$.next(null);
+
+    // Load pending approvals from backend
+    // Note: Backend currently only supports pending approvals endpoint
+    // For other filters, we'll need to load all and filter on frontend
+    this.contractApprovalService.getPendingApprovals({
+      pageNumber: 1,
+      pageSize: 100, // Load first 100 approvals
+    }).pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        const errorMessage = error.message || 'Failed to load approvals';
+        this.error$.next(errorMessage);
+        this.loading$.next(false);
+        this.notificationService.error(
+          'Load Failed',
+          errorMessage,
+          { duration: 5000, persistent: false, autoClose: true }
+        );
+        return of(null);
+      })
+    ).subscribe({
+      next: (response) => {
+        if (response?.data) {
+          // Store all approvals for statistics and filtering
+          this.allApprovals.set(response.data);
+          
+          // Apply filter
+          const filter = this.activeFilter();
+          const filtered = filter === 'all' || filter === 'pending'
+            ? response.data
+            : response.data.filter(a => a.status.toLowerCase() === filter);
+          
+          this.approvals.set(filtered);
+          this.approvalsData$.next(filtered);
+          this.loading$.next(false);
+          console.log('✅ Approvals loaded:', response.data.length);
+        } else {
+          this.allApprovals.set([]);
+          this.approvals.set([]);
+          this.approvalsData$.next([]);
+          this.loading$.next(false);
+        }
+      }
     });
   }
 
   onFilterChange(filter: 'all' | 'pending' | 'approved' | 'rejected'): void {
     this.activeFilter.set(filter);
-    this.loadApprovals();
+    // Filter existing data (frontend filtering)
+    // Note: Backend only supports pending approvals endpoint
+    // For 'all', 'approved', 'rejected', we filter from loaded data
+    const allData = this.allApprovals();
+    const filtered = filter === 'all'
+      ? allData
+      : allData.filter(a => a.status.toLowerCase() === filter);
+    this.approvals.set(filtered);
+    this.approvalsData$.next(filtered);
   }
 
   getStatusVariant(status: string): BadgeVariant {
@@ -201,33 +162,98 @@ export class ContractApprovalListComponent implements OnInit {
   onApprove(approval: ContractApproval): void {
     this.dialogService.confirm({
       title: 'Approve Contract',
-      message: `Approve contract for ${approval.contractEmployeeName}?`,
+      message: `Approve contract for ${approval.contractEmployeeName || 'this contract'}?`,
       confirmText: 'Approve',
       cancelText: 'Cancel',
       confirmVariant: 'primary',
       icon: 'check',
-    }).pipe(first(), filter(c => c)).subscribe(() => {
-      const updated = this.approvals().map(a => a.id === approval.id ? { ...a, status: 'Approved' as const, approvedBy: 'Current User', approvedAt: new Date().toISOString() } : a);
-      this.approvals.set(updated);
-      this.approvalsData$.next(updated);
-      this.notificationService.success('Approved', `Contract for ${approval.contractEmployeeName} has been approved`, { duration: 3000 });
+    }).pipe(
+      first(),
+      filter(c => c),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.loading$.next(true);
+
+      const request: ApprovalActionRequest = {
+        comments: 'Approved',
+      };
+
+      this.contractApprovalService.approve(approval.id, request).pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.loading$.next(false);
+          this.notificationService.error(
+            'Approve Failed',
+            error.message || 'Failed to approve contract',
+            { duration: 5000, persistent: false, autoClose: true }
+          );
+          return of(null);
+        })
+      ).subscribe({
+        next: (success) => {
+          if (success) {
+            // Reload approvals after successful approval
+            this.loadApprovals();
+            this.notificationService.success(
+              'Approved',
+              `Contract for ${approval.contractEmployeeName || 'this contract'} has been approved`,
+              { duration: 3000, autoClose: true }
+            );
+          }
+        }
+      });
     });
   }
 
   onReject(approval: ContractApproval): void {
     this.dialogService.confirm({
       title: 'Reject Contract',
-      message: `Reject contract for ${approval.contractEmployeeName}?`,
+      message: `Reject contract for ${approval.contractEmployeeName || 'this contract'}?`,
       confirmText: 'Reject',
       cancelText: 'Cancel',
       confirmVariant: 'danger',
       icon: 'close',
-    }).pipe(first(), filter(c => c)).subscribe(() => {
-      const updated = this.approvals().map(a => a.id === approval.id ? { ...a, status: 'Rejected' as const, rejectedBy: 'Current User', rejectedAt: new Date().toISOString(), rejectionReason: 'Rejected by user' } : a);
-      this.approvals.set(updated);
-      this.approvalsData$.next(updated);
-      this.notificationService.warning('Rejected', `Contract for ${approval.contractEmployeeName} has been rejected`, { duration: 3000 });
+    }).pipe(
+      first(),
+      filter(c => c),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.loading$.next(true);
+
+      const request: RejectionActionRequest = {
+        reason: 'Rejected by user',
+      };
+
+      this.contractApprovalService.reject(approval.id, request).pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.loading$.next(false);
+          this.notificationService.error(
+            'Reject Failed',
+            error.message || 'Failed to reject contract',
+            { duration: 5000, persistent: false, autoClose: true }
+          );
+          return of(null);
+        })
+      ).subscribe({
+        next: (success) => {
+          if (success) {
+            // Reload approvals after successful rejection
+            this.loadApprovals();
+            this.notificationService.warning(
+              'Rejected',
+              `Contract for ${approval.contractEmployeeName || 'this contract'} has been rejected`,
+              { duration: 3000, autoClose: true }
+            );
+          }
+        }
+      });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onRowClick = (item: unknown) => this.onView(item as ContractApproval);

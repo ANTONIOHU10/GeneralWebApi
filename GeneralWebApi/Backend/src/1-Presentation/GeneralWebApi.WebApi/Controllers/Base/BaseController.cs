@@ -66,7 +66,12 @@ public abstract class BaseController : ControllerBase, IBaseController
             if (!validationResult.IsValid)
             {
                 var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return BadRequest(ApiResponse<object>.ErrorResult(string.Join(", ", errors)));
+                // Follow consistent error format: error = short title, message = detailed errors
+                return BadRequest(ApiResponse<object>.ErrorResult(
+                    "Validation failed",
+                    400,
+                    string.Join(", ", errors)
+                ));
             }
         }
 

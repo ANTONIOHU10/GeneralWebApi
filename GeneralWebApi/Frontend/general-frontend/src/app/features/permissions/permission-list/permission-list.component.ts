@@ -79,7 +79,7 @@ export class PermissionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPermissions();
-  }
+      }
 
   loadPermissions(): void {
     this.loading$.next(true);

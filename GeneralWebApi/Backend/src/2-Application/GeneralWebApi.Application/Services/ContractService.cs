@@ -42,7 +42,8 @@ public class ContractService : IContractService
             throw new KeyNotFoundException($"Contract with ID {id} not found");
         }
 
-        await _contractRepository.DeleteAsync(contract, cancellationToken);
+        // DeleteAsync expects id (int), not the entity object
+        await _contractRepository.DeleteAsync(id, cancellationToken);
 
         _logger.LogInformation("Successfully deleted contract with ID: {ContractId}", id);
         return _mapper.Map<ContractDto>(contract);

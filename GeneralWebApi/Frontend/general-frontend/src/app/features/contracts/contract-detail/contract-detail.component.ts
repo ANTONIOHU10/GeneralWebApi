@@ -194,8 +194,13 @@ export class ContractDetailComponent implements OnInit, OnChanges {
   private initializeFormData(): void {
     if (!this.contract) return;
 
+    // In view mode, show employee name instead of ID
+    const employeeDisplayValue = this.mode === 'view' && this.contract.employeeName
+      ? this.contract.employeeName
+      : this.contract.employeeId || null;
+
     this.formData = {
-      employeeId: this.contract.employeeId || null,
+      employeeId: employeeDisplayValue,
       contractType: this.contract.contractType || 'Indefinite',
       status: this.contract.status || 'Active',
       startDate: this.contract.startDate ? this.contract.startDate.split('T')[0] : new Date().toISOString().split('T')[0],
@@ -213,11 +218,24 @@ export class ContractDetailComponent implements OnInit, OnChanges {
 
     const isReadOnly = this.mode === 'view';
 
-    const updatedFields = this.formConfig.fields.map(field => ({
-      ...field,
-      readonly: isReadOnly,
-      disabled: isReadOnly,
-    }));
+    const updatedFields = this.formConfig.fields.map(field => {
+      // In view mode, change employeeId field from select to text to display employee name
+      if (field.key === 'employeeId' && isReadOnly) {
+        return {
+          ...field,
+          type: 'input' as const,
+          readonly: true,
+          disabled: true,
+          placeholder: 'Employee name',
+        };
+      }
+
+      return {
+        ...field,
+        readonly: isReadOnly,
+        disabled: isReadOnly,
+      };
+    });
 
     this.formConfig = {
       ...this.formConfig,

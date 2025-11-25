@@ -1,15 +1,18 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/add-contract/add-contract.component.ts
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, delay, of } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { takeUntil, catchError } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
-import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES } from 'app/contracts/contracts/contract.model';
+import { CONTRACT_TYPES, CONTRACT_STATUSES, CreateContractRequest } from 'app/contracts/contracts/contract.model';
+import { ContractService } from '../../../core/services/contract.service';
+import { EmployeeService } from '../../../core/services/employee.service';
+import { Employee } from 'app/contracts/employees/employee.model';
 
 @Component({
   selector: 'app-add-contract',
@@ -24,11 +27,14 @@ import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES } from 'app/contracts/contr
 export class AddContractComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private contractService = inject(ContractService);
+  private employeeService = inject(EmployeeService);
   private destroy$ = new Subject<void>();
 
   @Output() contractCreated = new EventEmitter<void>();
 
   loading = signal(false);
+  loadingEmployees = signal(false);
 
   formData: Record<string, unknown> = {
     employeeId: null,
@@ -41,14 +47,8 @@ export class AddContractComponent implements OnInit, OnDestroy {
     renewalReminderDate: null,
   };
 
-  // Mock employee options (in real app, this would come from EmployeeService)
-  employeeOptions: SelectOption[] = [
-    { value: 1, label: 'John Doe (ID: 1)' },
-    { value: 2, label: 'Jane Smith (ID: 2)' },
-    { value: 3, label: 'Bob Johnson (ID: 3)' },
-    { value: 4, label: 'Alice Williams (ID: 4)' },
-    { value: 5, label: 'Charlie Brown (ID: 5)' },
-  ];
+  // Employee options loaded from backend
+  employeeOptions: SelectOption[] = [];
 
   formConfig: FormConfig = {
     sections: [
@@ -166,7 +166,52 @@ export class AddContractComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
-    // Component initialization
+    // Load employees for dropdown
+    this.loadEmployees();
+  }
+
+  /**
+   * Load employees from backend for dropdown selection
+   */
+  private loadEmployees(): void {
+    this.loadingEmployees.set(true);
+    
+    this.employeeService.getEmployees({
+      pageNumber: 1,
+      pageSize: 100, // Load first 100 employees for selection (backend limit: 100)
+    }).pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        console.error('❌ Error loading employees:', error);
+        this.loadingEmployees.set(false);
+        this.notificationService.error(
+          'Load Failed',
+          'Failed to load employees. Please try again.',
+          { duration: 5000, persistent: false, autoClose: true }
+        );
+        return of(null);
+      })
+    ).subscribe({
+      next: (response) => {
+        if (response?.data) {
+          this.employeeOptions = response.data.map((employee: Employee) => ({
+            value: parseInt(employee.id, 10),
+            label: `${employee.firstName} ${employee.lastName} (ID: ${employee.id})${employee.employeeNumber ? ` - ${employee.employeeNumber}` : ''}`,
+          }));
+          
+          // Update form config with loaded employee options
+          const employeeField = this.formConfig.fields.find(f => f.key === 'employeeId');
+          if (employeeField) {
+            employeeField.options = this.employeeOptions;
+          }
+          
+          this.loadingEmployees.set(false);
+          console.log('✅ Employees loaded:', this.employeeOptions.length);
+        } else {
+          this.loadingEmployees.set(false);
+        }
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -177,41 +222,47 @@ export class AddContractComponent implements OnInit, OnDestroy {
   onFormSubmit(data: Record<string, unknown>): void {
     this.loading.set(true);
 
-    // Simulate API call with mock data
-    of({
-      id: Date.now().toString(),
-      employeeId: data['employeeId'] as number,
-      employeeName: this.employeeOptions.find(e => e.value === data['employeeId'])?.label?.split(' (')[0] || 'Unknown',
-      contractType: data['contractType'] as string,
-      startDate: data['startDate'] as string,
-      endDate: data['endDate'] as string | null || null,
-      status: data['status'] as string,
-      salary: data['salary'] as number | null || null,
-      notes: data['notes'] as string || '',
-      renewalReminderDate: data['renewalReminderDate'] as string | null || null,
-      createdAt: new Date().toISOString(),
-      updatedAt: null,
-    } as Contract).pipe(
-      delay(1000), // Simulate network delay
-      takeUntil(this.destroy$)
-    ).subscribe({
-      next: (contract: Contract) => {
-        this.loading.set(false);
-        this.notificationService.success(
-          'Contract Created',
-          `Contract for ${contract.employeeName} has been created successfully`,
-          { duration: 3000, autoClose: true }
-        );
-        this.contractCreated.emit();
-        this.resetForm();
-      },
-      error: (error) => {
+    // Get employee name for notification
+    const selectedEmployee = this.employeeOptions.find(
+      e => e.value === data['employeeId']
+    );
+    const employeeName = selectedEmployee?.label?.split(' (')[0] || 'Unknown';
+
+    // Prepare request data matching backend CreateContractDto
+    const createRequest: CreateContractRequest = {
+      EmployeeId: data['employeeId'] as number,
+      ContractType: data['contractType'] as string,
+      StartDate: data['startDate'] as string,
+      EndDate: (data['endDate'] as string) || null,
+      Status: (data['status'] as string) || 'Active',
+      Salary: (data['salary'] as number) || null,
+      Notes: (data['notes'] as string) || '',
+      RenewalReminderDate: (data['renewalReminderDate'] as string) || null,
+    };
+
+    this.contractService.createContract(createRequest).pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
         this.loading.set(false);
         this.notificationService.error(
           'Creation Failed',
           error.message || 'Failed to create contract',
           { duration: 5000, persistent: false, autoClose: true }
         );
+        return of(null);
+      })
+    ).subscribe({
+      next: (contract) => {
+        if (contract) {
+          this.loading.set(false);
+          this.notificationService.success(
+            'Contract Created',
+            `Contract for ${employeeName} has been created successfully`,
+            { duration: 3000, autoClose: true }
+          );
+          this.contractCreated.emit();
+          this.resetForm();
+        }
       }
     });
   }

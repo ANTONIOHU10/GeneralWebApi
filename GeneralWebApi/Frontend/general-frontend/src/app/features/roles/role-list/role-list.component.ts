@@ -152,7 +152,7 @@ export class RoleListComponent implements OnInit {
   onSearchChange(searchTerm: string): void {
     this.searchTerm.set(searchTerm);
     this.loadRoles();
-  }
+      }
 
   getTypeVariant(isSystemRole: boolean): BadgeVariant {
     return isSystemRole ? 'primary' : 'secondary';
