@@ -1,0 +1,79 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-reminders/contract-reminder-list/contract-reminder-list.component.scss */
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  label {
+    margin: 0;
+  }
+
+  select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-primary);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    cursor: pointer;
+
+    &:focus {
+      outline: 2px solid var(--color-primary-500);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-icons {
+    color: white;
+  }
+
+  &.error {
+    background: var(--color-error-500);
+  }
+
+  &.error-light {
+    background: var(--color-error-400);
+  }
+
+  &.warning {
+    background: var(--color-warning-500);
+  }
+
+  &.info {
+    background: var(--color-info-500);
+  }
+}
+
+.stat-content {
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+}

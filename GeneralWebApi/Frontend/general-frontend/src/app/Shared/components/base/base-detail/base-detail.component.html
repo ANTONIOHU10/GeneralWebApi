@@ -1,0 +1,64 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-detail/base-detail.component.html -->
+<app-base-modal
+  [isOpen]="isOpen"
+  [title]="title"
+  [config]="modalConfig"
+  (closeEvent)="onClose()"
+>
+  <div *ngIf="mode === 'view'">
+    <!-- Custom View Template -->
+    <ng-container *ngIf="customViewTemplate; else defaultView">
+      <ng-container *ngTemplateOutlet="customViewTemplate"></ng-container>
+    </ng-container>
+
+    <!-- Default View -->
+    <ng-template #defaultView>
+      <div class="detail-container">
+        <app-base-card
+          *ngFor="let section of sections; let last = last"
+          [title]="section.title"
+          [variant]="'elevated'"
+          [customClass]="last ? '' : 'mb-3'"
+        >
+          <!-- Custom Content -->
+          <ng-container *ngIf="section.customContent">
+            <ng-container *ngTemplateOutlet="section.customContent"></ng-container>
+          </ng-container>
+
+          <!-- Default Fields -->
+          <ng-container *ngIf="!section.customContent">
+            <div class="info-grid">
+              <div class="info-item" *ngFor="let field of section.fields">
+                <div class="info-label">{{ field.label }}</div>
+                <div class="info-value" *ngIf="field.type !== 'badge' && field.type !== 'custom'">
+                  {{ getFieldValue(field) }}
+                </div>
+                <app-base-badge
+                  *ngIf="field.type === 'badge'"
+                  [text]="getBadgeText(field)"
+                  [variant]="getBadgeVariant(field)"
+                  size="small"
+                ></app-base-badge>
+                <ng-container *ngIf="field.type === 'custom' && field.customTemplate">
+                  <ng-container *ngTemplateOutlet="field.customTemplate; context: { $implicit: field }"></ng-container>
+                </ng-container>
+              </div>
+            </div>
+            <div *ngIf="section.showDivider" class="section-divider"></div>
+          </ng-container>
+        </app-base-card>
+
+        <!-- Actions -->
+        <div *ngIf="actionsTemplate" class="detail-actions">
+          <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Edit Mode -->
+  <div *ngIf="mode === 'edit' && editFormTemplate">
+    <ng-container *ngTemplateOutlet="editFormTemplate"></ng-container>
+  </div>
+</app-base-modal>
+

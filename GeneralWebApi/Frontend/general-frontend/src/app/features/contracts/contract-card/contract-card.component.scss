@@ -1,0 +1,182 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-card/contract-card.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+// Contract card specific styles
+// Most layout styles are now handled by BaseCardComponent
+
+.contract-card {
+  height: fit-content;
+  min-height: 200px;
+  position: relative;
+}
+
+.contract-card-content {
+  .contract-info-header {
+    margin-bottom: $spacing-4;
+  }
+
+  .contract-type-section {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .contract-type {
+    margin: 0 0 $spacing-2 0;
+    color: var(--text-primary);
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    line-height: 1.2;
+  }
+
+  .employee-name {
+    margin: 0 0 $spacing-1 0;
+    color: var(--text-secondary);
+    font-size: $font-size-base;
+    line-height: 1.4;
+  }
+
+  .contract-id {
+    margin: 0;
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
+    line-height: 1.4;
+    font-family: monospace;
+  }
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  margin-top: $spacing-4;
+  padding-top: $spacing-4;
+  border-top: 1px solid var(--border-primary);
+
+  .date-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    .material-icons {
+      font-size: $font-size-base;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-tertiary);
+    }
+
+    .date-details {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-1;
+
+      .date-label {
+        font-size: $font-size-xs;
+        color: var(--text-tertiary);
+      }
+
+      .date-value {
+        font-size: $font-size-sm;
+        color: var(--text-secondary);
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+}
+
+.salary-info {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  margin-top: $spacing-3;
+  padding-top: $spacing-3;
+  border-top: 1px solid var(--border-primary);
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  font-weight: $font-weight-semibold;
+
+  .material-icons {
+    font-size: $font-size-base;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+  }
+
+  .salary-text {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.notes-info {
+  margin-top: $spacing-3;
+  padding-top: $spacing-3;
+  border-top: 1px solid var(--border-primary);
+
+  .notes-text {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.renewal-info {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  margin-top: $spacing-3;
+  padding-top: $spacing-3;
+  border-top: 1px solid var(--border-primary);
+  font-size: $font-size-xs;
+  color: var(--text-tertiary);
+
+  .material-icons {
+    font-size: $font-size-base;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .renewal-text {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.contract-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-2;
+  flex-wrap: wrap;
+}
+
+// Responsive design
+@include mobile-only {
+  .contract-card-content {
+    .contract-info-header {
+      text-align: center;
+    }
+  }
+
+  .contract-card-footer {
+    flex-direction: column;
+
+    app-base-button {
+      width: 100%;
+    }
+  }
+}
+

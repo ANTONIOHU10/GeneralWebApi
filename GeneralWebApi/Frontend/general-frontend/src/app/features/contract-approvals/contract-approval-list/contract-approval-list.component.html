@@ -1,0 +1,100 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-list/contract-approval-list.component.html -->
+<app-base-private-page-container
+  title="Contract Approvals"
+  subtitle="Manage and review contract approval requests"
+  icon="check_circle"
+  [showTabs]="false"
+  [showSearch]="false"
+>
+  <!-- Filter -->
+  <app-base-card [title]="'Filter'" [icon]="'filter_list'" [variant]="'elevated'">
+    <div class="filter-buttons">
+      <button
+        *ngFor="let filter of filterOptions"
+        [class.active]="activeFilter() === filter"
+        (click)="onFilterChange(filter)"
+        class="filter-button"
+      >
+        {{ filter | titlecase }}
+        <span *ngIf="filter !== 'all'">({{ getFilterCount(filter) }})</span>
+      </button>
+    </div>
+  </app-base-card>
+
+  <!-- Statistics -->
+  <div class="statistics-grid" *ngIf="approvals().length > 0">
+    <app-base-card [variant]="'elevated'">
+      <div class="stat-card">
+        <div class="stat-icon warning">
+          <span class="material-icons">pending_actions</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ pendingCount() }}</div>
+          <div class="stat-label">Pending</div>
+        </div>
+      </div>
+    </app-base-card>
+    <app-base-card [variant]="'elevated'">
+      <div class="stat-card">
+        <div class="stat-icon success">
+          <span class="material-icons">check_circle</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ approvedCount() }}</div>
+          <div class="stat-label">Approved</div>
+        </div>
+      </div>
+    </app-base-card>
+    <app-base-card [variant]="'elevated'">
+      <div class="stat-card">
+        <div class="stat-icon error">
+          <span class="material-icons">cancel</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ rejectedCount() }}</div>
+          <div class="stat-label">Rejected</div>
+        </div>
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Table -->
+  <app-base-async-state
+    [loading$]="loading$"
+    [data$]="approvalsData$"
+    loadingMessage="Loading approvals..."
+    emptyTitle="No Approvals"
+    emptyDescription="No contract approvals match the selected filter"
+    [onRetry]="onRetryLoad"
+  >
+    <app-base-table
+      [data]="approvals()"
+      [columns]="tableColumns"
+      [actions]="tableActions"
+      [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
+      [pageSize]="10"
+      (rowClick)="onRowClick($event)"
+    >
+      <ng-template #cellTemplate let-row="row" let-column="column">
+        <ng-container *ngIf="column.key === 'status'">
+          <app-base-badge [text]="row.status" [variant]="getStatusVariant(row.status)" size="small"></app-base-badge>
+        </ng-container>
+        <ng-container *ngIf="column.key === 'currentApprovalLevel'">
+          <div class="progress-bar">
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="getProgress(row)"></div>
+            </div>
+            <span class="progress-text">{{ row.currentApprovalLevel }}/{{ row.maxApprovalLevel }}</span>
+          </div>
+        </ng-container>
+      </ng-template>
+    </app-base-table>
+  </app-base-async-state>
+</app-base-private-page-container>
+
+<app-contract-approval-detail
+  [approval]="selectedApproval"
+  [isOpen]="isDetailModalOpen"
+  (closeEvent)="onCloseDetailModal()"
+  (approvalUpdated)="onApprovalUpdated()"
+></app-contract-approval-detail>

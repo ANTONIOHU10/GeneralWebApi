@@ -1,0 +1,57 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/role-detail/role-detail.component.html -->
+<app-base-detail
+  [isOpen]="isOpen"
+  [title]="mode === 'edit' ? 'Edit Role' : 'Role Details'"
+  [mode]="mode"
+  [sections]="sections()"
+  [editFormTemplate]="editFormTemplate"
+  (closeEvent)="onClose()"
+>
+  <!-- Permissions Custom Template -->
+  <ng-template #permissionsTemplate>
+    <div class="permissions-list">
+      <app-base-badge
+        *ngFor="let perm of role?.permissions"
+        [text]="perm"
+        [variant]="'info'"
+        size="small"
+        class="badge-item"
+      ></app-base-badge>
+    </div>
+  </ng-template>
+
+  <!-- Description Custom Content -->
+  <ng-template #descriptionContent>
+    <div class="info-grid">
+      <div class="info-item" *ngFor="let field of sections()[0]?.fields">
+        <div class="info-label">{{ field.label }}</div>
+        <div class="info-value" *ngIf="field.type !== 'badge' && field.type !== 'custom'">
+          {{ field.value }}
+        </div>
+        <app-base-badge
+          *ngIf="field.type === 'badge'"
+          [text]="field.value?.toString() || ''"
+          [variant]="field.badgeVariant || 'secondary'"
+          size="small"
+        ></app-base-badge>
+      </div>
+    </div>
+    <div *ngIf="role && role.description" class="section-divider">
+      <div class="info-label">Description</div>
+      <div>{{ role.description }}</div>
+    </div>
+  </ng-template>
+
+  <!-- Edit Form Template -->
+  <ng-template #editFormTemplate>
+    <app-base-form
+      [config]="formConfig"
+      [formData]="formData"
+      [loading]="loading()"
+      submitText="Update Role"
+      cancelText="Cancel"
+      (formSubmit)="onFormSubmit($event)"
+      (formCancel)="onClose()"
+    ></app-base-form>
+  </ng-template>
+</app-base-detail>

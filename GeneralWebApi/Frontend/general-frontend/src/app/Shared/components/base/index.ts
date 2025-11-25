@@ -37,6 +37,7 @@ export { BaseEmptyComponent } from './base-empty/base-empty.component';
 export { BaseAsyncStateComponent } from './base-async-state/base-async-state.component';
 export { BaseModalComponent } from './base-modal/base-modal.component';
 export { BaseNotificationComponent } from './base-notification/base-notification.component';
+export { BaseDetailComponent } from './base-detail/base-detail.component';
 
 // Navigation Components
 export { BaseTabsComponent } from './base-tabs/base-tabs.component';
@@ -122,3 +123,7 @@ export type {
   FormButton,
   FormConfig,
 } from './base-form/base-form.component';
+export type {
+  DetailField,
+  DetailSection,
+} from './base-detail/base-detail.component';

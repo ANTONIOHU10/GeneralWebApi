@@ -1,0 +1,23 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/audit-log-detail/audit-log-detail.component.html -->
+<app-base-detail
+  [isOpen]="isOpen"
+  [title]="'Audit Log Details'"
+  [mode]="'view'"
+  [sections]="sections()"
+  (closeEvent)="onClose()"
+>
+  <!-- Changes Template -->
+  <ng-template #changesTemplate>
+    <pre class="json-content">{{ formatJson(log?.changes) }}</pre>
+  </ng-template>
+
+  <!-- Old Values Template -->
+  <ng-template #oldValuesTemplate>
+    <pre class="json-content">{{ formatJson(log?.oldValues) }}</pre>
+  </ng-template>
+
+  <!-- New Values Template -->
+  <ng-template #newValuesTemplate>
+    <pre class="json-content">{{ formatJson(log?.newValues) }}</pre>
+  </ng-template>
+</app-base-detail>

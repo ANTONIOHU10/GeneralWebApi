@@ -1,0 +1,118 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/role-list/role-list.component.html -->
+<app-base-private-page-container
+  title="Role Management"
+  subtitle="Manage user roles and their permissions"
+  icon="admin_panel_settings"
+  [showTabs]="true"
+  [showSearch]="activeTab() === 'list'"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header -->
+  <app-base-search
+    *ngIf="activeTab() === 'list'"
+    slot="search"
+    [config]="{
+      placeholder: 'Search roles...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true,
+    }"
+    (searchChange)="onSearchChange($event)"
+    inputId="role-search"
+  ></app-base-search>
+
+  <!-- Role List Tab -->
+  <div *ngIf="activeTab() === 'list'">
+    <!-- Statistics -->
+    <div class="statistics-grid" *ngIf="roles().length > 0">
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <span class="material-icons">admin_panel_settings</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalCount() }}</div>
+            <div class="stat-label">Total Roles</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <span class="material-icons">security</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ systemRoleCount() }}</div>
+            <div class="stat-label">System Roles</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon secondary">
+            <span class="material-icons">person</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ customRoleCount() }}</div>
+            <div class="stat-label">Custom Roles</div>
+          </div>
+        </div>
+      </app-base-card>
+    </div>
+
+    <!-- Table -->
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="rolesData$"
+      loadingMessage="Loading roles..."
+      emptyTitle="No Roles"
+      emptyDescription="No roles found"
+      [onRetry]="onRetryLoad"
+    >
+      <app-base-table
+        [data]="roles()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
+        [pageSize]="10"
+        (rowClick)="onRowClick($event)"
+      >
+        <ng-template #cellTemplate let-row="row" let-column="column">
+          <ng-container *ngIf="column.key === 'permissions'">
+            <div class="permissions-container">
+              <app-base-badge
+                *ngFor="let perm of row.permissions.slice(0, 3)"
+                [text]="perm"
+                [variant]="'info'"
+                size="small"
+                style="margin-right: 0.25rem;"
+              ></app-base-badge>
+              <span *ngIf="row.permissions.length > 3" class="more-permissions">+{{ row.permissions.length - 3 }} more</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="column.key === 'isSystemRole'">
+            <app-base-badge [text]="row.isSystemRole ? 'System' : 'Custom'" [variant]="getTypeVariant(row.isSystemRole)" size="small"></app-base-badge>
+          </ng-container>
+        </ng-template>
+      </app-base-table>
+    </app-base-async-state>
+  </div>
+
+  <!-- Add Role Tab -->
+  <div *ngIf="activeTab() === 'add'">
+    <app-add-role (roleCreated)="onRoleCreated()"></app-add-role>
+  </div>
+</app-base-private-page-container>
+
+<!-- Role Detail Modal -->
+<app-role-detail
+  [role]="selectedRole"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (roleUpdated)="onRoleUpdated()"
+></app-role-detail>
+

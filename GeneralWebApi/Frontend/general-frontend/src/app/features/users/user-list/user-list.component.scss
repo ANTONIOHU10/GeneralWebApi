@@ -1,0 +1,58 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/user-list/user-list.component.scss */
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-icons {
+    color: white;
+  }
+
+  &.success {
+    background: var(--color-success-500);
+  }
+
+  &.secondary {
+    background: var(--color-secondary-500);
+  }
+
+  &.warning {
+    background: var(--color-warning-500);
+  }
+}
+
+.stat-content {
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+}
+
+.roles-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+

@@ -1,0 +1,166 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-detail/base-detail.component.scss */
+/* Common styles for detail/modal components */
+
+// Info Grid (for detail views)
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.info-item {
+  .info-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+  }
+
+  .info-value {
+    font-weight: 500;
+    word-break: break-word;
+  }
+}
+
+// Section divider
+.section-divider {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-primary);
+}
+
+// Detail container
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Badge/Container helpers
+.roles-container,
+.permissions-container,
+.permissions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.badge-item {
+  margin: 0.25rem;
+}
+
+// JSON content display
+.json-content {
+  white-space: pre-wrap;
+  font-family: monospace;
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.json-content-small {
+  max-height: 200px;
+}
+
+.json-content-no-limit {
+  max-height: none;
+}
+
+// Step list (for approval steps)
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+
+  &.approved {
+    background: var(--color-success-50);
+  }
+
+  &.rejected {
+    background: var(--color-error-50);
+  }
+}
+
+.step-number {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.step-number-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary-500);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step-connector {
+  width: 2px;
+  height: 40px;
+  background: var(--border-primary);
+  margin: 0.5rem 0;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.step-meta {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.step-comments {
+  padding: 0.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.step-processed {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+// Detail actions
+.detail-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-primary);
+}
+
+// Utility classes
+.mb-3 {
+  margin-bottom: 1rem;
+}
+

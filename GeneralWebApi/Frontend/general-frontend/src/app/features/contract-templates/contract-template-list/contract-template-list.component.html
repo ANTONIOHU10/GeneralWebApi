@@ -1,0 +1,123 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-templates/contract-template-list/contract-template-list.component.html -->
+<app-base-private-page-container
+  title="Contract Templates"
+  subtitle="Manage contract templates for quick contract creation"
+  icon="description"
+  [showTabs]="true"
+  [showSearch]="activeTab() === 'list'"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header -->
+  <app-base-search
+    *ngIf="activeTab() === 'list'"
+    slot="search"
+    [config]="{
+      placeholder: 'Search templates...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true,
+    }"
+    (searchChange)="onSearchChange($event)"
+    inputId="template-search"
+  ></app-base-search>
+
+  <!-- Template List Tab -->
+  <div *ngIf="activeTab() === 'list'">
+    <!-- Filter -->
+    <app-base-card [title]="'Filter'" [icon]="'filter_list'" [variant]="'elevated'">
+      <div class="filter-buttons">
+        <button
+          *ngFor="let filter of filterOptions"
+          [class.active]="activeFilter() === filter"
+          (click)="onFilterChange(filter)"
+          class="filter-button"
+        >
+          {{ filter | titlecase }}
+          <span>({{ getFilterCount(filter) }})</span>
+        </button>
+      </div>
+    </app-base-card>
+
+    <!-- Statistics -->
+    <div class="statistics-grid" *ngIf="templates().length > 0">
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon success">
+            <span class="material-icons">check_circle</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ activeCount() }}</div>
+            <div class="stat-label">Active</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon secondary">
+            <span class="material-icons">cancel</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ inactiveCount() }}</div>
+            <div class="stat-label">Inactive</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <span class="material-icons">star</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ defaultCount() }}</div>
+            <div class="stat-label">Default</div>
+          </div>
+        </div>
+      </app-base-card>
+    </div>
+
+    <!-- Table -->
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="templatesData$"
+      loadingMessage="Loading templates..."
+      emptyTitle="No Templates"
+      emptyDescription="No contract templates match the selected filter"
+      [onRetry]="onRetryLoad"
+    >
+      <app-base-table
+        [data]="templates()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
+        [pageSize]="10"
+        (rowClick)="onRowClick($event)"
+      >
+        <ng-template #cellTemplate let-row="row" let-column="column">
+          <ng-container *ngIf="column.key === 'isActive'">
+            <app-base-badge [text]="row.isActive ? 'Active' : 'Inactive'" [variant]="getStatusVariant(row.isActive)" size="small"></app-base-badge>
+          </ng-container>
+          <ng-container *ngIf="column.key === 'isDefault'">
+            <app-base-badge [text]="row.isDefault ? 'Default' : '-'" [variant]="getDefaultVariant(row.isDefault)" size="small"></app-base-badge>
+          </ng-container>
+        </ng-template>
+      </app-base-table>
+    </app-base-async-state>
+  </div>
+
+  <!-- Add Template Tab -->
+  <div *ngIf="activeTab() === 'add'">
+    <app-add-contract-template (templateCreated)="onTemplateCreated()"></app-add-contract-template>
+  </div>
+</app-base-private-page-container>
+
+<!-- Template Detail Modal -->
+<app-contract-template-detail
+  [template]="selectedTemplate"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (templateUpdated)="onTemplateUpdated()"
+></app-contract-template-detail>

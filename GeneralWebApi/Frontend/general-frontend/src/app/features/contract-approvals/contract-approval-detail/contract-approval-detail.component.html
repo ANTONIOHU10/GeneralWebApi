@@ -1,0 +1,71 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-detail/contract-approval-detail.component.html -->
+<app-base-detail
+  [isOpen]="isOpen"
+  [title]="'Contract Approval Details'"
+  [mode]="'view'"
+  [sections]="sections()"
+  [actionsTemplate]="actionsTemplate"
+  (closeEvent)="onClose()"
+>
+  <!-- Comments Custom Content -->
+  <ng-template #commentsContent>
+    <div *ngIf="approval && approval.comments" class="section-divider">
+      <div class="info-label">Comments</div>
+      <div>{{ approval.comments }}</div>
+    </div>
+  </ng-template>
+
+  <!-- Steps Template -->
+  <ng-template #stepsTemplate>
+    <div class="step-list" *ngIf="approval && approval.approvalSteps">
+      <div
+        *ngFor="let step of approval.approvalSteps; let i = index"
+        class="step-item"
+        [class.approved]="step.status === 'Approved'"
+        [class.rejected]="step.status === 'Rejected'"
+      >
+        <div class="step-number">
+          <div class="step-number-circle">{{ step.stepOrder }}</div>
+          <div *ngIf="approval && i < approval.approvalSteps.length - 1" class="step-connector"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div style="font-weight: 500;">{{ step.stepName }}</div>
+            <app-base-badge [text]="step.status" [variant]="getStepStatusVariant(step.status)" size="small"></app-base-badge>
+          </div>
+          <div class="step-meta">
+            <div>Role: {{ step.approverRole }}</div>
+            <div *ngIf="step.approverUserName">Approver: {{ step.approverUserName }}</div>
+            <div *ngIf="step.dueDate">Due: {{ formatDate(step.dueDate) }}</div>
+          </div>
+          <div *ngIf="step.comments" class="step-comments">
+            {{ step.comments }}
+          </div>
+          <div *ngIf="step.processedAt" class="step-processed">
+            Processed: {{ formatDate(step.processedAt) }} by {{ step.processedBy }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Actions Template -->
+  <ng-template #actionsTemplate>
+    <div *ngIf="approval?.status === 'Pending'" class="detail-actions">
+      <app-base-button
+        text="Reject"
+        icon="close"
+        variant="danger"
+        [loading]="loading()"
+        (click)="onReject()"
+      ></app-base-button>
+      <app-base-button
+        text="Approve"
+        icon="check"
+        variant="primary"
+        [loading]="loading()"
+        (click)="onApprove()"
+      ></app-base-button>
+    </div>
+  </ng-template>
+</app-base-detail>

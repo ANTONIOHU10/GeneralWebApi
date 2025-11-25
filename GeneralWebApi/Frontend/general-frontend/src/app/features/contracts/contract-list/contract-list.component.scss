@@ -1,0 +1,27 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-list/contract-list.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+.contract-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-4;
+  padding: $spacing-4 0;
+}
+
+// Responsive design
+@include mobile-only {
+  .contract-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-3;
+    padding: $spacing-3 0;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .contract-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-3;
+  }
+}
+

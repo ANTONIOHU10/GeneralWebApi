@@ -1,0 +1,79 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/search-contract/search-contract.component.html -->
+<div class="search-contract-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">search</span>
+      Search Contracts
+    </h2>
+    <p>Search and filter contracts by various criteria</p>
+  </div>
+
+  <!-- Search Form Section -->
+  <div class="search-section">
+    <app-base-card
+      [title]="'Search & Filter Contracts'"
+      [icon]="'search'"
+      [variant]="'elevated'"
+    >
+      <div class="search-stats" *ngIf="allContracts().length > 0">
+        <span class="stat-text">
+          Showing {{ allContracts().length }} contract(s)
+        </span>
+      </div>
+
+      <div class="search-form-container">
+        <app-base-form
+          [config]="searchFormConfig"
+          [formData]="searchFilters()"
+          [loading]="loading()"
+          (formSubmit)="onSearchFormSubmit($event)"
+          (formCancel)="onSearchFormCancel()"
+        ></app-base-form>
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Contracts List -->
+  <div class="contracts-section">
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="contractsData$"
+      loadingMessage="Loading contracts..."
+      emptyTitle="No contracts found"
+      emptyDescription="No contracts match your search criteria"
+      [onRetry]="onRetryLoad"
+    >
+      <!-- Success content: Contract table -->
+      <app-base-table
+        [data]="allContracts()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{
+          showHeader: true,
+          showFooter: true,
+          showPagination: true,
+          showSearch: false,
+          showActions: true,
+          striped: true,
+          hoverable: true,
+          bordered: false,
+          size: 'medium',
+          loading: false,
+          emptyMessage: 'No contracts match your search criteria'
+        }"
+        [pageSize]="10"
+        (rowClick)="onRowClick($event)"
+      ></app-base-table>
+    </app-base-async-state>
+  </div>
+</div>
+
+<!-- Contract Detail Modal -->
+<app-contract-detail
+  [contract]="selectedContractForDetail"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (contractUpdated)="onContractUpdated($event)"
+></app-contract-detail>
+

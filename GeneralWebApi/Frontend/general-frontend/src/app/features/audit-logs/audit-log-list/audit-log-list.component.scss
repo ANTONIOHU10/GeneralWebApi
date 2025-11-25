@@ -1,0 +1,52 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/audit-log-list/audit-log-list.component.scss */
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-icons {
+    color: white;
+  }
+
+  &.info {
+    background: var(--color-info-500);
+  }
+
+  &.warning {
+    background: var(--color-warning-500);
+  }
+
+  &.error {
+    background: var(--color-error-500);
+  }
+}
+
+.stat-content {
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+}
+

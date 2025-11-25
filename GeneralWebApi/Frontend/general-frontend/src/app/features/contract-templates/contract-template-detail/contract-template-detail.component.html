@@ -1,0 +1,45 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-templates/contract-template-detail/contract-template-detail.component.html -->
+<app-base-detail
+  [isOpen]="isOpen"
+  [title]="mode === 'edit' ? 'Edit Template' : 'Template Details'"
+  [mode]="mode"
+  [sections]="sections()"
+  [editFormTemplate]="editFormTemplate"
+  (closeEvent)="onClose()"
+>
+  <!-- Description Custom Content -->
+  <ng-template #descriptionContent>
+    <div *ngIf="template && template.description" class="section-divider">
+      <div class="info-label">Description</div>
+      <div>{{ template.description }}</div>
+    </div>
+  </ng-template>
+
+  <!-- Content Template -->
+  <ng-template #contentTemplate>
+    <div class="json-content">{{ template?.templateContent || '' }}</div>
+  </ng-template>
+
+  <!-- Variables Template -->
+  <ng-template #variablesTemplate>
+    <div class="json-content json-content-small">{{ template?.variables || '' }}</div>
+  </ng-template>
+
+  <!-- Legal Requirements Template -->
+  <ng-template #legalTemplate>
+    <div class="json-content json-content-no-limit">{{ template?.legalRequirements || '' }}</div>
+  </ng-template>
+
+  <!-- Edit Form Template -->
+  <ng-template #editFormTemplate>
+    <app-base-form
+      [config]="formConfig"
+      [formData]="formData"
+      [loading]="loading()"
+      submitText="Update Template"
+      cancelText="Cancel"
+      (formSubmit)="onFormSubmit($event)"
+      (formCancel)="onClose()"
+    ></app-base-form>
+  </ng-template>
+</app-base-detail>

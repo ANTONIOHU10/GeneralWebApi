@@ -1,0 +1,35 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/user-detail/user-detail.component.html -->
+<app-base-detail
+  [isOpen]="isOpen"
+  [title]="mode === 'edit' ? 'Edit User' : 'User Details'"
+  [mode]="mode"
+  [sections]="sections()"
+  [editFormTemplate]="editFormTemplate"
+  (closeEvent)="onClose()"
+>
+  <!-- Roles Custom Template -->
+  <ng-template #rolesTemplate>
+    <div class="roles-container">
+      <app-base-badge
+        *ngFor="let role of user?.roles"
+        [text]="role"
+        [variant]="'primary'"
+        size="small"
+        class="badge-item"
+      ></app-base-badge>
+    </div>
+  </ng-template>
+
+  <!-- Edit Form Template -->
+  <ng-template #editFormTemplate>
+    <app-base-form
+      [config]="formConfig"
+      [formData]="formData"
+      [loading]="loading()"
+      submitText="Update User"
+      cancelText="Cancel"
+      (formSubmit)="onFormSubmit($event)"
+      (formCancel)="onClose()"
+    ></app-base-form>
+  </ng-template>
+</app-base-detail>

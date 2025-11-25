@@ -1,0 +1,11 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/add-role/add-role.component.html -->
+<app-base-form
+  [config]="formConfig"
+  [formData]="formData"
+  [loading]="loading()"
+  submitText="Add Role"
+  cancelText="Cancel"
+  (formSubmit)="onFormSubmit($event)"
+  (formCancel)="onFormCancel()"
+></app-base-form>
+

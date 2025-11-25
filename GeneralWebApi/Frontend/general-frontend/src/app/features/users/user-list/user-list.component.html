@@ -1,0 +1,117 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/user-list/user-list.component.html -->
+<app-base-private-page-container
+  title="User Management"
+  subtitle="Manage system users and their access"
+  icon="people"
+  [showTabs]="true"
+  [showSearch]="activeTab() === 'list'"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header -->
+  <app-base-search
+    *ngIf="activeTab() === 'list'"
+    slot="search"
+    [config]="{
+      placeholder: 'Search users...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true,
+    }"
+    (searchChange)="onSearchChange($event)"
+    inputId="user-search"
+  ></app-base-search>
+
+  <!-- User List Tab -->
+  <div *ngIf="activeTab() === 'list'">
+    <!-- Statistics -->
+    <div class="statistics-grid" *ngIf="users().length > 0">
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon success">
+            <span class="material-icons">check_circle</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ activeCount() }}</div>
+            <div class="stat-label">Active</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon secondary">
+            <span class="material-icons">cancel</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ inactiveCount() }}</div>
+            <div class="stat-label">Inactive</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon warning">
+            <span class="material-icons">lock</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ lockedCount() }}</div>
+            <div class="stat-label">Locked</div>
+          </div>
+        </div>
+      </app-base-card>
+    </div>
+
+    <!-- Table -->
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="usersData$"
+      loadingMessage="Loading users..."
+      emptyTitle="No Users"
+      emptyDescription="No users found"
+      [onRetry]="onRetryLoad"
+    >
+      <app-base-table
+        [data]="users()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
+        [pageSize]="10"
+        (rowClick)="onRowClick($event)"
+      >
+        <ng-template #cellTemplate let-row="row" let-column="column">
+          <ng-container *ngIf="column.key === 'roles'">
+            <div class="roles-container">
+              <app-base-badge
+                *ngFor="let role of row.roles"
+                [text]="role"
+                [variant]="'primary'"
+                size="small"
+                style="margin-right: 0.25rem;"
+              ></app-base-badge>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="column.key === 'isActive'">
+            <app-base-badge [text]="row.isActive ? 'Active' : 'Inactive'" [variant]="getStatusVariant(row.isActive)" size="small"></app-base-badge>
+          </ng-container>
+        </ng-template>
+      </app-base-table>
+    </app-base-async-state>
+  </div>
+
+  <!-- Add User Tab -->
+  <div *ngIf="activeTab() === 'add'">
+    <app-add-user (userCreated)="onUserCreated()"></app-add-user>
+  </div>
+</app-base-private-page-container>
+
+<!-- User Detail Modal -->
+<app-user-detail
+  [user]="selectedUser"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (userUpdated)="onUserUpdated()"
+></app-user-detail>
+

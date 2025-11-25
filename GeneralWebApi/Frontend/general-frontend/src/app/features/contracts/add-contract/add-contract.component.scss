@@ -1,0 +1,10 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/add-contract/add-contract.component.scss */
+@use '../../../../styles/core/variable' as *;
+
+.add-contract-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-4;
+}
+

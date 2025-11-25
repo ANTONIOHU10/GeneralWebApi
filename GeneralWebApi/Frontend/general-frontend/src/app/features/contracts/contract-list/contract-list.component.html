@@ -1,0 +1,74 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-list/contract-list.component.html -->
+<app-base-private-page-container
+  title="Contract Management"
+  subtitle="Manage and view all contracts in the system"
+  icon="description"
+  [showTabs]="true"
+  [showSearch]="activeTab() === 'list'"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header - only shown when list tab is active -->
+  <app-base-search
+    *ngIf="activeTab() === 'list'"
+    slot="search"
+    [config]="{
+      placeholder: 'Search contracts...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true,
+    }"
+    (searchChange)="onSearchChange($event)"
+    inputId="contract-search"
+  ></app-base-search>
+
+  <!-- Contract List Tab Content -->
+  <div *ngIf="activeTab() === 'list'">
+    <app-base-async-state
+      [loading$]="loading$"
+      [error$]="error$"
+      [data$]="contracts$"
+      loadingMessage="Loading contracts..."
+      emptyTitle="No contracts found"
+      emptyDescription="There are no contracts to display at the moment"
+      emptyActionText="Add First Contract"
+      [onRetry]="onRetryLoad"
+      [onEmptyAction]="onEmptyActionClick"
+    >
+      <!-- Success content: Contract grid -->
+      <div class="contract-grid">
+        <app-contract-card
+          *ngFor="let contract of contracts$ | async"
+          [contract]="contract"
+          [showActions]="true"
+          (edit)="onEditContract($event)"
+          (delete)="onDeleteContract($event)"
+          (view)="onViewContract($event)"
+        >
+        </app-contract-card>
+      </div>
+    </app-base-async-state>
+  </div>
+
+  <!-- Add Contract Tab Content -->
+  <div *ngIf="activeTab() === 'add'">
+    <app-add-contract (contractCreated)="onContractCreated()"></app-add-contract>
+  </div>
+
+  <!-- Search Contract Tab Content -->
+  <div *ngIf="activeTab() === 'search'">
+    <app-search-contract></app-search-contract>
+  </div>
+</app-base-private-page-container>
+
+<!-- Contract Detail Modal -->
+<app-contract-detail
+  [contract]="selectedContractForDetail"
+  [isOpen]="isDetailModalOpen"
+  [mode]="detailMode"
+  (closeEvent)="onCloseDetailModal()"
+  (contractUpdated)="onContractUpdated($event)"
+></app-contract-detail>
+

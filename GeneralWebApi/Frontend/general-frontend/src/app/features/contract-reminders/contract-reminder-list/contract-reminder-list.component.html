@@ -1,0 +1,102 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-reminders/contract-reminder-list/contract-reminder-list.component.html -->
+<app-base-private-page-container
+  title="Contract Expiry Reminders"
+  subtitle="Monitor contracts expiring soon"
+  icon="notifications"
+  [showTabs]="false"
+  [showSearch]="false"
+>
+  <!-- Filter -->
+  <app-base-card [title]="'Filter'" [icon]="'filter_list'" [variant]="'elevated'">
+    <div class="filter-container">
+      <label>Show contracts expiring within:</label>
+      <select [value]="filterDays()" (change)="onFilterChange(+$any($event.target).value)">
+        <option [value]="7">7 days</option>
+        <option [value]="30">30 days</option>
+        <option [value]="60">60 days</option>
+        <option [value]="90">90 days</option>
+      </select>
+    </div>
+  </app-base-card>
+
+  <!-- Statistics -->
+  <div class="statistics-grid" *ngIf="reminders().length > 0">
+    <app-base-card [variant]="'elevated'">
+      <div class="stat-card">
+        <div class="stat-icon error">
+          <span class="material-icons">error</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ expiredCount() }}</div>
+          <div class="stat-label">Expired</div>
+        </div>
+      </div>
+    </app-base-card>
+    <app-base-card [variant]="'elevated'">
+      <div class="stat-card">
+        <div class="stat-icon error-light">
+          <span class="material-icons">warning</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ urgentCount() }}</div>
+          <div class="stat-label">Urgent (≤7 days)</div>
+        </div>
+      </div>
+    </app-base-card>
+    <app-base-card [variant]="'elevated'">
+      <div class="stat-card">
+        <div class="stat-icon warning">
+          <span class="material-icons">schedule</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ warningCount() }}</div>
+          <div class="stat-label">Warning (8-30 days)</div>
+        </div>
+      </div>
+    </app-base-card>
+    <app-base-card [variant]="'elevated'">
+      <div class="stat-card">
+        <div class="stat-icon info">
+          <span class="material-icons">info</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ infoCount() }}</div>
+          <div class="stat-label">Info (>30 days)</div>
+        </div>
+      </div>
+    </app-base-card>
+  </div>
+
+  <!-- Table -->
+  <app-base-async-state
+    [loading$]="loading$"
+    [data$]="remindersData$"
+    loadingMessage="Loading reminders..."
+    emptyTitle="No Reminders"
+    emptyDescription="No contracts expiring within selected period"
+    [onRetry]="onRetryLoad"
+  >
+    <app-base-table
+      [data]="reminders()"
+      [columns]="tableColumns"
+      [actions]="tableActions"
+      [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
+      [pageSize]="10"
+      (rowClick)="onRowClick($event)"
+    >
+      <ng-template #cellTemplate let-row="row" let-column="column">
+        <ng-container *ngIf="column.key === 'daysUntilExpiry'">
+          <app-base-badge [text]="getStatusText(row)" [variant]="getBadgeVariant(row)" size="small"></app-base-badge>
+        </ng-container>
+      </ng-template>
+    </app-base-table>
+  </app-base-async-state>
+</app-base-private-page-container>
+
+<app-contract-detail
+  [contract]="selectedContract"
+  [isOpen]="isDetailModalOpen"
+  mode="view"
+  (closeEvent)="onCloseDetailModal()"
+  (contractUpdated)="onContractUpdated()"
+></app-contract-detail>

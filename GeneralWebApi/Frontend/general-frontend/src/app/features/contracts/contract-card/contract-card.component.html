@@ -1,0 +1,91 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-card/contract-card.component.html -->
+<app-base-card
+  [variant]="'elevated'"
+  [customClass]="'contract-card'"
+  [showHeader]="true"
+  [showActions]="true"
+  [showFooter]="showActions"
+>
+  <!-- Status Badge in Header Actions -->
+  <div slot="actions">
+    <app-base-badge
+      [text]="contract.status"
+      [variant]="getStatusVariant()"
+      size="small"
+    ></app-base-badge>
+  </div>
+
+  <!-- Card Content -->
+  <div class="contract-card-content">
+    <!-- Contract Type and Employee Section -->
+    <div class="contract-info-header">
+      <div class="contract-type-section">
+        <h3 class="contract-type">{{ getContractTypeLabel(contract.contractType) }}</h3>
+        <p class="employee-name" *ngIf="contract.employeeName">
+          Employee: {{ contract.employeeName }}
+        </p>
+        <p class="contract-id">Contract ID: {{ contract.id }}</p>
+      </div>
+    </div>
+
+    <!-- Date Information -->
+    <div class="date-info">
+      <div class="date-item">
+        <span class="material-icons">event</span>
+        <div class="date-details">
+          <span class="date-label">Start Date:</span>
+          <span class="date-value">{{ formatDate(contract.startDate) }}</span>
+        </div>
+      </div>
+      <div class="date-item" *ngIf="contract.endDate">
+        <span class="material-icons">event_busy</span>
+        <div class="date-details">
+          <span class="date-label">End Date:</span>
+          <span class="date-value">{{ formatDate(contract.endDate) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Salary Information -->
+    <div class="salary-info" *ngIf="contract.salary">
+      <span class="material-icons">attach_money</span>
+      <span class="salary-text">{{ formatCurrency(contract.salary) }}</span>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes-info" *ngIf="contract.notes">
+      <p class="notes-text">{{ contract.notes }}</p>
+    </div>
+
+    <!-- Renewal Reminder -->
+    <div class="renewal-info" *ngIf="contract.renewalReminderDate">
+      <span class="material-icons">notifications</span>
+      <span class="renewal-text">
+        Renewal reminder: {{ formatDate(contract.renewalReminderDate) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Card Footer with Actions -->
+  <div class="contract-card-footer" *ngIf="showActions" slot="footer">
+    <app-base-button
+      text="View"
+      variant="outline"
+      size="small"
+      (buttonClick)="onView()"
+    ></app-base-button>
+    <app-base-button
+      text="Edit"
+      variant="secondary"
+      size="small"
+      (buttonClick)="onEdit()"
+    ></app-base-button>
+    <app-base-button
+      text="Delete"
+      variant="danger"
+      size="small"
+      (buttonClick)="onDelete()"
+    ></app-base-button>
+  </div>
+</app-base-card>
+

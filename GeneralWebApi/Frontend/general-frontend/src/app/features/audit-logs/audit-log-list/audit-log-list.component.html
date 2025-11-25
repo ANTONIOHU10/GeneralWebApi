@@ -1,0 +1,129 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/audit-log-list/audit-log-list.component.html -->
+<app-base-private-page-container
+  title="Audit Logs"
+  subtitle="Track and review all system activities and changes"
+  icon="history"
+  [showTabs]="true"
+  [showSearch]="activeTab() === 'list'"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
+>
+  <!-- Search in header -->
+  <app-base-search
+    *ngIf="activeTab() === 'list'"
+    slot="search"
+    [config]="{
+      placeholder: 'Search audit logs...',
+      debounceTime: 300,
+      minLength: 1,
+      showClearButton: true,
+      showSearchButton: true,
+    }"
+    (searchChange)="onSearchChange($event)"
+    inputId="audit-log-search"
+  ></app-base-search>
+
+  <!-- Audit Log List Tab -->
+  <div *ngIf="activeTab() === 'list'">
+    <!-- Statistics -->
+    <div class="statistics-grid" *ngIf="logs().length > 0">
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon info">
+            <span class="material-icons">info</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalCount() }}</div>
+            <div class="stat-label">Total Logs</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon info">
+            <span class="material-icons">check_circle</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ infoCount() }}</div>
+            <div class="stat-label">Info</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon warning">
+            <span class="material-icons">warning</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ warningCount() }}</div>
+            <div class="stat-label">Warning</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon error">
+            <span class="material-icons">error</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ errorCount() }}</div>
+            <div class="stat-label">Error</div>
+          </div>
+        </div>
+      </app-base-card>
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon error">
+            <span class="material-icons">dangerous</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ criticalCount() }}</div>
+            <div class="stat-label">Critical</div>
+          </div>
+        </div>
+      </app-base-card>
+    </div>
+
+    <!-- Table -->
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="logsData$"
+      loadingMessage="Loading audit logs..."
+      emptyTitle="No Audit Logs"
+      emptyDescription="No audit logs found"
+      [onRetry]="onRetryLoad"
+    >
+      <app-base-table
+        [data]="logs()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
+        [pageSize]="20"
+        (rowClick)="onRowClick($event)"
+      >
+        <ng-template #cellTemplate let-row="row" let-column="column">
+          <ng-container *ngIf="column.key === 'action'">
+            <app-base-badge [text]="row.action" [variant]="getActionVariant(row.action)" size="small"></app-base-badge>
+          </ng-container>
+          <ng-container *ngIf="column.key === 'severity'">
+            <app-base-badge [text]="row.severity" [variant]="getSeverityVariant(row.severity)" size="small"></app-base-badge>
+          </ng-container>
+        </ng-template>
+      </app-base-table>
+    </app-base-async-state>
+  </div>
+
+  <!-- Search Tab -->
+  <div *ngIf="activeTab() === 'search'">
+    <app-search-audit-log></app-search-audit-log>
+  </div>
+</app-base-private-page-container>
+
+<!-- Audit Log Detail Modal -->
+<app-audit-log-detail
+  [log]="selectedLog"
+  [isOpen]="isDetailModalOpen"
+  (closeEvent)="onCloseDetailModal()"
+></app-audit-log-detail>
+
