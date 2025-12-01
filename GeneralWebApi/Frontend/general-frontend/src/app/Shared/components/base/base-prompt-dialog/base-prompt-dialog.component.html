@@ -1,0 +1,49 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-prompt-dialog/base-prompt-dialog.component.html -->
+<app-base-modal
+  [isOpen]="isOpen"
+  [config]="modalConfig"
+  (closeEvent)="onClose()"
+>
+  <div class="prompt-dialog">
+    <div class="prompt-dialog-header">
+      <div class="prompt-dialog-icon" *ngIf="iconType">
+        <span class="material-icons">{{ iconType }}</span>
+      </div>
+      <h3 class="prompt-dialog-title">{{ config.title || 'Confirm Action' }}</h3>
+    </div>
+
+    <div class="prompt-dialog-body">
+      <p class="prompt-dialog-message" *ngIf="config.message">{{ config.message }}</p>
+      
+      <app-base-textarea
+        [label]="config.label || 'Response'"
+        [placeholder]="config.placeholder || 'Enter your response...'"
+        [required]="config.required || false"
+        [rows]="config.rows || 4"
+        [maxLength]="config.maxLength ?? 500"
+        [(ngModel)]="inputValue"
+        [customClass]="'prompt-textarea'"
+      ></app-base-textarea>
+    </div>
+
+    <div class="prompt-dialog-footer">
+      <app-base-button
+        *ngIf="config.showCancel !== false"
+        [text]="config.cancelText || 'Cancel'"
+        [variant]="cancelButtonVariant"
+        (click)="onCancel()"
+      ></app-base-button>
+      <app-base-button
+        [text]="config.confirmText || 'Confirm'"
+        [variant]="confirmButtonVariant"
+        [disabled]="!canConfirm"
+        (click)="onConfirm()"
+      ></app-base-button>
+    </div>
+  </div>
+</app-base-modal>
+
+
+
+
+

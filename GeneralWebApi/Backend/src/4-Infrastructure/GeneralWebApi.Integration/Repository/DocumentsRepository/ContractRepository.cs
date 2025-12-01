@@ -13,6 +13,21 @@ public class ContractRepository : BaseRepository<Contract>, IContractRepository
     {
     }
 
+    public override async Task<Contract> GetByIdAsync(object id, CancellationToken cancellationToken = default)
+    {
+        var contract = await GetActiveAndEnabledEntities()
+            .Include(c => c.Employee)
+            .FirstOrDefaultAsync(c => c.Id.Equals(id), cancellationToken);
+
+        if (contract == null)
+        {
+            _logger.LogWarning("Contract with ID {ContractId} not found", id);
+            throw new KeyNotFoundException($"Contract with ID {id} not found");
+        }
+
+        return contract;
+    }
+
     public async Task<bool> ExistsByEmployeeIdAsync(int employeeId, CancellationToken cancellationToken = default)
     {
         return await GetActiveAndEnabledEntities()
@@ -68,6 +83,7 @@ public class ContractRepository : BaseRepository<Contract>, IContractRepository
     public async Task<List<Contract>> GetByEmployeeIdAsync(int employeeId, CancellationToken cancellationToken = default)
     {
         return await GetActiveAndEnabledEntities()
+            .Include(c => c.Employee)
             .Where(c => c.EmployeeId == employeeId)
             .OrderByDescending(c => c.StartDate)
             .ToListAsync(cancellationToken);

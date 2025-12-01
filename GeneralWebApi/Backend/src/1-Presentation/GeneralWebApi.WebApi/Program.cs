@@ -65,6 +65,8 @@ builder.Services.AddDatabaseHealthChecks(builder.Configuration);
 builder.Services.AddRepositories();
 
 builder.Services.AddControllers();
+// Add HttpContextAccessor for accessing HttpContext in services/handlers
+builder.Services.AddHttpContextAccessor();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddRouting(options =>
 {

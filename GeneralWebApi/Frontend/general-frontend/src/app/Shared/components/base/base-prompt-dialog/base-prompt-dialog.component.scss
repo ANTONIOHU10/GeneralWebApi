@@ -1,0 +1,66 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-prompt-dialog/base-prompt-dialog.component.scss */
+.prompt-dialog {
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  max-width: 600px;
+  padding: 1.5rem;
+  background: var(--bg-surface);
+  border-radius: 8px;
+}
+
+.prompt-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.prompt-dialog-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-100);
+  color: var(--color-primary-600);
+
+  .material-icons {
+    font-size: 24px;
+  }
+}
+
+.prompt-dialog-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.prompt-dialog-body {
+  margin-bottom: 1.5rem;
+
+  .prompt-dialog-message {
+    margin: 0 0 1rem 0;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .prompt-textarea {
+    width: 100%;
+  }
+}
+
+.prompt-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+
+
+
+

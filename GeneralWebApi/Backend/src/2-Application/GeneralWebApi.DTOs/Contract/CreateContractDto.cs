@@ -10,6 +10,20 @@ public class CreateContractDto
     public decimal? Salary { get; set; }
     public string Notes { get; set; } = string.Empty;
     public DateTime? RenewalReminderDate { get; set; }
+    
+    // Approval settings (optional - if provided, contract will be automatically submitted for approval)
+    public bool SubmitForApproval { get; set; } = false;
+    public string? ApprovalComments { get; set; }
+    public List<ApprovalStepDto>? ApprovalSteps { get; set; }
+}
+
+public class ApprovalStepDto
+{
+    public int StepOrder { get; set; }
+    public string StepName { get; set; } = string.Empty;
+    public string? ApproverUserId { get; set; }
+    public string? ApproverUserName { get; set; }
+    public string? ApproverRole { get; set; }
 }
 
 

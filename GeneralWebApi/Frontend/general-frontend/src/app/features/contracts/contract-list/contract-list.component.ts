@@ -7,6 +7,7 @@ import { ContractCardComponent } from '../contract-card/contract-card.component'
 import { AddContractComponent } from '../add-contract/add-contract.component';
 import { ContractDetailComponent } from '../contract-detail/contract-detail.component';
 import { SearchContractComponent } from '../search-contract/search-contract.component';
+import { SubmitContractApprovalComponent } from '../submit-contract-approval/submit-contract-approval.component';
 import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
@@ -30,6 +31,7 @@ import { of } from 'rxjs';
     AddContractComponent,
     ContractDetailComponent,
     SearchContractComponent,
+    SubmitContractApprovalComponent,
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
@@ -49,7 +51,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
   error$ = new BehaviorSubject<string | null>(null);
 
   // Local state
-  activeTab = signal<'list' | 'add' | 'search'>('list');
+  activeTab = signal<'list' | 'add' | 'search' | 'submit-approval'>('list');
   selectedContractForDetail: Contract | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
@@ -59,6 +61,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
   tabs: TabItem[] = [
     { id: 'list', label: 'Contract List', icon: 'list' },
     { id: 'add', label: 'Add Contract', icon: 'add' },
+    { id: 'submit-approval', label: 'Submit for Approval', icon: 'check_circle' },
     { id: 'search', label: 'Search Contract', icon: 'search' },
   ];
 
@@ -187,13 +190,20 @@ export class ContractListComponent implements OnInit, OnDestroy {
     this.setActiveTab('list');
   }
 
-  setActiveTab(tab: 'list' | 'add' | 'search'): void {
+  setActiveTab(tab: 'list' | 'add' | 'search' | 'submit-approval'): void {
     this.activeTab.set(tab);
   }
 
   onTabChange(tabId: string): void {
-    const newTab = tabId as 'list' | 'add' | 'search';
+    const newTab = tabId as 'list' | 'add' | 'search' | 'submit-approval';
     this.setActiveTab(newTab);
+  }
+
+  onApprovalSubmitted(): void {
+    // Reload contracts to reflect status changes
+    this.loadContracts();
+    // Switch to list tab
+    this.setActiveTab('list');
   }
 
   onSearchChange(searchTerm: string) {

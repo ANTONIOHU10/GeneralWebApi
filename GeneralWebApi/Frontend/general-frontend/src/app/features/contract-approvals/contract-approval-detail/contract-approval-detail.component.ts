@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import type { SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { delay, of } from 'rxjs';
-import { first, filter } from 'rxjs/operators';
+import { first, filter, catchError, takeUntil } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
 import {
   BaseDetailComponent,
   BaseBadgeComponent,
@@ -15,8 +15,10 @@ import {
   DetailSection,
   BadgeVariant,
 } from '../../../Shared/components/base';
-import { NotificationService, DialogService } from '../../../Shared/services';
-import { ContractApproval } from 'app/contracts/contract-approvals/contract-approval.model';
+import { BasePromptDialogComponent, PromptDialogConfig } from '../../../Shared/components/base/base-prompt-dialog/base-prompt-dialog.component';
+import { NotificationService } from '../../../Shared/services';
+import { ContractApproval, ApprovalActionRequest, RejectionActionRequest } from 'app/contracts/contract-approvals/contract-approval.model';
+import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 
 @Component({
   selector: 'app-contract-approval-detail',
@@ -26,13 +28,15 @@ import { ContractApproval } from 'app/contracts/contract-approvals/contract-appr
     BaseDetailComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
+    BasePromptDialogComponent,
   ],
   templateUrl: './contract-approval-detail.component.html',
   styleUrls: ['./contract-approval-detail.component.scss'],
 })
 export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges {
   private notificationService = inject(NotificationService);
-  private dialogService = inject(DialogService);
+  private contractApprovalService = inject(ContractApprovalService);
+  private destroy$ = new Subject<void>();
 
   @Input() approval: ContractApproval | null = null;
   @Input() isOpen = false;
@@ -43,6 +47,8 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
   loading = signal(false);
+  showApproveDialog = signal(false);
+  showRejectDialog = signal(false);
 
   sections = signal<DetailSection[]>([]);
 
@@ -55,8 +61,11 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
       {
         title: 'Approval Information',
         fields: [
-          { label: 'Employee', value: this.approval.contractEmployeeName, type: 'text' },
-          { label: 'Contract Type', value: this.approval.contractType, type: 'text' },
+          { label: 'Approval ID', value: this.approval.id.toString(), type: 'text' },
+          { label: 'Contract ID', value: this.approval.contractId.toString(), type: 'text' },
+          { label: 'Employee ID', value: this.approval.employeeId.toString(), type: 'text' },
+          { label: 'Employee Name', value: this.approval.contractEmployeeName || 'N/A', type: 'text' },
+          { label: 'Contract Type', value: this.approval.contractType || 'N/A', type: 'text' },
           { label: 'Status', value: this.approval.status, type: 'badge', badgeVariant: this.getStatusVariant(this.approval.status) },
           { label: 'Progress', value: `${this.approval.currentApprovalLevel}/${this.approval.maxApprovalLevel}`, type: 'text' },
           { label: 'Requested By', value: this.approval.requestedBy, type: 'text' },
@@ -102,42 +111,106 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
 
   onApprove(): void {
     if (!this.approval) return;
-
-    this.dialogService.confirm({
-      title: 'Approve Contract',
-      message: `Approve contract for ${this.approval.contractEmployeeName}?`,
-      confirmText: 'Approve',
-      cancelText: 'Cancel',
-      confirmVariant: 'primary',
-      icon: 'check',
-    }).pipe(first(), filter(c => c)).subscribe(() => {
-      this.loading.set(true);
-      of(true).pipe(delay(500), first()).subscribe(() => {
-        this.loading.set(false);
-        this.notificationService.success('Approved', `Contract for ${this.approval!.contractEmployeeName} has been approved`, { duration: 3000 });
-        this.approvalUpdated.emit();
-      });
-    });
+    this.showApproveDialog.set(true);
   }
 
   onReject(): void {
     if (!this.approval) return;
+    this.showRejectDialog.set(true);
+  }
 
-    this.dialogService.confirm({
-      title: 'Reject Contract',
-      message: `Reject contract for ${this.approval.contractEmployeeName}?`,
-      confirmText: 'Reject',
-      cancelText: 'Cancel',
-      confirmVariant: 'danger',
-      icon: 'close',
-    }).pipe(first(), filter(c => c)).subscribe(() => {
-      this.loading.set(true);
-      of(true).pipe(delay(500), first()).subscribe(() => {
+  onApproveConfirm(comments: string): void {
+    if (!this.approval) return;
+
+    this.loading.set(true);
+    this.showApproveDialog.set(false);
+
+    const request: ApprovalActionRequest = {
+      comments: comments || undefined,
+    };
+
+    this.contractApprovalService.approve(this.approval.id, request).pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
         this.loading.set(false);
-        this.notificationService.warning('Rejected', `Contract for ${this.approval!.contractEmployeeName} has been rejected`, { duration: 3000 });
-        this.approvalUpdated.emit();
-      });
+        this.notificationService.error(
+          'Approve Failed',
+          error.message || 'Failed to approve contract',
+          { duration: 5000, persistent: false, autoClose: true }
+        );
+        return of(false);
+      })
+    ).subscribe({
+      next: (success) => {
+        this.loading.set(false);
+        if (success) {
+          this.notificationService.success(
+            'Approved',
+            `Contract for ${this.approval!.contractEmployeeName || 'this contract'} has been approved`,
+            { duration: 3000, autoClose: true }
+          );
+          this.approvalUpdated.emit();
+        }
+      }
     });
+  }
+
+  onRejectConfirm(reason: string): void {
+    if (!this.approval) return;
+
+    if (!reason || !reason.trim()) {
+      this.notificationService.error(
+        'Rejection Reason Required',
+        'Please provide a reason for rejection',
+        { duration: 3000, autoClose: true }
+      );
+      return;
+    }
+
+    this.loading.set(true);
+    this.showRejectDialog.set(false);
+
+    const request: RejectionActionRequest = {
+      reason: reason.trim(),
+    };
+
+    this.contractApprovalService.reject(this.approval.id, request).pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        this.loading.set(false);
+        this.notificationService.error(
+          'Reject Failed',
+          error.message || 'Failed to reject contract',
+          { duration: 5000, persistent: false, autoClose: true }
+        );
+        return of(false);
+      })
+    ).subscribe({
+      next: (success) => {
+        this.loading.set(false);
+        if (success) {
+          this.notificationService.warning(
+            'Rejected',
+            `Contract for ${this.approval!.contractEmployeeName || 'this contract'} has been rejected`,
+            { duration: 3000, autoClose: true }
+          );
+          this.approvalUpdated.emit();
+        }
+      }
+    });
+  }
+
+  onApproveDialogClose(): void {
+    this.showApproveDialog.set(false);
+  }
+
+  onRejectDialogClose(): void {
+    this.showRejectDialog.set(false);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   formatDate(dateString: string | null | undefined): string {

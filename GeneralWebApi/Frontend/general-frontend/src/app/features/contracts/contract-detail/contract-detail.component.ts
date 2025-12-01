@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-detail/contract-detail.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, delay, of } from 'rxjs';
 import { filter, first, takeUntil } from 'rxjs/operators';
@@ -7,10 +7,15 @@ import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES } from 'app/contracts/contr
 import {
   BaseModalComponent,
   BaseFormComponent,
+  BaseBadgeComponent,
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
+import { ContractApprovalService } from '../../../core/services/contract-approval.service';
+import { ContractApprovalStep } from 'app/contracts/contract-approvals/contract-approval.model';
+import { Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 /**
  * ContractDetailComponent - Modal component for displaying detailed contract information
@@ -22,13 +27,16 @@ import { DialogService, NotificationService } from '../../../Shared/services';
     CommonModule,
     BaseModalComponent,
     BaseFormComponent,
+    BaseBadgeComponent,
   ],
   templateUrl: './contract-detail.component.html',
   styleUrls: ['./contract-detail.component.scss'],
 })
-export class ContractDetailComponent implements OnInit, OnChanges {
+export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private contractApprovalService = inject(ContractApprovalService);
+  private destroy$ = new Subject<void>();
 
   @Input() contract: Contract | null = null;
   @Input() isOpen = false;
@@ -39,6 +47,10 @@ export class ContractDetailComponent implements OnInit, OnChanges {
 
   // Loading state for form (using signal for reactive updates)
   loading = signal(false);
+  
+  // Approval information
+  approvalSteps = signal<ContractApprovalStep[]>([]);
+  loadingApproval = signal(false);
 
   // Form data
   formData: Record<string, unknown> = {};
@@ -175,12 +187,19 @@ export class ContractDetailComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['contract'] && this.contract) {
       this.initializeFormData();
+      // Load approval information when contract changes
+      this.loadApprovalHistory();
     }
     if (changes['mode'] || (changes['contract'] && this.contract)) {
       setTimeout(() => {
         this.updateFormConfigForMode();
       }, 0);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onClose(): void {
@@ -318,6 +337,66 @@ export class ContractDetailComponent implements OnInit, OnChanges {
 
   onFormCancel(): void {
     this.onClose();
+  }
+
+  /**
+   * Load approval history for the current contract
+   */
+  private loadApprovalHistory(): void {
+    if (!this.contract || !this.contract.id) {
+      this.approvalSteps.set([]);
+      return;
+    }
+
+    this.loadingApproval.set(true);
+    const contractId = parseInt(this.contract.id, 10);
+
+    this.contractApprovalService.getApprovalHistory(contractId).pipe(
+      takeUntil(this.destroy$),
+      catchError(error => {
+        console.error('❌ Error loading approval history:', error);
+        this.loadingApproval.set(false);
+        // Don't show error notification for missing approval (contract might not have approval yet)
+        if (error.message && !error.message.includes('not found')) {
+          this.notificationService.error(
+            'Load Failed',
+            'Failed to load approval information',
+            { duration: 3000, persistent: false, autoClose: true }
+          );
+        }
+        return of([]);
+      })
+    ).subscribe({
+      next: (steps: ContractApprovalStep[]) => {
+        this.approvalSteps.set(steps);
+        this.loadingApproval.set(false);
+        console.log('✅ Approval history loaded:', steps.length, 'steps');
+      }
+    });
+  }
+
+  /**
+   * Get status badge variant for approval step
+   */
+  getApprovalStatusVariant(status: string): 'success' | 'warning' | 'danger' | 'secondary' {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return 'success';
+      case 'pending':
+        return 'warning';
+      case 'rejected':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
+  }
+
+  /**
+   * Format date for display
+   */
+  formatDate(date: string | null | undefined): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleString();
   }
 }
 

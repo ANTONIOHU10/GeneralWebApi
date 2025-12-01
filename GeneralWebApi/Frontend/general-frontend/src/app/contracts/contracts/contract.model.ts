@@ -40,6 +40,18 @@ export interface CreateContractRequest {
   Salary?: number | null;
   Notes?: string;
   RenewalReminderDate?: string | null;
+  // Approval settings (optional - if provided, contract will be automatically submitted for approval)
+  SubmitForApproval?: boolean;
+  ApprovalComments?: string | null;
+  ApprovalSteps?: ApprovalStepDto[] | null;
+}
+
+export interface ApprovalStepDto {
+  StepOrder: number;
+  StepName: string;
+  ApproverUserId?: string | null;
+  ApproverUserName?: string | null;
+  ApproverRole?: string | null;
 }
 
 // Request DTO for updating contract - matches backend UpdateContractDto

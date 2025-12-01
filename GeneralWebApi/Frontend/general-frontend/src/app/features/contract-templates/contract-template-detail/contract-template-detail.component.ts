@@ -212,18 +212,18 @@ export class ContractTemplateDetailComponent implements OnInit, OnChanges, After
         ],
         showDivider: !!this.template.description,
       },
-      {
+      ...(this.contentTemplate ? [{
         title: 'Template Content',
         fields: [
           { label: 'Content', value: null, type: 'custom' as const, customTemplate: this.contentTemplate },
         ],
-      },
-      {
+      }] : []),
+      ...(this.variablesTemplate ? [{
         title: 'Variables',
         fields: [
           { label: 'Variables', value: null, type: 'custom' as const, customTemplate: this.variablesTemplate },
         ],
-      },
+      }] : []),
       ...(this.template.legalRequirements && this.legalTemplate ? [{
         title: 'Legal Requirements',
         fields: [
@@ -245,8 +245,13 @@ export class ContractTemplateDetailComponent implements OnInit, OnChanges, After
     if (changes['template'] || changes['mode']) {
       this.updateFormData();
     }
-    if (changes['template'] && this.contentTemplate && this.variablesTemplate) {
-      this.updateSections();
+    // Only check if template data changed - updateSections() will handle template availability
+    // The contentTemplate is always needed, but variablesTemplate may not be if there's no variables data
+    if (changes['template'] && this.template) {
+      // Use setTimeout to ensure ViewChild templates are available after change detection
+      setTimeout(() => {
+        this.updateSections();
+      }, 0);
     }
   }
 

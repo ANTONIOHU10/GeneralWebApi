@@ -25,6 +25,88 @@
         (formCancel)="onFormCancel()"
       ></app-base-form>
     </div>
+
+    <!-- Approval Information Section (only in view mode) -->
+    <div class="approval-section" *ngIf="mode === 'view'">
+      <div class="approval-header">
+        <h3>Approval Information</h3>
+      </div>
+
+      <!-- Loading state -->
+      <div *ngIf="loadingApproval()" class="approval-loading">
+        Loading approval information...
+      </div>
+
+      <!-- No approval -->
+      <div *ngIf="!loadingApproval() && approvalSteps().length === 0" class="approval-empty">
+        <p>No approval information available for this contract.</p>
+      </div>
+
+      <!-- Approval steps -->
+      <div *ngIf="!loadingApproval() && approvalSteps().length > 0" class="approval-steps">
+        <div 
+          *ngFor="let step of approvalSteps(); let i = index" 
+          class="approval-step-item"
+          [class.pending]="step.status === 'Pending'"
+          [class.approved]="step.status === 'Approved'"
+          [class.rejected]="step.status === 'Rejected'"
+        >
+          <div class="step-header">
+            <div class="step-number">
+              <span class="step-number-circle">{{ step.stepOrder }}</span>
+              <div class="step-connector" *ngIf="i < approvalSteps().length - 1"></div>
+            </div>
+            <div class="step-content">
+              <div class="step-title-row">
+                <h4 class="step-name">{{ step.stepName }}</h4>
+                <app-base-badge
+                  [text]="step.status"
+                  [variant]="getApprovalStatusVariant(step.status)"
+                  size="small"
+                ></app-base-badge>
+              </div>
+              
+              <!-- Approver Information -->
+              <div class="step-info">
+                <div class="step-info-item" *ngIf="step.approverUserName">
+                  <strong>Approver:</strong> {{ step.approverUserName }}
+                  <span *ngIf="step.approverRole && !step.approverUserId" class="role-badge">({{ step.approverRole }})</span>
+                </div>
+                <div class="step-info-item" *ngIf="!step.approverUserName && step.approverRole">
+                  <strong>Approver Role:</strong> {{ step.approverRole }}
+                </div>
+                <div class="step-info-item" *ngIf="step.status === 'Pending' && !step.approverUserName && !step.approverRole">
+                  <em>Approver not assigned</em>
+                </div>
+              </div>
+
+              <!-- Processed Information -->
+              <div class="step-processed" *ngIf="step.status !== 'Pending'">
+                <div class="step-info-item" *ngIf="step.processedBy">
+                  <strong>Processed by:</strong> {{ step.processedBy }}
+                </div>
+                <div class="step-info-item" *ngIf="step.processedAt">
+                  <strong>Processed at:</strong> {{ formatDate(step.processedAt) }}
+                </div>
+                <div class="step-info-item" *ngIf="step.comments">
+                  <strong>Comments:</strong> {{ step.comments }}
+                </div>
+              </div>
+
+              <!-- Pending Information -->
+              <div class="step-pending" *ngIf="step.status === 'Pending'">
+                <div class="step-info-item" *ngIf="step.dueDate">
+                  <strong>Due Date:</strong> {{ formatDate(step.dueDate) }}
+                </div>
+                <div class="step-info-item" *ngIf="step.comments">
+                  <strong>Notes:</strong> {{ step.comments }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </app-base-modal>
 

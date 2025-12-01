@@ -59,7 +59,8 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
   @Output() dropdownClose = new EventEmitter<void>();
 
   isOpen = false;
-  selectedOption: SelectOption | null = null;
+  selectedOption: SelectOption | null = null; // For single select
+  selectedOptions: SelectOption[] = []; // For multiple select
   searchQuery = '';
   filteredOptions: SelectOption[] = [];
   groupedOptions: { name: string; options: SelectOption[] }[] = [];
@@ -126,16 +127,40 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
   selectOption(option: SelectOption): void {
     if (option.disabled) return;
 
-    this.selectedOption = option;
-    this.onChange(option.value);
+    if (this.multiple) {
+      // Toggle selection for multiple select
+      const index = this.selectedOptions.findIndex(opt => opt.value === option.value);
+      if (index >= 0) {
+        // Deselect
+        this.selectedOptions.splice(index, 1);
+      } else {
+        // Select
+        this.selectedOptions.push(option);
+      }
+      
+      // Emit array of values
+      const values = this.selectedOptions.map(opt => opt.value);
+      this.onChange(values);
+      this.selectionChange.emit([...this.selectedOptions]);
+      // Don't close dropdown for multiple select - allow selecting multiple options
+    } else {
+      // Single select
+      this.selectedOption = option;
+      this.onChange(option.value);
+      this.selectionChange.emit(option);
+      this.isOpen = false;
+      this.dropdownClose.emit();
+    }
+    
     this.onTouched();
-    this.selectionChange.emit(option);
-    this.isOpen = false;
-    this.dropdownClose.emit();
   }
 
   isSelected(option: SelectOption): boolean {
-    return this.selectedOption?.value === option.value;
+    if (this.multiple) {
+      return this.selectedOptions.some(opt => opt.value === option.value);
+    } else {
+      return this.selectedOption?.value === option.value;
+    }
   }
 
   onSearchChange(): void {
@@ -180,8 +205,27 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
 
   // ControlValueAccessor implementation
   writeValue(value: unknown): void {
-    const option = this.options.find(opt => opt.value === value);
-    this.selectedOption = option || null;
+    if (this.multiple) {
+      // Handle array of values for multiple select
+      if (Array.isArray(value)) {
+        this.selectedOptions = this.options.filter(opt => 
+          value.some(v => this.valuesEqual(v, opt.value))
+        );
+      } else {
+        this.selectedOptions = [];
+      }
+    } else {
+      // Handle single value for single select
+      const option = this.options.find(opt => this.valuesEqual(opt.value, value));
+      this.selectedOption = option || null;
+    }
+  }
+
+  private valuesEqual(a: unknown, b: unknown): boolean {
+    // Handle different types (number vs string, etc.)
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    return String(a) === String(b);
   }
 
   registerOnChange(fn: (value: unknown) => void): void {

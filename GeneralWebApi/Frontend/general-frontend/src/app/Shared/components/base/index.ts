@@ -38,6 +38,8 @@ export { BaseAsyncStateComponent } from './base-async-state/base-async-state.com
 export { BaseModalComponent } from './base-modal/base-modal.component';
 export { BaseNotificationComponent } from './base-notification/base-notification.component';
 export { BaseDetailComponent } from './base-detail/base-detail.component';
+export { BasePromptDialogComponent } from './base-prompt-dialog/base-prompt-dialog.component';
+export type { PromptDialogConfig } from './base-prompt-dialog/base-prompt-dialog.component';
 
 // Navigation Components
 export { BaseTabsComponent } from './base-tabs/base-tabs.component';

@@ -23,11 +23,20 @@
     [attr.aria-labelledby]="label ? selectId + '-label' : null"
   >
     <div class="select-display">
-      <span *ngIf="selectedOption?.icon" class="option-icon material-icons">
+      <span *ngIf="!multiple && selectedOption?.icon" class="option-icon material-icons">
         {{ selectedOption?.icon }}
       </span>
       <span class="select-text">
-        {{ selectedOption?.label || placeholder }}
+        <ng-container *ngIf="multiple">
+          <span *ngIf="selectedOptions.length === 0">{{ placeholder }}</span>
+          <span *ngIf="selectedOptions.length > 0">
+            {{ selectedOptions.length }} selected
+            <span *ngIf="selectedOptions.length === 1">: {{ selectedOptions[0].label }}</span>
+          </span>
+        </ng-container>
+        <ng-container *ngIf="!multiple">
+          {{ selectedOption?.label || placeholder }}
+        </ng-container>
       </span>
     </div>
 

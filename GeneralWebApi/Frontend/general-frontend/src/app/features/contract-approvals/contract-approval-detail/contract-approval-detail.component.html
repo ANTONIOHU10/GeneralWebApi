@@ -69,3 +69,45 @@
     </div>
   </ng-template>
 </app-base-detail>
+
+<!-- Approve Dialog -->
+<app-base-prompt-dialog
+  [isOpen]="showApproveDialog()"
+  [config]="{
+    title: 'Approve Contract',
+    message: `Approve contract for ${approval?.contractEmployeeName || 'this contract'}?`,
+    label: 'Comments (Optional)',
+    placeholder: 'Enter approval comments...',
+    confirmText: 'Approve',
+    cancelText: 'Cancel',
+    confirmVariant: 'primary',
+    icon: 'check',
+    required: false,
+    maxLength: 500,
+    rows: 4
+  }"
+  (confirm)="onApproveConfirm($event)"
+  (cancelAction)="onApproveDialogClose()"
+  (dialogClose)="onApproveDialogClose()"
+></app-base-prompt-dialog>
+
+<!-- Reject Dialog -->
+<app-base-prompt-dialog
+  [isOpen]="showRejectDialog()"
+  [config]="{
+    title: 'Reject Contract',
+    message: `Reject contract for ${approval?.contractEmployeeName || 'this contract'}?`,
+    label: 'Rejection Reason',
+    placeholder: 'Please provide a reason for rejection...',
+    confirmText: 'Reject',
+    cancelText: 'Cancel',
+    confirmVariant: 'danger',
+    icon: 'close',
+    required: true,
+    maxLength: 500,
+    rows: 4
+  }"
+  (confirm)="onRejectConfirm($event)"
+  (cancelAction)="onRejectDialogClose()"
+  (dialogClose)="onRejectDialogClose()"
+></app-base-prompt-dialog>

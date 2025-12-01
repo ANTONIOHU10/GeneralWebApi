@@ -4,6 +4,7 @@ public class ContractApprovalDto
 {
     public int Id { get; set; }
     public int ContractId { get; set; }
+    public int EmployeeId { get; set; }
     public string Status { get; set; } = string.Empty;
     public string? Comments { get; set; }
     public string RequestedBy { get; set; } = string.Empty;
@@ -24,6 +25,7 @@ public class ContractApprovalStepDto
     public int StepOrder { get; set; }
     public string StepName { get; set; } = string.Empty;
     public string ApproverRole { get; set; } = string.Empty;
+    public string? ApproverUserId { get; set; }
     public string? ApproverUserName { get; set; }
     public string Status { get; set; } = string.Empty;
     public string? Comments { get; set; }
@@ -35,6 +37,16 @@ public class ContractApprovalStepDto
 public class SubmitApprovalRequest
 {
     public string? Comments { get; set; }
+    public List<ApprovalStepRequest>? ApprovalSteps { get; set; }
+}
+
+public class ApprovalStepRequest
+{
+    public int StepOrder { get; set; }
+    public string StepName { get; set; } = string.Empty;
+    public string? ApproverUserId { get; set; }
+    public string? ApproverUserName { get; set; }
+    public string? ApproverRole { get; set; }
 }
 
 public class ApprovalActionRequest

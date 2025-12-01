@@ -23,7 +23,7 @@ public class ContractApprovalService : IContractApprovalService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<ContractApprovalDto> SubmitForApprovalAsync(int contractId, string requestedBy, string? comments, CancellationToken cancellationToken = default)
+    public async Task<ContractApprovalDto> SubmitForApprovalAsync(int contractId, string requestedBy, string? comments, List<ApprovalStepRequest>? customSteps = null, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Submitting contract {ContractId} for approval by {RequestedBy}", contractId, requestedBy);
 
@@ -48,46 +48,77 @@ public class ContractApprovalService : IContractApprovalService
             Comments = comments,
             RequestedBy = requestedBy,
             RequestedAt = DateTime.UtcNow,
-            CurrentApprovalLevel = 1,
-            MaxApprovalLevel = 2
+            CurrentApprovalLevel = 1
         };
 
-        approval.ApprovalSteps.Add(new ContractApprovalStep
+        // Use custom steps if provided, otherwise use default two-level workflow
+        if (customSteps != null && customSteps.Any())
         {
-            StepOrder = 1,
-            StepName = "Department Manager Approval",
-            ApproverRole = "DepartmentManager",
-            Status = "Pending"
-        });
+            approval.MaxApprovalLevel = customSteps.Count;
+            foreach (var step in customSteps.OrderBy(s => s.StepOrder))
+            {
+                approval.ApprovalSteps.Add(new ContractApprovalStep
+                {
+                    StepOrder = step.StepOrder,
+                    StepName = step.StepName,
+                    ApproverRole = step.ApproverRole ?? string.Empty,
+                    ApproverUserId = step.ApproverUserId,
+                    ApproverUserName = step.ApproverUserName,
+                    Status = "Pending"
+                });
+            }
+        }
+        else
+        {
+            // Default two-level workflow
+            approval.MaxApprovalLevel = 2;
+            approval.ApprovalSteps.Add(new ContractApprovalStep
+            {
+                StepOrder = 1,
+                StepName = "Department Manager Approval",
+                ApproverRole = "DepartmentManager",
+                Status = "Pending"
+            });
 
-        approval.ApprovalSteps.Add(new ContractApprovalStep
-        {
-            StepOrder = 2,
-            StepName = "HR Approval",
-            ApproverRole = "HRManager",
-            Status = "Pending"
-        });
+            approval.ApprovalSteps.Add(new ContractApprovalStep
+            {
+                StepOrder = 2,
+                StepName = "HR Approval",
+                ApproverRole = "HRManager",
+                Status = "Pending"
+            });
+        }
+
+        // Update contract status to Pending when submitted for approval
+        contract.Status = "Pending";
+        await _contractRepository.UpdateAsync(contract, cancellationToken);
+        _logger.LogInformation("Contract {ContractId} status updated to Pending when submitted for approval", contractId);
 
         var saved = await _approvalRepository.AddAsync(approval, cancellationToken);
 
         _logger.LogInformation("Successfully submitted contract {ContractId} for approval with approval ID {ApprovalId}", contractId, saved.Id);
 
+        // Reload with Contract and Employee to get EmployeeId
+        var savedWithContract = await _approvalRepository.GetByIdWithStepsAsync(saved.Id, cancellationToken);
+
         return new ContractApprovalDto
         {
-            Id = saved.Id,
-            ContractId = saved.ContractId,
-            Status = saved.Status,
-            Comments = saved.Comments,
-            RequestedBy = saved.RequestedBy,
-            RequestedAt = saved.RequestedAt,
-            CurrentApprovalLevel = saved.CurrentApprovalLevel,
-            MaxApprovalLevel = saved.MaxApprovalLevel,
-            ApprovalSteps = saved.ApprovalSteps.Select(s => new ContractApprovalStepDto
+            Id = savedWithContract.Id,
+            ContractId = savedWithContract.ContractId,
+            EmployeeId = savedWithContract.Contract?.EmployeeId ?? 0,
+            Status = savedWithContract.Status,
+            Comments = savedWithContract.Comments,
+            RequestedBy = savedWithContract.RequestedBy,
+            RequestedAt = savedWithContract.RequestedAt,
+            CurrentApprovalLevel = savedWithContract.CurrentApprovalLevel,
+            MaxApprovalLevel = savedWithContract.MaxApprovalLevel,
+            ApprovalSteps = savedWithContract.ApprovalSteps.Select(s => new ContractApprovalStepDto
             {
                 Id = s.Id,
                 StepOrder = s.StepOrder,
                 StepName = s.StepName,
                 ApproverRole = s.ApproverRole,
+                ApproverUserId = s.ApproverUserId,
                 ApproverUserName = s.ApproverUserName,
                 Status = s.Status,
                 Comments = s.Comments,
@@ -116,6 +147,15 @@ public class ContractApprovalService : IContractApprovalService
             throw new InvalidOperationException("No pending step found for approval");
         }
 
+        // Verify that the approver is authorized for this step
+        // If ApproverUserId is specified, only that user can approve
+        if (!string.IsNullOrEmpty(current.ApproverUserId) && current.ApproverUserId != approverId)
+        {
+            _logger.LogWarning("User {ApproverId} is not authorized to approve step {StepOrder} of approval {ApprovalId}. Expected approver: {ExpectedApproverId}", 
+                approverId, current.StepOrder, approvalId, current.ApproverUserId);
+            throw new UnauthorizedAccessException($"You are not authorized to approve this step. Expected approver: {current.ApproverUserName ?? current.ApproverUserId}");
+        }
+
         current.Status = "Approved";
         current.Comments = comments;
         current.ProcessedAt = DateTime.UtcNow;
@@ -132,6 +172,15 @@ public class ContractApprovalService : IContractApprovalService
             approval.ApprovedBy = approverId;
             approval.ApprovedAt = DateTime.UtcNow;
             _logger.LogInformation("Approval {ApprovalId} completed", approvalId);
+
+            // Update contract status to Active when approval is completed
+            var contract = await _contractRepository.GetByIdAsync(approval.ContractId, cancellationToken);
+            if (contract != null)
+            {
+                contract.Status = "Active";
+                await _contractRepository.UpdateAsync(contract, cancellationToken);
+                _logger.LogInformation("Contract {ContractId} status updated to Active after approval", contract.Id);
+            }
         }
 
         await _approvalRepository.UpdateAsync(approval, cancellationToken);
@@ -163,6 +212,15 @@ public class ContractApprovalService : IContractApprovalService
             current.ProcessedBy = approverId;
         }
 
+        // Update contract status to Pending when approval is rejected
+        var contract = await _contractRepository.GetByIdAsync(approval.ContractId, cancellationToken);
+        if (contract != null)
+        {
+            contract.Status = "Pending";
+            await _contractRepository.UpdateAsync(contract, cancellationToken);
+            _logger.LogInformation("Contract {ContractId} status updated to Pending after rejection", contract.Id);
+        }
+
         await _approvalRepository.UpdateAsync(approval, cancellationToken);
         _logger.LogInformation("Approval {ApprovalId} rejected", approvalId);
         return true;
@@ -170,14 +228,22 @@ public class ContractApprovalService : IContractApprovalService
 
     public async Task<PagedResult<ContractApprovalDto>> GetPendingApprovalsAsync(string approverUserId, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Getting pending approvals for user {UserId}, page {PageNumber}", approverUserId, pageNumber);
+        return await GetPendingApprovalsAsync(approverUserId, Array.Empty<string>(), pageNumber, pageSize, cancellationToken);
+    }
 
-        var paged = await _approvalRepository.GetPendingForApproverAsync(approverUserId, pageNumber, pageSize, cancellationToken);
+    public async Task<PagedResult<ContractApprovalDto>> GetPendingApprovalsAsync(string approverUserId, string[] approverRoles, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting pending approvals for user {UserId} with roles {Roles}, page {PageNumber}", approverUserId, string.Join(", ", approverRoles), pageNumber);
+
+        var paged = approverRoles.Length > 0
+            ? await _approvalRepository.GetPendingForApproverAsync(approverUserId, approverRoles, pageNumber, pageSize, cancellationToken)
+            : await _approvalRepository.GetPendingForApproverAsync(approverUserId, pageNumber, pageSize, cancellationToken);
         var mapped = new PagedResult<ContractApprovalDto>(
             paged.Items.Select(a => new ContractApprovalDto
             {
                 Id = a.Id,
                 ContractId = a.ContractId,
+                EmployeeId = a.Contract?.EmployeeId ?? 0,
                 Status = a.Status,
                 Comments = a.Comments,
                 RequestedBy = a.RequestedBy,
@@ -190,6 +256,7 @@ public class ContractApprovalService : IContractApprovalService
                     StepOrder = s.StepOrder,
                     StepName = s.StepName,
                     ApproverRole = s.ApproverRole,
+                    ApproverUserId = s.ApproverUserId,
                     ApproverUserName = s.ApproverUserName,
                     Status = s.Status,
                     Comments = s.Comments,
@@ -226,6 +293,7 @@ public class ContractApprovalService : IContractApprovalService
                 StepOrder = s.StepOrder,
                 StepName = s.StepName,
                 ApproverRole = s.ApproverRole,
+                ApproverUserId = s.ApproverUserId,
                 ApproverUserName = s.ApproverUserName,
                 Status = s.Status,
                 Comments = s.Comments,

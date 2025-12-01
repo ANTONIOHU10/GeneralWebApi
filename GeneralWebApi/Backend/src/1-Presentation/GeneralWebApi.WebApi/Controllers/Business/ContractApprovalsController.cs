@@ -33,7 +33,7 @@ public class ContractApprovalsController : ControllerBase
                 return Unauthorized(ApiResponse<object>.Unauthorized("User not authenticated"));
             }
 
-            var result = await _approvalService.SubmitForApprovalAsync(contractId, userId, request.Comments);
+            var result = await _approvalService.SubmitForApprovalAsync(contractId, userId, request.Comments, request.ApprovalSteps);
             return Ok(ApiResponse<ContractApprovalDto>.SuccessResult(result, "Contract submitted for approval successfully"));
         }
         catch (KeyNotFoundException ex)
@@ -121,7 +121,13 @@ public class ContractApprovalsController : ControllerBase
                 return Unauthorized(ApiResponse<object>.Unauthorized("User not authenticated"));
             }
 
-            var result = await _approvalService.GetPendingApprovalsAsync(userId, pageNumber, pageSize);
+            // Get user roles from claims
+            var userRoles = User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToArray();
+
+            var result = await _approvalService.GetPendingApprovalsAsync(userId, userRoles, pageNumber, pageSize);
             return Ok(ApiResponse<PagedResult<ContractApprovalDto>>.SuccessResult(result, "Pending approvals retrieved successfully"));
         }
         catch (Exception ex)

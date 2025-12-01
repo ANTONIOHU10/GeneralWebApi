@@ -57,6 +57,11 @@
     <app-add-contract (contractCreated)="onContractCreated()"></app-add-contract>
   </div>
 
+  <!-- Submit for Approval Tab Content -->
+  <div *ngIf="activeTab() === 'submit-approval'">
+    <app-submit-contract-approval (approvalSubmitted)="onApprovalSubmitted()"></app-submit-contract-approval>
+  </div>
+
   <!-- Search Contract Tab Content -->
   <div *ngIf="activeTab() === 'search'">
     <app-search-contract></app-search-contract>

@@ -92,8 +92,13 @@ export class AuditLogDetailComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['log'] && this.changesTemplate && this.oldValuesTemplate && this.newValuesTemplate) {
-      this.updateSections();
+    // Only check if log data changed - updateSections() will handle template availability
+    // and only add sections for templates that exist and have corresponding data
+    if (changes['log'] && this.log) {
+      // Use setTimeout to ensure ViewChild templates are available after change detection
+      setTimeout(() => {
+        this.updateSections();
+      }, 0);
     }
   }
 

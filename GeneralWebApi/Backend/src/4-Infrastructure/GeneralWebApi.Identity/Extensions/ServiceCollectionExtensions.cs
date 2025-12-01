@@ -16,6 +16,19 @@ public static class ServiceCollectionExtensions
     {
         // bind the appsettings.json configuration to the AuthenticationSettings, JwtSettings, and ApiKeySettings
         var authSettings = configuration.GetSection("Authentication").Get<AuthenticationSettings>() ?? new();
+        // bind the appsettings.json configuration to the AuthenticationSettings, JwtSettings, and ApiKeySettings
+
+        // inject the Authentication section into AuthenticationSettings objects
+        // and we can use it by injecting the AuthenticationSettings into the services
+        // like this:
+        // public class MyService
+        // {
+        //     private readonly AuthenticationSettings _authenticationSettings;
+        //     public MyService(AuthenticationSettings authenticationSettings)
+        //     {
+        //         _authenticationSettings = authenticationSettings;
+        //     }
+        // }
         services.Configure<AuthenticationSettings>(configuration.GetSection("Authentication"));
         services.Configure<JwtSettings>(configuration.GetSection("Authentication:Jwt"));
         services.Configure<ApiKeySettings>(configuration.GetSection("Authentication:ApiKey"));
@@ -27,6 +40,8 @@ public static class ServiceCollectionExtensions
         // configure the authentication
         var authBuilder = services.AddAuthentication(options =>
         {
+            // defaultScheme is the protocol used to authenticate the request
+            // the value "DefaultScheme" is appesettings is Bearer, so the default scheme is Bearer
             options.DefaultAuthenticateScheme = authSettings.DefaultScheme;
             options.DefaultChallengeScheme = authSettings.DefaultScheme;
         });

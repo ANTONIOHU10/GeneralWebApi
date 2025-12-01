@@ -5,6 +5,7 @@ export interface ContractApprovalStep {
   stepOrder: number;
   stepName: string;
   approverRole: string;
+  approverUserId: string | null;
   approverUserName: string | null;
   status: 'Pending' | 'Approved' | 'Rejected';
   comments: string | null;
@@ -16,6 +17,7 @@ export interface ContractApprovalStep {
 export interface ContractApproval {
   id: number;
   contractId: number;
+  employeeId: number;
   contractEmployeeName?: string;
   contractType?: string;
   status: 'Pending' | 'Approved' | 'Rejected' | 'Cancelled';
@@ -34,6 +36,15 @@ export interface ContractApproval {
 
 export interface SubmitApprovalRequest {
   comments?: string;
+  ApprovalSteps?: ApprovalStepRequest[];
+}
+
+export interface ApprovalStepRequest {
+  StepOrder: number;
+  StepName: string;
+  ApproverUserId?: string | null;
+  ApproverUserName?: string | null;
+  ApproverRole?: string | null;
 }
 
 export interface ApprovalActionRequest {
@@ -48,6 +59,7 @@ export interface RejectionActionRequest {
 export interface BackendContractApproval {
   id: number;
   contractId: number;
+  employeeId: number;
   status: string;
   comments?: string | null;
   requestedBy: string;

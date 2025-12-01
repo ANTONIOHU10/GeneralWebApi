@@ -3,6 +3,7 @@ using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Entities.Documents;
 using GeneralWebApi.DTOs.Contract;
 using GeneralWebApi.Integration.Repository.DocumentsRepository;
+using GeneralWebApi.Integration.Repository.DocumentsRepository.Approvals;
 using Microsoft.Extensions.Logging;
 
 namespace GeneralWebApi.Application.Services;
@@ -10,12 +11,18 @@ namespace GeneralWebApi.Application.Services;
 public class ContractService : IContractService
 {
     private readonly IContractRepository _contractRepository;
+    private readonly IContractApprovalRepository _approvalRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<ContractService> _logger;
 
-    public ContractService(IContractRepository contractRepository, ILogger<ContractService> logger, IMapper mapper)
+    public ContractService(
+        IContractRepository contractRepository,
+        IContractApprovalRepository approvalRepository,
+        ILogger<ContractService> logger,
+        IMapper mapper)
     {
         _contractRepository = contractRepository;
+        _approvalRepository = approvalRepository;
         _logger = logger;
         _mapper = mapper;
     }
@@ -40,6 +47,18 @@ public class ContractService : IContractService
         {
             _logger.LogWarning("Contract with ID {ContractId} not found", id);
             throw new KeyNotFoundException($"Contract with ID {id} not found");
+        }
+
+        // Delete all related contract approvals before deleting the contract
+        var approvals = await _approvalRepository.GetByContractIdAsync(id, cancellationToken);
+        if (approvals.Any())
+        {
+            _logger.LogInformation("Deleting {Count} contract approvals for contract {ContractId}", approvals.Count, id);
+            foreach (var approval in approvals)
+            {
+                await _approvalRepository.DeleteAsync(approval.Id, cancellationToken);
+            }
+            _logger.LogInformation("Successfully deleted {Count} contract approvals for contract {ContractId}", approvals.Count, id);
         }
 
         // DeleteAsync expects id (int), not the entity object

@@ -27,6 +27,7 @@ export class ContractApprovalService extends BaseHttpService {
     return {
       id: backendApproval.id,
       contractId: backendApproval.contractId,
+      employeeId: backendApproval.employeeId,
       contractEmployeeName: contract?.employeeName || undefined,
       contractType: contract?.contractType || undefined,
       status: backendApproval.status as 'Pending' | 'Approved' | 'Rejected' | 'Cancelled',
