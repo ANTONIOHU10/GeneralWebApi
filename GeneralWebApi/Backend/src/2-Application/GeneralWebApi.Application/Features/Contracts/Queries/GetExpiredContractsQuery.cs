@@ -3,12 +3,7 @@ using MediatR;
 
 namespace GeneralWebApi.Application.Features.Contracts.Queries;
 
-public class GetExpiringContractsQuery : IRequest<List<ContractDto>>
+public class GetExpiredContractsQuery : IRequest<List<ContractDto>>
 {
-    public int DaysFromNow { get; set; } = 30;
 }
-
-
-
-
 

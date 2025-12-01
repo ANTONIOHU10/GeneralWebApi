@@ -130,15 +130,34 @@ public class ContractsController : BaseController
     /// <summary>
     /// Get expiring contracts
     /// </summary>
-    /// <param name="expiryDate">Expiry date filter</param>
+    /// <param name="daysFromNow">Number of days from now to check for expiring contracts (default: 30)</param>
     /// <returns>List of expiring contracts</returns>
     [HttpGet("expiring")]
     [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can view expiring contracts
-    public async Task<ActionResult<ApiResponse<List<ContractDto>>>> GetExpiringContracts([FromQuery] DateTime expiryDate)
+    public async Task<ActionResult<ApiResponse<List<ContractDto>>>> GetExpiringContracts([FromQuery] int daysFromNow = 30)
     {
-        var query = new GetExpiringContractsQuery { ExpiryDate = expiryDate };
-        var result = await _mediator.Send(query);
-        return Ok(ApiResponse<List<ContractDto>>.SuccessResult(result, "Expiring contracts retrieved successfully"));
+        return await ValidateAndExecuteAsync(daysFromNow, async (validatedDays) =>
+        {
+            var query = new GetExpiringContractsQuery { DaysFromNow = validatedDays };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<ContractDto>>.SuccessResult(result, "Expiring contracts retrieved successfully"));
+        });
+    }
+
+    /// <summary>
+    /// Get expired contracts
+    /// </summary>
+    /// <returns>List of expired contracts</returns>
+    [HttpGet("expired")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can view expired contracts
+    public async Task<ActionResult<ApiResponse<List<ContractDto>>>> GetExpiredContracts()
+    {
+        return await ValidateAndExecuteAsync(new object(), async (_) =>
+        {
+            var query = new GetExpiredContractsQuery();
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<ContractDto>>.SuccessResult(result, "Expired contracts retrieved successfully"));
+        });
     }
 
     /// <summary>

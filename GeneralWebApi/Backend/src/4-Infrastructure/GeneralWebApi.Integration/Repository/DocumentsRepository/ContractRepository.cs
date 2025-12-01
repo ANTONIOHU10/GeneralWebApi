@@ -98,6 +98,28 @@ public class ContractRepository : BaseRepository<Contract>, IContractRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<Contract>> GetExpiringContractsAsync(int daysFromNow, CancellationToken cancellationToken = default)
+    {
+        var targetDate = DateTime.Today.AddDays(daysFromNow);
+        return await GetActiveAndEnabledEntities()
+            .Include(c => c.Employee)
+            .Where(c => c.EndDate.HasValue &&
+                       c.EndDate <= targetDate &&
+                       c.EndDate >= DateTime.Today &&
+                       c.Status == "Active")
+            .OrderBy(c => c.EndDate)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<Contract>> GetExpiredContractsAsync(CancellationToken cancellationToken = default)
+    {
+        return await GetActiveAndEnabledEntities()
+            .Include(c => c.Employee)
+            .Where(c => c.EndDate.HasValue && c.EndDate < DateTime.Today)
+            .OrderBy(c => c.EndDate)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<Contract>> GetContractsByStatusAsync(string status, CancellationToken cancellationToken = default)
     {
         return await GetActiveAndEnabledEntities()

@@ -136,6 +136,22 @@ public class ContractService : IContractService
         return _mapper.Map<List<ContractDto>>(contracts);
     }
 
+    public async Task<List<ContractDto>> GetExpiringContractsAsync(int daysFromNow, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting expiring contracts within {DaysFromNow} days", daysFromNow);
+
+        var contracts = await _contractRepository.GetExpiringContractsAsync(daysFromNow, cancellationToken);
+        return _mapper.Map<List<ContractDto>>(contracts);
+    }
+
+    public async Task<List<ContractDto>> GetExpiredContractsAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting expired contracts");
+
+        var contracts = await _contractRepository.GetExpiredContractsAsync(cancellationToken);
+        return _mapper.Map<List<ContractDto>>(contracts);
+    }
+
     public async Task<List<ContractDto>> GetContractsByStatusAsync(string status, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting contracts by status: {Status}", status);

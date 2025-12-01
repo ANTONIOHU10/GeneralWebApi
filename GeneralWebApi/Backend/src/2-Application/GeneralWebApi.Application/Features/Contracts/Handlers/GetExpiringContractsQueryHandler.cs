@@ -16,7 +16,7 @@ public class GetExpiringContractsQueryHandler : IRequestHandler<GetExpiringContr
 
     public async Task<List<ContractDto>> Handle(GetExpiringContractsQuery request, CancellationToken cancellationToken)
     {
-        return await _contractService.GetExpiringContractsAsync(request.ExpiryDate, cancellationToken);
+        return await _contractService.GetExpiringContractsAsync(request.DaysFromNow, cancellationToken);
     }
 }
 
