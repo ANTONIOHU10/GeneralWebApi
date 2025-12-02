@@ -6,7 +6,7 @@ namespace GeneralWebApi.Application.Features.Permissions.Roles.Queries;
 /// <summary>
 /// Get role by ID query
 /// </summary>
-public class GetRoleByIdQuery : IRequest<RoleDto?>
+public class GetRoleByIdQuery : IRequest<RoleDto>
 {
     public int Id { get; set; }
 }

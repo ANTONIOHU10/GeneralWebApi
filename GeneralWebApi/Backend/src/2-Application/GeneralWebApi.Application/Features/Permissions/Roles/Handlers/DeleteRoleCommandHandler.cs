@@ -28,7 +28,7 @@ public class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommand, bool>
         // Check if role exists
         if (!await _roleRepository.ExistsAsync(request.Id))
         {
-            return false;
+            throw new KeyNotFoundException($"Role with ID {request.Id} not found");
         }
 
         // Check if role is assigned to any employees
@@ -46,6 +46,12 @@ public class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommand, bool>
         }
 
         // Delete role
-        return await _roleRepository.DeleteAsync(request.Id);
+        var result = await _roleRepository.DeleteAsync(request.Id);
+        if (!result)
+        {
+            throw new InvalidOperationException($"Failed to delete role with ID {request.Id}");
+        }
+
+        return true;
     }
 }

@@ -1,7 +1,10 @@
+using GeneralWebApi.Application.Features.Users.Commands;
+using GeneralWebApi.Application.Features.Users.Queries;
+using GeneralWebApi.DTOs.Users;
 using GeneralWebApi.Contracts.Common;
 using GeneralWebApi.Controllers.Base;
 using GeneralWebApi.DTOs.Users;
-using GeneralWebApi.Integration.Repository.BasesRepository;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,13 +17,11 @@ namespace GeneralWebApi.Controllers.Business;
 [Authorize] // Require authentication for all endpoints
 public class UsersController : BaseController
 {
-    private readonly IUserRepository _userRepository;
-    private readonly ILogger<UsersController> _logger;
+    private readonly IMediator _mediator;
 
-    public UsersController(IUserRepository userRepository, ILogger<UsersController> logger)
+    public UsersController(IMediator mediator)
     {
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -31,16 +32,12 @@ public class UsersController : BaseController
     [Authorize(Policy = "AllRoles")] // All authenticated users can view users
     public async Task<ActionResult<ApiResponse<List<UserWithEmployeeDto>>>> GetUsersWithEmployee()
     {
-        try
+        return await ValidateAndExecuteAsync(new object(), async (_) =>
         {
-            var users = await _userRepository.GetUsersWithEmployeeAsync();
-            return Ok(ApiResponse<List<UserWithEmployeeDto>>.SuccessResult(users, "Users retrieved successfully"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving users with employee information");
-            return InternalServerError<List<UserWithEmployeeDto>>("An error occurred while retrieving users");
-        }
+            var query = new GetUsersWithEmployeeQuery();
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<UserWithEmployeeDto>>.SuccessResult(result, "Users retrieved successfully"));
+        });
     }
 
     /// <summary>
@@ -52,20 +49,66 @@ public class UsersController : BaseController
     [Authorize(Policy = "AllRoles")]
     public async Task<ActionResult<ApiResponse<UserWithEmployeeDto>>> GetUserWithEmployee(int id)
     {
-        try
+        return await ValidateAndExecuteAsync(id, async (validatedId) =>
         {
-            var user = await _userRepository.GetUserWithEmployeeAsync(id);
-            if (user == null)
-            {
-                return NotFound<UserWithEmployeeDto>("User not found");
-            }
-            return Ok(ApiResponse<UserWithEmployeeDto>.SuccessResult(user, "User retrieved successfully"));
-        }
-        catch (Exception ex)
+            var query = new GetUserWithEmployeeQuery { UserId = validatedId };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<UserWithEmployeeDto>.SuccessResult(result, "User retrieved successfully"));
+        });
+    }
+
+    /// <summary>
+    /// Create new user
+    /// </summary>
+    /// <param name="createRequest">User creation data</param>
+    /// <returns>Created user with employee information</returns>
+    [HttpPost]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can create users
+    public async Task<ActionResult<ApiResponse<UserWithEmployeeDto>>> CreateUser([FromBody] CreateUserRequest createRequest)
+    {
+        return await ValidateAndExecuteAsync(createRequest, async (validatedRequest) =>
         {
-            _logger.LogError(ex, "Error retrieving user {UserId} with employee information", id);
-            return InternalServerError<UserWithEmployeeDto>("An error occurred while retrieving user");
-        }
+            var command = new CreateUserCommand { CreateUserRequest = validatedRequest };
+            var result = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetUserWithEmployee), new { id = result.UserId },
+                ApiResponse<UserWithEmployeeDto>.SuccessResult(result, "User created successfully"));
+        });
+    }
+
+    /// <summary>
+    /// Update user
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <param name="updateRequest">User update data</param>
+    /// <returns>Updated user with employee information</returns>
+    [HttpPut("{id}")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can update users
+    public async Task<ActionResult<ApiResponse<UserWithEmployeeDto>>> UpdateUser(int id, [FromBody] UpdateUserRequest updateRequest)
+    {
+        return await ValidateAndExecuteAsync(updateRequest, async (validatedRequest) =>
+        {
+            var command = new UpdateUserCommand { UserId = id, UpdateUserRequest = validatedRequest };
+            var result = await _mediator.Send(command);
+            return Ok(ApiResponse<UserWithEmployeeDto>.SuccessResult(result, "User updated successfully"));
+        });
+    }
+
+    /// <summary>
+    /// Delete user
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <returns>Deletion result</returns>
+    [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")] // Only admins can delete users
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteUser(int id)
+    {
+        return await ValidateAndExecuteAsync(id, async (validatedId) =>
+        {
+            var command = new DeleteUserCommand { UserId = validatedId };
+            var result = await _mediator.Send(command);
+            // Service throws KeyNotFoundException if not found, handled by global exception handler
+            return Ok(ApiResponse<bool>.SuccessResult(result, "User deleted successfully"));
+        });
     }
 }
 

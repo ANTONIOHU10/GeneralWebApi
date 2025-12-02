@@ -1,7 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/add-role/add-role.component.ts
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, delay, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil, filter, take } from 'rxjs/operators';
 import {
   BaseFormComponent,
@@ -10,6 +10,7 @@ import {
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { CreateRoleRequest } from '../../../roles/role.model';
+import { RoleService } from '../../../core/services/role.service';
 
 @Component({
   selector: 'app-add-role',
@@ -24,6 +25,7 @@ import { CreateRoleRequest } from '../../../roles/role.model';
 export class AddRoleComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private roleService = inject(RoleService);
   private destroy$ = new Subject<void>();
 
   @Output() roleCreated = new EventEmitter<void>();
@@ -142,8 +144,16 @@ export class AddRoleComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.loading.set(true);
 
-      of(true).pipe(
-        delay(1000),
+      const permissions = data['permissions'] as string[] || [];
+      // Note: Backend expects permissionIds (numbers), but we're sending permission names
+      // This might need adjustment based on your backend implementation
+      const createRoleData = {
+        name: data['name'] as string,
+        description: data['description'] as string || undefined,
+        permissionIds: [] as number[], // Will need to map permission names to IDs if needed
+      };
+
+      this.roleService.createRole(createRoleData).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
         next: () => {

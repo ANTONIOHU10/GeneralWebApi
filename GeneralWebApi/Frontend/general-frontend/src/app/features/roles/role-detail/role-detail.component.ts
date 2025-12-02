@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import type { SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { delay, of } from 'rxjs';
-import { filter, first } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { filter, first, catchError } from 'rxjs/operators';
 import { Role } from '../../../roles/role.model';
 import {
   BaseDetailComponent,
@@ -19,6 +19,7 @@ import {
   BadgeVariant,
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
+import { RoleService, Role as BackendRole } from '../../../core/services/role.service';
 
 @Component({
   selector: 'app-role-detail',
@@ -35,10 +36,13 @@ import { DialogService, NotificationService } from '../../../Shared/services';
 export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private roleService = inject(RoleService);
 
   @Input() role: Role | null = null;
   @Input() isOpen = false;
   @Input() mode: 'edit' | 'view' = 'view';
+  
+  fullRoleDetails = signal<BackendRole | null>(null);
 
   @Output() closeEvent = new EventEmitter<void>();
   @Output() roleUpdated = new EventEmitter<void>();
@@ -171,10 +175,35 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['role'] || changes['mode']) {
       this.updateFormData();
+      // Load full role details when viewing/editing
+      if (this.role && this.isOpen) {
+        this.loadFullRoleDetails();
+      }
     }
     if (changes['role'] && this.permissionsTemplate) {
       this.updateSections();
     }
+  }
+
+  loadFullRoleDetails(): void {
+    if (!this.role) return;
+    const roleId = parseInt(this.role.id, 10);
+    this.roleService.getRole(roleId).pipe(
+      first(),
+      catchError(err => {
+        this.notificationService.error('Load Failed', err.message || 'Failed to load role details', { duration: 5000 });
+        return of(null);
+      })
+    ).subscribe(backendRole => {
+      if (backendRole) {
+        this.fullRoleDetails.set(backendRole);
+        // Update the role with full details including permissions
+        if (this.role) {
+          this.role.permissions = backendRole.permissions.map(p => p.name);
+        }
+        this.updateSections();
+      }
+    });
   }
 
   updateFormData(): void {
@@ -209,19 +238,27 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
     ).subscribe(() => {
       this.loading.set(true);
 
-      of(true).pipe(
-        delay(1000),
-        first()
-      ).subscribe({
-        next: () => {
+      const roleId = parseInt(this.role!.id, 10);
+      const permissions = data['permissions'] as string[] || [];
+      const updateRoleData = {
+        name: data['name'] as string,
+        description: data['description'] as string || undefined,
+        permissionIds: [] as number[], // Will need to map permission names to IDs if needed
+      };
+
+      this.roleService.updateRole(roleId, updateRoleData).pipe(
+        first(),
+        catchError(err => {
+          this.loading.set(false);
+          this.notificationService.error('Update Role Failed', err.message || 'Failed to update role.', { duration: 5000 });
+          return of(null);
+        })
+      ).subscribe(updatedRole => {
+        if (updatedRole) {
           this.loading.set(false);
           this.notificationService.success('Role Updated', `Role "${data['name']}" updated successfully!`, { duration: 3000 });
           this.roleUpdated.emit();
           this.onClose();
-        },
-        error: (err) => {
-          this.loading.set(false);
-          this.notificationService.error('Update Role Failed', err.message || 'Failed to update role.', { duration: 5000 });
         }
       });
     });

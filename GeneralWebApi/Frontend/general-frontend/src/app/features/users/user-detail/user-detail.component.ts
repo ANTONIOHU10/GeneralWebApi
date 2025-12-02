@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import type { SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { delay, of } from 'rxjs';
-import { filter, first } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { filter, first, catchError } from 'rxjs/operators';
 import { User } from '../../../users/user.model';
 import {
   BaseDetailComponent,
@@ -19,6 +19,7 @@ import {
   BadgeVariant,
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -35,6 +36,7 @@ import { DialogService, NotificationService } from '../../../Shared/services';
 export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
 
   @Input() user: User | null = null;
   @Input() isOpen = false;
@@ -233,19 +235,34 @@ export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
     ).subscribe(() => {
       this.loading.set(true);
 
-      of(true).pipe(
-        delay(1000),
-        first()
-      ).subscribe({
-        next: () => {
+      const userId = parseInt(this.user!.id, 10);
+      const roles = data['roles'] as string[] || [];
+      const role = roles.length > 0 ? roles[0] : this.user!.roles?.[0] || 'User';
+
+      const updateUserData = {
+        username: data['userName'] as string || undefined,
+        email: data['email'] as string || undefined,
+        phoneNumber: data['phoneNumber'] as string || undefined,
+        role: role,
+        firstName: data['firstName'] as string || undefined,
+        lastName: data['lastName'] as string || undefined,
+        departmentId: undefined, // Can be added later if needed
+        positionId: undefined, // Can be added later if needed
+      };
+
+      this.userService.updateUser(userId, updateUserData).pipe(
+        first(),
+        catchError(err => {
+          this.loading.set(false);
+          this.notificationService.error('Update User Failed', err.message || 'Failed to update user.', { duration: 5000 });
+          return of(null);
+        })
+      ).subscribe(updatedUser => {
+        if (updatedUser) {
           this.loading.set(false);
           this.notificationService.success('User Updated', `User "${data['userName']}" updated successfully!`, { duration: 3000 });
           this.userUpdated.emit();
           this.onClose();
-        },
-        error: (err) => {
-          this.loading.set(false);
-          this.notificationService.error('Update User Failed', err.message || 'Failed to update user.', { duration: 5000 });
         }
       });
     });

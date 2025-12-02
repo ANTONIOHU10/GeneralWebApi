@@ -1,7 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/add-user/add-user.component.ts
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, delay, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil, filter, take } from 'rxjs/operators';
 import {
   BaseFormComponent,
@@ -10,6 +10,8 @@ import {
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { CreateUserRequest } from '../../../users/user.model';
+import { UserService } from '../../../core/services/user.service';
+import { RoleService, RoleList } from '../../../core/services/role.service';
 
 @Component({
   selector: 'app-add-user',
@@ -24,11 +26,15 @@ import { CreateUserRequest } from '../../../users/user.model';
 export class AddUserComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
+  private roleService = inject(RoleService);
   private destroy$ = new Subject<void>();
 
   @Output() userCreated = new EventEmitter<void>();
 
   loading = signal(false);
+  rolesLoading = signal(false);
+  fieldLoading: Record<string, boolean> = {}; // For BaseFormComponent fieldLoading input
 
   formData: Record<string, unknown> = {
     userName: '',
@@ -42,11 +48,7 @@ export class AddUserComponent implements OnInit, OnDestroy {
     isActive: true,
   };
 
-  roleOptions: SelectOption[] = [
-    { value: 'Admin', label: 'Admin' },
-    { value: 'Manager', label: 'Manager' },
-    { value: 'User', label: 'User' },
-  ];
+  roleOptions: SelectOption[] = [];
 
   formConfig: FormConfig = {
     sections: [
@@ -167,7 +169,60 @@ export class AddUserComponent implements OnInit, OnDestroy {
     ],
   };
 
-  ngOnInit(): void {}
+  rolesLoaded = false; // Track if roles have been loaded
+
+  ngOnInit(): void {
+    // Don't load roles on init, wait for user to click the dropdown
+  }
+
+  onFieldDropdownOpen(event: { key: string }): void {
+    // Load roles when the roles dropdown is opened for the first time
+    if (event.key === 'roles' && !this.rolesLoaded) {
+      this.loadRoles();
+    }
+  }
+
+  loadRoles(): void {
+    if (this.rolesLoaded) return; // Don't reload if already loaded
+
+    this.rolesLoading.set(true);
+    this.fieldLoading['roles'] = true; // Set loading state for BaseFormComponent
+    
+    this.roleService.getRoles().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (roles: RoleList[]) => {
+        this.roleOptions = roles.map(role => ({
+          value: role.name,
+          label: role.name
+        }));
+        // Update formConfig to reflect new options
+        const rolesField = this.formConfig.fields.find(f => f.key === 'roles');
+        if (rolesField) {
+          rolesField.options = this.roleOptions;
+        }
+        this.rolesLoaded = true;
+        this.rolesLoading.set(false);
+        this.fieldLoading['roles'] = false;
+      },
+      error: (err) => {
+        this.notificationService.error('Load Roles Failed', err.message || 'Failed to load roles', { duration: 5000 });
+        this.rolesLoading.set(false);
+        this.fieldLoading['roles'] = false;
+        // Fallback to default roles if API fails
+        this.roleOptions = [
+          { value: 'Admin', label: 'Admin' },
+          { value: 'Manager', label: 'Manager' },
+          { value: 'User', label: 'User' },
+        ];
+        const rolesField = this.formConfig.fields.find(f => f.key === 'roles');
+        if (rolesField) {
+          rolesField.options = this.roleOptions;
+        }
+        this.rolesLoaded = true;
+      }
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -196,8 +251,23 @@ export class AddUserComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.loading.set(true);
 
-      of(true).pipe(
-        delay(1000),
+      // Prepare request data matching backend CreateUserRequest DTO
+      const roles = data['roles'] as string[] || [];
+      const role = roles.length > 0 ? roles[0] : 'User'; // Use first role or default to 'User'
+
+      const createUserData = {
+        username: data['userName'] as string,
+        email: data['email'] as string,
+        password: data['password'] as string,
+        phoneNumber: data['phoneNumber'] as string || undefined,
+        role: role,
+        firstName: data['firstName'] as string || undefined,
+        lastName: data['lastName'] as string || undefined,
+        departmentId: undefined, // Can be added later if needed
+        positionId: undefined, // Can be added later if needed
+      };
+
+      this.userService.createUser(createUserData).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
         next: () => {

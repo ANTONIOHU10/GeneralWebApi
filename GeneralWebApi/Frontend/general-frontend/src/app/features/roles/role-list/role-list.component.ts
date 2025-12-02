@@ -1,7 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/role-list/role-list.component.ts
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, delay, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { first, catchError, filter, take } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
@@ -19,6 +19,8 @@ import { NotificationService, DialogService } from '../../../Shared/services';
 import { Role } from '../../../roles/role.model';
 import { RoleDetailComponent } from '../role-detail/role-detail.component';
 import { AddRoleComponent } from '../add-role/add-role.component';
+import { RoleService, RoleList as BackendRoleList } from '../../../core/services/role.service';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-role-list',
@@ -40,6 +42,7 @@ import { AddRoleComponent } from '../add-role/add-role.component';
 export class RoleListComponent implements OnInit {
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private roleService = inject(RoleService);
 
   roles = signal<Role[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -57,56 +60,9 @@ export class RoleListComponent implements OnInit {
   ];
 
   // Computed statistics
-  totalCount = computed(() => this.allRoles.length);
-  systemRoleCount = computed(() => this.allRoles.filter(r => r.isSystemRole).length);
-  customRoleCount = computed(() => this.allRoles.filter(r => !r.isSystemRole).length);
-
-  private allRoles: Role[] = [
-    {
-      id: '1',
-      name: 'Admin',
-      normalizedName: 'ADMIN',
-      description: 'Full system access',
-      permissions: ['All'],
-      userCount: 2,
-      isSystemRole: true,
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: null,
-    },
-    {
-      id: '2',
-      name: 'Manager',
-      normalizedName: 'MANAGER',
-      description: 'Department and team management',
-      permissions: ['Employees.View', 'Employees.Create', 'Employees.Update', 'Departments.View', 'Contracts.View', 'Contracts.Approve'],
-      userCount: 5,
-      isSystemRole: false,
-      createdAt: '2024-01-15T00:00:00Z',
-      updatedAt: null,
-    },
-    {
-      id: '3',
-      name: 'User',
-      normalizedName: 'USER',
-      description: 'Basic user access',
-      permissions: ['Employees.View', 'Contracts.View'],
-      userCount: 20,
-      isSystemRole: false,
-      createdAt: '2024-01-20T00:00:00Z',
-      updatedAt: null,
-    },
-    {
-      id: '4',
-      name: 'HR',
-      normalizedName: 'HR',
-      description: 'Human resources management',
-      permissions: ['Employees.View', 'Employees.Create', 'Employees.Update', 'Contracts.View', 'Contracts.Create', 'Contracts.Update'],
-      userCount: 3,
-      isSystemRole: false,
-      createdAt: '2024-02-01T00:00:00Z',
-      updatedAt: null,
-    },
-  ];
+  totalCount = computed(() => this.roles().length);
+  systemRoleCount = computed(() => this.roles().filter(r => r.isSystemRole).length);
+  customRoleCount = computed(() => this.roles().filter(r => !r.isSystemRole).length);
 
   tableColumns: TableColumn[] = [
     { key: 'name', label: 'Role Name', sortable: true, width: '150px' },
@@ -129,22 +85,32 @@ export class RoleListComponent implements OnInit {
 
   loadRoles(): void {
     this.loading$.next(true);
-    of(this.allRoles).pipe(delay(500), first(), catchError(err => {
-      this.loading$.next(false);
-      this.notificationService.error('Load Failed', err.message || 'Failed to load roles', { duration: 5000 });
-      return of([]);
-    })).subscribe(roles => {
-      let filtered = roles;
-      const search = this.searchTerm().toLowerCase();
-      if (search) {
-        filtered = filtered.filter(r =>
-          r.name.toLowerCase().includes(search) ||
-          r.description?.toLowerCase().includes(search) ||
-          r.normalizedName.toLowerCase().includes(search)
-        );
-      }
-      this.roles.set(filtered);
-      this.rolesData$.next(filtered);
+    const search = this.searchTerm();
+    const searchParams = search ? { name: search } : undefined;
+
+    this.roleService.getRoles(searchParams).pipe(
+      first(),
+      catchError(err => {
+        this.loading$.next(false);
+        this.notificationService.error('Load Failed', err.message || 'Failed to load roles', { duration: 5000 });
+        return of([]);
+      })
+    ).subscribe((backendRoles: BackendRoleList[]) => {
+      // Transform backend roles to frontend Role format
+      const transformedRoles: Role[] = backendRoles.map(role => ({
+        id: role.id.toString(),
+        name: role.name,
+        normalizedName: role.name.toUpperCase(),
+        description: role.description || null,
+        permissions: [], // Will be loaded separately if needed
+        userCount: role.employeeCount,
+        isSystemRole: false, // Backend doesn't have this field, default to false
+        createdAt: role.createdAt,
+        updatedAt: null,
+      }));
+
+      this.roles.set(transformedRoles);
+      this.rolesData$.next(transformedRoles);
       this.loading$.next(false);
     });
   }
@@ -179,10 +145,21 @@ export class RoleListComponent implements OnInit {
       confirmVariant: 'danger',
       icon: 'warning',
     }).pipe(first(), filter(c => c)).subscribe(() => {
-      const updated = this.roles().filter(r => r.id !== role.id);
-      this.roles.set(updated);
-      this.rolesData$.next(updated);
-      this.notificationService.success('Deleted', `Role "${role.name}" has been deleted`, { duration: 3000 });
+      const roleId = parseInt(role.id, 10);
+      this.roleService.deleteRole(roleId).pipe(
+        first(),
+        catchError(err => {
+          this.notificationService.error('Delete Failed', err.message || 'Failed to delete role', { duration: 5000 });
+          return of(false);
+        })
+      ).subscribe(success => {
+        if (success) {
+          const updated = this.roles().filter(r => r.id !== role.id);
+          this.roles.set(updated);
+          this.rolesData$.next(updated);
+          this.notificationService.success('Deleted', `Role "${role.name}" has been deleted`, { duration: 3000 });
+        }
+      });
     });
   }
 

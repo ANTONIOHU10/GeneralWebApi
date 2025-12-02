@@ -33,9 +33,12 @@ public class RolesController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetRoles([FromQuery] RoleSearchDto? searchDto)
     {
-        var query = new GetRolesQuery { SearchDto = searchDto };
-        var result = await _mediator.Send(query);
-        return Ok(ApiResponse<List<RoleListDto>>.SuccessResult(result, "Roles retrieved successfully"));
+        return await ValidateAndExecuteAsync(searchDto ?? new RoleSearchDto(), async (validatedSearch) =>
+        {
+            var query = new GetRolesQuery { SearchDto = validatedSearch };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<RoleListDto>>.SuccessResult(result, "Roles retrieved successfully"));
+        });
     }
 
     /// <summary>
@@ -47,15 +50,13 @@ public class RolesController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<RoleDto>>> GetRole(int id)
     {
-        var query = new GetRoleByIdQuery { Id = id };
-        var result = await _mediator.Send(query);
-
-        if (result == null)
+        return await ValidateAndExecuteAsync(id, async (validatedId) =>
         {
-            return NotFound(ApiResponse<RoleDto>.NotFound($"Role with ID {id} not found"));
-        }
-
-        return Ok(ApiResponse<RoleDto>.SuccessResult(result, "Role retrieved successfully"));
+            var query = new GetRoleByIdQuery { Id = validatedId };
+            var result = await _mediator.Send(query);
+            // Service throws KeyNotFoundException if not found, handled by global exception handler
+            return Ok(ApiResponse<RoleDto>.SuccessResult(result, "Role retrieved successfully"));
+        });
     }
 
     /// <summary>
@@ -67,10 +68,13 @@ public class RolesController : BaseController
     [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ApiResponse<RoleDto>>> CreateRole([FromBody] CreateRoleDto createRoleDto)
     {
-        var command = new CreateRoleCommand { CreateRoleDto = createRoleDto };
-        var result = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetRole), new { id = result.Id },
-            ApiResponse<RoleDto>.SuccessResult(result, "Role created successfully"));
+        return await ValidateAndExecuteAsync(createRoleDto, async (validatedDto) =>
+        {
+            var command = new CreateRoleCommand { CreateRoleDto = validatedDto };
+            var result = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetRole), new { id = result.Id },
+                ApiResponse<RoleDto>.SuccessResult(result, "Role created successfully"));
+        });
     }
 
     /// <summary>
@@ -83,9 +87,12 @@ public class RolesController : BaseController
     [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ApiResponse<RoleDto>>> UpdateRole(int id, [FromBody] UpdateRoleDto updateRoleDto)
     {
-        var command = new UpdateRoleCommand { Id = id, UpdateRoleDto = updateRoleDto };
-        var result = await _mediator.Send(command);
-        return Ok(ApiResponse<RoleDto>.SuccessResult(result, "Role updated successfully"));
+        return await ValidateAndExecuteAsync(updateRoleDto, async (validatedDto) =>
+        {
+            var command = new UpdateRoleCommand { Id = id, UpdateRoleDto = validatedDto };
+            var result = await _mediator.Send(command);
+            return Ok(ApiResponse<RoleDto>.SuccessResult(result, "Role updated successfully"));
+        });
     }
 
     /// <summary>
@@ -97,15 +104,13 @@ public class RolesController : BaseController
     [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteRole(int id)
     {
-        var command = new DeleteRoleCommand { Id = id };
-        var result = await _mediator.Send(command);
-
-        if (!result)
+        return await ValidateAndExecuteAsync(id, async (validatedId) =>
         {
-            return NotFound(ApiResponse<bool>.NotFound($"Role with ID {id} not found"));
-        }
-
-        return Ok(ApiResponse<bool>.SuccessResult(true, "Role deleted successfully"));
+            var command = new DeleteRoleCommand { Id = validatedId };
+            var result = await _mediator.Send(command);
+            // Service throws KeyNotFoundException if not found, handled by global exception handler
+            return Ok(ApiResponse<bool>.SuccessResult(result, "Role deleted successfully"));
+        });
     }
 
     /// <summary>
@@ -117,9 +122,12 @@ public class RolesController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetRolesByEmployee(int employeeId)
     {
-        var query = new GetRolesByEmployeeQuery { EmployeeId = employeeId };
-        var result = await _mediator.Send(query);
-        return Ok(ApiResponse<List<RoleListDto>>.SuccessResult(result, "Employee roles retrieved successfully"));
+        return await ValidateAndExecuteAsync(employeeId, async (validatedEmployeeId) =>
+        {
+            var query = new GetRolesByEmployeeQuery { EmployeeId = validatedEmployeeId };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<RoleListDto>>.SuccessResult(result, "Employee roles retrieved successfully"));
+        });
     }
 
     /// <summary>
@@ -131,9 +139,12 @@ public class RolesController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<EmployeeRoleDto>>> AssignRoleToEmployee([FromBody] AssignRoleToEmployeeDto assignRoleDto)
     {
-        var command = new AssignRoleToEmployeeCommand { AssignRoleToEmployeeDto = assignRoleDto };
-        var result = await _mediator.Send(command);
-        return Ok(ApiResponse<EmployeeRoleDto>.SuccessResult(result, "Role assigned to employee successfully"));
+        return await ValidateAndExecuteAsync(assignRoleDto, async (validatedDto) =>
+        {
+            var command = new AssignRoleToEmployeeCommand { AssignRoleToEmployeeDto = validatedDto };
+            var result = await _mediator.Send(command);
+            return Ok(ApiResponse<EmployeeRoleDto>.SuccessResult(result, "Role assigned to employee successfully"));
+        });
     }
 
     /// <summary>
@@ -146,15 +157,13 @@ public class RolesController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<bool>>> RemoveRoleFromEmployee(int employeeId, int roleId)
     {
-        var command = new RemoveRoleFromEmployeeCommand { EmployeeId = employeeId, RoleId = roleId };
-        var result = await _mediator.Send(command);
-
-        if (!result)
+        return await ValidateAndExecuteAsync(new { EmployeeId = employeeId, RoleId = roleId }, async (_) =>
         {
-            return NotFound(ApiResponse<bool>.NotFound($"Role assignment not found"));
-        }
-
-        return Ok(ApiResponse<bool>.SuccessResult(true, "Role removed from employee successfully"));
+            var command = new RemoveRoleFromEmployeeCommand { EmployeeId = employeeId, RoleId = roleId };
+            var result = await _mediator.Send(command);
+            // Service throws KeyNotFoundException if not found, handled by global exception handler
+            return Ok(ApiResponse<bool>.SuccessResult(result, "Role removed from employee successfully"));
+        });
     }
 
     /// <summary>
@@ -166,8 +175,11 @@ public class RolesController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<List<EmployeeRoleDto>>>> GetEmployeeRoleAssignments([FromQuery] EmployeeRoleSearchDto? searchDto)
     {
-        var query = new GetEmployeeRolesSearchQuery { SearchDto = searchDto };
-        var result = await _mediator.Send(query);
-        return Ok(ApiResponse<List<EmployeeRoleDto>>.SuccessResult(result, "Employee role assignments retrieved successfully"));
+        return await ValidateAndExecuteAsync(searchDto ?? new EmployeeRoleSearchDto(), async (validatedSearch) =>
+        {
+            var query = new GetEmployeeRolesSearchQuery { SearchDto = validatedSearch };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<EmployeeRoleDto>>.SuccessResult(result, "Employee role assignments retrieved successfully"));
+        });
     }
 }

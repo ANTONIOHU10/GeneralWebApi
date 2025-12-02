@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { BaseHttpService } from './base-http.service';
-import { ApiResponse } from 'app/contracts/common/api-response';
 
 // User with Employee information - matches backend UserWithEmployeeDto
 export interface UserWithEmployee {
@@ -30,18 +28,7 @@ export class UserService extends BaseHttpService {
    * @returns Observable of users with employee information
    */
   getUsersWithEmployee(): Observable<UserWithEmployee[]> {
-    return this.get<ApiResponse<UserWithEmployee[]>>(
-      `${this.endpoint}/with-employee`,
-      undefined,
-      { extractData: false }
-    ).pipe(
-      map((response: ApiResponse<UserWithEmployee[]>) => {
-        if (!response.data) {
-          throw new Error(response.message || 'Response data is missing');
-        }
-        return response.data;
-      })
-    );
+    return this.get<UserWithEmployee[]>(`${this.endpoint}/with-employee`);
   }
 
   /**
@@ -50,18 +37,54 @@ export class UserService extends BaseHttpService {
    * @returns Observable of user with employee information
    */
   getUserWithEmployee(id: number): Observable<UserWithEmployee> {
-    return this.get<ApiResponse<UserWithEmployee>>(
-      `${this.endpoint}/${id}/with-employee`,
-      undefined,
-      { extractData: false }
-    ).pipe(
-      map((response: ApiResponse<UserWithEmployee>) => {
-        if (!response.data) {
-          throw new Error(response.message || 'Response data is missing');
-        }
-        return response.data;
-      })
-    );
+    return this.get<UserWithEmployee>(`${this.endpoint}/${id}/with-employee`);
+  }
+
+  /**
+   * Create new user
+   * @param userData User creation data
+   * @returns Observable of created user with employee information
+   */
+  createUser(userData: {
+    username: string;
+    email: string;
+    password: string;
+    phoneNumber?: string;
+    role: string;
+    firstName?: string;
+    lastName?: string;
+    departmentId?: number;
+    positionId?: number;
+  }): Observable<UserWithEmployee> {
+    return this.post<UserWithEmployee>(this.endpoint, userData);
+  }
+
+  /**
+   * Update user
+   * @param id User ID
+   * @param userData User update data
+   * @returns Observable of updated user with employee information
+   */
+  updateUser(id: number, userData: {
+    username?: string;
+    email?: string;
+    phoneNumber?: string;
+    role?: string;
+    firstName?: string;
+    lastName?: string;
+    departmentId?: number;
+    positionId?: number;
+  }): Observable<UserWithEmployee> {
+    return this.put<UserWithEmployee>(`${this.endpoint}/${id}`, userData);
+  }
+
+  /**
+   * Delete user
+   * @param id User ID
+   * @returns Observable of deletion result
+   */
+  deleteUser(id: number): Observable<boolean> {
+    return this.delete<boolean>(`${this.endpoint}/${id}`);
   }
 }
 

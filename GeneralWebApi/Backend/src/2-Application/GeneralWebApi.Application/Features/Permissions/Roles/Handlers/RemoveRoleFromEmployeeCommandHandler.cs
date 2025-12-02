@@ -21,10 +21,16 @@ public class RemoveRoleFromEmployeeCommandHandler : IRequestHandler<RemoveRoleFr
         // Check if employee role assignment exists
         if (!await _employeeRoleRepository.ExistsByEmployeeAndRoleAsync(request.EmployeeId, request.RoleId))
         {
-            return false;
+            throw new KeyNotFoundException($"Role assignment not found for employee ID {request.EmployeeId} and role ID {request.RoleId}");
         }
 
         // Remove employee role assignment
-        return await _employeeRoleRepository.DeleteByEmployeeAndRoleAsync(request.EmployeeId, request.RoleId);
+        var result = await _employeeRoleRepository.DeleteByEmployeeAndRoleAsync(request.EmployeeId, request.RoleId);
+        if (!result)
+        {
+            throw new InvalidOperationException($"Failed to remove role assignment for employee ID {request.EmployeeId} and role ID {request.RoleId}");
+        }
+
+        return true;
     }
 }

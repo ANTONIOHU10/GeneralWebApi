@@ -13,6 +13,9 @@ using GeneralWebApi.Application.Features.Certifications.Handlers;
 using GeneralWebApi.Application.Features.Certifications.Validators;
 using GeneralWebApi.Application.Features.Contracts.Handlers;
 using GeneralWebApi.Application.Features.Contracts.Validators;
+using GeneralWebApi.Application.Features.Users.Handlers;
+using GeneralWebApi.Application.Features.Users.Validators;
+using GeneralWebApi.DTOs.Users;
 using GeneralWebApi.Application.Mappings;
 using GeneralWebApi.Application.Services;
 using GeneralWebApi.Application.Interfaces;
@@ -105,6 +108,12 @@ public static class ServiceCollectionExtensions
 
         // Enum Values Service
         services.AddScoped<IEnumValueService, EnumValueService>();
+
+        // Users
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetUsersWithEmployeeQueryHandler).Assembly));
+        services.AddScoped<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
+        services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserRequestValidator>();
+        services.AddScoped<IUserService, UserService>();
 
         // Permission Services
         services.AddAutoMapper(cfg => cfg.AddMaps(typeof(PermissionMappingProfile).Assembly));
