@@ -3,11 +3,15 @@
   title="Permission Management"
   subtitle="View and manage system permissions"
   icon="security"
-  [showTabs]="false"
-  [showSearch]="true"
+  [showTabs]="true"
+  [showSearch]="activeTab() === 'list'"
+  [tabs]="tabs"
+  [activeTabId]="activeTab()"
+  (tabChange)="onTabChange($event)"
 >
   <!-- Search in header -->
   <app-base-search
+    *ngIf="activeTab() === 'list'"
     slot="search"
     [config]="{
       placeholder: 'Search permissions...',
@@ -20,68 +24,76 @@
     inputId="permission-search"
   ></app-base-search>
 
-  <!-- Filter -->
-  <app-base-card [title]="'Filter by Module'" [icon]="'filter_list'" [variant]="'elevated'">
-    <div class="filter-buttons">
-      <button
-        [class.active]="activeFilter() === 'all'"
-        (click)="onFilterChange('all')"
-        class="filter-button"
-      >
-        All ({{ totalCount() }})
-      </button>
-      <button
-        *ngFor="let module of ['Employees', 'Departments', 'Contracts', 'Users', 'Roles']"
-        [class.active]="activeFilter() === module"
-        (click)="onFilterChange(module)"
-        class="filter-button"
-      >
-        {{ module }} ({{ moduleCounts()[module] || 0 }})
-      </button>
-    </div>
-  </app-base-card>
-
-  <!-- Statistics -->
-  <div class="statistics-grid" *ngIf="permissions().length > 0">
-    <app-base-card [variant]="'elevated'">
-      <div class="stat-card">
-        <div class="stat-icon primary">
-          <span class="material-icons">security</span>
-        </div>
-        <div class="stat-content">
-          <div class="stat-value">{{ totalCount() }}</div>
-          <div class="stat-label">Total Permissions</div>
-        </div>
+  <!-- Permission List Tab -->
+  <div *ngIf="activeTab() === 'list'">
+    <!-- Filter -->
+    <app-base-card [title]="'Filter by Module'" [icon]="'filter_list'" [variant]="'elevated'">
+      <div class="filter-buttons">
+        <button
+          [class.active]="activeFilter() === 'all'"
+          (click)="onFilterChange('all')"
+          class="filter-button"
+        >
+          All ({{ totalCount() }})
+        </button>
+        <button
+          *ngFor="let module of ['Employees', 'Departments', 'Contracts', 'Users', 'Roles']"
+          [class.active]="activeFilter() === module"
+          (click)="onFilterChange(module)"
+          class="filter-button"
+        >
+          {{ module }} ({{ moduleCounts()[module] || 0 }})
+        </button>
       </div>
     </app-base-card>
+
+    <!-- Statistics -->
+    <div class="statistics-grid" *ngIf="permissions().length > 0">
+      <app-base-card [variant]="'elevated'">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <span class="material-icons">security</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalCount() }}</div>
+            <div class="stat-label">Total Permissions</div>
+          </div>
+        </div>
+      </app-base-card>
+    </div>
+
+    <!-- Table -->
+    <app-base-async-state
+      [loading$]="loading$"
+      [data$]="permissionsData$"
+      loadingMessage="Loading permissions..."
+      emptyTitle="No Permissions"
+      emptyDescription="No permissions found"
+      [onRetry]="onRetryLoad"
+    >
+      <app-base-table
+        [data]="permissions()"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
+        [pageSize]="20"
+        (rowClick)="onRowClick($event)"
+      >
+        <ng-template #cellTemplate let-row="row" let-column="column">
+          <ng-container *ngIf="column.key === 'category'">
+            <app-base-badge [text]="row.category" [variant]="getCategoryVariant(row.category)" size="small"></app-base-badge>
+          </ng-container>
+          <ng-container *ngIf="column.key === 'isSystemPermission'">
+            <app-base-badge [text]="row.isSystemPermission ? 'System' : 'Custom'" [variant]="getTypeVariant(row.isSystemPermission)" size="small"></app-base-badge>
+          </ng-container>
+        </ng-template>
+      </app-base-table>
+    </app-base-async-state>
   </div>
 
-  <!-- Table -->
-  <app-base-async-state
-    [loading$]="loading$"
-    [data$]="permissionsData$"
-    loadingMessage="Loading permissions..."
-    emptyTitle="No Permissions"
-    emptyDescription="No permissions found"
-    [onRetry]="onRetryLoad"
-  >
-    <app-base-table
-      [data]="permissions()"
-      [columns]="tableColumns"
-      [actions]="tableActions"
-      [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
-      [pageSize]="20"
-      (rowClick)="onRowClick($event)"
-    >
-      <ng-template #cellTemplate let-row="row" let-column="column">
-        <ng-container *ngIf="column.key === 'category'">
-          <app-base-badge [text]="row.category" [variant]="getCategoryVariant(row.category)" size="small"></app-base-badge>
-        </ng-container>
-        <ng-container *ngIf="column.key === 'isSystemPermission'">
-          <app-base-badge [text]="row.isSystemPermission ? 'System' : 'Custom'" [variant]="getTypeVariant(row.isSystemPermission)" size="small"></app-base-badge>
-        </ng-container>
-      </ng-template>
-    </app-base-table>
-  </app-base-async-state>
+  <!-- Add Permission Tab -->
+  <div *ngIf="activeTab() === 'add'">
+    <app-add-permission (permissionCreated)="onPermissionCreated()"></app-add-permission>
+  </div>
 </app-base-private-page-container>
 

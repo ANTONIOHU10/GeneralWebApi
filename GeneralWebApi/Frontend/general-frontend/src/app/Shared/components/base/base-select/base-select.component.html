@@ -1,5 +1,5 @@
 <!-- src/app/Shared/components/base/base-select/base-select.component.html -->
-<div class="base-select-container" [class]="containerClass">
+<div class="base-select-container" [ngClass]="containerClass" [class.dropdown-open]="isOpen">
   <label
     *ngIf="label"
     class="select-label"

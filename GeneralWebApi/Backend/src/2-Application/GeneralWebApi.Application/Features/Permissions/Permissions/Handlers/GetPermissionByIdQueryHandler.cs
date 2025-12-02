@@ -9,7 +9,7 @@ namespace GeneralWebApi.Application.Features.Permissions.Permissions.Handlers;
 /// <summary>
 /// Get permission by ID query handler
 /// </summary>
-public class GetPermissionByIdQueryHandler : IRequestHandler<GetPermissionByIdQuery, PermissionDto?>
+public class GetPermissionByIdQueryHandler : IRequestHandler<GetPermissionByIdQuery, PermissionDto>
 {
     private readonly IPermissionRepository _permissionRepository;
     private readonly IMapper _mapper;
@@ -20,10 +20,13 @@ public class GetPermissionByIdQueryHandler : IRequestHandler<GetPermissionByIdQu
         _mapper = mapper;
     }
 
-    public async Task<PermissionDto?> Handle(GetPermissionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<PermissionDto> Handle(GetPermissionByIdQuery request, CancellationToken cancellationToken)
     {
         var permission = await _permissionRepository.GetByIdAsync(request.Id);
-        if (permission == null) return null;
+        if (permission == null)
+        {
+            throw new KeyNotFoundException($"Permission with ID {request.Id} not found");
+        }
 
         return _mapper.Map<PermissionDto>(permission);
     }

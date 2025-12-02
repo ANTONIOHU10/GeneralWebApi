@@ -91,9 +91,9 @@ export class RoleListComponent implements OnInit {
     this.roleService.getRoles(searchParams).pipe(
       first(),
       catchError(err => {
-        this.loading$.next(false);
-        this.notificationService.error('Load Failed', err.message || 'Failed to load roles', { duration: 5000 });
-        return of([]);
+      this.loading$.next(false);
+      this.notificationService.error('Load Failed', err.message || 'Failed to load roles', { duration: 5000 });
+      return of([]);
       })
     ).subscribe((backendRoles: BackendRoleList[]) => {
       // Transform backend roles to frontend Role format
@@ -154,10 +154,10 @@ export class RoleListComponent implements OnInit {
         })
       ).subscribe(success => {
         if (success) {
-          const updated = this.roles().filter(r => r.id !== role.id);
-          this.roles.set(updated);
-          this.rolesData$.next(updated);
-          this.notificationService.success('Deleted', `Role "${role.name}" has been deleted`, { duration: 3000 });
+      const updated = this.roles().filter(r => r.id !== role.id);
+      this.roles.set(updated);
+      this.rolesData$.next(updated);
+      this.notificationService.success('Deleted', `Role "${role.name}" has been deleted`, { duration: 3000 });
         }
       });
     });

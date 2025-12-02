@@ -11,5 +11,6 @@ public class PermissionListDto
     public string Resource { get; set; } = string.Empty;
     public string Action { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
+    public int RoleCount { get; set; }
     public DateTime CreatedAt { get; set; }
 }

@@ -43,6 +43,18 @@ public class GetPermissionsQueryHandler : IRequestHandler<GetPermissionsQuery, L
             permissions = await _permissionRepository.GetAllAsync();
         }
 
-        return _mapper.Map<List<PermissionListDto>>(permissions);
+        var permissionListDtos = _mapper.Map<List<PermissionListDto>>(permissions);
+
+        // Set role count for each permission
+        foreach (var permissionDto in permissionListDtos)
+        {
+            var permission = permissions.FirstOrDefault(p => p.Id == permissionDto.Id);
+            if (permission != null)
+            {
+                permissionDto.RoleCount = permission.RolePermissions?.Count ?? 0;
+            }
+        }
+
+        return permissionListDtos;
     }
 }

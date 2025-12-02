@@ -25,7 +25,7 @@ public class DeletePermissionCommandHandler : IRequestHandler<DeletePermissionCo
         // Check if permission exists
         if (!await _permissionRepository.ExistsAsync(request.Id))
         {
-            return false;
+            throw new KeyNotFoundException($"Permission with ID {request.Id} not found");
         }
 
         // Check if permission is assigned to any roles
@@ -36,6 +36,12 @@ public class DeletePermissionCommandHandler : IRequestHandler<DeletePermissionCo
         }
 
         // Delete permission
-        return await _permissionRepository.DeleteAsync(request.Id);
+        var result = await _permissionRepository.DeleteAsync(request.Id);
+        if (!result)
+        {
+            throw new InvalidOperationException($"Failed to delete permission with ID {request.Id}");
+        }
+
+        return true;
     }
 }

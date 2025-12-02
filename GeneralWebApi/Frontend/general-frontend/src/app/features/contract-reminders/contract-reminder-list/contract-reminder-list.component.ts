@@ -84,8 +84,8 @@ export class ContractReminderListComponent implements OnInit {
     }).pipe(
       first(),
       catchError(err => {
-        this.loading$.next(false);
-        this.notificationService.error('Load Failed', err.message || 'Failed to load reminders', { duration: 5000 });
+      this.loading$.next(false);
+      this.notificationService.error('Load Failed', err.message || 'Failed to load reminders', { duration: 5000 });
         return of({ expiring: [], expired: [] });
       })
     ).subscribe(({ expiring, expired }) => {

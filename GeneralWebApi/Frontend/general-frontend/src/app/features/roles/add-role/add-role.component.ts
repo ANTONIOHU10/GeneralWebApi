@@ -11,6 +11,7 @@ import {
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { CreateRoleRequest } from '../../../roles/role.model';
 import { RoleService } from '../../../core/services/role.service';
+import { PermissionService, PermissionList } from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-add-role',
@@ -26,11 +27,16 @@ export class AddRoleComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private roleService = inject(RoleService);
+  private permissionService = inject(PermissionService);
   private destroy$ = new Subject<void>();
 
   @Output() roleCreated = new EventEmitter<void>();
 
   loading = signal(false);
+  permissionsLoading = signal(false);
+  permissionsLoaded = false; // Track if permissions have been loaded
+  fieldLoading: Record<string, boolean> = {}; // Track loading state for each field
+  permissionMap: Map<string, number> = new Map(); // Map permission names to IDs
 
   formData: Record<string, unknown> = {
     name: '',
@@ -38,29 +44,7 @@ export class AddRoleComponent implements OnInit, OnDestroy {
     permissions: [],
   };
 
-  permissionOptions: SelectOption[] = [
-    { value: 'Employees.View', label: 'Employees - View' },
-    { value: 'Employees.Create', label: 'Employees - Create' },
-    { value: 'Employees.Update', label: 'Employees - Update' },
-    { value: 'Employees.Delete', label: 'Employees - Delete' },
-    { value: 'Departments.View', label: 'Departments - View' },
-    { value: 'Departments.Create', label: 'Departments - Create' },
-    { value: 'Departments.Update', label: 'Departments - Update' },
-    { value: 'Departments.Delete', label: 'Departments - Delete' },
-    { value: 'Contracts.View', label: 'Contracts - View' },
-    { value: 'Contracts.Create', label: 'Contracts - Create' },
-    { value: 'Contracts.Update', label: 'Contracts - Update' },
-    { value: 'Contracts.Delete', label: 'Contracts - Delete' },
-    { value: 'Contracts.Approve', label: 'Contracts - Approve' },
-    { value: 'Users.View', label: 'Users - View' },
-    { value: 'Users.Create', label: 'Users - Create' },
-    { value: 'Users.Update', label: 'Users - Update' },
-    { value: 'Users.Delete', label: 'Users - Delete' },
-    { value: 'Roles.View', label: 'Roles - View' },
-    { value: 'Roles.Create', label: 'Roles - Create' },
-    { value: 'Roles.Update', label: 'Roles - Update' },
-    { value: 'Roles.Delete', label: 'Roles - Delete' },
-  ];
+  permissionOptions: SelectOption[] = []; // Will be loaded from backend
 
   formConfig: FormConfig = {
     sections: [
@@ -120,11 +104,63 @@ export class AddRoleComponent implements OnInit, OnDestroy {
     ],
   };
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Don't load permissions on init, wait for user to click the dropdown
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  onFieldDropdownOpen(event: { key: string }): void {
+    // Load permissions when the permissions dropdown is opened for the first time
+    if (event.key === 'permissions' && !this.permissionsLoaded) {
+      this.loadPermissions();
+    }
+  }
+
+  loadPermissions(): void {
+    if (this.permissionsLoaded) return; // Don't reload if already loaded
+
+    this.permissionsLoading.set(true);
+    this.fieldLoading['permissions'] = true; // Set loading state for BaseFormComponent
+    
+    this.permissionService.getPermissions().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (permissions: PermissionList[]) => {
+        // Build permission map (name -> id) for later conversion
+        this.permissionMap.clear();
+        permissions.forEach(permission => {
+          this.permissionMap.set(permission.name, permission.id);
+        });
+
+        this.permissionOptions = permissions.map(permission => ({
+          value: permission.name,
+          label: permission.name
+        }));
+        // Update formConfig to reflect new options
+        const permissionsField = this.formConfig.fields.find(f => f.key === 'permissions');
+        if (permissionsField) {
+          permissionsField.options = this.permissionOptions;
+        }
+        this.permissionsLoaded = true;
+        this.permissionsLoading.set(false);
+        this.fieldLoading['permissions'] = false;
+      },
+      error: (err) => {
+        this.notificationService.error('Load Permissions Failed', err.message || 'Failed to load permissions', { duration: 5000 });
+        this.permissionsLoading.set(false);
+        this.fieldLoading['permissions'] = false;
+        // Fallback to empty array if API fails
+        this.permissionOptions = [];
+        const permissionsField = this.formConfig.fields.find(f => f.key === 'permissions');
+        if (permissionsField) {
+          permissionsField.options = this.permissionOptions;
+        }
+      }
+    });
   }
 
   onFormSubmit(data: Record<string, unknown>): void {
@@ -144,13 +180,16 @@ export class AddRoleComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.loading.set(true);
 
-      const permissions = data['permissions'] as string[] || [];
-      // Note: Backend expects permissionIds (numbers), but we're sending permission names
-      // This might need adjustment based on your backend implementation
+      const permissionNames = data['permissions'] as string[] || [];
+      // Convert permission names to IDs
+      const permissionIds = permissionNames
+        .map(name => this.permissionMap.get(name))
+        .filter((id): id is number => id !== undefined);
+
       const createRoleData = {
         name: data['name'] as string,
         description: data['description'] as string || undefined,
-        permissionIds: [] as number[], // Will need to map permission names to IDs if needed
+        permissionIds: permissionIds,
       };
 
       this.roleService.createRole(createRoleData).pipe(
@@ -176,6 +215,10 @@ export class AddRoleComponent implements OnInit, OnDestroy {
       description: '',
       permissions: [],
     };
+    // Reset permissions loaded state so they can be reloaded next time
+    this.permissionsLoaded = false;
+    this.permissionMap.clear();
+    this.permissionOptions = [];
   }
 }
 

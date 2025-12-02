@@ -79,6 +79,7 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
       this.size !== 'medium' ? this.size : '',
       this.error ? 'error' : '',
       this.disabled ? 'disabled' : '',
+      this.isOpen ? 'dropdown-open' : '', // Add class when dropdown is open
       this.customClass,
     ].filter(Boolean);
 

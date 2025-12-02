@@ -33,9 +33,12 @@ public class PermissionsController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissions([FromQuery] PermissionSearchDto? searchDto)
     {
-        var query = new GetPermissionsQuery { SearchDto = searchDto };
-        var result = await _mediator.Send(query);
-        return Ok(ApiResponse<List<PermissionListDto>>.SuccessResult(result, "Permissions retrieved successfully"));
+        return await ValidateAndExecuteAsync(searchDto ?? new PermissionSearchDto(), async (validatedSearch) =>
+        {
+            var query = new GetPermissionsQuery { SearchDto = validatedSearch };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<PermissionListDto>>.SuccessResult(result, "Permissions retrieved successfully"));
+        });
     }
 
     /// <summary>
@@ -47,15 +50,13 @@ public class PermissionsController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<PermissionDto>>> GetPermission(int id)
     {
-        var query = new GetPermissionByIdQuery { Id = id };
-        var result = await _mediator.Send(query);
-
-        if (result == null)
+        return await ValidateAndExecuteAsync(id, async (validatedId) =>
         {
-            return NotFound(ApiResponse<PermissionDto>.NotFound($"Permission with ID {id} not found"));
-        }
-
-        return Ok(ApiResponse<PermissionDto>.SuccessResult(result, "Permission retrieved successfully"));
+            var query = new GetPermissionByIdQuery { Id = validatedId };
+            var result = await _mediator.Send(query);
+            // Service throws KeyNotFoundException if not found, handled by global exception handler
+            return Ok(ApiResponse<PermissionDto>.SuccessResult(result, "Permission retrieved successfully"));
+        });
     }
 
     /// <summary>
@@ -67,10 +68,13 @@ public class PermissionsController : BaseController
     [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ApiResponse<PermissionDto>>> CreatePermission([FromBody] CreatePermissionDto createPermissionDto)
     {
-        var command = new CreatePermissionCommand { CreatePermissionDto = createPermissionDto };
-        var result = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetPermission), new { id = result.Id },
-            ApiResponse<PermissionDto>.SuccessResult(result, "Permission created successfully"));
+        return await ValidateAndExecuteAsync(createPermissionDto, async (validatedDto) =>
+        {
+            var command = new CreatePermissionCommand { CreatePermissionDto = validatedDto };
+            var result = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetPermission), new { id = result.Id },
+                ApiResponse<PermissionDto>.SuccessResult(result, "Permission created successfully"));
+        });
     }
 
     /// <summary>
@@ -83,9 +87,12 @@ public class PermissionsController : BaseController
     [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ApiResponse<PermissionDto>>> UpdatePermission(int id, [FromBody] UpdatePermissionDto updatePermissionDto)
     {
-        var command = new UpdatePermissionCommand { Id = id, UpdatePermissionDto = updatePermissionDto };
-        var result = await _mediator.Send(command);
-        return Ok(ApiResponse<PermissionDto>.SuccessResult(result, "Permission updated successfully"));
+        return await ValidateAndExecuteAsync(updatePermissionDto, async (validatedDto) =>
+        {
+            var command = new UpdatePermissionCommand { Id = id, UpdatePermissionDto = validatedDto };
+            var result = await _mediator.Send(command);
+            return Ok(ApiResponse<PermissionDto>.SuccessResult(result, "Permission updated successfully"));
+        });
     }
 
     /// <summary>
@@ -97,15 +104,13 @@ public class PermissionsController : BaseController
     [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ApiResponse<bool>>> DeletePermission(int id)
     {
-        var command = new DeletePermissionCommand { Id = id };
-        var result = await _mediator.Send(command);
-
-        if (!result)
+        return await ValidateAndExecuteAsync(id, async (validatedId) =>
         {
-            return NotFound(ApiResponse<bool>.NotFound($"Permission with ID {id} not found"));
-        }
-
-        return Ok(ApiResponse<bool>.SuccessResult(true, "Permission deleted successfully"));
+            var command = new DeletePermissionCommand { Id = validatedId };
+            var result = await _mediator.Send(command);
+            // Service throws KeyNotFoundException if not found, handled by global exception handler
+            return Ok(ApiResponse<bool>.SuccessResult(result, "Permission deleted successfully"));
+        });
     }
 
     /// <summary>
@@ -117,8 +122,11 @@ public class PermissionsController : BaseController
     [Authorize(Policy = "ManagerOrAdmin")]
     public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissionsByRole(int roleId)
     {
-        var query = new GetPermissionsByRoleQuery { RoleId = roleId };
-        var result = await _mediator.Send(query);
-        return Ok(ApiResponse<List<PermissionListDto>>.SuccessResult(result, "Role permissions retrieved successfully"));
+        return await ValidateAndExecuteAsync(roleId, async (validatedRoleId) =>
+        {
+            var query = new GetPermissionsByRoleQuery { RoleId = validatedRoleId };
+            var result = await _mediator.Send(query);
+            return Ok(ApiResponse<List<PermissionListDto>>.SuccessResult(result, "Role permissions retrieved successfully"));
+        });
     }
 }

@@ -23,6 +23,18 @@ public class GetPermissionsByRoleQueryHandler : IRequestHandler<GetPermissionsBy
     public async Task<List<PermissionListDto>> Handle(GetPermissionsByRoleQuery request, CancellationToken cancellationToken)
     {
         var permissions = await _permissionRepository.GetByRoleIdAsync(request.RoleId);
-        return _mapper.Map<List<PermissionListDto>>(permissions);
+        var permissionListDtos = _mapper.Map<List<PermissionListDto>>(permissions);
+
+        // Set role count for each permission
+        foreach (var permissionDto in permissionListDtos)
+        {
+            var permission = permissions.FirstOrDefault(p => p.Id == permissionDto.Id);
+            if (permission != null)
+            {
+                permissionDto.RoleCount = permission.RolePermissions?.Count ?? 0;
+            }
+        }
+
+        return permissionListDtos;
     }
 }

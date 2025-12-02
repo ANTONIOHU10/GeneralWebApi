@@ -3,9 +3,11 @@
   [config]="formConfig"
   [formData]="formData"
   [loading]="loading()"
+  [fieldLoading]="fieldLoading"
   submitText="Add Role"
   cancelText="Cancel"
   (formSubmit)="onFormSubmit($event)"
   (formCancel)="onFormCancel()"
+  (fieldDropdownOpen)="onFieldDropdownOpen($event)"
 ></app-base-form>
 

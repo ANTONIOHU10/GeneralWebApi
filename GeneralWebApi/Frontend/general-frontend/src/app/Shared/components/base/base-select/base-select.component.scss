@@ -9,6 +9,13 @@
   gap: $spacing-2;
   width: 100%;
   overflow: visible; // Allow dropdown to overflow
+  // Default z-index
+  z-index: 1;
+  
+  // When dropdown is open, raise the entire container above other fields
+  &.dropdown-open {
+    z-index: 10001; // Higher than dropdown itself to ensure label and control are also above
+  }
 }
 
 .select-label {
@@ -96,14 +103,19 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: var(--bg-surface);
+  background: var(--bg-surface, #ffffff); // Ensure solid background
   border: 1px solid var(--border-primary);
   border-radius: var(--border-radius-base);
   box-shadow: var(--shadow-lg);
-  z-index: 9999; // Higher z-index to ensure it appears above other elements
+  z-index: 10000; // Higher z-index to ensure it appears above modal (1050) and other elements
   max-height: 300px;
   overflow-y: auto; // Allow scrolling within dropdown
   margin-top: $spacing-1;
+  // Ensure dropdown is not clipped by parent containers
+  isolation: isolate;
+  // Ensure background is opaque to prevent text bleeding through
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
 }
 
 .dropdown-search {

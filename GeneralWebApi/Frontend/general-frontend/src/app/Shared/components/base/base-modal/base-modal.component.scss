@@ -134,7 +134,10 @@
   padding: $spacing-6;
   flex: 1;
   overflow-y: auto;
+  overflow-x: visible; // Allow horizontal overflow for dropdowns
   color: var(--text-primary);
+  // Prevent clipping of absolutely positioned children (like select dropdowns)
+  position: relative;
 
   &.scrollable {
     max-height: 60vh;

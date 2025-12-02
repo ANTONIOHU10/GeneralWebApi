@@ -94,9 +94,9 @@ export class UserListComponent implements OnInit {
       }),
       first(),
       catchError(err => {
-        this.loading$.next(false);
-        this.notificationService.error('Load Failed', err.message || 'Failed to load users', { duration: 5000 });
-        return of([]);
+      this.loading$.next(false);
+      this.notificationService.error('Load Failed', err.message || 'Failed to load users', { duration: 5000 });
+      return of([]);
       })
     ).subscribe(users => {
       this.allUsers = users;
@@ -190,10 +190,10 @@ export class UserListComponent implements OnInit {
         })
       ).subscribe(success => {
         if (success) {
-          const updated = this.users().filter(u => u.id !== user.id);
-          this.users.set(updated);
-          this.usersData$.next(updated);
-          this.notificationService.success('Deleted', `User "${user.userName}" has been deleted`, { duration: 3000 });
+      const updated = this.users().filter(u => u.id !== user.id);
+      this.users.set(updated);
+      this.usersData$.next(updated);
+      this.notificationService.success('Deleted', `User "${user.userName}" has been deleted`, { duration: 3000 });
         }
       });
     });
