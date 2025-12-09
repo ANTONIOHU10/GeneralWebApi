@@ -1,7 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/search-audit-log/search-audit-log.component.ts
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, of, delay } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { first, catchError } from 'rxjs/operators';
 import {
   BaseCardComponent,
@@ -18,6 +18,7 @@ import {
 import { NotificationService } from '../../../Shared/services';
 import { AuditLog, AUDIT_LOG_ACTIONS, AUDIT_LOG_SEVERITIES, AUDIT_LOG_MODULES, AUDIT_LOG_ENTITY_TYPES } from '../../../audit-logs/audit-log.model';
 import { AuditLogDetailComponent } from '../audit-log-detail/audit-log-detail.component';
+import { AuditLogService, BackendAuditLog, AuditLogSearch } from '../../../core/services/audit-log.service';
 
 @Component({
   selector: 'app-search-audit-log',
@@ -36,6 +37,7 @@ import { AuditLogDetailComponent } from '../audit-log-detail/audit-log-detail.co
 })
 export class SearchAuditLogComponent implements OnInit {
   private notificationService = inject(NotificationService);
+  private auditLogService = inject(AuditLogService);
 
   allLogs = signal<AuditLog[]>([]);
   loading = signal(false);
@@ -54,94 +56,6 @@ export class SearchAuditLogComponent implements OnInit {
     startDate: null,
     endDate: null,
   });
-
-  private mockLogs: AuditLog[] = [
-    {
-      id: 1,
-      entityType: 'Employee',
-      entityId: 1,
-      action: 'Create',
-      userId: 'user1',
-      userName: 'John Admin',
-      timestamp: '2024-12-17T10:30:00Z',
-      ipAddress: '192.168.1.100',
-      userAgent: 'Mozilla/5.0',
-      changes: '{"name":"John Doe","email":"john@example.com"}',
-      oldValues: null,
-      newValues: '{"name":"John Doe","email":"john@example.com"}',
-      description: 'New employee created',
-      severity: 'Info',
-      module: 'Employees',
-    },
-    {
-      id: 2,
-      entityType: 'Contract',
-      entityId: 2,
-      action: 'Approve',
-      userId: 'user2',
-      userName: 'Jane Manager',
-      timestamp: '2024-12-17T09:15:00Z',
-      ipAddress: '192.168.1.101',
-      userAgent: 'Mozilla/5.0',
-      changes: '{"status":"Approved"}',
-      oldValues: '{"status":"Pending"}',
-      newValues: '{"status":"Approved"}',
-      description: 'Contract approved',
-      severity: 'Info',
-      module: 'Approvals',
-    },
-    {
-      id: 3,
-      entityType: 'Department',
-      entityId: 3,
-      action: 'Delete',
-      userId: 'user1',
-      userName: 'John Admin',
-      timestamp: '2024-12-16T14:20:00Z',
-      ipAddress: '192.168.1.100',
-      userAgent: 'Mozilla/5.0',
-      changes: null,
-      oldValues: '{"name":"Old Department","code":"OLD"}',
-      newValues: null,
-      description: 'Department deleted',
-      severity: 'Warning',
-      module: 'Departments',
-    },
-    {
-      id: 4,
-      entityType: 'User',
-      entityId: 5,
-      action: 'Login',
-      userId: 'user3',
-      userName: 'Bob User',
-      timestamp: '2024-12-17T08:00:00Z',
-      ipAddress: '192.168.1.102',
-      userAgent: 'Mozilla/5.0',
-      changes: null,
-      oldValues: null,
-      newValues: null,
-      description: 'User logged in',
-      severity: 'Info',
-      module: 'Authentication',
-    },
-    {
-      id: 5,
-      entityType: 'Contract',
-      entityId: 4,
-      action: 'Reject',
-      userId: 'user2',
-      userName: 'Jane Manager',
-      timestamp: '2024-12-15T16:45:00Z',
-      ipAddress: '192.168.1.101',
-      userAgent: 'Mozilla/5.0',
-      changes: '{"status":"Rejected","rejectionReason":"Budget constraints"}',
-      oldValues: '{"status":"Pending"}',
-      newValues: '{"status":"Rejected","rejectionReason":"Budget constraints"}',
-      description: 'Contract rejected',
-      severity: 'Warning',
-      module: 'Approvals',
-    },
-  ];
 
   searchFormConfig: FormConfig = {
     sections: [
@@ -259,8 +173,24 @@ export class SearchAuditLogComponent implements OnInit {
     this.loading.set(true);
     this.loading$.next(true);
 
-    of(this.mockLogs).pipe(
-      delay(500),
+    const filters = this.searchFilters();
+    const search: AuditLogSearch = {
+      entityType: (filters['entityType'] as string) || undefined,
+      action: (filters['action'] as string) || undefined,
+      category: (filters['module'] as string) || undefined,
+      severity: (filters['severity'] as string) || undefined,
+      userId: (filters['userId'] as string)?.trim() || undefined,
+      startDate: filters['startDate']
+        ? new Date(filters['startDate'] as string).toISOString()
+        : undefined,
+      endDate: filters['endDate']
+        ? new Date(filters['endDate'] as string).toISOString()
+        : undefined,
+      pageNumber: 1,
+      pageSize: 100,
+    };
+
+    this.auditLogService.getAuditLogs(search).pipe(
       first(),
       catchError(err => {
         const errorMessage = err.message || 'Failed to search audit logs';
@@ -269,43 +199,19 @@ export class SearchAuditLogComponent implements OnInit {
         this.allLogs.set([]);
         this.logsData$.next([]);
         this.notificationService.error('Search Failed', errorMessage, { duration: 5000 });
-        return of([]);
+        return of({ items: [] as BackendAuditLog[], totalCount: 0, pageNumber: 1, pageSize: 100 });
       })
-    ).subscribe({
-      next: (logs: AuditLog[]) => {
-        let filtered = logs;
-        const filters = this.searchFilters();
+    ).subscribe(result => {
+      const backendLogs = result.items || [];
+      const mappedLogs = backendLogs.map(log => this.mapBackendToUi(log));
 
-        if (filters['entityType']) {
-          filtered = filtered.filter(l => l.entityType === filters['entityType']);
-        }
-        if (filters['action']) {
-          filtered = filtered.filter(l => l.action === filters['action']);
-        }
-        if (filters['module']) {
-          filtered = filtered.filter(l => l.module === filters['module']);
-        }
-        if (filters['severity']) {
-          filtered = filtered.filter(l => l.severity === filters['severity']);
-        }
-        if (filters['userId']) {
-          filtered = filtered.filter(l => l.userId.toLowerCase().includes((filters['userId'] as string).toLowerCase()));
-        }
-        if (filters['startDate']) {
-          filtered = filtered.filter(l => new Date(l.timestamp) >= new Date(filters['startDate'] as string));
-        }
-        if (filters['endDate']) {
-          filtered = filtered.filter(l => new Date(l.timestamp) <= new Date(filters['endDate'] as string));
-        }
+      this.allLogs.set(mappedLogs);
+      this.logsData$.next(mappedLogs);
+      this.loading.set(false);
+      this.loading$.next(false);
 
-        this.allLogs.set(filtered);
-        this.logsData$.next(filtered);
-        this.loading.set(false);
-        this.loading$.next(false);
-
-        if (filtered.length > 0) {
-          this.notificationService.info('Search Completed', `Found ${filtered.length} audit log(s)`, { duration: 3000 });
-        }
+      if (mappedLogs.length > 0) {
+        this.notificationService.info('Search Completed', `Found ${mappedLogs.length} audit log(s)`, { duration: 3000 });
       }
     });
   }
@@ -347,5 +253,39 @@ export class SearchAuditLogComponent implements OnInit {
   onRowClick = (item: unknown) => this.onView(item as AuditLog);
   onRetryLoad = () => this.searchLogs();
   onCloseDetailModal = () => { this.isDetailModalOpen = false; this.selectedLog = null; };
+
+  /**
+   * Map backend AuditLogDto to UI AuditLog model
+   */
+  private mapBackendToUi(log: BackendAuditLog): AuditLog {
+    // Handle entityId: if it's "N/A" or not a valid number, use 0
+    let entityId = 0;
+    if (log.entityId && log.entityId !== 'N/A') {
+      const parsed = Number(log.entityId);
+      entityId = isNaN(parsed) ? 0 : parsed;
+    }
+
+    // Description: Human-readable description of the operation
+    let description = log.details ?? log.errorMessage ?? log.entityName ?? null;
+
+    // Changes field is no longer used - we only show Old Values and New Values separately
+    return {
+      id: log.id,
+      entityType: log.entityType,
+      entityId: entityId,
+      action: log.action as AuditLog['action'],
+      userId: log.userId,
+      userName: log.userName,
+      timestamp: log.createdAt,
+      ipAddress: log.ipAddress || null,
+      userAgent: log.userAgent || null,
+      changes: null, // No longer used - Old Values and New Values are shown separately
+      oldValues: log.oldValues ?? null,
+      newValues: log.newValues ?? null,
+      description: description,
+      severity: (log.severity || 'Info') as AuditLog['severity'],
+      module: log.category || 'System',
+    };
+  }
 }
 

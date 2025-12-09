@@ -16,6 +16,7 @@ using GeneralWebApi.Application.Extensions;
 using GeneralWebApi.Caching.Extensions;
 using GeneralWebApi.HttpClient.Extensions;
 using GeneralWebApi.Scheduler.Extensions;
+using GeneralWebApi.Middleware;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -139,6 +140,10 @@ app.UseGlobalExceptionHandling();
 app.UseHttpsRedirection();
 
 app.UseCustomAuthentication();
+
+// Add audit middleware to log CREATE, UPDATE, DELETE operations
+// Must be after authentication so we can get user information
+app.UseMiddleware<AuditMiddleware>();
 app.MapControllers();
 app.UseRateLimiter();
 

@@ -128,7 +128,6 @@ export class SidebarComponent implements OnInit {
           icon: 'security',
           route: '/private/permissions',
         },
-        { label: 'Settings', icon: 'settings', route: '/private/settings' },
       ],
       expandable: true,
       expanded: false,

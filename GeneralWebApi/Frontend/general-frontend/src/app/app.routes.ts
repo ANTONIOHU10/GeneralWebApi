@@ -24,7 +24,6 @@ import { CompanyDocumentListComponent } from './features/company-documents/compa
 import { UserListComponent } from './features/users/user-list/user-list.component';
 import { RoleListComponent } from './features/roles/role-list/role-list.component';
 import { PermissionListComponent } from './features/permissions/permission-list/permission-list.component';
-import { SettingsComponent } from './features/settings/settings.component';
 import { AuditLogListComponent } from './features/audit-logs/audit-log-list/audit-log-list.component';
 import { SystemMonitorComponent } from './features/system-monitor/system-monitor/system-monitor.component';
 import { SecurityAuditComponent } from './features/security-audit/security-audit/security-audit.component';
@@ -79,7 +78,6 @@ export const routes: Routes = [
       { path: 'users', component: UserListComponent },
       { path: 'roles', component: RoleListComponent },
       { path: 'permissions', component: PermissionListComponent },
-      { path: 'settings', component: SettingsComponent },
 
       // 📊 Monitoring & Audit
       { path: 'audit-logs', component: AuditLogListComponent },

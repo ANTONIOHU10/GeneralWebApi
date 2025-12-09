@@ -6,11 +6,6 @@
   [sections]="sections()"
   (closeEvent)="onClose()"
 >
-  <!-- Changes Template -->
-  <ng-template #changesTemplate>
-    <pre class="json-content">{{ formatJson(log?.changes) }}</pre>
-  </ng-template>
-
   <!-- Old Values Template -->
   <ng-template #oldValuesTemplate>
     <pre class="json-content">{{ formatJson(log?.oldValues) }}</pre>

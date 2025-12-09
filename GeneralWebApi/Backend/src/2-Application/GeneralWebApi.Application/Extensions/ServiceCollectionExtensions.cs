@@ -109,6 +109,9 @@ public static class ServiceCollectionExtensions
         // Enum Values Service
         services.AddScoped<IEnumValueService, EnumValueService>();
 
+        // Audit Service
+        services.AddScoped<IAuditService, AuditService>();
+
         // Users
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetUsersWithEmployeeQueryHandler).Assembly));
         services.AddScoped<IValidator<CreateUserRequest>, CreateUserRequestValidator>();

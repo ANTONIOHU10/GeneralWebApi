@@ -1,7 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/audit-log-list/audit-log-list.component.ts
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, delay, of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { first, catchError } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
@@ -16,9 +16,10 @@ import {
   BadgeVariant,
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
-import { AuditLog, AUDIT_LOG_ACTIONS, AUDIT_LOG_SEVERITIES, AUDIT_LOG_MODULES, AUDIT_LOG_ENTITY_TYPES } from '../../../audit-logs/audit-log.model';
+import { AuditLog } from '../../../audit-logs/audit-log.model';
 import { SearchAuditLogComponent } from '../search-audit-log/search-audit-log.component';
 import { AuditLogDetailComponent } from '../audit-log-detail/audit-log-detail.component';
+import { AuditLogService, BackendAuditLog } from '../../../core/services/audit-log.service';
 
 @Component({
   selector: 'app-audit-log-list',
@@ -39,6 +40,7 @@ import { AuditLogDetailComponent } from '../audit-log-detail/audit-log-detail.co
 })
 export class AuditLogListComponent implements OnInit {
   private notificationService = inject(NotificationService);
+  private auditLogService = inject(AuditLogService);
 
   logs = signal<AuditLog[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -61,110 +63,7 @@ export class AuditLogListComponent implements OnInit {
   errorCount = computed(() => this.allLogs.filter(l => l.severity === 'Error').length);
   criticalCount = computed(() => this.allLogs.filter(l => l.severity === 'Critical').length);
 
-  private allLogs: AuditLog[] = [
-    {
-      id: 1,
-      entityType: 'Employee',
-      entityId: 1,
-      action: 'Create',
-      userId: 'user1',
-      userName: 'John Admin',
-      timestamp: '2024-12-17T10:30:00Z',
-      ipAddress: '192.168.1.100',
-      userAgent: 'Mozilla/5.0',
-      changes: '{"name":"John Doe","email":"john@example.com"}',
-      oldValues: null,
-      newValues: '{"name":"John Doe","email":"john@example.com"}',
-      description: 'New employee created',
-      severity: 'Info',
-      module: 'Employees',
-    },
-    {
-      id: 2,
-      entityType: 'Contract',
-      entityId: 2,
-      action: 'Approve',
-      userId: 'user2',
-      userName: 'Jane Manager',
-      timestamp: '2024-12-17T09:15:00Z',
-      ipAddress: '192.168.1.101',
-      userAgent: 'Mozilla/5.0',
-      changes: '{"status":"Approved"}',
-      oldValues: '{"status":"Pending"}',
-      newValues: '{"status":"Approved"}',
-      description: 'Contract approved',
-      severity: 'Info',
-      module: 'Approvals',
-    },
-    {
-      id: 3,
-      entityType: 'Department',
-      entityId: 3,
-      action: 'Delete',
-      userId: 'user1',
-      userName: 'John Admin',
-      timestamp: '2024-12-16T14:20:00Z',
-      ipAddress: '192.168.1.100',
-      userAgent: 'Mozilla/5.0',
-      changes: null,
-      oldValues: '{"name":"Old Department","code":"OLD"}',
-      newValues: null,
-      description: 'Department deleted',
-      severity: 'Warning',
-      module: 'Departments',
-    },
-    {
-      id: 4,
-      entityType: 'User',
-      entityId: 5,
-      action: 'Login',
-      userId: 'user3',
-      userName: 'Bob User',
-      timestamp: '2024-12-17T08:00:00Z',
-      ipAddress: '192.168.1.102',
-      userAgent: 'Mozilla/5.0',
-      changes: null,
-      oldValues: null,
-      newValues: null,
-      description: 'User logged in',
-      severity: 'Info',
-      module: 'Authentication',
-    },
-    {
-      id: 5,
-      entityType: 'Contract',
-      entityId: 4,
-      action: 'Reject',
-      userId: 'user2',
-      userName: 'Jane Manager',
-      timestamp: '2024-12-15T16:45:00Z',
-      ipAddress: '192.168.1.101',
-      userAgent: 'Mozilla/5.0',
-      changes: '{"status":"Rejected","rejectionReason":"Budget constraints"}',
-      oldValues: '{"status":"Pending"}',
-      newValues: '{"status":"Rejected","rejectionReason":"Budget constraints"}',
-      description: 'Contract rejected',
-      severity: 'Warning',
-      module: 'Approvals',
-    },
-    {
-      id: 6,
-      entityType: 'System',
-      entityId: 0,
-      action: 'Update',
-      userId: 'system',
-      userName: 'System',
-      timestamp: '2024-12-14T12:00:00Z',
-      ipAddress: null,
-      userAgent: null,
-      changes: '{"config":"updated"}',
-      oldValues: null,
-      newValues: '{"config":"updated"}',
-      description: 'System configuration updated',
-      severity: 'Error',
-      module: 'System',
-    },
-  ];
+  private allLogs: AuditLog[] = [];
 
   tableColumns: TableColumn[] = [
     { key: 'timestamp', label: 'Time', sortable: true, type: 'date', width: '150px' },
@@ -187,22 +86,30 @@ export class AuditLogListComponent implements OnInit {
 
   loadLogs(): void {
     this.loading$.next(true);
-    of(this.allLogs).pipe(delay(500), first(), catchError(err => {
-      this.loading$.next(false);
-      this.notificationService.error('Load Failed', err.message || 'Failed to load audit logs', { duration: 5000 });
-      return of([]);
-    })).subscribe(logs => {
-      let filtered = logs;
+
+    this.auditLogService.getAuditLogs({ pageNumber: 1, pageSize: 100 }).pipe(
+      first(),
+      catchError(err => {
+        this.loading$.next(false);
+        this.notificationService.error('Load Failed', err.message || 'Failed to load audit logs', { duration: 5000 });
+        return of({ items: [] as BackendAuditLog[], totalCount: 0, pageNumber: 1, pageSize: 100 });
+      })
+    ).subscribe(result => {
+      const backendLogs = result.items || [];
+      this.allLogs = backendLogs.map(log => this.mapBackendToUi(log));
+
+      let filtered = this.allLogs;
       const search = this.searchTerm().toLowerCase();
       if (search) {
         filtered = filtered.filter(log =>
           log.userName.toLowerCase().includes(search) ||
-          log.description?.toLowerCase().includes(search) ||
+          (log.description ?? '').toLowerCase().includes(search) ||
           log.module.toLowerCase().includes(search) ||
           log.action.toLowerCase().includes(search) ||
           log.entityType.toLowerCase().includes(search)
         );
       }
+
       this.logs.set(filtered);
       this.logsData$.next(filtered);
       this.loading$.next(false);
@@ -237,4 +144,40 @@ export class AuditLogListComponent implements OnInit {
   onRowClick = (item: unknown) => this.onView(item as AuditLog);
   onRetryLoad = () => this.loadLogs();
   onCloseDetailModal = () => { this.isDetailModalOpen = false; this.selectedLog = null; };
+
+  /**
+   * Map backend AuditLogDto to UI AuditLog model
+   */
+  private mapBackendToUi(log: BackendAuditLog): AuditLog {
+    // Handle entityId: if it's "N/A" or not a valid number, use 0
+    let entityId = 0;
+    if (log.entityId && log.entityId !== 'N/A') {
+      const parsed = Number(log.entityId);
+      entityId = isNaN(parsed) ? 0 : parsed;
+    }
+
+    // Description: Human-readable description of the operation
+    // Prefer details (which contains operation summary), fallback to errorMessage or entityName
+    let description = log.details ?? log.errorMessage ?? log.entityName ?? null;
+
+    // Changes field is no longer used - we only show Old Values and New Values separately
+    // Set changes to null to avoid confusion
+    return {
+      id: log.id,
+      entityType: log.entityType,
+      entityId: entityId,
+      action: log.action as AuditLog['action'],
+      userId: log.userId,
+      userName: log.userName,
+      timestamp: log.createdAt,
+      ipAddress: log.ipAddress || null,
+      userAgent: log.userAgent || null,
+      changes: null, // No longer used - Old Values and New Values are shown separately
+      oldValues: log.oldValues ?? null,
+      newValues: log.newValues ?? null,
+      description: description,
+      severity: (log.severity || 'Info') as AuditLog['severity'],
+      module: log.category || 'System',
+    };
+  }
 }

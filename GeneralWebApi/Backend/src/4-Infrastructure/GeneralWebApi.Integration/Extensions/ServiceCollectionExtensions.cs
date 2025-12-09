@@ -6,6 +6,7 @@ using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Integration.Repository.DocumentRepository;
 using GeneralWebApi.Integration.Repository.DocumentsRepository;
 using GeneralWebApi.Integration.Repository.DocumentsRepository.Approvals;
+using GeneralWebApi.Integration.Repository.AuditRepository;
 using GeneralWebApi.Integration.Repository.Interfaces;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
@@ -145,6 +146,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IEmployeeRoleRepository, EmployeeRoleRepository>();
         services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+
+        // Audit repositories
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IEmployeeAuditLogRepository, EmployeeAuditLogRepository>();
 
         return services;
     }
