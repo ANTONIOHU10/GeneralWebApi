@@ -14,6 +14,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: var(--bg-primary);
   }
 
   .public-header {
@@ -118,11 +119,17 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
     background-color: var(--bg-primary);
 
     // Ensure content takes full height
     router-outlet {
       flex: 1;
+      display: block;
+      height: 100%;
+      overflow: hidden;
     }
   }
 
@@ -138,6 +145,20 @@
       color: var(--text-secondary);
       font-size: 0.9rem;
     }
+  }
+}
+
+// Dark theme - ensure all public layout elements have dark background
+.dark-theme .app-public-layout,
+.app-public-layout.dark-theme {
+  background-color: var(--bg-primary) !important;
+
+  &__content {
+    background-color: var(--bg-primary) !important;
+  }
+
+  .public-main {
+    background-color: var(--bg-primary) !important;
   }
 }
 

@@ -1,11 +1,13 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/layout/private-layout.component.scss
 @use '../../../styles/components/layout' as layout;
+@use '../../../styles/core/variable' as *;
+@use '../../../styles/core/mixin' as *;
 
 // Private Layout Specific Styles
 .app-private-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; // 使用最小高度而不是固定高度
+  min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   transition: all 0.3s ease;
@@ -83,7 +85,8 @@
     flex: 1;
     min-height: 0;
     overflow: visible;
-    height: auto; // 根据内容自动调整高度
+    height: auto;
+    gap: 0;
   }
 
   &__content {
@@ -92,14 +95,21 @@
     background-color: var(--bg-primary);
     overflow-y: auto;
     overflow-x: hidden;
-    height: auto; // 根据内容自动调整高度
+    height: auto;
     display: flex;
     flex-direction: column;
 
     .page-content {
       flex: 1;
-      padding-top: 1rem;
+      padding: $spacing-6 $spacing-8;
       overflow-y: auto;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+
+      @include mobile-only {
+        padding: $spacing-4;
+      }
     }
   }
 

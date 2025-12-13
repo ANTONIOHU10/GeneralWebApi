@@ -3,6 +3,7 @@
   <div class="app-public-layout__content">
     <!-- Public Header -->
     <app-header
+      *ngIf="showHeader"
       [isDarkMode]="isDarkMode"
       [showSidebarToggle]="false"
       [showLoginButton]="true"
@@ -18,6 +19,7 @@
 
     <!-- Public Footer -->
     <app-footer
+      *ngIf="showFooter"
       [isPublicLayout]="true"
       [showVersion]="false"
       [copyrightText]="'GeneralWebApi. All rights reserved.'"

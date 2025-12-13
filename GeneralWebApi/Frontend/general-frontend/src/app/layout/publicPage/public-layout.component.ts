@@ -1,6 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/layout/public-layout.component.ts
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 import { HeaderComponent } from '../../Shared/components/header/header.component';
 import { FooterComponent } from '../../Shared/components/footer/footer.component';
 
@@ -9,14 +11,36 @@ import { FooterComponent } from '../../Shared/components/footer/footer.component
   selector: 'app-public-layout',
   templateUrl: './public-layout.component.html',
   styleUrls: ['./public-layout.component.scss'],
-  imports: [RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
 })
 export class PublicLayoutComponent {
+  private router = inject(Router);
   isDarkMode = false;
+  showHeader = true;
+  showFooter = true;
 
   constructor() {
     // Initialize theme from localStorage or system preference
     this.initializeTheme();
+    
+    // Check current route and listen for route changes
+    this.checkRoute();
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.checkRoute();
+      });
+  }
+
+  /**
+   * Check current route and hide header/footer on login page
+   */
+  private checkRoute(): void {
+    const url = this.router.url;
+    const isLoginPage = url === '/login' || url === '/' || url === '';
+    
+    this.showHeader = !isLoginPage;
+    this.showFooter = !isLoginPage;
   }
 
   /**

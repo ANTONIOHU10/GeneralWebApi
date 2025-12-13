@@ -1,96 +1,122 @@
 // ===========================================
-// Login Component Styles - Using Design System
+// Login Component Styles - Minimalist Design
 // ===========================================
 
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
+
+// Prevent body scroll on login page
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// Theme Toggle Button
+.theme-toggle-button {
+  position: fixed;
+  top: $spacing-4;
+  right: $spacing-4;
+  z-index: 1000;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 0 0 1px var(--border-primary);
+  transition: all $duration-300 $ease-in-out;
+  backdrop-filter: blur(10px);
+
+  .material-icons {
+    font-size: 22px;
+    color: var(--text-primary);
+    transition: all $duration-300 $ease-in-out;
+  }
+
+  &:hover {
+    background: var(--color-primary-600);
+    border-color: var(--color-primary-600);
+    color: var(--text-primary);
+    box-shadow: 
+      0 6px 16px rgba(0, 0, 0, 0.15),
+      0 0 0 1px var(--color-primary-600);
+    transform: scale(1.05);
+
+    .material-icons {
+      color: var(--text-primary);
+      transform: rotate(180deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+
+  @include mobile-only {
+    top: $spacing-3;
+    right: $spacing-3;
+    width: 44px;
+    height: 44px;
+
+    .material-icons {
+      font-size: 20px;
+    }
+  }
+}
+
+// Dark theme styles for toggle button
+.dark-theme {
+  .theme-toggle-button {
+    background: var(--bg-surface);
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      0 0 0 1px var(--border-primary);
+
+    .material-icons {
+      color: var(--text-primary);
+    }
+
+    &:hover {
+      background: var(--color-primary-500);
+      border-color: var(--color-primary-500);
+      color: var(--text-primary);
+      box-shadow: 
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        0 0 0 1px var(--color-primary-500);
+
+      .material-icons {
+        color: var(--text-primary);
+      }
+    }
+  }
+}
+
 // Login Container
 .login-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, $primary-500 0%, $secondary-500 100%);
+  height: 100vh;
+  max-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   @include flex-center;
   position: relative;
+  padding: 0;
   overflow: hidden;
-  padding: $spacing-4;
-}
+  box-sizing: border-box;
 
-// Background Decoration
-.background-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 1;
-
-  .circle {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba($white, 0.1);
-    animation: float 6s ease-in-out infinite;
-
-    &.circle-1 {
-      width: 200px;
-      height: 200px;
-      top: 10%;
-      left: 10%;
-      animation-delay: 0s;
-    }
-
-    &.circle-2 {
-      width: 150px;
-      height: 150px;
-      top: 60%;
-      right: 15%;
-      animation-delay: 2s;
-    }
-
-    &.circle-3 {
-      width: 100px;
-      height: 100px;
-      bottom: 20%;
-      left: 20%;
-      animation-delay: 4s;
-    }
-  }
-}
-
-// Main Content Area
-.login-content {
-  @include grid(2, $spacing-0);
-  max-width: 1200px;
-  width: 100%;
-  background: rgba($white, 0.95);
-  border-radius: $border-radius-2xl;
-  box-shadow: $shadow-xl;
-  backdrop-filter: blur(10px);
-  overflow: hidden;
-  min-height: 600px;
-  position: relative;
-  z-index: 2;
-
-  @include mobile-only {
-    @include grid(1, $spacing-0);
-    margin: $spacing-2;
-    min-height: auto;
-  }
-}
-
-// Brand Section
-.brand-section {
-  background: linear-gradient(135deg, $primary-500 0%, $secondary-500 100%);
-  padding: $spacing-12;
-  @include flex-column-center;
-  text-align: center;
-  color: $white;
-  position: relative;
-
-  @include mobile-only {
-    padding: $spacing-8;
-    min-height: 300px;
-  }
-
+  // Subtle background pattern
   &::before {
     content: '';
     position: absolute;
@@ -98,8 +124,128 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-    opacity: 0.3;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(33, 150, 243, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(30, 136, 229, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    opacity: 1;
+  }
+
+  // Dark theme - when container itself has dark-theme class
+  &.dark-theme {
+    background: var(--bg-primary) !important;
+    
+    &::before {
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 50%);
+      opacity: 0.8;
+    }
+  }
+}
+
+// Dark theme container - also support parent dark-theme class
+.dark-theme .login-container,
+body.dark-theme .login-container {
+  background: var(--bg-primary) !important;
+  
+  &::before {
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 50%);
+    opacity: 0.8;
+  }
+}
+
+// Main Content Area
+.login-content {
+  @include grid(2, $spacing-0);
+  max-width: 1100px;
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  background: var(--bg-surface);
+  border-radius: 0;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.1),
+    0 0 0 1px var(--border-primary);
+  overflow: hidden;
+  border: none;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+
+  @include mobile-only {
+    @include grid(1, $spacing-0);
+    margin: 0;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+
+// Dark theme content - unified dark background, no white borders
+.dark-theme .login-content {
+  background: var(--bg-surface);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  border: none;
+}
+
+// Brand Section
+.brand-section {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+  padding: $spacing-10 $spacing-8;
+  @include flex-column-center;
+  text-align: center;
+  color: $white;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  // Decorative elements - more subtle and elegant
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -15%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba($white, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(40px);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -25%;
+    left: -8%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba($white, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(40px);
+  }
+
+  @include mobile-only {
+    padding: $spacing-8 $spacing-6;
+  }
+}
+
+// Dark theme brand section - unified dark colors
+.dark-theme .brand-section {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #020617 100%);
+  color: var(--text-primary);
+
+  // Dark decorative elements
+  &::before {
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  }
+
+  &::after {
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%);
   }
 }
 
@@ -111,20 +257,27 @@
   .logo-icon {
     width: 80px;
     height: 80px;
-    background: rgba($white, 0.2);
-    border-radius: $border-radius-xl;
+    background: $white;
+    border-radius: $border-radius-lg;
     @include flex-center;
     font-size: $font-size-3xl;
     font-weight: $font-weight-bold;
-    margin: 0 auto $spacing-4;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba($white, 0.3);
+    margin: 0 auto $spacing-5;
+    color: #2563eb;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: all $duration-300 $ease-in-out;
+
+    &:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
   }
 
   .brand-title {
     @include heading-style($font-size-4xl, $font-weight-bold, $white);
-    margin-bottom: $spacing-2;
-    letter-spacing: -1px;
+    margin-bottom: $spacing-3;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
     @include mobile-only {
       font-size: $font-size-3xl;
@@ -133,9 +286,33 @@
 
   .brand-subtitle {
     font-size: $font-size-lg;
-    opacity: 0.9;
+    opacity: 0.95;
     margin: 0;
-    font-weight: $font-weight-light;
+    font-weight: $font-weight-normal;
+    letter-spacing: 0.2px;
+    color: rgba($white, 0.95);
+  }
+}
+
+// Dark theme brand logo - unified dark colors
+.dark-theme .brand-logo {
+  .logo-icon {
+    background: var(--bg-surface);
+    color: var(--color-primary-400);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+    &:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .brand-title {
+    color: var(--text-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .brand-subtitle {
+    color: var(--text-secondary);
   }
 }
 
@@ -143,33 +320,78 @@
   position: relative;
   z-index: 1;
   margin-top: $spacing-8;
+  width: 100%;
+  max-width: 280px;
 
   .feature-item {
     @include flex-center;
     justify-content: flex-start;
     margin-bottom: $spacing-4;
+    padding: $spacing-4;
+    background: rgba($white, 0.12);
+    border-radius: $border-radius-lg;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba($white, 0.15);
+    transition: all $duration-300 $ease-in-out;
     font-size: $font-size-base;
-    opacity: 0.9;
+    opacity: 1;
+    color: $white;
+
+    &:hover {
+      background: rgba($white, 0.18);
+      border-color: rgba($white, 0.25);
+      transform: translateX(6px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
     .feature-icon {
-      font-size: $font-size-xl;
-      margin-right: $spacing-4;
-      width: 40px;
+      font-size: $font-size-lg;
+      margin-right: $spacing-3;
+      width: 32px;
+      height: 32px;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: rgba($white, 0.25);
+      border-radius: $border-radius-md;
+      flex-shrink: 0;
+      color: $white;
+    }
+  }
+}
+
+// Dark theme features list - unified dark colors
+.dark-theme .features-list {
+  .feature-item {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: var(--text-primary);
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-icon {
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--color-primary-400);
     }
   }
 }
 
 // Login Form Section
 .login-form-section {
-  padding: $spacing-12;
+  padding: $spacing-10 $spacing-8;
   @include flex-center;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: var(--input-bg);
+  color: var(--text-primary);
 
   @include mobile-only {
-    padding: $spacing-8;
+    padding: $spacing-8 $spacing-6;
   }
 }
 
@@ -179,291 +401,128 @@
 }
 
 .form-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: $spacing-8;
+  width: 100%;
 
   h2 {
-    @include heading-style($font-size-3xl, $font-weight-semibold, $gray-900);
+    @include heading-style($font-size-3xl, $font-weight-bold, var(--text-primary));
     margin-bottom: $spacing-2;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
   }
 
   p {
-    color: $gray-600;
+    color: var(--text-secondary);
     margin: 0;
     font-size: $font-size-base;
+    line-height: 1.6;
   }
 }
 
 // Form Styles using Design System
 .login-form {
-  .form-example__group {
-    margin-bottom: $spacing-6;
-  }
+  width: 100%;
 
-  .form-example__input {
-    @include input-base;
-    padding-left: $spacing-12;
-    background-color: $gray-50;
-    border: 2px solid $gray-200;
-    border-radius: $border-radius-xl;
-    font-size: $font-size-base;
-    transition: all $duration-300 $ease-in-out;
-
-    &:focus {
-      border-color: $primary-500;
-      background-color: $white;
-      box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
-    }
-
-    &::placeholder {
-      color: $gray-400;
-    }
-  }
-
-  .input-icon {
-    position: absolute;
-    left: $spacing-4;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: $font-size-lg;
-    color: $gray-400;
-    pointer-events: none;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .form-group {
+    margin-bottom: $spacing-5;
   }
 }
 
 .form-options {
   @include flex-between;
-  margin-bottom: $spacing-8;
-
-  .checkbox-wrapper {
-    @include flex-center;
-    cursor: pointer;
-    font-size: $font-size-sm;
-    color: $gray-600;
-
-    input[type='checkbox'] {
-      margin-right: $spacing-2;
-      width: 16px;
-      height: 16px;
-    }
-  }
+  align-items: center;
+  margin-bottom: $spacing-6;
 
   .forgot-link {
-    color: $primary-500;
+    color: #2563eb;
     text-decoration: none;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
-    transition: color $duration-200 $ease-in-out;
+    transition: all $duration-200 $ease-in-out;
 
     &:hover {
-      color: $primary-600;
+      color: #1d4ed8;
       text-decoration: underline;
+    }
+  }
+}
+
+// Dark theme form options
+.dark-theme .form-options {
+  .forgot-link {
+    color: #60a5fa;
+
+    &:hover {
+      color: #3b82f6;
     }
   }
 }
 
 // Button using Design System
 .login-button {
-  @include button-base;
-  @include button-size($button-height-lg, $spacing-6);
   width: 100%;
-  background: linear-gradient(135deg, $primary-500 0%, $secondary-500 100%);
-  color: $white;
-  border: none;
-  border-radius: $border-radius-xl;
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  position: relative;
-  overflow: hidden;
-  transition: all $duration-300 $ease-in-out;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: $shadow-lg;
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  &.loading {
-    .loading-spinner {
-      @include flex-center;
-      gap: $spacing-2;
-
-      .spinner {
-        width: 20px;
-        height: 20px;
-        border: 2px solid rgba($white, 0.3);
-        border-top: 2px solid $white;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-    }
-  }
+  margin-top: $spacing-4;
 }
 
 // Error Message using Design System
 .error-message {
-  @include flex-center;
-  justify-content: flex-start;
-  gap: $spacing-2;
-  padding: $spacing-4;
-  background-color: $error-50;
-  border: 1px solid $error-200;
-  border-radius: $border-radius-lg;
-  color: $error-700;
   margin-top: $spacing-4;
-  font-size: $font-size-sm;
-  @include slide-up;
-
-  .error-icon {
-    font-size: $font-size-lg;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 }
 
 .form-footer {
   text-align: center;
-  margin-top: $spacing-8;
+  margin-top: $spacing-6;
   padding-top: $spacing-4;
-  border-top: 1px solid $gray-200;
+  border-top: 1px solid var(--border-primary);
 
   p {
     margin: 0;
-    color: $gray-600;
+    color: var(--text-secondary);
     font-size: $font-size-sm;
+    line-height: 1.6;
   }
 
   .signup-link {
-    color: $primary-500;
+    color: #2563eb;
     text-decoration: none;
     font-weight: $font-weight-medium;
-    transition: color $duration-200 $ease-in-out;
+    transition: all $duration-200 $ease-in-out;
 
     &:hover {
-      color: $primary-600;
+      color: #1d4ed8;
       text-decoration: underline;
     }
   }
 }
 
-// Animations
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-// Dark Theme Support
-.dark-theme {
-  .login-container {
-    background: linear-gradient(
-      135deg,
-      var(--color-primary-500) 0%,
-      var(--color-secondary-500) 100%
-    );
-  }
-
-  .login-content {
-    background: rgba(var(--bg-surface), 0.95);
-  }
-
-  .brand-section {
-    background: linear-gradient(
-      135deg,
-      var(--color-primary-500) 0%,
-      var(--color-secondary-500) 100%
-    );
-  }
-
-  .form-header h2 {
-    color: var(--text-primary);
-  }
-
-  .form-header p {
-    color: var(--text-secondary);
-  }
-
-  .form-example__input {
-    background-color: var(--input-bg);
-    border-color: var(--border-primary);
-    color: var(--text-primary);
-
-    &:focus {
-      border-color: var(--border-focus);
-      background-color: var(--bg-surface);
-    }
-
-    &::placeholder {
-      color: var(--text-tertiary);
-    }
-  }
-
-  .input-icon {
-    color: var(--text-tertiary);
-  }
-
-  .form-options .checkbox-wrapper {
-    color: var(--text-secondary);
-  }
-
-  .form-options .forgot-link {
-    color: var(--color-primary-500);
+// Dark theme form footer
+.dark-theme .form-footer {
+  .signup-link {
+    color: #60a5fa;
 
     &:hover {
-      color: var(--color-primary-600);
+      color: #3b82f6;
     }
   }
+}
 
-  .login-button {
-    background: linear-gradient(
-      135deg,
-      var(--color-primary-500) 0%,
-      var(--color-secondary-500) 100%
-    );
+
+// Additional dark theme overrides - unified dark colors
+.dark-theme {
+  // Ensure all colors are unified in dark mode - no white elements
+  .login-content {
+    background: var(--bg-surface) !important;
+    border: none;
   }
 
-  .error-message {
-    background-color: var(--color-error-light);
-    border-color: var(--color-error);
-    color: var(--color-error);
+  .login-form-section {
+    background: var(--bg-surface) !important;
   }
 
-  .form-footer {
-    border-top-color: var(--border-primary);
-
-    p {
-      color: var(--text-secondary);
-    }
-
-    .signup-link {
-      color: var(--color-primary-500);
-
-      &:hover {
-        color: var(--color-primary-600);
-      }
-    }
+  // Ensure brand section uses dark colors
+  .brand-section {
+    background: var(--bg-secondary) !important;
   }
 }
 
@@ -489,25 +548,11 @@
   }
 }
 
-// Accessibility Improvements
-.login-button:focus-visible {
-  outline: 2px solid $primary-500;
-  outline-offset: 2px;
-}
-
-.form-example__input:focus-visible {
-  outline: 2px solid $primary-500;
-  outline-offset: 2px;
-}
 
 // Print Styles
 @media print {
   .login-container {
     background: none !important;
-  }
-
-  .background-decoration {
-    display: none;
   }
 
   .login-content {

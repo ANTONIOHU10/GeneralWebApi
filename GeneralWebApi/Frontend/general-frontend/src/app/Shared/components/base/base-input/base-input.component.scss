@@ -59,6 +59,11 @@
   color: var(--text-tertiary);
   transition: color $duration-300 $ease-in-out;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
 
   &.prefix-icon {
     left: $spacing-3;
@@ -79,6 +84,7 @@ input {
   color: var(--text-primary);
   transition: all $duration-300 $ease-in-out;
   width: 100%;
+  box-sizing: border-box;
 
   &::placeholder {
     color: var(--text-tertiary);
@@ -91,6 +97,17 @@ input {
 
   &:read-only {
     cursor: default;
+  }
+
+  // Add left padding when prefix icon exists
+  // Icon left (12px) + icon width (19.2px) + gap (8px) = 39.2px
+  &.with-prefix {
+    padding-left: 2.5rem; // 40px - ensures text doesn't overlap icon
+  }
+
+  // Add right padding when suffix icon exists
+  &.with-suffix {
+    padding-right: 2.5rem; // 40px - ensures text doesn't overlap icon
   }
 }
 
@@ -149,6 +166,15 @@ input {
     input {
       padding: $spacing-2 $spacing-3;
       font-size: $font-size-sm;
+
+      // Adjust padding for icons in small size
+      &.with-prefix {
+        padding-left: 2rem; // 32px for small size
+      }
+
+      &.with-suffix {
+        padding-right: 2rem; // 32px for small size
+      }
     }
 
     .input-icon {
@@ -162,6 +188,15 @@ input {
     input {
       padding: $spacing-4 $spacing-5;
       font-size: $font-size-lg;
+
+      // Adjust padding for icons in large size
+      &.with-prefix {
+        padding-left: 3rem; // 48px for large size
+      }
+
+      &.with-suffix {
+        padding-right: 3rem; // 48px for large size
+      }
     }
 
     .input-icon {

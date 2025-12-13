@@ -1,11 +1,14 @@
-<!-- src/app/features/auth/login/login.component.html -->
-<div class="login-container theme-transition">
-  <!-- Background Decoration -->
-  <div class="background-decoration">
-    <div class="circle circle-1"></div>
-    <div class="circle circle-2"></div>
-    <div class="circle circle-3"></div>
-  </div>
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/auth/login/login.component.html -->
+<div class="login-container theme-transition" [class.dark-theme]="isDarkMode">
+  <!-- Theme Toggle Button -->
+  <button
+    class="theme-toggle-button"
+    (click)="toggleTheme()"
+    [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+    [title]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+  >
+    <span class="material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+  </button>
 
   <!-- Main Content Area -->
   <div class="login-content">
@@ -38,92 +41,96 @@
       <div class="form-container">
         <div class="form-header">
           <h2>Welcome Back</h2>
-          <p>Sign in to your account</p>
+          <p>Sign in to continue to your account</p>
         </div>
 
-        <form class="login-form" (ngSubmit)="onSubmit()" novalidate>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <!-- Username Input -->
-          <div class="form-example__group">
-            <div class="input-wrapper">
-              <input
-                type="text"
-                [(ngModel)]="username"
-                name="username"
-                placeholder="Username"
-                required
-                class="form-example__input"
-                autocomplete="username"
-                aria-label="Username"
-              />
-              <div class="input-icon material-icons">person</div>
-            </div>
+          <div class="form-group">
+            <app-base-input
+              formControlName="username"
+              type="text"
+              placeholder="Username"
+              [required]="true"
+              [error]="getFieldError('username')"
+              prefixIcon="person"
+              autocomplete="username"
+              inputId="login-username"
+            ></app-base-input>
           </div>
 
           <!-- Password Input -->
-          <div class="form-example__group">
-            <div class="input-wrapper">
-              <input
-                type="password"
-                [(ngModel)]="password"
-                name="password"
-                placeholder="Password"
-                required
-                class="form-example__input"
-                autocomplete="current-password"
-                aria-label="Password"
-              />
-              <div class="input-icon material-icons">lock</div>
-            </div>
+          <div class="form-group">
+            <app-base-input
+              formControlName="password"
+              type="password"
+              placeholder="Password"
+              [required]="true"
+              [error]="getFieldError('password')"
+              prefixIcon="lock"
+              autocomplete="current-password"
+              inputId="login-password"
+            ></app-base-input>
           </div>
 
           <!-- Form Options -->
           <div class="form-options">
-            <label class="checkbox-wrapper">
-              <input type="checkbox" name="remember" />
-              <span class="checkmark"></span>
-              Remember me
-            </label>
-            <a href="#" class="forgot-link" role="button" tabindex="0"
-              >Forgot password?</a
+            <app-base-checkbox
+              formControlName="rememberMe"
+              label="Remember me"
+              inputId="login-remember-me"
+              [size]="'sm'"
+            ></app-base-checkbox>
+            <a
+              href="#"
+              class="forgot-link"
+              role="button"
+              tabindex="0"
+              (click)="onForgotPassword(); $event.preventDefault()"
             >
+              Forgot password?
+            </a>
           </div>
 
           <!-- Submit Button -->
-          <button
+          <app-base-button
             type="submit"
-            [disabled]="loading()"
-            class="login-button"
-            [class.loading]="loading()"
-            aria-label="Sign in to your account"
-          >
-            <span *ngIf="!loading()">Sign In</span>
-            <span *ngIf="loading()" class="loading-spinner">
-              <div class="spinner" aria-hidden="true"></div>
-              Signing in...
-            </span>
-          </button>
+            text="Sign In"
+            variant="primary"
+            size="large"
+            [disabled]="loading() || loginForm.invalid"
+            [loading]="loading()"
+            customClass="login-button"
+          ></app-base-button>
         </form>
 
         <!-- Error Message -->
-        <div
+        <app-base-error
           *ngIf="error()"
+          [message]="error() || ''"
+          [config]="{
+            type: 'error',
+            size: 'sm',
+            showRetryButton: false,
+            showDismissButton: false,
+            centered: false
+          }"
           class="error-message"
-          role="alert"
-          aria-live="polite"
-        >
-          <div class="error-icon material-icons" aria-hidden="true">
-            warning
-          </div>
-          <span>{{ error() }}</span>
-        </div>
+        ></app-base-error>
 
         <!-- Footer Information -->
         <div class="form-footer">
           <p>
             Don't have an account?
-            <a href="#" class="signup-link" role="button" tabindex="0"
-              >Contact Administrator</a
+            <a
+              href="#"
+              class="signup-link"
+              role="button"
+              tabindex="0"
+              (click)="onContactAdmin(); $event.preventDefault()"
             >
+              Contact Administrator
+            </a>
           </p>
         </div>
       </div>
