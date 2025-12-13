@@ -13,6 +13,8 @@ using GeneralWebApi.Application.Features.Certifications.Handlers;
 using GeneralWebApi.Application.Features.Certifications.Validators;
 using GeneralWebApi.Application.Features.Contracts.Handlers;
 using GeneralWebApi.Application.Features.Contracts.Validators;
+using GeneralWebApi.Application.Features.Tasks.Handlers;
+using GeneralWebApi.Application.Features.Tasks.Validators;
 using GeneralWebApi.Application.Features.Users.Handlers;
 using GeneralWebApi.Application.Features.Users.Validators;
 using GeneralWebApi.DTOs.Users;
@@ -26,6 +28,7 @@ using GeneralWebApi.DTOs.Department;
 using GeneralWebApi.DTOs.Position;
 using GeneralWebApi.DTOs.Certification;
 using GeneralWebApi.DTOs.Contract;
+using GeneralWebApi.DTOs.Task;
 using Microsoft.Extensions.DependencyInjection;
 using GeneralWebApi.DTOs.Permissions;
 using GeneralWebApi.Application.Features.Permissions.Validators;
@@ -111,6 +114,14 @@ public static class ServiceCollectionExtensions
 
         // Audit Service
         services.AddScoped<IAuditService, AuditService>();
+
+        // Tasks
+        services.AddAutoMapper(cfg => cfg.AddMaps(typeof(TaskMappingProfile).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTaskCommandHandler).Assembly));
+        services.AddScoped<IValidator<CreateTaskDto>, CreateTaskDtoValidator>();
+        services.AddScoped<IValidator<UpdateTaskDto>, UpdateTaskDtoValidator>();
+        services.AddScoped<IValidator<TaskSearchDto>, TaskSearchDtoValidator>();
+        services.AddScoped<ITaskService, TaskService>();
 
         // Users
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetUsersWithEmployeeQueryHandler).Assembly));

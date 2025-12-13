@@ -1,0 +1,178 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/tasks/task-list/task-list.component.html -->
+<app-base-private-page-container
+  title="My Tasks"
+  subtitle="Manage your personal todo list"
+  icon="task_alt"
+  [showTabs]="false"
+  [showSearch]="false"
+>
+  <!-- Header Actions -->
+  <div slot="actions" class="header-actions">
+    <app-base-button
+      [icon]="showCreateForm() ? 'close' : 'add'"
+      [text]="showCreateForm() ? 'Cancel' : 'New Task'"
+      variant="primary"
+      size="small"
+      (buttonClick)="showCreateForm() ? onCancelEdit() : showCreateForm.set(true)"
+    ></app-base-button>
+  </div>
+
+  <!-- Filters - Simplified: Only Status -->
+  <div class="filters">
+    <div class="filter-group">
+      <label for="task-status-filter">Status:</label>
+      <select id="task-status-filter" [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event); loadTasks()">
+        <option value="all">All</option>
+        <option value="Pending">Pending</option>
+        <option value="InProgress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Create/Edit Form - Simplified -->
+  <app-base-card
+    *ngIf="showCreateForm()"
+    [title]="editingTask ? 'Edit Task' : 'Create New Task'"
+    variant="elevated"
+    class="task-form-card"
+  >
+    <div class="task-form">
+      <div class="form-row">
+        <app-base-input
+          label="Title"
+          [(ngModel)]="taskForm.title"
+          placeholder="Enter task title"
+          [required]="true"
+          inputId="task-title"
+        ></app-base-input>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="task-description">Description</label>
+          <textarea
+            id="task-description"
+            [(ngModel)]="taskForm.description"
+            placeholder="Enter task description (optional)"
+            class="form-control textarea"
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label for="task-status">Status</label>
+          <select id="task-status" [(ngModel)]="taskForm.status">
+            <option value="Pending">Pending</option>
+            <option value="InProgress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="task-priority">Priority</label>
+          <select id="task-priority" [(ngModel)]="taskForm.priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Urgent">Urgent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-base-button
+          [text]="editingTask ? 'Update Task' : 'Create Task'"
+          [icon]="editingTask ? 'save' : 'add'"
+          variant="primary"
+          (buttonClick)="editingTask ? onSaveTask() : onCreateTask()"
+          [disabled]="(loading$ | async) ?? false"
+        ></app-base-button>
+        <app-base-button
+          text="Cancel"
+          icon="close"
+          variant="outline"
+          (buttonClick)="onCancelEdit()"
+        ></app-base-button>
+      </div>
+    </div>
+  </app-base-card>
+
+  <!-- Task List - Simplified -->
+  <app-base-async-state
+    [loading$]="loading$"
+    [error$]="error$"
+    [data$]="filteredTasks$"
+    loadingMessage="Loading tasks..."
+    emptyTitle="No tasks found"
+    emptyDescription="You don't have any tasks yet. Create your first task to get started!"
+    emptyActionText="Create First Task"
+    [onRetry]="onRetryLoad"
+    [onEmptyAction]="onEmptyAction"
+  >
+    <div class="task-list">
+      <div
+        *ngFor="let task of filteredTasks$ | async"
+        class="task-item"
+        [class.completed]="task.status === 'Completed'"
+      >
+        <div class="task-content">
+          <div class="task-header">
+            <div class="task-title-row">
+              <input
+                type="checkbox"
+                [checked]="task.status === 'Completed'"
+                (change)="
+                  onUpdateTaskStatus(
+                    task,
+                    task.status === 'Completed' ? 'Pending' : 'Completed'
+                  )
+                "
+                class="task-checkbox"
+              />
+              <h3 class="task-title">{{ task.title }}</h3>
+            </div>
+            <div class="task-badges">
+              <app-base-badge
+                [text]="task.status"
+                [variant]="getStatusVariant(task.status)"
+                size="small"
+              ></app-base-badge>
+              <app-base-badge
+                [text]="task.priority"
+                [variant]="getPriorityVariant(task.priority)"
+                size="small"
+              ></app-base-badge>
+            </div>
+          </div>
+
+          <p *ngIf="task.description" class="task-description">
+            {{ task.description }}
+          </p>
+        </div>
+
+        <div class="task-actions">
+          <app-base-button
+            icon="edit"
+            variant="outline"
+            size="small"
+            (buttonClick)="onEditTask(task)"
+            title="Edit task"
+          ></app-base-button>
+          <app-base-button
+            icon="delete"
+            variant="danger"
+            size="small"
+            (buttonClick)="onDeleteTask(task)"
+            title="Delete task"
+          ></app-base-button>
+        </div>
+      </div>
+    </div>
+  </app-base-async-state>
+</app-base-private-page-container>
+

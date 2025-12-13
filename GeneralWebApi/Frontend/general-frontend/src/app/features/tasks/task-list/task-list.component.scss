@@ -1,0 +1,236 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/tasks/task-list/task-list.component.scss */
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+// Header Actions
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+// Filters
+.filters {
+  display: flex;
+  gap: $spacing-4;
+  margin-bottom: $spacing-4;
+  padding: $spacing-3;
+  background: var(--bg-surface);
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-primary);
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    label {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: var(--text-secondary);
+    }
+
+    select {
+      padding: $spacing-2 $spacing-3;
+      border: 1px solid var(--border-primary);
+      border-radius: $border-radius-sm;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: $font-size-sm;
+      cursor: pointer;
+      transition: all $duration-200 $ease-in-out;
+
+      &:hover {
+        border-color: var(--color-primary-500);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary-500);
+        box-shadow: 0 0 0 2px rgba(var(--color-primary-500-rgb), 0.2);
+      }
+    }
+  }
+}
+
+// Task Form Card
+.task-form-card {
+  margin-bottom: $spacing-4;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    &.form-row-2 {
+      flex-direction: row;
+      gap: $spacing-3;
+
+      .form-group {
+        flex: 1;
+      }
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    label {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: var(--text-secondary);
+    }
+
+    select,
+    textarea {
+      padding: $spacing-2 $spacing-3;
+      border: 1px solid var(--border-primary);
+      border-radius: $border-radius-sm;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: $font-size-sm;
+      transition: all $duration-200 $ease-in-out;
+      font-family: inherit;
+
+      &:hover {
+        border-color: var(--color-primary-500);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary-500);
+        box-shadow: 0 0 0 2px rgba(var(--color-primary-500-rgb), 0.2);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: $spacing-3;
+    margin-top: $spacing-2;
+  }
+}
+
+// Task List
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-4;
+  padding: $spacing-4;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: $border-radius-md;
+  transition: all $duration-200 $ease-in-out;
+
+  &:hover {
+    border-color: var(--color-primary-500);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &.completed {
+    opacity: 0.7;
+    background: var(--bg-secondary);
+
+    .task-title {
+      text-decoration: line-through;
+      color: var(--text-secondary);
+    }
+  }
+
+  .task-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+
+  .task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-3;
+  }
+
+  .task-title-row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    flex: 1;
+
+    .task-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--color-primary-500);
+    }
+
+    .task-title {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: var(--text-primary);
+      margin: 0;
+      flex: 1;
+    }
+  }
+
+  .task-badges {
+    display: flex;
+    gap: $spacing-2;
+    flex-shrink: 0;
+  }
+
+  .task-description {
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .task-actions {
+    display: flex;
+    gap: $spacing-2;
+    flex-shrink: 0;
+  }
+}
+
+// Responsive
+@include mobile-only {
+  .filters {
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+
+  .task-form .form-row.form-row-2 {
+    flex-direction: column;
+  }
+
+  .task-item {
+    flex-direction: column;
+
+    .task-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}
+

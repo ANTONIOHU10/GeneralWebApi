@@ -3,7 +3,9 @@ using GeneralWebApi.Domain.Entities.Anagraphy;
 using GeneralWebApi.Domain.Entities.Documents;
 using GeneralWebApi.Domain.Entities.Documents.Approvals;
 using GeneralWebApi.Domain.Entities.Permissions;
+using GeneralWebApi.Domain.Entities.Tasks;
 using Microsoft.EntityFrameworkCore;
+using TaskEntity = GeneralWebApi.Domain.Entities.Tasks.Task;
 
 namespace GeneralWebApi.Integration.Context;
 
@@ -41,6 +43,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<IdentityDocument> IdentityDocuments { get; set; }
     public DbSet<ContractApproval> ContractApprovals { get; set; }
     public DbSet<ContractApprovalStep> ContractApprovalSteps { get; set; }
+    #endregion
+
+    #region Tasks entities
+    public DbSet<TaskEntity> Tasks { get; set; }
     #endregion
 
     // constructor to inject the DbContextOptions in ServiceCollectionExtensions
