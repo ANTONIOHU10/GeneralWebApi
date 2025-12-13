@@ -95,3 +95,21 @@
     </app-base-table>
   </app-base-async-state>
 </app-base-private-page-container>
+
+<!-- Approve Dialog -->
+<app-base-prompt-dialog
+  [isOpen]="!!showApproveDialog().approval"
+  [config]="approveDialogConfig()"
+  (confirm)="onApproveConfirm($event)"
+  (cancelAction)="onApproveDialogClose()"
+  (dialogClose)="onApproveDialogClose()"
+></app-base-prompt-dialog>
+
+<!-- Reject Dialog -->
+<app-base-prompt-dialog
+  [isOpen]="!!showRejectDialog().approval"
+  [config]="rejectDialogConfig()"
+  (confirm)="onRejectConfirm($event)"
+  (cancelAction)="onRejectDialogClose()"
+  (dialogClose)="onRejectDialogClose()"
+></app-base-prompt-dialog>
