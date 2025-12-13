@@ -1,10 +1,10 @@
 // src/app/features/employees/employee-list/employee-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, from, Observable } from 'rxjs';
-import { takeUntil, filter, take, switchMap, concatMap, delay } from 'rxjs/operators';
-import { EmployeeCardComponent } from '../employee-card/employee-card.component';
+import { takeUntil, filter, take, switchMap, concatMap, delay, map } from 'rxjs/operators';
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
+import { EmployeeCardComponent } from '../employee-card/employee-card.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
 import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
 import { SearchEmployeeComponent } from '../search-employee/search-employee.component';
@@ -13,7 +13,15 @@ import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
   BaseAsyncStateComponent,
+  BaseTableComponent,
+  BaseAvatarComponent,
+  BaseBadgeComponent,
+  BaseButtonComponent,
   TabItem,
+  TableColumn,
+  TableAction,
+  TableConfig,
+  BadgeVariant,
 } from '../../../Shared/components/base';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { Employee } from 'app/contracts/employees/employee.model';
@@ -29,8 +37,8 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    EmployeeCardComponent,
     AddEmployeeComponent,
+    EmployeeCardComponent,
     EmployeeReportsComponent,
     EmployeeSettingsComponent,
     SearchEmployeeComponent,
@@ -38,11 +46,15 @@ import {
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
+    BaseTableComponent,
+    BaseAvatarComponent,
+    BaseBadgeComponent,
+    BaseButtonComponent,
   ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
 })
-export class EmployeeListComponent implements OnInit, OnDestroy {
+export class EmployeeListComponent implements OnInit, OnDestroy, AfterViewInit {
   private employeeFacade = inject(EmployeeFacade);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
@@ -63,6 +75,40 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   selectedEmployeeForDetail: Employee | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view'; // Default to view mode
+  
+  // View mode: 'table' or 'card'
+  viewMode = signal<'table' | 'card'>('table');
+
+  // Table configuration
+  @ViewChild('avatarTemplate', { static: false }) avatarTemplate!: TemplateRef<unknown>;
+  @ViewChild('statusTemplate', { static: false }) statusTemplate!: TemplateRef<unknown>;
+  
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
+  tableConfig: TableConfig = {
+    showHeader: true,
+    showFooter: true,
+    showPagination: true,
+    showSearch: false, // We use the header search instead
+    showActions: true,
+    striped: true,
+    hoverable: true,
+    bordered: false,
+    size: 'medium',
+    loading: false,
+    emptyMessage: 'No employees found',
+  };
+  
+  // Convert employees$ to array for table with fullName field
+  employeesArray$ = this.employees$.pipe(
+    map(employees => {
+      if (!employees) return [];
+      return employees.map(employee => ({
+        ...employee,
+        fullName: `${employee.firstName} ${employee.lastName}`,
+      }));
+    })
+  );
 
   // Tab configuration
   tabs: TabItem[] = [
@@ -76,6 +122,146 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadEmployees();
     this.setupOperationListeners();
+    this.initializeTable();
+  }
+
+  ngAfterViewInit(): void {
+    // Set template references for custom columns
+    const avatarColumn = this.tableColumns.find(col => col.key === 'avatar');
+    if (avatarColumn && this.avatarTemplate) {
+      avatarColumn.template = this.avatarTemplate;
+    }
+    
+    const statusColumn = this.tableColumns.find(col => col.key === 'status');
+    if (statusColumn && this.statusTemplate) {
+      statusColumn.template = this.statusTemplate;
+    }
+  }
+
+  /**
+   * Initialize table columns and actions
+   */
+  private initializeTable(): void {
+    // Configure table columns (templates will be set in ngAfterViewInit)
+    this.tableColumns = [
+      {
+        key: 'avatar',
+        label: '',
+        width: '60px',
+        align: 'center',
+        type: 'custom',
+        sortable: false,
+      },
+      {
+        key: 'fullName',
+        label: 'Name',
+        width: '200px',
+        align: 'left',
+        type: 'text',
+        sortable: true, // Will be mapped to 'firstname' in onTableSortChange
+      },
+      {
+        key: 'position',
+        label: 'Position',
+        width: '150px',
+        align: 'left',
+        type: 'text',
+        sortable: true,
+      },
+      {
+        key: 'department',
+        label: 'Department',
+        width: '150px',
+        align: 'left',
+        type: 'text',
+        sortable: true,
+      },
+      {
+        key: 'status',
+        label: 'Status',
+        width: '120px',
+        align: 'center',
+        type: 'custom',
+        sortable: true, // Will be mapped to 'employmentsstatus' in onTableSortChange
+      },
+      {
+        key: 'email',
+        label: 'Email',
+        width: '200px',
+        align: 'left',
+        type: 'text',
+        sortable: true,
+      },
+      {
+        key: 'phone',
+        label: 'Phone',
+        width: '140px',
+        align: 'left',
+        type: 'text',
+        sortable: false,
+      },
+    ];
+
+    // Configure table actions
+    this.tableActions = [
+      {
+        label: 'View',
+        icon: 'visibility',
+        variant: 'primary',
+        showLabel: false,
+        onClick: (employee: unknown) => {
+          this.onViewEmployee(employee as Employee);
+        },
+      },
+      {
+        label: 'Edit',
+        icon: 'edit',
+        variant: 'warning',
+        showLabel: false,
+        onClick: (employee: unknown) => {
+          this.onEditEmployee(employee as Employee);
+        },
+      },
+      {
+        label: 'Delete',
+        icon: 'delete',
+        variant: 'danger',
+        showLabel: false,
+        onClick: (employee: unknown) => {
+          this.onDeleteEmployee(employee as Employee);
+        },
+      },
+    ];
+  }
+
+  /**
+   * Get full name for employee
+   */
+  getFullName(employee: Employee): string {
+    return `${employee.firstName} ${employee.lastName}`;
+  }
+
+  /**
+   * Get initials for employee
+   */
+  getInitials(employee: Employee): string {
+    return `${employee.firstName.charAt(0)}${employee.lastName.charAt(0)}`.toUpperCase();
+  }
+
+  /**
+   * Get status variant for badge
+   */
+  getStatusVariant(status: string): BadgeVariant {
+    switch (status?.toLowerCase()) {
+      case 'active':
+        return 'success';
+      case 'inactive':
+        return 'warning';
+      case 'terminated':
+        return 'danger';
+      default:
+        return 'primary';
+    }
   }
 
   /**
@@ -315,6 +501,59 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   // 过滤和搜索方法
   onSearchChange(searchTerm: string) {
     this.employeeFacade.setFilters({ searchTerm });
+  }
+
+  /**
+   * Handle table row click - view employee details
+   */
+  onTableRowClick(employee: unknown): void {
+    this.onViewEmployee(employee as Employee);
+  }
+
+  /**
+   * Handle table sort change
+   * Maps frontend column keys to backend sort field names
+   */
+  onTableSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
+    // Map frontend column keys to backend sort field names
+    const sortFieldMap: Record<string, string> = {
+      'fullName': 'firstname', // Map fullName to firstname for sorting
+      'status': 'employmentsstatus', // Map status to employmentsstatus (note: backend has typo)
+      'position': 'position',
+      'department': 'department',
+      'email': 'email',
+    };
+
+    const backendSortField = sortFieldMap[event.column] || event.column;
+    this.onSortChange(backendSortField, event.direction);
+  }
+
+  /**
+   * Handle table page change
+   */
+  onTablePageChange(page: number): void {
+    this.onPageChange(page);
+  }
+
+  /**
+   * Toggle between table and card view
+   */
+  toggleViewMode(): void {
+    this.viewMode.set(this.viewMode() === 'table' ? 'card' : 'table');
+  }
+
+  /**
+   * Get view mode icon
+   */
+  getViewModeIcon(): string {
+    return this.viewMode() === 'table' ? 'view_module' : 'table_view';
+  }
+
+  /**
+   * Get view mode label
+   */
+  getViewModeLabel(): string {
+    return this.viewMode() === 'table' ? 'Card View' : 'Table View';
   }
 
   onDepartmentFilterChange(department: string) {

@@ -1,24 +1,80 @@
 /* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-list/employee-list.component.scss */
-// Styles specific to employee list content
-// Most layout styles are now handled by BasePrivatePageContainerComponent
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
 
-// Employee grid layout
+// Header Actions (Search + View Toggle)
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  width: 100%;
+
+  .search-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .view-toggle-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  @include mobile-only {
+    flex-direction: column;
+    gap: $spacing-2;
+
+    .search-input {
+      width: 100%;
+    }
+
+    .view-toggle-btn {
+      width: 100%;
+    }
+  }
+}
+
+// Employee table - Optimized for data display
+.employee-table {
+  width: 100%;
+  
+  // Ensure table takes full width
+  ::ng-deep .base-table-container {
+    width: 100%;
+  }
+}
+
+// Employee grid layout - For card view
 .employee-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-4;
+  padding: $spacing-4;
   flex: 1;
   overflow-y: visible;
   height: auto;
   align-content: start;
   min-height: 0;
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  @media (min-width: 1600px) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
 }
 
 // Responsive design
-@media (max-width: 768px) {
+@include mobile-only {
+  .employee-table {
+    ::ng-deep .table-wrapper {
+      overflow-x: auto;
+    }
+  }
+
   .employee-grid {
     grid-template-columns: 1fr;
-    padding: 1rem;
+    padding: $spacing-3;
+    gap: $spacing-3;
   }
 }

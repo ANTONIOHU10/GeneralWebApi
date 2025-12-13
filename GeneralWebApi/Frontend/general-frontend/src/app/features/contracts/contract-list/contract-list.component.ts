@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-list/contract-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
-import { takeUntil, filter, take, catchError } from 'rxjs/operators';
+import { takeUntil, filter, take, catchError, map } from 'rxjs/operators';
 import { ContractCardComponent } from '../contract-card/contract-card.component';
 import { AddContractComponent } from '../add-contract/add-contract.component';
 import { ContractDetailComponent } from '../contract-detail/contract-detail.component';
@@ -12,7 +12,14 @@ import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
   BaseAsyncStateComponent,
+  BaseTableComponent,
+  BaseBadgeComponent,
+  BaseButtonComponent,
   TabItem,
+  TableColumn,
+  TableAction,
+  TableConfig,
+  BadgeVariant,
 } from '../../../Shared/components/base';
 import { Contract } from 'app/contracts/contracts/contract.model';
 import {
@@ -35,11 +42,14 @@ import { of } from 'rxjs';
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
+    BaseTableComponent,
+    BaseBadgeComponent,
+    BaseButtonComponent,
   ],
   templateUrl: './contract-list.component.html',
   styleUrls: ['./contract-list.component.scss'],
 })
-export class ContractListComponent implements OnInit, OnDestroy {
+export class ContractListComponent implements OnInit, OnDestroy, AfterViewInit {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private contractService = inject(ContractService);
@@ -56,6 +66,33 @@ export class ContractListComponent implements OnInit, OnDestroy {
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
   searchTerm = signal<string>('');
+  
+  // View mode: 'table' or 'card'
+  viewMode = signal<'table' | 'card'>('table');
+
+  // Table configuration
+  @ViewChild('statusTemplate', { static: false }) statusTemplate!: TemplateRef<unknown>;
+  
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
+  tableConfig: TableConfig = {
+    showHeader: true,
+    showFooter: true,
+    showPagination: true,
+    showSearch: false,
+    showActions: true,
+    striped: true,
+    hoverable: true,
+    bordered: false,
+    size: 'medium',
+    loading: false,
+    emptyMessage: 'No contracts found',
+  };
+  
+  // Convert contracts$ to array for table
+  contractsArray$ = this.contracts$.pipe(
+    map(contracts => contracts || [])
+  );
 
   // Tab configuration
   tabs: TabItem[] = [
@@ -67,6 +104,163 @@ export class ContractListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadContracts();
+    this.initializeTable();
+  }
+
+  ngAfterViewInit(): void {
+    // Set template references for custom columns
+    const statusColumn = this.tableColumns.find(col => col.key === 'status');
+    if (statusColumn && this.statusTemplate) {
+      statusColumn.template = this.statusTemplate;
+    }
+  }
+
+  /**
+   * Initialize table columns and actions
+   */
+  private initializeTable(): void {
+    this.tableColumns = [
+      {
+        key: 'employeeName',
+        label: 'Employee',
+        width: '180px',
+        align: 'left',
+        type: 'text',
+        sortable: true,
+      },
+      {
+        key: 'contractType',
+        label: 'Contract Type',
+        width: '140px',
+        align: 'left',
+        type: 'text',
+        sortable: true,
+      },
+      {
+        key: 'startDate',
+        label: 'Start Date',
+        width: '120px',
+        align: 'left',
+        type: 'date',
+        sortable: true,
+      },
+      {
+        key: 'endDate',
+        label: 'End Date',
+        width: '120px',
+        align: 'left',
+        type: 'date',
+        sortable: true,
+      },
+      {
+        key: 'status',
+        label: 'Status',
+        width: '120px',
+        align: 'center',
+        type: 'custom',
+        sortable: true,
+      },
+      {
+        key: 'salary',
+        label: 'Salary',
+        width: '120px',
+        align: 'right',
+        type: 'number',
+        sortable: true,
+      },
+    ];
+
+    this.tableActions = [
+      {
+        label: 'View',
+        icon: 'visibility',
+        variant: 'primary',
+        showLabel: false,
+        onClick: (contract: unknown) => {
+          this.onViewContract(contract as Contract);
+        },
+      },
+      {
+        label: 'Edit',
+        icon: 'edit',
+        variant: 'warning',
+        showLabel: false,
+        onClick: (contract: unknown) => {
+          this.onEditContract(contract as Contract);
+        },
+      },
+      {
+        label: 'Delete',
+        icon: 'delete',
+        variant: 'danger',
+        showLabel: false,
+        onClick: (contract: unknown) => {
+          this.onDeleteContract(contract as Contract);
+        },
+      },
+    ];
+  }
+
+  /**
+   * Get status variant for badge
+   */
+  getStatusVariant(status: string): BadgeVariant {
+    switch (status?.toLowerCase()) {
+      case 'active':
+        return 'success';
+      case 'expired':
+        return 'warning';
+      case 'terminated':
+        return 'danger';
+      case 'pending':
+        return 'secondary';
+      default:
+        return 'primary';
+    }
+  }
+
+  /**
+   * Toggle between table and card view
+   */
+  toggleViewMode(): void {
+    this.viewMode.set(this.viewMode() === 'table' ? 'card' : 'table');
+  }
+
+  /**
+   * Get view mode icon
+   */
+  getViewModeIcon(): string {
+    return this.viewMode() === 'table' ? 'view_module' : 'table_view';
+  }
+
+  /**
+   * Get view mode label
+   */
+  getViewModeLabel(): string {
+    return this.viewMode() === 'table' ? 'Card View' : 'Table View';
+  }
+
+  /**
+   * Handle table row click - view contract details
+   */
+  onTableRowClick(contract: unknown): void {
+    this.onViewContract(contract as Contract);
+  }
+
+  /**
+   * Handle table sort change (not implemented for contracts yet)
+   */
+  onTableSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
+    // TODO: Implement sorting for contracts
+    console.log('Sort changed:', event);
+  }
+
+  /**
+   * Handle table page change (not implemented for contracts yet)
+   */
+  onTablePageChange(page: number): void {
+    // TODO: Implement pagination for contracts
+    console.log('Page changed:', page);
   }
 
   ngOnDestroy() {

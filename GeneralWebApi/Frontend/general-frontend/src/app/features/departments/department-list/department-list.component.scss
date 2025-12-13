@@ -2,23 +2,75 @@
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
 
+// Header Actions (Search + View Toggle)
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  width: 100%;
+
+  .search-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .view-toggle-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  @include mobile-only {
+    flex-direction: column;
+    gap: $spacing-2;
+
+    .search-input {
+      width: 100%;
+    }
+
+    .view-toggle-btn {
+      width: 100%;
+    }
+  }
+}
+
+// Department table - Optimized for data display
+.department-table {
+  width: 100%;
+  
+  ::ng-deep .base-table-container {
+    width: 100%;
+  }
+}
+
+// Department grid layout - For card view
 .department-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: $spacing-4;
-  padding: $spacing-4 0;
-}
+  padding: $spacing-4;
+  flex: 1;
+  overflow-y: visible;
+  height: auto;
+  align-content: start;
+  min-height: 0;
 
-// Responsive design
-@media (max-width: 768px) {
-  .department-grid {
-    grid-template-columns: 1fr;
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+// Responsive design
+@include mobile-only {
+  .department-table {
+    ::ng-deep .table-wrapper {
+      overflow-x: auto;
+    }
+  }
+
   .department-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: 1fr;
+    padding: $spacing-3;
+    gap: $spacing-3;
   }
 }
 

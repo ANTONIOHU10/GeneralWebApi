@@ -9,20 +9,32 @@
   [activeTabId]="activeTab()"
   (tabChange)="onTabChange($event)"
 >
-  <!-- Search in header - only shown when list tab is active -->
-  <app-base-search
-    *ngIf="activeTab() === 'list'"
-    slot="search"
-    [config]="{
-      placeholder: 'Search employees...',
-      debounceTime: 300,
-      minLength: 1,
-      showClearButton: true,
-      showSearchButton: true,
-    }"
-    (searchChange)="onSearchChange($event)"
-    inputId="employee-search"
-  ></app-base-search>
+  <!-- Search and View Toggle in header - only shown when list tab is active -->
+  <div *ngIf="activeTab() === 'list'" slot="search" class="header-actions">
+    <app-base-search
+      [config]="{
+        placeholder: 'Search employees...',
+        debounceTime: 300,
+        minLength: 1,
+        showClearButton: true,
+        showSearchButton: true,
+      }"
+      (searchChange)="onSearchChange($event)"
+      inputId="employee-search"
+      class="search-input"
+    ></app-base-search>
+    
+    <!-- View Toggle Button -->
+    <app-base-button
+      [icon]="getViewModeIcon()"
+      [text]="getViewModeLabel()"
+      variant="outline"
+      size="small"
+      (buttonClick)="toggleViewMode()"
+      [title]="'Switch to ' + (viewMode() === 'table' ? 'card' : 'table') + ' view'"
+      customClass="view-toggle-btn"
+    ></app-base-button>
+  </div>
 
   <!-- Employee List Tab Content -->
   <div *ngIf="activeTab() === 'list'">
@@ -37,8 +49,42 @@
       [onRetry]="onRetryLoad"
       [onEmptyAction]="onEmptyActionClick"
     >
-      <!-- Success content: Employee grid -->
-      <div class="employee-grid">
+      <!-- Success content: Table View -->
+      <app-base-table
+        *ngIf="viewMode() === 'table'"
+        [data]="(employeesArray$ | async) || []"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="tableConfig"
+        [pageSize]="20"
+        (rowClick)="onTableRowClick($event)"
+        (sortChange)="onTableSortChange($event)"
+        (pageChange)="onTablePageChange($event)"
+        class="employee-table"
+      >
+        <!-- Avatar Template -->
+        <ng-template #avatarTemplate let-employee="$implicit">
+          <app-base-avatar
+            [src]="employee.avatar || ''"
+            [fallbackText]="getInitials(employee)"
+            [alt]="getFullName(employee)"
+            size="small"
+            shape="circle"
+          ></app-base-avatar>
+        </ng-template>
+
+        <!-- Status Template -->
+        <ng-template #statusTemplate let-employee="$implicit">
+          <app-base-badge
+            [text]="employee.status | titlecase"
+            [variant]="getStatusVariant(employee.status)"
+            size="small"
+          ></app-base-badge>
+        </ng-template>
+      </app-base-table>
+
+      <!-- Success content: Card View -->
+      <div *ngIf="viewMode() === 'card'" class="employee-grid">
         <app-employee-card
           *ngFor="let employee of employees$ | async"
           [employee]="employee"

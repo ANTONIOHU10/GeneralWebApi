@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-list/position-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, filter, take } from 'rxjs/operators';
+import { takeUntil, filter, take, map } from 'rxjs/operators';
 import { PositionCardComponent } from '../position-card/position-card.component';
 import { AddPositionComponent } from '../add-position/add-position.component';
 import { PositionDetailComponent } from '../position-detail/position-detail.component';
@@ -11,7 +11,13 @@ import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
   BaseAsyncStateComponent,
+  BaseTableComponent,
+  BaseBadgeComponent,
+  BaseButtonComponent,
   TabItem,
+  TableColumn,
+  TableAction,
+  TableConfig,
 } from '../../../Shared/components/base';
 import { PositionFacade } from '@store/position/position.facade';
 import { Position } from 'app/contracts/positions/position.model';
@@ -33,11 +39,14 @@ import {
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
+    BaseTableComponent,
+    BaseBadgeComponent,
+    BaseButtonComponent,
   ],
   templateUrl: './position-list.component.html',
   styleUrls: ['./position-list.component.scss'],
 })
-export class PositionListComponent implements OnInit, OnDestroy {
+export class PositionListComponent implements OnInit, OnDestroy, AfterViewInit {
   private positionFacade = inject(PositionFacade);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
@@ -57,6 +66,33 @@ export class PositionListComponent implements OnInit, OnDestroy {
   selectedPositionForDetail: Position | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
+  
+  // View mode: 'table' or 'card'
+  viewMode = signal<'table' | 'card'>('table');
+
+  // Table configuration
+  @ViewChild('isManagementTemplate', { static: false }) isManagementTemplate!: TemplateRef<unknown>;
+  
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
+  tableConfig: TableConfig = {
+    showHeader: true,
+    showFooter: true,
+    showPagination: true,
+    showSearch: false,
+    showActions: true,
+    striped: true,
+    hoverable: true,
+    bordered: false,
+    size: 'medium',
+    loading: false,
+    emptyMessage: 'No positions found',
+  };
+  
+  // Convert positions$ to array for table
+  positionsArray$ = this.positions$.pipe(
+    map(positions => positions || [])
+  );
 
   // Tab configuration
   tabs: TabItem[] = [
@@ -68,6 +104,175 @@ export class PositionListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadPositions();
     this.setupOperationListeners();
+    this.initializeTable();
+  }
+
+  ngAfterViewInit(): void {
+    // Set template references for custom columns
+    const isManagementColumn = this.tableColumns.find(col => col.key === 'isManagement');
+    if (isManagementColumn && this.isManagementTemplate) {
+      isManagementColumn.template = this.isManagementTemplate;
+    }
+  }
+
+  /**
+   * Initialize table columns and actions
+   */
+  private initializeTable(): void {
+    this.tableColumns = [
+      {
+        key: 'code',
+        label: 'Code',
+        width: '100px',
+        align: 'left',
+        type: 'text',
+        sortable: true,
+      },
+      {
+        key: 'title',
+        label: 'Title',
+        width: '200px',
+        align: 'left',
+        type: 'text',
+        sortable: true,
+      },
+      {
+        key: 'description',
+        label: 'Description',
+        width: '250px',
+        align: 'left',
+        type: 'text',
+        sortable: false,
+      },
+      {
+        key: 'departmentName',
+        label: 'Department',
+        width: '150px',
+        align: 'left',
+        type: 'text',
+        sortable: false, // Backend doesn't support sorting by departmentName
+      },
+      {
+        key: 'level',
+        label: 'Level',
+        width: '80px',
+        align: 'center',
+        type: 'number',
+        sortable: true,
+      },
+      {
+        key: 'isManagement',
+        label: 'Management',
+        width: '120px',
+        align: 'center',
+        type: 'custom',
+        sortable: false, // Backend doesn't support sorting by isManagement
+      },
+      {
+        key: 'minSalary',
+        label: 'Min Salary',
+        width: '120px',
+        align: 'right',
+        type: 'number',
+        sortable: true,
+      },
+      {
+        key: 'maxSalary',
+        label: 'Max Salary',
+        width: '120px',
+        align: 'right',
+        type: 'number',
+        sortable: true,
+      },
+    ];
+
+    this.tableActions = [
+      {
+        label: 'View',
+        icon: 'visibility',
+        variant: 'primary',
+        showLabel: false,
+        onClick: (position: unknown) => {
+          this.onViewPosition(position as Position);
+        },
+      },
+      {
+        label: 'Edit',
+        icon: 'edit',
+        variant: 'warning',
+        showLabel: false,
+        onClick: (position: unknown) => {
+          this.onEditPosition(position as Position);
+        },
+      },
+      {
+        label: 'Delete',
+        icon: 'delete',
+        variant: 'danger',
+        showLabel: false,
+        onClick: (position: unknown) => {
+          this.onDeletePosition(position as Position);
+        },
+      },
+    ];
+  }
+
+  /**
+   * Toggle between table and card view
+   */
+  toggleViewMode(): void {
+    this.viewMode.set(this.viewMode() === 'table' ? 'card' : 'table');
+  }
+
+  /**
+   * Get view mode icon
+   */
+  getViewModeIcon(): string {
+    return this.viewMode() === 'table' ? 'view_module' : 'table_view';
+  }
+
+  /**
+   * Get view mode label
+   */
+  getViewModeLabel(): string {
+    return this.viewMode() === 'table' ? 'Card View' : 'Table View';
+  }
+
+  /**
+   * Handle table row click - view position details
+   */
+  onTableRowClick(position: unknown): void {
+    this.onViewPosition(position as Position);
+  }
+
+  /**
+   * Handle table sort change
+   * Maps frontend column keys to backend sort field names
+   */
+  onTableSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
+    // Map frontend column keys to backend sort field names
+    // Backend allows: "Title", "Code", "Level", "MinSalary", "MaxSalary", "CreatedAt"
+    const sortFieldMap: Record<string, string> = {
+      'title': 'Title',
+      'code': 'Code',
+      'level': 'Level',
+      'minSalary': 'MinSalary',
+      'maxSalary': 'MaxSalary',
+      'createdAt': 'CreatedAt',
+    };
+
+    const backendSortField = sortFieldMap[event.column.toLowerCase()] || event.column;
+    this.positionFacade.setFilters({ 
+      sortBy: backendSortField, 
+      sortDescending: event.direction === 'desc' 
+    });
+  }
+
+  /**
+   * Handle table page change
+   */
+  onTablePageChange(page: number): void {
+    this.positionFacade.setPagination({ currentPage: page });
   }
 
   private setupOperationListeners(): void {

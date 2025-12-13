@@ -113,4 +113,20 @@ export class AuthService extends BaseHttpService {
       email: decoded.email,
     };
   }
+
+  // Get current user info from API endpoint
+  // BaseHttpService automatically unwraps ApiResponse<T> to T
+  getCurrentUser(): Observable<{
+    userId?: string;
+    username?: string;
+    email?: string;
+    roles?: string[];
+  }> {
+    return this.get<{
+      userId?: string;
+      username?: string;
+      email?: string;
+      roles?: string[];
+    }>(`${this.endpoint}/me`);
+  }
 }

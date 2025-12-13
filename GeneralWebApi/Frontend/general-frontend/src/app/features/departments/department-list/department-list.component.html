@@ -9,20 +9,32 @@
   [activeTabId]="activeTab()"
   (tabChange)="onTabChange($event)"
 >
-  <!-- Search in header - only shown when list tab is active -->
-  <app-base-search
-    *ngIf="activeTab() === 'list'"
-    slot="search"
-    [config]="{
-      placeholder: 'Search departments...',
-      debounceTime: 300,
-      minLength: 1,
-      showClearButton: true,
-      showSearchButton: true,
-    }"
-    (searchChange)="onSearchChange($event)"
-    inputId="department-search"
-  ></app-base-search>
+  <!-- Search and View Toggle in header - only shown when list tab is active -->
+  <div *ngIf="activeTab() === 'list'" slot="search" class="header-actions">
+    <app-base-search
+      [config]="{
+        placeholder: 'Search departments...',
+        debounceTime: 300,
+        minLength: 1,
+        showClearButton: true,
+        showSearchButton: true,
+      }"
+      (searchChange)="onSearchChange($event)"
+      inputId="department-search"
+      class="search-input"
+    ></app-base-search>
+    
+    <!-- View Toggle Button -->
+    <app-base-button
+      [icon]="getViewModeIcon()"
+      [text]="getViewModeLabel()"
+      variant="outline"
+      size="small"
+      (buttonClick)="toggleViewMode()"
+      [title]="'Switch to ' + (viewMode() === 'table' ? 'card' : 'table') + ' view'"
+      customClass="view-toggle-btn"
+    ></app-base-button>
+  </div>
 
   <!-- Department List Tab Content -->
   <div *ngIf="activeTab() === 'list'">
@@ -37,8 +49,31 @@
       [onRetry]="onRetryLoad"
       [onEmptyAction]="onEmptyActionClick"
     >
-      <!-- Success content: Department grid -->
-      <div class="department-grid">
+      <!-- Success content: Table View -->
+      <app-base-table
+        *ngIf="viewMode() === 'table'"
+        [data]="(departmentsArray$ | async) || []"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [config]="tableConfig"
+        [pageSize]="20"
+        (rowClick)="onTableRowClick($event)"
+        (sortChange)="onTableSortChange($event)"
+        (pageChange)="onTablePageChange($event)"
+        class="department-table"
+      >
+        <!-- Level Template -->
+        <ng-template #levelTemplate let-department="$implicit">
+          <app-base-badge
+            [text]="'L' + department.level"
+            variant="primary"
+            size="small"
+          ></app-base-badge>
+        </ng-template>
+      </app-base-table>
+
+      <!-- Success content: Card View -->
+      <div *ngIf="viewMode() === 'card'" class="department-grid">
         <app-department-card
           *ngFor="let department of departments$ | async"
           [department]="department"
