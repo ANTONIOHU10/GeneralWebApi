@@ -35,7 +35,7 @@ public class TasksController : BaseController
     [Authorize(Policy = "AllRoles")] // All authenticated users can view their tasks
     public async Task<ActionResult<ApiResponse<PagedResult<TaskListDto>>>> GetTasks([FromQuery] TaskSearchDto? searchDto)
     {
-        return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
+        return await ValidateAndExecuteAsync(searchDto ?? new TaskSearchDto(), async (validatedDto) =>
         {
             var query = new GetTasksQuery { SearchDto = validatedDto };
             var result = await _mediator.Send(query);

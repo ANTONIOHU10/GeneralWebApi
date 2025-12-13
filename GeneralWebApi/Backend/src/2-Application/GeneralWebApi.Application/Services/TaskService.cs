@@ -140,16 +140,27 @@ public class TaskService : ITaskService
         task.Status = updateDto.Status;
         task.Priority = updateDto.Priority;
         task.DueDate = updateDto.DueDate;
-        task.CompletedAt = updateDto.CompletedAt;
         task.Category = updateDto.Category;
         task.EstimatedHours = updateDto.EstimatedHours;
         task.ActualHours = updateDto.ActualHours;
 
-        // Set completed date if status is Completed
-        if (updateDto.Status == "Completed" && !task.CompletedAt.HasValue)
+        // Handle CompletedAt: only update if explicitly provided, or set/clear based on status changes
+        if (updateDto.CompletedAt.HasValue)
         {
+            // Explicitly provided value - use it
+            task.CompletedAt = updateDto.CompletedAt;
+        }
+        else if (updateDto.Status == "Completed" && !task.CompletedAt.HasValue)
+        {
+            // Status changed to Completed and no completion date exists - set it
             task.CompletedAt = DateTime.UtcNow;
         }
+        else if (updateDto.Status != "Completed" && task.CompletedAt.HasValue)
+        {
+            // Status changed from Completed to another status - clear completion date
+            task.CompletedAt = null;
+        }
+        // Otherwise, keep existing CompletedAt value (don't clear it on unrelated updates)
 
         var updatedTask = await _taskRepository.UpdateAsync(task, cancellationToken);
         _logger.LogInformation("Successfully updated task with ID: {TaskId}", id);
