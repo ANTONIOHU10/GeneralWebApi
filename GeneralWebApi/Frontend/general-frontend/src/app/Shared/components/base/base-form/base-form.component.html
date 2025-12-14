@@ -360,7 +360,7 @@
       [icon]="button.icon || ''"
       [disabled]="button.disabled || loading"
       [customClass]="button.customClass || ''"
-      (buttonClick)="button.type === 'submit' ? onSubmit() : (button.type === 'reset' ? onCancel() : $event)"
+      (buttonClick)="button.type === 'reset' ? onCancel() : (button.type !== 'submit' ? $event : null)"
     >
     </app-base-button>
   </div>

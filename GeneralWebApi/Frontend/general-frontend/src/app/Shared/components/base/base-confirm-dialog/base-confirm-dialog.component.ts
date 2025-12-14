@@ -76,12 +76,14 @@ export class BaseConfirmDialogComponent implements OnInit, OnDestroy, OnChanges 
 
   onConfirm(): void {
     this.confirm.emit();
-    this.dialogClose.emit();
+    // Don't emit dialogClose here - let DialogContainerComponent handle cleanup
+    // dialogClose will be emitted when the dialog is actually removed
   }
 
   onCancel(): void {
     this.cancelAction.emit();
-    this.dialogClose.emit();
+    // Don't emit dialogClose here - let DialogContainerComponent handle cleanup
+    // dialogClose will be emitted when the dialog is actually removed
   }
 
   onClose(): void {

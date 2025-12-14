@@ -166,9 +166,13 @@ export class DialogService {
     const dialog = currentDialogs.find(d => d.id === id);
     
     if (dialog) {
+      // Emit result first
       dialog.result$.next(result);
       dialog.result$.complete();
-      // Dialog will be removed in finalize operator
+      // Remove dialog immediately to close it in UI
+      // The finalize operator will also try to remove it, but it's safe to call removeDialog multiple times
+      // This ensures the dialog closes immediately without waiting for finalize
+      this.removeDialog(id);
     }
   }
 

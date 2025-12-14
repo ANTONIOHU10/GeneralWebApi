@@ -516,8 +516,16 @@ export class BaseFormComponent implements OnInit, OnChanges, OnDestroy {
 
   /**
    * Handle form submit
+   * @param event Optional event to prevent default behavior when called from button click
    */
-  onSubmit(): void {
+  onSubmit(event?: Event): void {
+    // Prevent default form submission if event is provided (from button click)
+    // This prevents duplicate submissions when button type is 'submit'
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     // use the validator of every control, touched, format ecc.
 
     // if 
