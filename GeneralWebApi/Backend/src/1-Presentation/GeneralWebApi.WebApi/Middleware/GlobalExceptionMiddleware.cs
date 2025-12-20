@@ -1,4 +1,5 @@
 using GeneralWebApi.Contracts.Common;
+using GeneralWebApi.Contracts.Constants;
 using GeneralWebApi.Logging.Templates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -48,16 +49,16 @@ public class GlobalExceptionMiddleware
         {
             case ArgumentNullException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Invalid request",
+                    ErrorTitles.Common.InvalidRequest,
                     (int)HttpStatusCode.BadRequest,
-                    $"A required parameter is missing or null: {ex.ParamName ?? "Unknown parameter"}"
+                    $"{ErrorMessages.Validation.ParameterMissing}: {ex.ParamName ?? "Unknown parameter"}"
                 );
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 break;
 
             case ArgumentException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Invalid argument",
+                    ErrorTitles.Validation.InvalidArgument,
                     (int)HttpStatusCode.BadRequest,
                     ex.Message
                 );
@@ -66,7 +67,7 @@ public class GlobalExceptionMiddleware
 
             case KeyNotFoundException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Resource not found",
+                    ErrorTitles.Common.ResourceNotFound,
                     (int)HttpStatusCode.NotFound,
                     ex.Message
                 );
@@ -75,7 +76,7 @@ public class GlobalExceptionMiddleware
 
             case InvalidOperationException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Invalid operation",
+                    ErrorTitles.Business.InvalidOperation,
                     (int)HttpStatusCode.BadRequest,
                     ex.Message
                 );
@@ -84,7 +85,7 @@ public class GlobalExceptionMiddleware
 
             case UnauthorizedAccessException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Unauthorized access",
+                    ErrorTitles.Common.UnauthorizedAccess,
                     (int)HttpStatusCode.Unauthorized,
                     ex.Message
                 );
@@ -93,25 +94,25 @@ public class GlobalExceptionMiddleware
 
             case TimeoutException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Request timeout",
+                    ErrorTitles.Common.RequestTimeout,
                     (int)HttpStatusCode.RequestTimeout,
-                    "The request took too long to process. Please try again later."
+                    ErrorMessages.Common.RequestTimeout
                 );
                 context.Response.StatusCode = (int)HttpStatusCode.RequestTimeout;
                 break;
 
             case HttpRequestException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "External service error",
+                    ErrorTitles.ExternalService.ServiceError,
                     (int)HttpStatusCode.BadGateway,
-                    $"An error occurred while communicating with an external service: {ex.Message}"
+                    $"{ErrorMessages.ExternalService.ServiceError}: {ex.Message}"
                 );
                 context.Response.StatusCode = (int)HttpStatusCode.BadGateway;
                 break;
 
             case FileNotFoundException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "File not found",
+                    ErrorTitles.File.FileNotFound,
                     (int)HttpStatusCode.NotFound,
                     ex.Message
                 );
@@ -120,7 +121,7 @@ public class GlobalExceptionMiddleware
 
             case DirectoryNotFoundException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Directory not found",
+                    ErrorTitles.File.DirectoryNotFound,
                     (int)HttpStatusCode.NotFound,
                     ex.Message
                 );
@@ -129,7 +130,7 @@ public class GlobalExceptionMiddleware
 
             case NotSupportedException ex:
                 response = ApiResponse<object>.ErrorResult(
-                    "Operation not supported",
+                    ErrorTitles.Business.OperationNotSupported,
                     (int)HttpStatusCode.NotImplemented,
                     ex.Message
                 );
@@ -139,9 +140,9 @@ public class GlobalExceptionMiddleware
             case ValidationException ex:
                 var validationErrors = ex.Errors?.Select(e => e.ErrorMessage).ToList() ?? new List<string> { ex.Message };
                 response = ApiResponse<object>.ErrorResult(
-                    "Validation failed",
+                    ErrorTitles.Validation.ValidationFailed,
                     (int)HttpStatusCode.BadRequest,
-                    $"One or more validation errors occurred: {string.Join(", ", validationErrors)}"
+                    $"{ErrorMessages.Validation.ValidationFailed}: {string.Join(", ", validationErrors)}"
                 );
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 break;
@@ -149,7 +150,7 @@ public class GlobalExceptionMiddleware
             case BusinessException ex:
                 var businessDetails = ex.Details?.ToList() ?? new List<string> { ex.Message };
                 response = ApiResponse<object>.ErrorResult(
-                    ex.Title ?? "Business rule violation",
+                    ex.Title ?? ErrorTitles.Business.RuleViolation,
                     (int)HttpStatusCode.BadRequest,
                     $"{ex.Message}. Details: {string.Join(", ", businessDetails)}"
                 );
@@ -169,9 +170,9 @@ public class GlobalExceptionMiddleware
 
             default:
                 response = ApiResponse<object>.ErrorResult(
-                    "Internal server error",
+                    ErrorTitles.Common.InternalServerError,
                     (int)HttpStatusCode.InternalServerError,
-                    "An unexpected error occurred while processing your request. Please contact support if the problem persists."
+                    ErrorMessages.Common.InternalServerError
                 );
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 break;
@@ -202,16 +203,16 @@ public class GlobalExceptionMiddleware
         if (ex.InnerException?.Message.Contains("FOREIGN KEY") == true)
         {
             return ApiResponse<object>.ErrorResult(
-                "Data integrity violation",
+                ErrorTitles.Database.DataIntegrityViolation,
                 (int)HttpStatusCode.BadRequest,
-                "The operation cannot be completed because it would violate data integrity rules. Please check that all referenced records exist."
+                ErrorMessages.Database.DataIntegrityViolation
             );
         }
 
         return ApiResponse<object>.ErrorResult(
-            "Database operation failed",
+            ErrorTitles.Database.OperationFailed,
             (int)HttpStatusCode.BadRequest,
-            "An error occurred while saving data to the database. Please try again."
+            ErrorMessages.Database.OperationFailed
         );
     }
 
@@ -224,58 +225,58 @@ public class GlobalExceptionMiddleware
         {
             // Foreign key constraint violation
             547 => ApiResponse<object>.ErrorResult(
-                "Reference data not found",
+                ErrorTitles.Database.ReferenceDataNotFound,
                 (int)HttpStatusCode.BadRequest,
                 GetForeignKeyErrorMessage(ex.Message)
             ),
 
             // Primary key constraint violation
             2627 => ApiResponse<object>.ErrorResult(
-                "Duplicate data",
+                ErrorTitles.Database.DuplicateData,
                 (int)HttpStatusCode.BadRequest,
-                "A record with this information already exists. Please check your data and try again."
+                ErrorMessages.Database.DuplicateData
             ),
 
             // Unique constraint violation
             2601 => ApiResponse<object>.ErrorResult(
-                "Duplicate data",
+                ErrorTitles.Database.DuplicateData,
                 (int)HttpStatusCode.BadRequest,
-                "A record with this information already exists. Please check your data and try again."
+                ErrorMessages.Database.DuplicateData
             ),
 
             // Cannot insert NULL value
             515 => ApiResponse<object>.ErrorResult(
-                "Required field missing",
+                ErrorTitles.Database.RequiredFieldMissing,
                 (int)HttpStatusCode.BadRequest,
-                "A required field is missing. Please provide all required information."
+                ErrorMessages.Database.RequiredFieldMissing
             ),
 
             // String or binary data would be truncated
             8152 => ApiResponse<object>.ErrorResult(
-                "Data too long",
+                ErrorTitles.Database.DataTooLong,
                 (int)HttpStatusCode.BadRequest,
-                "One or more fields contain data that is too long. Please check your input and try again."
+                ErrorMessages.Database.DataTooLong
             ),
 
             // Arithmetic overflow error
             8115 => ApiResponse<object>.ErrorResult(
-                "Numeric value out of range",
+                ErrorTitles.Database.NumericValueOutOfRange,
                 (int)HttpStatusCode.BadRequest,
-                "One or more numeric values are outside the allowed range. Please check your input."
+                ErrorMessages.Database.NumericValueOutOfRange
             ),
 
             // Timeout expired
             -2 => ApiResponse<object>.ErrorResult(
-                "Request timeout",
+                ErrorTitles.Database.Timeout,
                 (int)HttpStatusCode.RequestTimeout,
-                "The database operation timed out. Please try again later."
+                ErrorMessages.Database.Timeout
             ),
 
             // Default SQL exception
             _ => ApiResponse<object>.ErrorResult(
-                "Database error",
+                ErrorTitles.Database.OperationFailed,
                 (int)HttpStatusCode.BadRequest,
-                "An error occurred while processing your request. Please try again."
+                ErrorMessages.Database.OperationFailed
             )
         };
     }
@@ -288,31 +289,31 @@ public class GlobalExceptionMiddleware
         // Parse the SQL error message to extract table and column information
         if (sqlMessage.Contains("FK_Employees_Departments_DepartmentId"))
         {
-            return "The specified department does not exist. Please select a valid department.";
+            return ErrorMessages.Database.DepartmentNotFound;
         }
 
         if (sqlMessage.Contains("FK_Employees_Positions_PositionId"))
         {
-            return "The specified position does not exist. Please select a valid position.";
+            return ErrorMessages.Database.PositionNotFound;
         }
 
         if (sqlMessage.Contains("FK_Employees_Employees_ManagerId"))
         {
-            return "The specified manager does not exist. Please select a valid manager.";
+            return ErrorMessages.Database.ManagerNotFound;
         }
 
         if (sqlMessage.Contains("FK_Positions_Departments_DepartmentId"))
         {
-            return "The specified department does not exist. Please select a valid department for the position.";
+            return ErrorMessages.Database.DepartmentForPositionNotFound;
         }
 
         // Generic foreign key error
         if (sqlMessage.Contains("FOREIGN KEY"))
         {
-            return "The operation cannot be completed because one or more referenced records do not exist. Please check that all referenced data is valid.";
+            return ErrorMessages.Database.GenericForeignKeyError;
         }
 
-        return "The operation cannot be completed due to data integrity constraints. Please check your data and try again.";
+        return ErrorMessages.Database.DataIntegrityConstraint;
     }
 
     #endregion

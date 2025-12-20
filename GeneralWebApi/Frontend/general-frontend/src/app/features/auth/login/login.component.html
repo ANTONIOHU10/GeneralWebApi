@@ -104,20 +104,6 @@
           ></app-base-button>
         </form>
 
-        <!-- Error Message -->
-        <app-base-error
-          *ngIf="error()"
-          [message]="error() || ''"
-          [config]="{
-            type: 'error',
-            size: 'sm',
-            showRetryButton: false,
-            showDismissButton: false,
-            centered: false
-          }"
-          class="error-message"
-        ></app-base-error>
-
         <!-- Footer Information -->
         <div class="form-footer">
           <p>

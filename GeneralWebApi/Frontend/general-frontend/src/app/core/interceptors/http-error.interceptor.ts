@@ -16,12 +16,21 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       // Extract error message from various formats
       // Priority: message (detailed) > error (title) > validation errors > statusText
       // Backend follows consistent format: error = short title, message = detailed errors
+      // After backend update: message defaults to error value if not explicitly provided
       if (error?.error) {
         // Priority 1: Check for ApiResponse message format (detailed error information)
         // Backend now consistently puts detailed errors in message field
+        // If message is the old default "Operation failed", fallback to error field
         if (error.error.message && error.error.message.trim()) {
-          message = error.error.message;
-          console.log('✅ Extracted from error.error.message (priority - detailed):', message);
+          const messageValue = error.error.message.trim();
+          // Check if message is the old default value, use error field instead
+          if (messageValue === 'Operation failed' && error.error.error && error.error.error.trim()) {
+            message = error.error.error.trim();
+            console.log('✅ Message is default, using error field:', message);
+          } else {
+            message = messageValue;
+            console.log('✅ Extracted from error.error.message (priority - detailed):', message);
+          }
         }
         // Priority 2: Check for ASP.NET Core validation errors
         else if (error.error.errors && typeof error.error.errors === 'object') {
@@ -37,7 +46,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
         // Priority 3: Check for ApiResponse error format (short title/type)
         // Use error field as fallback if message is not available
         else if (error.error.error && error.error.error.trim()) {
-          message = error.error.error;
+          message = error.error.error.trim();
           console.log('✅ Extracted from error.error.error (fallback - title):', message);
         }
         // Fallback to statusText

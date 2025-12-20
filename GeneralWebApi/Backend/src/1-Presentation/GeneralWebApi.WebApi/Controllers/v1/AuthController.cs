@@ -1,4 +1,5 @@
 using GeneralWebApi.Contracts.Common;
+using GeneralWebApi.Contracts.Constants;
 using GeneralWebApi.Contracts.Requests;
 using GeneralWebApi.Contracts.Responses;
 using GeneralWebApi.Controllers.Base;
@@ -28,7 +29,11 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return Unauthorized(ApiResponse<LoginResponseData>.Unauthorized("Invalid username or password"));
+                return Unauthorized(ApiResponse<LoginResponseData>.ErrorResult(
+                    ErrorTitles.Authentication.InvalidCredentials,
+                    401,
+                    ErrorMessages.Authentication.InvalidCredentials
+                ));
             }
 
             // get the user claims
@@ -72,7 +77,11 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return Unauthorized(ApiResponse<RefreshTokenResponseData>.Unauthorized("Invalid or expired refresh token"));
+                return Unauthorized(ApiResponse<RefreshTokenResponseData>.ErrorResult(
+                    ErrorTitles.Authentication.InvalidRefreshToken,
+                    401,
+                    ErrorMessages.Authentication.InvalidRefreshToken
+                ));
             }
 
             var responseData = new RefreshTokenResponseData
@@ -104,7 +113,11 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return BadRequest(ApiResponse<LogoutResponseData>.ErrorResult("Invalid refresh token"));
+                return BadRequest(ApiResponse<LogoutResponseData>.ErrorResult(
+                    ErrorTitles.Authentication.InvalidRefreshToken,
+                    400,
+                    ErrorMessages.Authentication.InvalidRefreshToken
+                ));
             }
 
             return Ok(ApiResponse<LogoutResponseData>.SuccessResult(null, "Logout successful"));
@@ -151,7 +164,11 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return BadRequest(ApiResponse<RegisterResponseData>.ErrorResult(errorMessage));
+                return BadRequest(ApiResponse<RegisterResponseData>.ErrorResult(
+                    ErrorTitles.User.UserCreationFailed,
+                    400,
+                    errorMessage ?? ErrorMessages.User.UserCreationFailed
+                ));
             }
 
             var responseData = new RegisterResponseData
@@ -177,7 +194,11 @@ public class AuthController(IUserService userService) : BaseController
 
             if (!success)
             {
-                return BadRequest(ApiResponse<UpdatePasswordResponseData>.ErrorResult("Password update failed"));
+                return BadRequest(ApiResponse<UpdatePasswordResponseData>.ErrorResult(
+                    ErrorTitles.Authentication.PasswordUpdateFailed,
+                    400,
+                    ErrorMessages.Authentication.PasswordUpdateFailed
+                ));
             }
 
             return Ok(ApiResponse<UpdatePasswordResponseData>.SuccessResult(null, "Password updated successfully"));

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Azure.Core;
 using FluentValidation;
 using GeneralWebApi.Contracts.Common;
+using GeneralWebApi.Contracts.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeneralWebApi.Controllers.Base;
@@ -12,13 +13,13 @@ namespace GeneralWebApi.Controllers.Base;
 [Produces("application/json")]
 public abstract class BaseController : ControllerBase, IBaseController
 {
-    public virtual ActionResult<ApiResponse<T>> Success<T>(T data, string message = "Operation successful")
+    public virtual ActionResult<ApiResponse<T>> Success<T>(T data, string message = ErrorMessages.Common.OperationSuccessful)
     {
         var response = ApiResponse<T>.SuccessResult(data, message);
         return Ok(response);
     }
 
-    public virtual ActionResult<ApiResponse<T>> BadRequest<T>(string error, string message = "Operation failed")
+    public virtual ActionResult<ApiResponse<T>> BadRequest<T>(string error, string? message = null)
     {
         var response = ApiResponse<T>.ErrorResult(error, 400, message);
         return BadRequest(response);
@@ -68,9 +69,9 @@ public abstract class BaseController : ControllerBase, IBaseController
                 var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 // Follow consistent error format: error = short title, message = detailed errors
                 return BadRequest(ApiResponse<object>.ErrorResult(
-                    "Validation failed",
+                    ErrorTitles.Validation.ValidationFailed,
                     400,
-                    string.Join(", ", errors)
+                    $"{ErrorMessages.Validation.ValidationFailed}: {string.Join(", ", errors)}"
                 ));
             }
         }

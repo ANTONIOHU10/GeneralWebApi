@@ -9,11 +9,11 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { NotificationService } from '../../../Shared/services/notification.service';
 import {
   BaseInputComponent,
   BaseButtonComponent,
   BaseCheckboxComponent,
-  BaseErrorComponent,
 } from '../../../Shared/components/base';
 
 @Component({
@@ -25,7 +25,6 @@ import {
     BaseInputComponent,
     BaseButtonComponent,
     BaseCheckboxComponent,
-    BaseErrorComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -34,13 +33,13 @@ export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
 
   // Form group
   loginForm!: FormGroup;
 
-  // Loading and error states
+  // Loading state
   loading = signal(false);
-  error = signal<string | null>(null);
 
   // Theme state
   isDarkMode = false;
@@ -101,7 +100,10 @@ export class LoginComponent implements OnInit {
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();
       });
-      this.error.set('Please enter both username and password');
+      this.notificationService.error(
+        'Validation Error',
+        'Please enter both username and password'
+      );
       return;
     }
 
@@ -110,12 +112,14 @@ export class LoginComponent implements OnInit {
     const password = (formValue.password as string)?.trim() || '';
 
     if (!username || !password) {
-      this.error.set('Please enter both username and password');
+      this.notificationService.error(
+        'Validation Error',
+        'Please enter both username and password'
+      );
       return;
     }
 
     this.loading.set(true);
-    this.error.set(null);
 
     console.log('🚀 Starting login...');
 
@@ -140,19 +144,26 @@ export class LoginComponent implements OnInit {
               console.log('🎉 Successfully navigated!');
             } else {
               console.error('❌ Navigation failed!');
-              this.error.set('Navigation failed - please refresh the page');
+              this.notificationService.error(
+                'Navigation Error',
+                'Navigation failed - please refresh the page'
+              );
             }
           })
           .catch(err => {
             console.error('❌ Navigation error:', err);
-            this.error.set('Navigation error: ' + err.message);
+            this.notificationService.error(
+              'Navigation Error',
+              'Navigation error: ' + err.message
+            );
           });
 
         this.loading.set(false);
       },
       error: err => {
         console.error('❌ Login failed:', err);
-        this.error.set(
+        this.notificationService.error(
+          'Login Failed',
           err.message || 'Login failed. Please check your credentials.'
         );
         this.loading.set(false);

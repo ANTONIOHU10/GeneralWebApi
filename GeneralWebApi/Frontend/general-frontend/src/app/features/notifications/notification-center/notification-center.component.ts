@@ -5,12 +5,6 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subject, interval } from 'rxjs';
 import { takeUntil, catchError, startWith, switchMap } from 'rxjs/operators';
 import {
-  BasePrivatePageContainerComponent,
-  BaseAsyncStateComponent,
-  BaseCardComponent,
-  BaseBadgeComponent,
-  BaseButtonComponent,
-  TableColumn,
   BadgeVariant,
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
@@ -32,11 +26,6 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    BasePrivatePageContainerComponent,
-    BaseAsyncStateComponent,
-    BaseCardComponent,
-    BaseBadgeComponent,
-    BaseButtonComponent,
   ],
   templateUrl: './notification-center.component.html',
   styleUrls: ['./notification-center.component.scss'],
