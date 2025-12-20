@@ -66,20 +66,20 @@
   <app-base-card [title]="'Filters'" [icon]="'filter_list'" [variant]="'elevated'" class="filters-card">
     <div class="filter-groups">
       <div class="filter-group">
-        <label>Type:</label>
-        <select [value]="activeFilter().type || 'all'" (change)="onFilterChange({ type: $any($event.target).value })">
+        <label for="filter-type">Type:</label>
+        <select id="filter-type" [value]="activeFilter().type || 'all'" (change)="onFilterChange({ type: $any($event.target).value })">
           <option *ngFor="let type of typeOptions" [value]="type">{{ type | titlecase }}</option>
         </select>
       </div>
       <div class="filter-group">
-        <label>Status:</label>
-        <select [value]="activeFilter().status || 'all'" (change)="onFilterChange({ status: $any($event.target).value })">
+        <label for="filter-status">Status:</label>
+        <select id="filter-status" [value]="activeFilter().status || 'all'" (change)="onFilterChange({ status: $any($event.target).value })">
           <option *ngFor="let status of statusOptions" [value]="status">{{ status | titlecase }}</option>
         </select>
       </div>
       <div class="filter-group">
-        <label>Priority:</label>
-        <select [value]="activeFilter().priority || 'all'" (change)="onFilterChange({ priority: $any($event.target).value })">
+        <label for="filter-priority">Priority:</label>
+        <select id="filter-priority" [value]="activeFilter().priority || 'all'" (change)="onFilterChange({ priority: $any($event.target).value })">
           <option *ngFor="let priority of priorityOptions" [value]="priority">{{ priority | titlecase }}</option>
         </select>
       </div>

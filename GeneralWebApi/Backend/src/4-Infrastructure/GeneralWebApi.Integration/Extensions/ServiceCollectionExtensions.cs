@@ -8,6 +8,8 @@ using GeneralWebApi.Integration.Repository.DocumentsRepository;
 using GeneralWebApi.Integration.Repository.DocumentsRepository.Approvals;
 using GeneralWebApi.Integration.Repository.AuditRepository;
 using GeneralWebApi.Integration.Repository.TaskRepository;
+using GeneralWebApi.Integration.Repository.NotificationRepository;
+using GeneralWebApi.Integration.Repository.NotificationReadStatusRepository;
 using GeneralWebApi.Integration.Repository.Interfaces;
 using GeneralWebApi.Integration.Seeds;
 using GeneralWebApi.Integration.Services;
@@ -154,6 +156,10 @@ public static class ServiceCollectionExtensions
 
         // Task repositories
         services.AddScoped<ITaskRepository, TaskRepository>();
+
+        // Notification repositories
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<INotificationReadStatusRepository, NotificationReadStatusRepository>();
 
         return services;
     }

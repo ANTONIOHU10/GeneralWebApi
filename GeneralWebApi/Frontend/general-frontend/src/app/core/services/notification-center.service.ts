@@ -1,7 +1,14 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/core/services/notification-center.service.ts
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { BehaviorSubject, Observable, combineLatest, forkJoin, of } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { BehaviorSubject, Observable, combineLatest, from, of, EMPTY, forkJoin } from 'rxjs';
+import { 
+  map, 
+  catchError, 
+  tap, 
+  shareReplay,
+  distinctUntilChanged,
+  switchMap
+} from 'rxjs/operators';
 import { 
   Notification, 
   NotificationFilter, 
@@ -11,36 +18,67 @@ import {
   NotificationPriority,
   NotificationStatus
 } from 'app/contracts/notifications/notification.model';
+import { NotificationService, BackendNotificationDto } from './notification.service';
 
 /**
  * Notification Center Service
- * Aggregates notifications from multiple sources and provides unified interface
+ * Modern Observable-based service for managing notifications from multiple providers
+ * 
+ * Features:
+ * - Fully reactive with RxJS Observables
+ * - Clean, composable code with modern operators
+ * - Type-safe and error-resilient
+ * - Automatic state management
  */
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationCenterService {
-  // Registered notification providers
-  private providers: NotificationProvider[] = [];
+  // Registered providers
+  private readonly providers = new Map<NotificationType, NotificationProvider>();
   
-  // Notification state
-  private notificationsSubject = new BehaviorSubject<Notification[]>([]);
-  public readonly notifications$ = this.notificationsSubject.asObservable();
+  // Backend notification service
+  private readonly notificationService = inject(NotificationService);
   
-  // Loading state
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  public readonly loading$ = this.loadingSubject.asObservable();
-  
-  // Error state
-  private errorSubject = new BehaviorSubject<string | null>(null);
-  public readonly error$ = this.errorSubject.asObservable();
+  // State management with BehaviorSubject (reactive and Observable-compatible)
+  private readonly notificationsSubject = new BehaviorSubject<Notification[]>([]);
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  private readonly errorSubject = new BehaviorSubject<string | null>(null);
+
+  // Public readonly observables
+  public readonly notifications$ = this.notificationsSubject.asObservable().pipe(
+    distinctUntilChanged(),
+    shareReplay(1)
+  );
+
+  public readonly loading$ = this.loadingSubject.asObservable().pipe(
+    distinctUntilChanged(),
+    shareReplay(1)
+  );
+
+  public readonly error$ = this.errorSubject.asObservable().pipe(
+    distinctUntilChanged(),
+    shareReplay(1)
+  );
+
+  // Computed observables for derived state
+  public readonly unreadCount$ = this.notifications$.pipe(
+    map(notifications => notifications.filter(n => n.status === 'unread').length),
+    distinctUntilChanged(),
+    shareReplay(1)
+  );
+
+  public readonly stats$ = this.notifications$.pipe(
+    map(notifications => this.calculateStats(notifications)),
+    shareReplay(1)
+  );
 
   /**
    * Register a notification provider
    */
   registerProvider(provider: NotificationProvider): void {
-    if (!this.providers.find(p => p.getType() === provider.getType())) {
-      this.providers.push(provider);
+    if (!this.providers.has(provider.getType())) {
+      this.providers.set(provider.getType(), provider);
     }
   }
 
@@ -48,40 +86,37 @@ export class NotificationCenterService {
    * Unregister a notification provider
    */
   unregisterProvider(type: NotificationType): void {
-    this.providers = this.providers.filter(p => p.getType() !== type);
+    this.providers.delete(type);
   }
 
   /**
-   * Load all notifications from registered providers
+   * Load all notifications from backend API
+   * Uses modern RxJS operators for clean, composable code
    */
   loadNotifications(): Observable<Notification[]> {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
 
-    if (this.providers.length === 0) {
-      this.loadingSubject.next(false);
-      this.notificationsSubject.next([]);
-      return of([]);
-    }
-
-    // Fetch from all providers in parallel
-    const providerObservables = this.providers.map(provider =>
-      this.fetchFromProvider(provider)
-    );
-
-    return combineLatest(providerObservables).pipe(
-      map((results) => {
-        // Flatten and merge all notifications
-        const allNotifications = results.flat();
+    // Load from backend API
+    return this.notificationService.getNotifications({
+      pageNumber: 1,
+      pageSize: 100, // Load first 100 notifications
+      includeExpired: false,
+    }).pipe(
+      map((response: { items: BackendNotificationDto[]; totalCount: number; pageNumber: number; pageSize: number }) => {
+        // Transform backend DTOs to frontend Notification models
+        const notifications = response.items.map((dto: BackendNotificationDto) => 
+          this.notificationService.transformToNotification(dto)
+        );
         
-        // Sort by priority and creation date (urgent first, then by date)
-        const sorted = this.sortNotifications(allNotifications);
+        // Sort notifications
+        const sorted = this.sortNotifications(notifications);
         
         this.notificationsSubject.next(sorted);
         this.loadingSubject.next(false);
         return sorted;
       }),
-      catchError((error) => {
+      catchError(error => {
         this.errorSubject.next(error.message || 'Failed to load notifications');
         this.loadingSubject.next(false);
         return of([]);
@@ -90,25 +125,21 @@ export class NotificationCenterService {
   }
 
   /**
-   * Fetch notifications from a single provider
+   * Fetch notifications from a single provider (for generating new notifications)
+   * Converts Promise to Observable using modern RxJS
+   * Note: This is kept for backward compatibility, but notifications should be loaded from backend
    */
   private fetchFromProvider(provider: NotificationProvider): Observable<Notification[]> {
-    return new Observable<Notification[]>((subscriber) => {
-      provider.getNotifications()
-        .then((notifications) => {
-          subscriber.next(notifications);
-          subscriber.complete();
-        })
-        .catch((error) => {
-          console.error(`Failed to fetch notifications from ${provider.getType()}:`, error);
-          subscriber.next([]); // Return empty array on error, don't fail entire load
-          subscriber.complete();
-        });
-    });
+    return from(provider.getNotifications()).pipe(
+      catchError(error => {
+        console.error(`Provider ${provider.getType()} error:`, error);
+        return of([]);
+      })
+    );
   }
 
   /**
-   * Sort notifications by priority and date
+   * Sort notifications by priority, status, and date
    */
   private sortNotifications(notifications: Notification[]): Notification[] {
     const priorityOrder: Record<NotificationPriority, number> = {
@@ -119,7 +150,7 @@ export class NotificationCenterService {
     };
 
     return [...notifications].sort((a, b) => {
-      // First sort by priority
+      // Sort by priority first
       const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
       if (priorityDiff !== 0) return priorityDiff;
       
@@ -133,32 +164,29 @@ export class NotificationCenterService {
   }
 
   /**
-   * Filter notifications
+   * Filter notifications reactively
    */
   filterNotifications(filter: NotificationFilter): Observable<Notification[]> {
     return this.notifications$.pipe(
-      map((notifications) => {
+      map(notifications => {
         let filtered = [...notifications];
 
-        // Filter by type
         if (filter.type && filter.type !== 'all') {
           filtered = filtered.filter(n => n.type === filter.type);
         }
 
-        // Filter by status
         if (filter.status && filter.status !== 'all') {
           filtered = filtered.filter(n => n.status === filter.status);
         }
 
-        // Filter by priority
         if (filter.priority && filter.priority !== 'all') {
           filtered = filtered.filter(n => n.priority === filter.priority);
         }
 
-        // Filter by date range
         if (filter.startDate) {
           filtered = filtered.filter(n => new Date(n.createdAt) >= new Date(filter.startDate!));
         }
+
         if (filter.endDate) {
           filtered = filtered.filter(n => new Date(n.createdAt) <= new Date(filter.endDate!));
         }
@@ -169,77 +197,70 @@ export class NotificationCenterService {
   }
 
   /**
-   * Get notification statistics
+   * Get notification statistics (reactive)
    */
   getStats(): Observable<NotificationStats> {
-    return this.notifications$.pipe(
-      map((notifications) => {
-        const stats: NotificationStats = {
-          total: notifications.length,
-          unread: notifications.filter(n => n.status === 'unread').length,
-          byType: {
-            approval: 0,
-            task: 0,
-            contract: 0,
-            system: 0,
-            audit: 0,
-            employee: 0,
-          },
-          byPriority: {
-            urgent: 0,
-            high: 0,
-            medium: 0,
-            low: 0,
-          },
-        };
+    return this.stats$;
+  }
 
-        notifications.forEach((notification) => {
-          stats.byType[notification.type]++;
-          stats.byPriority[notification.priority]++;
-        });
+  /**
+   * Calculate statistics from notifications
+   */
+  private calculateStats(notifications: Notification[]): NotificationStats {
+    const stats: NotificationStats = {
+      total: notifications.length,
+      unread: notifications.filter(n => n.status === 'unread').length,
+      byType: {
+        approval: 0,
+        task: 0,
+        contract: 0,
+        system: 0,
+        audit: 0,
+        employee: 0,
+      },
+      byPriority: {
+        urgent: 0,
+        high: 0,
+        medium: 0,
+        low: 0,
+      },
+    };
 
-        return stats;
-      })
-    );
+    notifications.forEach(notification => {
+      stats.byType[notification.type]++;
+      stats.byPriority[notification.priority]++;
+    });
+
+    return stats;
   }
 
   /**
    * Mark notification as read
+   * Modern Observable-based implementation with optimistic updates
    */
   markAsRead(notification: Notification): Observable<void> {
-    // Find the provider for this notification
-    const provider = this.providers.find(p => p.getType() === notification.type);
+    const notificationId = parseInt(notification.id, 10);
     
-    if (provider && provider.markAsRead) {
-      return new Observable<void>((subscriber) => {
-        provider.markAsRead!(notification.id)
-          .then(() => {
-            // Update local state
-            const notifications = this.notificationsSubject.value;
-            const updated = notifications.map(n =>
-              n.id === notification.id
-                ? { ...n, status: 'read' as NotificationStatus, readAt: new Date().toISOString() }
-                : n
-            );
-            this.notificationsSubject.next(updated);
-            subscriber.next();
-            subscriber.complete();
-          })
-          .catch((error) => {
-            subscriber.error(error);
-          });
-      });
-    } else {
-      // If provider doesn't support markAsRead, just update local state
-      const notifications = this.notificationsSubject.value;
-      const updated = notifications.map(n =>
-        n.id === notification.id
-          ? { ...n, status: 'read' as NotificationStatus, readAt: new Date().toISOString() }
-          : n
-      );
-      this.notificationsSubject.next(updated);
+    if (isNaN(notificationId)) {
+      // If ID is not a number (e.g., "approval-123"), it's from a provider
+      // Update local state only
+      this.updateNotificationStatus(notification.id, 'read');
       return of(void 0);
     }
+
+    // Optimistic update: update local state immediately
+    this.updateNotificationStatus(notification.id, 'read');
+
+    // Call backend API
+    return this.notificationService.markAsRead(notificationId).pipe(
+      catchError(error => {
+        // Revert on error
+        this.updateNotificationStatus(notification.id, 'unread');
+        console.error(`Failed to mark notification ${notification.id} as read:`, error);
+        return EMPTY;
+      }),
+      map(() => void 0)
+    );
   }
 
   /**
@@ -253,7 +274,7 @@ export class NotificationCenterService {
       return of(void 0);
     }
 
-    // Mark all as read locally
+    // Update all locally (optimistic update)
     const updated = notifications.map(n =>
       n.status === 'unread'
         ? { ...n, status: 'read' as NotificationStatus, readAt: new Date().toISOString() }
@@ -261,17 +282,33 @@ export class NotificationCenterService {
     );
     this.notificationsSubject.next(updated);
 
-    // Optionally notify providers (if they support batch operations)
-    // For now, we'll just update local state
-    return of(void 0);
+    // Call backend API
+    return this.notificationService.markAllAsRead().pipe(
+      catchError(error => {
+        // Revert on error
+        this.notificationsSubject.next(notifications);
+        console.error('Failed to mark all notifications as read:', error);
+        return EMPTY;
+      }),
+      map(() => void 0)
+    );
   }
 
   /**
-   * Get unread count
+   * Get unread count (reactive)
+   * Can use either computed observable or backend API
    */
   getUnreadCount(): Observable<number> {
-    return this.notifications$.pipe(
-      map((notifications) => notifications.filter(n => n.status === 'unread').length)
+    // Option 1: Use computed from local state (faster, but may be stale)
+    // return this.unreadCount$;
+    
+    // Option 2: Fetch from backend (always accurate)
+    return this.notificationService.getUnreadCount().pipe(
+      catchError(error => {
+        console.error('Failed to get unread count:', error);
+        // Fallback to local count
+        return this.unreadCount$;
+      })
     );
   }
 
@@ -279,10 +316,31 @@ export class NotificationCenterService {
    * Delete notification (archive it)
    */
   deleteNotification(notification: Notification): Observable<void> {
+    const notificationId = parseInt(notification.id, 10);
+    
+    if (isNaN(notificationId)) {
+      // If ID is not a number, it's from a provider - just remove locally
+      const notifications = this.notificationsSubject.value;
+      const updated = notifications.filter(n => n.id !== notification.id);
+      this.notificationsSubject.next(updated);
+      return of(void 0);
+    }
+
+    // Optimistic update: remove from local state immediately
     const notifications = this.notificationsSubject.value;
     const updated = notifications.filter(n => n.id !== notification.id);
     this.notificationsSubject.next(updated);
-    return of(void 0);
+
+    // Call backend API
+    return this.notificationService.deleteNotification(notificationId).pipe(
+      catchError(error => {
+        // Revert on error
+        this.notificationsSubject.next(notifications);
+        console.error(`Failed to delete notification ${notification.id}:`, error);
+        return EMPTY;
+      }),
+      map(() => void 0)
+    );
   }
 
   /**
@@ -292,5 +350,42 @@ export class NotificationCenterService {
     this.notificationsSubject.next([]);
     return of(void 0);
   }
-}
 
+  /**
+   * Helper: Update notification status
+   */
+  private updateNotificationStatus(notificationId: string, status: NotificationStatus): void {
+    const notifications = this.notificationsSubject.value;
+    const updated = notifications.map(n =>
+      n.id === notificationId
+        ? { 
+            ...n, 
+            status, 
+            readAt: status === 'read' ? new Date().toISOString() : n.readAt 
+          }
+        : n
+    );
+    this.notificationsSubject.next(updated);
+  }
+
+  /**
+   * Get current notifications (synchronous access)
+   */
+  getNotifications(): Notification[] {
+    return this.notificationsSubject.value;
+  }
+
+  /**
+   * Get loading state (synchronous access)
+   */
+  isLoading(): boolean {
+    return this.loadingSubject.value;
+  }
+
+  /**
+   * Get error state (synchronous access)
+   */
+  getError(): string | null {
+    return this.errorSubject.value;
+  }
+}

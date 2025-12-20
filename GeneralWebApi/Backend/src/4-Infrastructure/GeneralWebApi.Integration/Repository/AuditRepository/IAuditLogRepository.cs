@@ -1,4 +1,5 @@
 using GeneralWebApi.Domain.Entities.Audit;
+using GeneralWebApi.DTOs.Audit;
 using GeneralWebApi.Integration.Repository.Base;
 
 namespace GeneralWebApi.Integration.Repository.AuditRepository;
@@ -65,4 +66,12 @@ public interface IAuditLogRepository : IBaseRepository<AuditLog>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated audit logs</returns>
     Task<(IEnumerable<AuditLog> Items, int TotalCount)> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get audit logs with pagination and filtering
+    /// </summary>
+    /// <param name="searchDto">Search criteria</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Paginated and filtered audit logs</returns>
+    Task<(IEnumerable<AuditLog> Items, int TotalCount)> GetPaginatedAsync(AuditLogSearchDto searchDto, CancellationToken cancellationToken = default);
 }

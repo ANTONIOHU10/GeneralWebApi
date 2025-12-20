@@ -1,6 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/core/services/notification-providers/contract-notification.provider.ts
 import { Injectable, inject } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { NotificationService } from '../notification.service';
 import { 
   Notification, 
   NotificationProvider, 
@@ -19,6 +21,7 @@ import { Contract } from 'app/contracts/contracts/contract.model';
 })
 export class ContractNotificationProvider implements NotificationProvider {
   private contractService = inject(ContractService);
+  private notificationService = inject(NotificationService);
 
   getType(): NotificationType {
     return 'contract';

@@ -1,6 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/core/services/notification-providers/task-notification.provider.ts
 import { Injectable, inject } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { NotificationService } from '../notification.service';
 import { 
   Notification, 
   NotificationProvider, 
@@ -19,6 +21,7 @@ import { Task } from 'app/contracts/tasks/task.model';
 })
 export class TaskNotificationProvider implements NotificationProvider {
   private taskService = inject(TaskService);
+  private notificationService = inject(NotificationService);
 
   getType(): NotificationType {
     return 'task';
@@ -149,8 +152,19 @@ export class TaskNotificationProvider implements NotificationProvider {
   }
 
   async markAsRead(notificationId: string): Promise<void> {
-    // Task notifications are ephemeral, no need to persist read status
-    return Promise.resolve();
+    const id = parseInt(notificationId, 10);
+    if (!isNaN(id)) {
+      // Notification exists in backend, call API
+      await firstValueFrom(
+        this.notificationService.markAsRead(id).pipe(
+          catchError(error => {
+            console.error('Failed to mark notification as read:', error);
+            return of(void 0);
+          })
+        )
+      );
+    }
+    // If ID is not numeric, it's a temporary ID - nothing to persist
   }
 
   async getUnreadCount(): Promise<number> {

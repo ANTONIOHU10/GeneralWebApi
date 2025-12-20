@@ -39,9 +39,7 @@ public class AuditLogsController : BaseController
     {
         return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
         {
-            var (items, totalCount) = await _auditLogRepository.GetPaginatedAsync(
-                validatedDto.PageNumber,
-                validatedDto.PageSize);
+            var (items, totalCount) = await _auditLogRepository.GetPaginatedAsync(validatedDto);
 
             var auditLogDtos = items.Select(MapToDto).ToList();
             var pagedResult = new PagedResult<AuditLogDto>(auditLogDtos, totalCount, validatedDto.PageNumber, validatedDto.PageSize);

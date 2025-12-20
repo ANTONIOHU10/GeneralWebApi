@@ -15,6 +15,7 @@ using GeneralWebApi.Application.Features.Contracts.Handlers;
 using GeneralWebApi.Application.Features.Contracts.Validators;
 using GeneralWebApi.Application.Features.Tasks.Handlers;
 using GeneralWebApi.Application.Features.Tasks.Validators;
+using GeneralWebApi.Application.Features.Notifications.Handlers;
 using GeneralWebApi.Application.Features.Users.Handlers;
 using GeneralWebApi.Application.Features.Users.Validators;
 using GeneralWebApi.DTOs.Users;
@@ -139,6 +140,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<CreatePermissionDto>, CreatePermissionDtoValidator>();
         services.AddScoped<IValidator<UpdatePermissionDto>, UpdatePermissionDtoValidator>();
         services.AddScoped<IValidator<AssignRoleToEmployeeDto>, AssignRoleToEmployeeDtoValidator>();
+
+        // Notifications
+        services.AddAutoMapper(cfg => cfg.AddMaps(typeof(NotificationMappingProfile).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateNotificationCommandHandler).Assembly));
+        services.AddScoped<INotificationService, NotificationService>();
 
         return services;
     }

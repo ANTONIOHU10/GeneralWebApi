@@ -2,6 +2,7 @@ using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Entities.Anagraphy;
 using GeneralWebApi.Domain.Entities.Documents;
 using GeneralWebApi.Domain.Entities.Documents.Approvals;
+using GeneralWebApi.Domain.Entities.Notifications;
 using GeneralWebApi.Domain.Entities.Permissions;
 using GeneralWebApi.Domain.Entities.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,11 @@ public class ApplicationDbContext : DbContext
 
     #region Tasks entities
     public DbSet<TaskEntity> Tasks { get; set; }
+    #endregion
+
+    #region Notifications entities
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<NotificationReadStatus> NotificationReadStatuses { get; set; }
     #endregion
 
     // constructor to inject the DbContextOptions in ServiceCollectionExtensions
