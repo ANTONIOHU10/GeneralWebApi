@@ -1,0 +1,76 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/user-profile-modal/user-profile-modal.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+.user-profile-content {
+  width: 100%;
+  max-width: 100%;
+}
+
+// Profile Header Section (matches employee-detail-header style)
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-6;
+  padding-bottom: $spacing-6;
+  margin-bottom: $spacing-6;
+  border-bottom: 1px solid var(--border-primary);
+
+  .profile-header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    .profile-name {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .profile-role {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .profile-department {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+    }
+
+    .profile-badges {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+      flex-wrap: wrap;
+      margin-top: $spacing-1;
+
+      .employee-id {
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+        margin-left: $spacing-2;
+      }
+    }
+  }
+}
+
+// Detail container (uses base-detail styles)
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-4;
+  }
+}
+

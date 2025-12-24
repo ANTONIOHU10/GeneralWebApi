@@ -2,6 +2,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Employee } from 'app/contracts/employees/employee.model';
+import { User } from 'app/users/user.model';
 import {
   BaseModalComponent,
   BaseAvatarComponent,
@@ -51,6 +52,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
   private cdr = inject(ChangeDetectorRef);
 
   @Input() employee: Employee | null = null;
+  @Input() user: User | null = null; // Optional user information
   @Input() isOpen = false;
   @Input() mode: 'edit' | 'view' = 'edit'; // Mode: 'edit' for editing, 'view' for read-only
 
@@ -74,6 +76,13 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
   // Form configuration - will be updated based on mode
   formConfig: FormConfig = {
     sections: [
+      {
+        title: 'User Information',
+        description: 'User account details',
+        order: -1,
+        collapsible: true,
+        collapsed: false,
+      },
       {
         title: 'Personal Information',
         description: 'Employee personal details',
@@ -107,6 +116,77 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
       showSectionDividers: true,
     },
     fields: [
+      // User Information Section
+      {
+        key: 'username',
+        type: 'input',
+        label: 'Username',
+        placeholder: 'Username',
+        section: 'User Information',
+        order: 0,
+        colSpan: 1,
+        readonly: true,
+      },
+      {
+        key: 'userEmail',
+        type: 'input',
+        label: 'User Email',
+        placeholder: 'User email',
+        inputType: 'email',
+        section: 'User Information',
+        order: 1,
+        colSpan: 1,
+        readonly: true,
+      },
+      {
+        key: 'userRole',
+        type: 'select',
+        label: 'Role',
+        placeholder: 'User role',
+        section: 'User Information',
+        order: 2,
+        colSpan: 1,
+        readonly: true,
+        options: [
+          { value: 'Admin', label: 'Admin' },
+          { value: 'Manager', label: 'Manager' },
+          { value: 'User', label: 'User' },
+        ] as SelectOption[],
+      },
+      {
+        key: 'accountCreated',
+        type: 'datepicker',
+        label: 'Account Created',
+        placeholder: 'Account creation date',
+        section: 'User Information',
+        order: 3,
+        colSpan: 1,
+        readonly: true,
+      },
+      {
+        key: 'lastLogin',
+        type: 'datepicker',
+        label: 'Last Login',
+        placeholder: 'Last login date',
+        section: 'User Information',
+        order: 4,
+        colSpan: 1,
+        readonly: true,
+      },
+      {
+        key: 'isActive',
+        type: 'select',
+        label: 'Account Status',
+        placeholder: 'Account status',
+        section: 'User Information',
+        order: 5,
+        colSpan: 1,
+        readonly: true,
+        options: [
+          { value: true, label: 'Active' },
+          { value: false, label: 'Inactive' },
+        ] as SelectOption[],
+      },
       // Personal Information Section
       {
         key: 'firstName',
@@ -403,11 +483,13 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
       });
     }
 
-    if (changes['employee'] && this.employee) {
+    if ((changes['employee'] && this.employee) || (changes['user'] && this.user)) {
       this.initializeFormData();
-      this.loadManagerOptions();
+      if (this.employee) {
+        this.loadManagerOptions();
+      }
     }
-    if (changes['mode'] || (changes['employee'] && this.employee)) {
+    if (changes['mode'] || (changes['employee'] && this.employee) || (changes['user'] && this.user)) {
       // Update form config for mode
       this.updateFormConfigForMode();
     }
@@ -452,6 +534,17 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Get modal title based on mode and whether user information is present
+   */
+  getModalTitle(): string {
+    if (this.mode === 'edit') {
+      return 'Edit Employee';
+    }
+    // If user information is present, show "User Profile", otherwise "Employee Details"
+    return this.user ? 'User Profile' : 'Employee Details';
+  }
+
   onClose(): void {
     this.closeEvent.emit();
   }
@@ -461,12 +554,24 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Initialize form data from employee
+   * Initialize form data from employee and user
    */
   private initializeFormData(): void {
     if (!this.employee) return;
 
+    // Initialize user information if available
+    const userData: Record<string, unknown> = {};
+    if (this.user) {
+      userData['username'] = this.user.userName || '';
+      userData['userEmail'] = this.user.email || '';
+      userData['userRole'] = this.user.roles && this.user.roles.length > 0 ? this.user.roles[0] : 'User';
+      userData['accountCreated'] = this.user.createdAt || null;
+      userData['lastLogin'] = this.user.lastLoginAt || null;
+      userData['isActive'] = this.user.isActive !== undefined ? this.user.isActive : true;
+    }
+
     this.formData = {
+      ...userData,
       firstName: this.employee.firstName || '',
       lastName: this.employee.lastName || '',
       email: this.employee.email || '',
@@ -493,6 +598,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
 
   /**
    * Update form configuration based on mode (edit/view)
+   * Also hide User Information section if user is not provided
    */
   private updateFormConfigForMode(): void {
     if (!this.formConfig.fields || this.formConfig.fields.length === 0) {
@@ -500,12 +606,28 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
     }
 
     const isReadOnly = this.mode === 'view';
+    const hasUser = this.user !== null;
+    
+    // Update sections - hide User Information section if no user provided
+    const updatedSections = (this.formConfig.sections || []).filter(section => {
+      if (section.title === 'User Information') {
+        return hasUser; // Only show if user is provided
+      }
+      return true;
+    });
     
     // Update all fields to be readonly/disabled in view mode
-    // In edit mode, only preserve fields that should always be readonly (e.g., employeeNumber)
+    // In edit mode, only preserve fields that should always be readonly (e.g., employeeNumber, user fields)
     const updatedFields = this.formConfig.fields.map(field => {
-      // Check if this field should always be readonly (e.g., employeeNumber)
-      const alwaysReadonly = field.key === 'employeeNumber';
+      // Check if this field should always be readonly
+      // User information fields and employeeNumber should always be readonly
+      const alwaysReadonly = field.key === 'employeeNumber' || 
+                            field.key === 'username' || 
+                            field.key === 'userEmail' || 
+                            field.key === 'userRole' || 
+                            field.key === 'accountCreated' || 
+                            field.key === 'lastLogin' || 
+                            field.key === 'isActive';
       
       return {
         ...field,
@@ -517,12 +639,19 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
         // Note: disabled state will be managed by FormControl, not template binding
         disabled: isReadOnly || alwaysReadonly,
       };
+    }).filter(field => {
+      // Hide user information fields if no user provided
+      if (!hasUser && field.section === 'User Information') {
+        return false;
+      }
+      return true;
     });
 
     // Create a new formConfig object to trigger change detection
     // This ensures BaseFormComponent detects the change and updates FormControl disabled states
     this.formConfig = {
       ...this.formConfig,
+      sections: updatedSections, // Updated sections (hide User Information if no user)
       fields: updatedFields, // New array reference
       showButtons: isReadOnly ? false : true,
       buttons: isReadOnly ? [

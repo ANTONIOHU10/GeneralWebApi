@@ -38,4 +38,12 @@
     [copyrightText]="'GeneralWebApi'"
   >
   </app-footer>
+
+  <!-- User Profile Modal -->
+  <app-user-profile-modal
+    [employee]="currentEmployee"
+    [user]="currentUser"
+    [isOpen]="isUserProfileModalOpen"
+    (closeEvent)="onUserProfileModalClose()"
+  ></app-user-profile-modal>
 </div>

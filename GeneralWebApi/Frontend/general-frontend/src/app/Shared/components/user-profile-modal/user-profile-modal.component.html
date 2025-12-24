@@ -1,0 +1,73 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/user-profile-modal/user-profile-modal.component.html -->
+<app-base-detail
+  [isOpen]="isOpen"
+  title="User Profile"
+  [mode]="'view'"
+  [sections]="sections()"
+  [customViewTemplate]="customViewTemplate"
+  (closeEvent)="onClose()"
+>
+  <!-- Custom View Template with Header and Sections -->
+  <ng-template #customViewTemplate>
+    <div class="user-profile-content">
+      <!-- Profile Header Section -->
+      <div class="profile-header">
+        <app-base-avatar
+          [src]="employee?.avatar || ''"
+          [fallbackText]="getInitials()"
+          [alt]="getFullName()"
+          size="large"
+          shape="circle"
+        ></app-base-avatar>
+        <div class="profile-header-info">
+          <h2 class="profile-name">{{ user?.userName || employee?.firstName || 'N/A' }}</h2>
+          <p class="profile-role" *ngIf="employeePosition() as position">{{ position }}</p>
+          <p class="profile-department" *ngIf="employeeDepartment() as department">{{ department }}</p>
+          <div class="profile-badges">
+            <app-base-badge
+              *ngIf="userRole() as role"
+              [text]="role"
+              [variant]="getRoleVariant()"
+              size="small"
+            ></app-base-badge>
+            <app-base-badge
+              *ngIf="employeeStatus() as status"
+              [text]="status"
+              [variant]="getStatusVariant()"
+              size="small"
+            ></app-base-badge>
+            <span class="employee-id" *ngIf="employeeNumber() as empNumber">
+              ID: {{ empNumber }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Sections -->
+      <div class="detail-container">
+        <app-base-card
+          *ngFor="let section of sections(); let last = last"
+          [title]="section.title"
+          [variant]="'elevated'"
+          [customClass]="last ? '' : 'mb-3'"
+        >
+          <div class="info-grid">
+            <div class="info-item" *ngFor="let field of section.fields">
+              <div class="info-label">{{ field.label }}</div>
+              <div class="info-value" *ngIf="field.type !== 'badge' && field.type !== 'custom'">
+                {{ getFieldValue(field) }}
+              </div>
+              <app-base-badge
+                *ngIf="field.type === 'badge'"
+                [text]="getBadgeText(field)"
+                [variant]="getBadgeVariant(field)"
+                size="small"
+              ></app-base-badge>
+            </div>
+          </div>
+        </app-base-card>
+      </div>
+    </div>
+  </ng-template>
+</app-base-detail>
+

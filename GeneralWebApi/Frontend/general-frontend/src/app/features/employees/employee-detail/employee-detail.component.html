@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-detail/employee-detail.component.html -->
 <app-base-modal
   [isOpen]="isOpen && employee !== null"
-  [title]="mode === 'edit' ? 'Edit Employee' : 'Employee Details'"
+  [title]="getModalTitle()"
   [icon]="mode === 'edit' ? 'edit' : 'person'"
   [config]="{
     size: 'large',
