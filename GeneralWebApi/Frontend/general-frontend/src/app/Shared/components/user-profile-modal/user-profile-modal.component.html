@@ -67,6 +67,19 @@
           </div>
         </app-base-card>
       </div>
+
+      <!-- Logout Button -->
+      <div class="logout-section">
+        <app-base-button
+          text="Logout"
+          icon="logout"
+          variant="danger"
+          size="medium"
+          [loading]="logoutLoading()"
+          [disabled]="logoutLoading()"
+          (buttonClick)="onLogout()"
+        ></app-base-button>
+      </div>
     </div>
   </ng-template>
 </app-base-detail>

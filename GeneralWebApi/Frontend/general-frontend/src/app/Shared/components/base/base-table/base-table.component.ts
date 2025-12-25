@@ -7,6 +7,8 @@ import {
   TemplateRef,
   OnInit,
   OnChanges,
+  ChangeDetectorRef,
+  AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -70,7 +72,7 @@ export interface TableConfig {
   templateUrl: './base-table.component.html',
   styleUrls: ['./base-table.component.scss'],
 })
-export class BaseTableComponent implements OnInit, OnChanges {
+export class BaseTableComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() title = '';
   @Input() subtitle = '';
   @Input() data: unknown[] = [];
@@ -91,6 +93,8 @@ export class BaseTableComponent implements OnInit, OnChanges {
   };
   @Input() pageSize = 10;
   @Input() customClass = '';
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   @Output() rowClick = new EventEmitter<unknown>();
   @Output() sortChange = new EventEmitter<{
@@ -214,6 +218,14 @@ export class BaseTableComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.updateData();
+    // Mark for check to handle template reference changes
+    this.cdr.markForCheck();
+  }
+
+  ngAfterViewInit(): void {
+    // Ensure change detection runs after view initialization
+    // This handles cases where template references are set in AfterViewInit
+    this.cdr.detectChanges();
   }
 
   onSearchChange(): void {

@@ -1,17 +1,24 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/user-profile-modal/user-profile-modal.component.ts
-import { Component, Input, Output, EventEmitter, signal, computed, OnInit, ViewChild, TemplateRef, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed, OnInit, ViewChild, TemplateRef, AfterViewInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   BaseDetailComponent,
   BaseCardComponent,
   BaseAvatarComponent,
   BaseBadgeComponent,
+  BaseButtonComponent,
   DetailSection,
   DetailField,
   BadgeVariant,
 } from '../base';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { User } from 'app/users/user.model';
+import { AuthService } from '@core/services/auth.service';
+import { TokenService } from '@core/services/token.service';
+import { NotificationService } from '../../services/notification.service';
+import { DialogService } from '../../services/dialog.service';
+import { catchError, of, take } from 'rxjs';
 
 /**
  * User Profile Modal Component
@@ -26,11 +33,19 @@ import { User } from 'app/users/user.model';
     BaseCardComponent,
     BaseAvatarComponent,
     BaseBadgeComponent,
+    BaseButtonComponent,
   ],
   templateUrl: './user-profile-modal.component.html',
   styleUrls: ['./user-profile-modal.component.scss'],
 })
 export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChanges {
+  // Services
+  private authService = inject(AuthService);
+  private tokenService = inject(TokenService);
+  private router = inject(Router);
+  private notificationService = inject(NotificationService);
+  private dialogService = inject(DialogService);
+
   @Input() employee: Employee | null = null;
   @Input() user: User | null = null;
   @Input() isOpen = false;
@@ -40,6 +55,12 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
 
   // Detail sections for BaseDetailComponent
   sections = signal<DetailSection[]>([]);
+
+  // Loading state for logout
+  logoutLoading = signal(false);
+  
+  // Flag to prevent duplicate logout calls
+  private isLoggingOut = false;
 
   // Computed properties for safe template access
   userRole = computed(() => {
@@ -364,6 +385,118 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
    */
   onClose(): void {
     this.closeEvent.emit();
+  }
+
+  /**
+   * Handle logout
+   */
+  onLogout(): void {
+    // Prevent duplicate calls
+    if (this.isLoggingOut) {
+      return;
+    }
+
+    // Show confirmation dialog using DialogService
+    this.dialogService.confirm({
+      title: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      confirmVariant: 'danger',
+      cancelVariant: 'outline',
+      icon: 'logout',
+      size: 'medium',
+    }).pipe(
+      take(1)
+    ).subscribe({
+      next: (confirmed) => {
+        if (!confirmed) {
+          // User cancelled
+          return;
+        }
+
+        // User confirmed, proceed with logout
+        this.isLoggingOut = true;
+        this.logoutLoading.set(true);
+
+        // Get refresh token
+        const refreshToken = this.tokenService.getRefreshToken();
+
+        if (refreshToken) {
+          // Call backend logout API
+          this.authService.logout({ refreshToken }).pipe(
+            catchError((error) => {
+              console.error('Logout API error:', error);
+              // Return error to be handled in error callback
+              return of(null);
+            })
+          ).subscribe({
+            next: (result) => {
+              // Only call performLocalLogout if not already called
+              if (this.isLoggingOut) {
+                console.log('Logout successful');
+                this.performLocalLogout();
+              }
+            },
+            error: (error) => {
+              console.error('Logout error:', error);
+              // Only call performLocalLogout if not already called
+              if (this.isLoggingOut) {
+                this.performLocalLogout();
+              }
+            }
+          });
+        } else {
+          // No refresh token, perform local logout only
+          console.log('No refresh token found, performing local logout');
+          this.performLocalLogout();
+        }
+      },
+      error: (error) => {
+        console.error('Dialog error:', error);
+      }
+    });
+  }
+
+  /**
+   * Perform local logout (clear tokens and redirect)
+   */
+  private performLocalLogout(): void {
+    // Prevent duplicate calls
+    if (!this.isLoggingOut) {
+      return;
+    }
+
+    // Clear all tokens
+    this.tokenService.clearAllTokens();
+
+    // Clear any other user-related data
+    localStorage.removeItem('remember_me');
+
+    // Show success notification
+    this.notificationService.success(
+      'Logout Successful',
+      'You have been logged out successfully'
+    );
+
+    // Close modal
+    this.onClose();
+
+    // Reset flag before navigation
+    this.isLoggingOut = false;
+
+    // Redirect to login page
+    this.router.navigate(['/login']).then((success) => {
+      if (success) {
+        console.log('Redirected to login page');
+      } else {
+        console.error('Failed to redirect to login page');
+      }
+      this.logoutLoading.set(false);
+    }).catch((error) => {
+      console.error('Navigation error:', error);
+      this.logoutLoading.set(false);
+    });
   }
 }
 

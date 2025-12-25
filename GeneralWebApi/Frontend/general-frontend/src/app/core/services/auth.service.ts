@@ -1,7 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/core/services/auth.service.ts
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 import { BaseHttpService } from './base-http.service';
 import { TokenService } from './token.service';
 import {
@@ -14,6 +15,7 @@ import {
   UserInfoRequest,
   UserInfoData,
 } from 'app/contracts/auth/auth.models';
+import { ApiResponse } from 'app/contracts/common/api-response';
 import { decodeJwt } from '@core/utils/jwt.util';
 
 @Injectable({ providedIn: 'root' })
@@ -78,8 +80,22 @@ export class AuthService extends BaseHttpService {
   logout(payload?: LogoutRequest): Observable<LogoutData | void> {
     if (payload) {
       // Call backend logout if refresh token provided
-      return this.post<LogoutData>(`${this.endpoint}/logout`, payload).pipe(
-        tap(() => this.token.clearAllTokens())
+      // Note: logout API may return data: null, so we use http.post directly
+      // to avoid extractData validation that requires data to be non-null
+      return this.http.post<ApiResponse<LogoutData>>(`${this.endpoint}/logout`, payload).pipe(
+        map((response: ApiResponse<LogoutData>) => {
+          // Extract message from ApiResponse
+          // Logout API may return { success: true, message: "Logout successful", data: null }
+          const message = response.message || 'Logout successful';
+          return { message } as LogoutData;
+        }),
+        tap(() => this.token.clearAllTokens()),
+        catchError((error) => {
+          // Even if API call fails, clear tokens locally
+          this.token.clearAllTokens();
+          // Re-throw error for component to handle
+          return throwError(() => error);
+        })
       );
     } else {
       // Local logout only

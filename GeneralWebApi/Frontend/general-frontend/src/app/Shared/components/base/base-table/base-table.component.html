@@ -91,12 +91,14 @@
             <ng-container [ngSwitch]="column.type">
               <!-- Custom Template -->
               <ng-container *ngSwitchCase="'custom'">
-                <ng-container
-                  *ngTemplateOutlet="
-                    column.template || null;
-                    context: { $implicit: item, column: column }
-                  "
-                ></ng-container>
+                <ng-container *ngIf="column.template">
+                  <ng-container
+                    *ngTemplateOutlet="
+                      column.template;
+                      context: { $implicit: item, column: column }
+                    "
+                  ></ng-container>
+                </ng-container>
               </ng-container>
 
               <!-- Date Type -->
