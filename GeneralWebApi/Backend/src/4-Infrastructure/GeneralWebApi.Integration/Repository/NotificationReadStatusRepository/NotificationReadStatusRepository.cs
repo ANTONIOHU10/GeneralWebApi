@@ -3,6 +3,7 @@ using GeneralWebApi.Integration.Context;
 using GeneralWebApi.Integration.Repository.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using GeneralWebApi.Logging.Templates;
 
 namespace GeneralWebApi.Integration.Repository.NotificationReadStatusRepository;
 
@@ -91,9 +92,10 @@ public class NotificationReadStatusRepository : BaseRepository<NotificationReadS
         CancellationToken cancellationToken = default)
     {
         // Get all unread notifications for the user
+        // Note: This method is deprecated as we now use IsRead flag on Notification entity
         var unreadNotifications = await _context.Set<Notification>()
             .Where(n => n.UserId == userId && n.IsActive && !n.IsDeleted)
-            .Where(n => !n.ReadStatuses.Any(rs => rs.UserId == userId && !rs.IsArchived))
+            .Where(n => !n.IsRead && !n.IsArchived)
             .ToListAsync(cancellationToken);
 
         var now = DateTime.UtcNow;
@@ -130,7 +132,11 @@ public class NotificationReadStatusRepository : BaseRepository<NotificationReadS
 
         if (readStatus != null)
         {
-            await DeleteAsync(readStatus, cancellationToken);
+            // Use hard delete (physical delete) for NotificationReadStatus
+            // This is safe because it's just an association record, not a main entity
+            _dbSet.Remove(readStatus);
+            await _context.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Deleted read status for notification {NotificationId} and user {UserId}", notificationId, userId);
         }
     }
 }

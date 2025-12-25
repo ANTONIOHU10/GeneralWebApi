@@ -40,5 +40,10 @@ public interface INotificationRepository : IBaseRepository<Notification>
     /// Get notifications by type for a user
     /// </summary>
     System.Threading.Tasks.Task<List<Notification>> GetByTypeAsync(string userId, string type, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get all unread notifications for a user
+    /// </summary>
+    System.Threading.Tasks.Task<List<Notification>> GetUnreadNotificationsAsync(string userId, CancellationToken cancellationToken = default);
 }
 

@@ -52,7 +52,6 @@ public class ApplicationDbContext : DbContext
 
     #region Notifications entities
     public DbSet<Notification> Notifications { get; set; }
-    public DbSet<NotificationReadStatus> NotificationReadStatuses { get; set; }
     #endregion
 
     // constructor to inject the DbContextOptions in ServiceCollectionExtensions

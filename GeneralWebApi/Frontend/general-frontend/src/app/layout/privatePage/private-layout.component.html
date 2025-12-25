@@ -46,4 +46,137 @@
     [isOpen]="isUserProfileModalOpen"
     (closeEvent)="onUserProfileModalClose()"
   ></app-user-profile-modal>
+
+  <!-- Notification Center Panel -->
+  <app-base-modal
+    [isOpen]="isNotificationCenterOpen"
+    [title]="'Notifications'"
+    [icon]="'notifications'"
+    [config]="{
+      size: 'large',
+      closable: true,
+      backdrop: true,
+      keyboard: true,
+      animation: true,
+      centered: false,
+      scrollable: true
+    }"
+    [customClass]="'notification-center-modal'"
+    (closeEvent)="onNotificationCenterClose()"
+  >
+    <app-notification-center></app-notification-center>
+  </app-base-modal>image.png
+
+  <!-- Settings Panel -->
+  <app-base-modal
+    [isOpen]="isSettingsPanelOpen"
+    [title]="'Settings'"
+    [icon]="'settings'"
+    [config]="{
+      size: 'medium',
+      closable: true,
+      backdrop: true,
+      keyboard: true,
+      animation: true,
+      centered: true,
+      scrollable: true
+    }"
+    [customClass]="'settings-panel-modal'"
+    (closeEvent)="onSettingsPanelClose()"
+  >
+    <div class="settings-panel-content">
+      <div class="settings-section">
+        <h3 class="settings-section-title">
+          <span class="material-icons">palette</span>
+          Appearance
+        </h3>
+        <div class="settings-item">
+          <label class="settings-label">
+            <span>Dark Mode</span>
+            <span class="settings-description">Toggle between light and dark theme</span>
+          </label>
+          <button
+            class="toggle-button"
+            [class.active]="isDarkMode"
+            (click)="toggleTheme()"
+            type="button"
+          >
+            <span class="material-icons">{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</span>
+            <span>{{ isDarkMode ? 'Dark' : 'Light' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section-title">
+          <span class="material-icons">notifications</span>
+          Notifications
+        </h3>
+        <div class="settings-item">
+          <label class="settings-label">
+            <span>Email Notifications</span>
+            <span class="settings-description">Receive notifications via email</span>
+          </label>
+          <input type="checkbox" checked class="settings-checkbox" />
+        </div>
+        <div class="settings-item">
+          <label class="settings-label">
+            <span>Push Notifications</span>
+            <span class="settings-description">Receive push notifications in browser</span>
+          </label>
+          <input type="checkbox" class="settings-checkbox" />
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section-title">
+          <span class="material-icons">language</span>
+          Language & Region
+        </h3>
+        <div class="settings-item">
+          <label class="settings-label">
+            <span>Language</span>
+            <span class="settings-description">Select your preferred language</span>
+          </label>
+          <select class="settings-select">
+            <option>English</option>
+            <option>中文</option>
+            <option>Español</option>
+          </select>
+        </div>
+        <div class="settings-item">
+          <label class="settings-label">
+            <span>Time Zone</span>
+            <span class="settings-description">Set your time zone</span>
+          </label>
+          <select class="settings-select">
+            <option>UTC</option>
+            <option>Asia/Shanghai</option>
+            <option>America/New_York</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section-title">
+          <span class="material-icons">security</span>
+          Security
+        </h3>
+        <div class="settings-item">
+          <label class="settings-label">
+            <span>Two-Factor Authentication</span>
+            <span class="settings-description">Add an extra layer of security</span>
+          </label>
+          <button class="settings-button" type="button">Enable 2FA</button>
+        </div>
+        <div class="settings-item">
+          <label class="settings-label">
+            <span>Change Password</span>
+            <span class="settings-description">Update your account password</span>
+          </label>
+          <button class="settings-button" type="button">Change Password</button>
+        </div>
+      </div>
+    </div>
+  </app-base-modal>
 </div>

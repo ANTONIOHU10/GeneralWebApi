@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Http;
 namespace GeneralWebApi.Application.Features.Notifications.Handlers;
 
 /// <summary>
-/// Handler for marking a notification as read
+/// Handler for toggling notification read status
 /// </summary>
-public class MarkAsReadCommandHandler : IRequestHandler<MarkAsReadCommand>
+public class ToggleReadStatusCommandHandler : IRequestHandler<ToggleReadStatusCommand>
 {
     private readonly INotificationService _notificationService;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public MarkAsReadCommandHandler(
+    public ToggleReadStatusCommandHandler(
         INotificationService notificationService,
         IHttpContextAccessor httpContextAccessor)
     {
@@ -22,12 +22,12 @@ public class MarkAsReadCommandHandler : IRequestHandler<MarkAsReadCommand>
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task Handle(MarkAsReadCommand request, CancellationToken cancellationToken)
+    public async Task Handle(ToggleReadStatusCommand request, CancellationToken cancellationToken)
     {
         var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? throw new UnauthorizedAccessException("User ID not found in token");
 
-        await _notificationService.MarkAsReadAsync(request.NotificationId, userId, cancellationToken);
+        await _notificationService.ToggleReadStatusAsync(request.NotificationId, userId, cancellationToken);
     }
 }
 

@@ -1,11 +1,20 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/notifications/notification-center/notification-center.component.ts
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Subject, interval } from 'rxjs';
+import { BehaviorSubject, Subject, interval, EMPTY } from 'rxjs';
 import { takeUntil, catchError, startWith, switchMap } from 'rxjs/operators';
 import {
   BadgeVariant,
+  BaseCardComponent,
+  BaseBadgeComponent,
+  BaseButtonComponent,
+  BaseSelectComponent,
+  BaseEmptyComponent,
+  BaseLoadingComponent,
+  BaseErrorComponent,
+  SelectOption,
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
 import { NotificationCenterService } from '../../../core/services/notification-center.service';
@@ -26,6 +35,14 @@ import {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    BaseCardComponent,
+    BaseBadgeComponent,
+    BaseButtonComponent,
+    BaseSelectComponent,
+    BaseEmptyComponent,
+    BaseLoadingComponent,
+    BaseErrorComponent,
   ],
   templateUrl: './notification-center.component.html',
   styleUrls: ['./notification-center.component.scss'],
@@ -55,10 +72,31 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   // Statistics
   stats = signal<NotificationStats | null>(null);
 
-  // Filter options
-  typeOptions: (NotificationType | 'all')[] = ['all', 'approval', 'task', 'contract', 'system', 'audit', 'employee'];
-  statusOptions: (NotificationStatus | 'all')[] = ['all', 'unread', 'read', 'archived'];
-  priorityOptions: (NotificationPriority | 'all')[] = ['all', 'urgent', 'high', 'medium', 'low'];
+  // Filter options for select components
+  typeFilterOptions: SelectOption[] = [
+    { value: 'all', label: 'All Types' },
+    { value: 'approval', label: 'Approval' },
+    { value: 'task', label: 'Task' },
+    { value: 'contract', label: 'Contract' },
+    { value: 'system', label: 'System' },
+    { value: 'audit', label: 'Audit' },
+    { value: 'employee', label: 'Employee' },
+  ];
+
+  statusFilterOptions: SelectOption[] = [
+    { value: 'all', label: 'All Status' },
+    { value: 'unread', label: 'Unread' },
+    { value: 'read', label: 'Read' },
+    { value: 'archived', label: 'Archived' },
+  ];
+
+  priorityFilterOptions: SelectOption[] = [
+    { value: 'all', label: 'All Priorities' },
+    { value: 'urgent', label: 'Urgent' },
+    { value: 'high', label: 'High' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'low', label: 'Low' },
+  ];
 
   // Computed values
   filteredNotifications = computed(() => {
@@ -66,17 +104,32 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
     const filter = this.activeFilter();
     let filtered = [...all];
 
+    // Apply type filter
     if (filter.type && filter.type !== 'all') {
       filtered = filtered.filter(n => n.type === filter.type);
     }
+
+    // Apply status filter
     if (filter.status && filter.status !== 'all') {
       filtered = filtered.filter(n => n.status === filter.status);
     }
+
+    // Apply priority filter
     if (filter.priority && filter.priority !== 'all') {
       filtered = filtered.filter(n => n.priority === filter.priority);
     }
 
     return filtered;
+  });
+
+  // Check if any filters are active
+  hasActiveFilters = computed(() => {
+    const filter = this.activeFilter();
+    return (
+      (filter.type && filter.type !== 'all') ||
+      (filter.status && filter.status !== 'all') ||
+      (filter.priority && filter.priority !== 'all')
+    );
   });
 
   unreadCount = computed(() => this.stats()?.unread || 0);
@@ -165,9 +218,6 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
    * Handle notification click
    */
   onNotificationClick(notification: Notification): void {
-    // Mark as read
-    this.markAsRead(notification);
-
     // Navigate to action URL if available
     if (notification.actionUrl) {
       this.router.navigate([notification.actionUrl]);
@@ -175,28 +225,65 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Mark notification as read
+   * Toggle notification read status (read <-> unread)
    */
-  markAsRead(notification: Notification): void {
-    this.notificationCenterService.markAsRead(notification).pipe(
+  toggleReadStatus(notification: Notification): void {
+    // Optimistically update UI immediately for better UX
+    const currentNotifications = this.notifications();
+    const currentStats = this.stats();
+    const newStatus: NotificationStatus = notification.status === 'read' ? 'unread' : 'read';
+    
+    const updatedNotifications = currentNotifications.map(n => 
+      n.id === notification.id 
+        ? { 
+            ...n, 
+            status: newStatus,
+            readAt: newStatus === 'read' ? new Date().toISOString() : undefined
+          }
+        : n
+    );
+    this.notifications.set(updatedNotifications);
+    
+    // Update stats optimistically
+    if (currentStats) {
+      const updatedStats = { ...currentStats };
+      if (newStatus === 'read') {
+        updatedStats.unread = Math.max(0, updatedStats.unread - 1);
+      } else {
+        updatedStats.unread = updatedStats.unread + 1;
+      }
+      this.stats.set(updatedStats);
+    }
+    
+    // Call backend API and reload all notifications on success to ensure consistency
+    this.notificationCenterService.toggleReadStatus(notification).pipe(
       takeUntil(this.destroy$),
       catchError((error) => {
-        this.notificationService.error('Error', 'Failed to mark notification as read', { duration: 3000 });
-        return [];
+        // Revert optimistic update on error
+        this.notifications.set(currentNotifications);
+        if (currentStats) {
+          this.stats.set(currentStats);
+        }
+        this.notificationService.error('Error', 'Failed to toggle notification read status', { duration: 3000 });
+        return EMPTY;
       })
     ).subscribe({
       next: () => {
-        // Update local state
-        const updated = this.notifications().map(n =>
-          n.id === notification.id
-            ? { ...n, status: 'read' as NotificationStatus, readAt: new Date().toISOString() }
-            : n
-        );
-        this.notifications.set(updated);
-        this.notificationsData$.next(updated);
+        // Reload all notifications from backend to ensure data consistency
+        // This ensures the UI reflects the exact state from the server
+        this.loadNotifications();
         this.loadStats();
       }
     });
+  }
+
+  /**
+   * Handle action button click
+   */
+  onActionClick(notification: Notification): void {
+    if (notification.actionUrl) {
+      this.router.navigate([notification.actionUrl]);
+    }
   }
 
   /**
@@ -207,11 +294,13 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
       catchError((error) => {
         this.notificationService.error('Error', 'Failed to mark all as read', { duration: 3000 });
-        return [];
+        return EMPTY;
       })
     ).subscribe({
       next: () => {
+        // Reload notifications to get updated status from backend
         this.loadNotifications();
+        this.loadStats();
       }
     });
   }
@@ -233,13 +322,81 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Update filter
+   * Get type filter value for ngModel
    */
-  onFilterChange(filter: Partial<NotificationFilter>): void {
+  getTypeFilterValue(): string {
+    return this.activeFilter().type || 'all';
+  }
+
+  /**
+   * Handle type filter value change
+   */
+  onTypeFilterValueChange(value: unknown): void {
     this.activeFilter.set({
       ...this.activeFilter(),
-      ...filter,
+      type: value === 'all' ? 'all' : (value as NotificationType),
     });
+  }
+
+  /**
+   * Get status filter value for ngModel
+   */
+  getStatusFilterValue(): string {
+    return this.activeFilter().status || 'all';
+  }
+
+  /**
+   * Handle status filter value change
+   */
+  onStatusFilterValueChange(value: unknown): void {
+    this.activeFilter.set({
+      ...this.activeFilter(),
+      status: value === 'all' ? 'all' : (value as NotificationStatus),
+    });
+  }
+
+  /**
+   * Get priority filter value for ngModel
+   */
+  getPriorityFilterValue(): string {
+    return this.activeFilter().priority || 'all';
+  }
+
+  /**
+   * Handle priority filter value change
+   */
+  onPriorityFilterValueChange(value: unknown): void {
+    this.activeFilter.set({
+      ...this.activeFilter(),
+      priority: value === 'all' ? 'all' : (value as NotificationPriority),
+    });
+  }
+
+  /**
+   * Clear all filters
+   */
+  clearFilters(): void {
+    this.activeFilter.set({
+      type: 'all',
+      status: 'all',
+      priority: 'all',
+    });
+  }
+
+  /**
+   * Get notification card CSS class
+   */
+  getNotificationCardClass(notification: Notification): string {
+    const classes = ['notification-card'];
+    if (notification.status === 'unread') {
+      classes.push('unread');
+    } else if (notification.status === 'read') {
+      classes.push('read');
+    }
+    if (notification.priority === 'urgent' || notification.priority === 'high') {
+      classes.push('priority-high');
+    }
+    return classes.join(' ');
   }
 
   /**
@@ -299,4 +456,13 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   onRetryLoad = (): void => {
     this.loadNotifications();
   };
+
+  /**
+   * Format read time for display
+   */
+  formatReadTime(readAt: string | null | undefined): string {
+    if (!readAt) return '';
+    const date = new Date(readAt);
+    return date.toLocaleString();
+  }
 }

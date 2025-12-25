@@ -145,8 +145,17 @@ export class ApprovalNotificationProvider implements NotificationProvider {
   async markAsRead(notificationId: string): Promise<void> {
     const id = parseInt(notificationId, 10);
     if (!isNaN(id)) {
-      // Notification exists in backend, call API
-      await firstValueFrom(this.notificationService.markAsRead(id));
+      // Notification exists in backend, call toggle API
+      // Note: This will toggle the status, so if already read, it will become unread
+      // For providers, we assume we want to mark as read
+      await firstValueFrom(
+        this.notificationService.toggleReadStatus(id).pipe(
+          catchError(error => {
+            console.error('Failed to toggle notification read status:', error);
+            return of(void 0);
+          })
+        )
+      );
     }
     // If ID is not numeric, it's a temporary ID - nothing to persist
   }

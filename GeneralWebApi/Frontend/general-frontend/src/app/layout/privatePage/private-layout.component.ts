@@ -1,11 +1,14 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/layout/private-layout.component.ts
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet, Router } from '@angular/router';
 import { HeaderComponent } from '../../Shared/components/header/header.component';
 import { FooterComponent } from '../../Shared/components/footer/footer.component';
 import { SidebarComponent } from '../../Shared/components/sidebar/sidebar.component';
 import { BreadcrumbComponent } from '../../Shared/components/breadcrumb/breadcrumb.component';
 import { UserProfileModalComponent } from '../../Shared/components/user-profile-modal/user-profile-modal.component';
+import { NotificationCenterComponent } from '../../features/notifications/notification-center/notification-center.component';
+import { BaseModalComponent } from '../../Shared/components/base/base-modal/base-modal.component';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { User } from 'app/users/user.model';
 import { AuthService } from '@core/services/auth.service';
@@ -19,12 +22,15 @@ import { catchError, of, Observable } from 'rxjs';
   templateUrl: './private-layout.component.html',
   styleUrls: ['./private-layout.component.scss'],
   imports: [
+    CommonModule,
     RouterOutlet,
     HeaderComponent,
     FooterComponent,
     SidebarComponent,
     BreadcrumbComponent,
     UserProfileModalComponent,
+    NotificationCenterComponent,
+    BaseModalComponent,
   ],
 })
 export class PrivateLayoutComponent implements OnInit {
@@ -32,11 +38,18 @@ export class PrivateLayoutComponent implements OnInit {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private employeeService = inject(EmployeeService);
+  private router = inject(Router);
 
   // User profile modal state
   isUserProfileModalOpen = false;
   isDarkMode = false;
   isSidebarOpen = this.getInitialSidebarState(); // 根据屏幕尺寸设置初始状态
+  
+  // Notification center modal state
+  isNotificationCenterOpen = false;
+  
+  // Settings panel state
+  isSettingsPanelOpen = false;
 
   // Real user and employee data
   currentEmployee: Employee | null = null;
@@ -108,11 +121,17 @@ export class PrivateLayoutComponent implements OnInit {
   }
 
   /**
-   * Handle notification click
+   * Handle notification click - open notification center panel
    */
   onNotificationClick(): void {
-    // TODO: Implement notification panel
-    console.log('Notification clicked');
+    this.isNotificationCenterOpen = true;
+  }
+  
+  /**
+   * Handle notification center close
+   */
+  onNotificationCenterClose(): void {
+    this.isNotificationCenterOpen = false;
   }
 
   /**
@@ -138,11 +157,21 @@ export class PrivateLayoutComponent implements OnInit {
   }
 
   /**
-   * Handle settings click
+   * Handle settings click - open settings panel or navigate to settings page
    */
   onSettingsClick(): void {
-    // TODO: Navigate to settings page
-    console.log('Settings clicked');
+    // Option 1: Open settings panel (modal)
+    this.isSettingsPanelOpen = true;
+    
+    // Option 2: Navigate to settings page (uncomment if you prefer navigation)
+    // this.router.navigate(['/private/settings']);
+  }
+  
+  /**
+   * Handle settings panel close
+   */
+  onSettingsPanelClose(): void {
+    this.isSettingsPanelOpen = false;
   }
 
   /**

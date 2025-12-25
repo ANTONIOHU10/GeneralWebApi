@@ -97,19 +97,19 @@ public class NotificationsController : BaseController
     }
 
     /// <summary>
-    /// Mark notification as read
+    /// Toggle notification read status (read <-> unread)
     /// </summary>
     /// <param name="id">Notification ID</param>
     /// <returns>Success response</returns>
-    [HttpPost("{id}/mark-read")]
+    [HttpPost("{id}/toggle-read-status")]
     [Authorize(Policy = "AllRoles")]
-    public async Task<ActionResult<ApiResponse<object>>> MarkAsRead(int id)
+    public async Task<ActionResult<ApiResponse<object>>> ToggleReadStatus(int id)
     {
         return await ValidateAndExecuteAsync(id, async (validatedId) =>
         {
-            var command = new MarkAsReadCommand { NotificationId = validatedId };
+            var command = new ToggleReadStatusCommand { NotificationId = validatedId };
             await _mediator.Send(command);
-            return Ok(ApiResponse<object>.SuccessResult(null, "Notification marked as read successfully"));
+            return Ok(ApiResponse<object>.SuccessResult(null, "Notification read status toggled successfully"));
         });
     }
 

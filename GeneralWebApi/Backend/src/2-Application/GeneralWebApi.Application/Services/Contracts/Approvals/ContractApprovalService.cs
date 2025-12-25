@@ -1,8 +1,10 @@
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Entities.Documents.Approvals;
 using GeneralWebApi.DTOs.Contracts.Approvals;
+using GeneralWebApi.DTOs.Notification;
 using GeneralWebApi.Integration.Repository.DocumentsRepository;
 using GeneralWebApi.Integration.Repository.DocumentsRepository.Approvals;
+using GeneralWebApi.Application.Services;
 using Microsoft.Extensions.Logging;
 
 namespace GeneralWebApi.Application.Services.Contracts.Approvals;
@@ -11,15 +13,18 @@ public class ContractApprovalService : IContractApprovalService
 {
     private readonly IContractRepository _contractRepository;
     private readonly IContractApprovalRepository _approvalRepository;
+    private readonly INotificationService _notificationService;
     private readonly ILogger<ContractApprovalService> _logger;
 
     public ContractApprovalService(
         IContractRepository contractRepository,
         IContractApprovalRepository approvalRepository,
+        INotificationService notificationService,
         ILogger<ContractApprovalService> logger)
     {
         _contractRepository = contractRepository ?? throw new ArgumentNullException(nameof(contractRepository));
         _approvalRepository = approvalRepository ?? throw new ArgumentNullException(nameof(approvalRepository));
+        _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -101,6 +106,12 @@ public class ContractApprovalService : IContractApprovalService
         // Reload with Contract and Employee to get EmployeeId
         var savedWithContract = await _approvalRepository.GetByIdWithStepsAsync(saved.Id, cancellationToken);
 
+        // Reload contract with Employee navigation property for notification
+        var contractWithEmployee = await _contractRepository.GetByIdAsync(contractId, cancellationToken);
+
+        // Create notifications for approvers
+        await CreateNotificationsForApproversAsync(savedWithContract, contractWithEmployee, cancellationToken);
+
         return new ContractApprovalDto
         {
             Id = savedWithContract.Id,
@@ -161,10 +172,15 @@ public class ContractApprovalService : IContractApprovalService
         current.ProcessedAt = DateTime.UtcNow;
         current.ProcessedBy = approverId;
 
+        var contract = await _contractRepository.GetByIdAsync(approval.ContractId, cancellationToken);
+        
         if (approval.CurrentApprovalLevel < approval.MaxApprovalLevel)
         {
             approval.CurrentApprovalLevel++;
             _logger.LogInformation("Approval {ApprovalId} moved to level {Level}", approvalId, approval.CurrentApprovalLevel);
+            
+            // Create notification for next level approver
+            await CreateNotificationForNextApproverAsync(approval, contract, cancellationToken);
         }
         else
         {
@@ -174,13 +190,15 @@ public class ContractApprovalService : IContractApprovalService
             _logger.LogInformation("Approval {ApprovalId} completed", approvalId);
 
             // Update contract status to Active when approval is completed
-            var contract = await _contractRepository.GetByIdAsync(approval.ContractId, cancellationToken);
             if (contract != null)
             {
                 contract.Status = "Active";
                 await _contractRepository.UpdateAsync(contract, cancellationToken);
                 _logger.LogInformation("Contract {ContractId} status updated to Active after approval", contract.Id);
             }
+            
+            // Create notification for requester that approval is completed
+            await CreateApprovalCompletedNotificationAsync(approval, contract, cancellationToken);
         }
 
         await _approvalRepository.UpdateAsync(approval, cancellationToken);
@@ -223,7 +241,286 @@ public class ContractApprovalService : IContractApprovalService
 
         await _approvalRepository.UpdateAsync(approval, cancellationToken);
         _logger.LogInformation("Approval {ApprovalId} rejected", approvalId);
+        
+        // Create notification for requester that approval is rejected
+        await CreateApprovalRejectedNotificationAsync(approval, contract, cancellationToken);
+        
         return true;
+    }
+    
+    /// <summary>
+    /// Create notifications for all approvers in the first step
+    /// </summary>
+    private async System.Threading.Tasks.Task CreateNotificationsForApproversAsync(
+        ContractApproval approval,
+        Domain.Entities.Documents.Contract? contract,
+        CancellationToken cancellationToken)
+    {
+        if (approval == null || contract == null)
+        {
+            return;
+        }
+
+        // Get employee name for notification
+        var employeeName = GetEmployeeName(contract);
+        
+        // Get first step approvers
+        var firstStep = approval.ApprovalSteps
+            .Where(s => s.StepOrder == approval.CurrentApprovalLevel && s.Status == "Pending")
+            .FirstOrDefault();
+
+        if (firstStep == null)
+        {
+            _logger.LogWarning("No pending step found for approval {ApprovalId} to create notifications", approval.Id);
+            return;
+        }
+
+        // If ApproverUserId is specified, create notification for that user
+        if (!string.IsNullOrEmpty(firstStep.ApproverUserId))
+        {
+            var priority = CalculatePriority(firstStep.DueDate);
+            
+            try
+            {
+                await _notificationService.CreateAsync(new CreateNotificationDto
+                {
+                    UserId = firstStep.ApproverUserId,
+                    Type = "approval",
+                    Priority = priority,
+                    Title = $"Contract Approval Required: {employeeName}",
+                    Message = $"You have a pending contract approval for {employeeName}. Current step: {approval.CurrentApprovalLevel}/{approval.MaxApprovalLevel}",
+                    Icon = "check_circle",
+                    ActionUrl = $"/contract-approvals/{approval.Id}",
+                    ActionLabel = "Review Approval",
+                    SourceType = "ContractApproval",
+                    SourceId = approval.Id.ToString(),
+                    Metadata = new Dictionary<string, object>
+                    {
+                        { "contractId", approval.ContractId },
+                        { "employeeName", employeeName },
+                        { "currentStep", approval.CurrentApprovalLevel },
+                        { "totalSteps", approval.MaxApprovalLevel },
+                        { "stepName", firstStep.StepName }
+                    },
+                    ExpiresAt = firstStep.DueDate
+                }, cancellationToken);
+                
+                _logger.LogInformation("Created notification for approver {ApproverId} for approval {ApprovalId}", 
+                    firstStep.ApproverUserId, approval.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create notification for approver {ApproverId} for approval {ApprovalId}", 
+                    firstStep.ApproverUserId, approval.Id);
+            }
+        }
+        else
+        {
+            _logger.LogWarning("No ApproverUserId specified for step {StepOrder} of approval {ApprovalId}", 
+                firstStep.StepOrder, approval.Id);
+        }
+    }
+    
+    /// <summary>
+    /// Create notification for next level approver
+    /// </summary>
+    private async System.Threading.Tasks.Task CreateNotificationForNextApproverAsync(
+        ContractApproval approval,
+        Domain.Entities.Documents.Contract? contract,
+        CancellationToken cancellationToken)
+    {
+        if (approval == null || contract == null)
+        {
+            return;
+        }
+
+        var nextStep = approval.ApprovalSteps
+            .FirstOrDefault(s => s.StepOrder == approval.CurrentApprovalLevel && s.Status == "Pending");
+
+        if (nextStep == null || string.IsNullOrEmpty(nextStep.ApproverUserId))
+        {
+            _logger.LogWarning("No next step approver found for approval {ApprovalId}", approval.Id);
+            return;
+        }
+
+        var employeeName = GetEmployeeName(contract);
+        var priority = CalculatePriority(nextStep.DueDate);
+
+        try
+        {
+            await _notificationService.CreateAsync(new CreateNotificationDto
+            {
+                UserId = nextStep.ApproverUserId,
+                Type = "approval",
+                Priority = priority,
+                Title = $"Contract Approval Required: {employeeName}",
+                Message = $"Contract approval moved to your level. Step: {nextStep.StepOrder}/{approval.MaxApprovalLevel}",
+                Icon = "check_circle",
+                ActionUrl = $"/contract-approvals/{approval.Id}",
+                ActionLabel = "Review Approval",
+                SourceType = "ContractApproval",
+                SourceId = approval.Id.ToString(),
+                Metadata = new Dictionary<string, object>
+                {
+                    { "contractId", approval.ContractId },
+                    { "employeeName", employeeName },
+                    { "currentStep", nextStep.StepOrder },
+                    { "totalSteps", approval.MaxApprovalLevel },
+                    { "stepName", nextStep.StepName }
+                },
+                ExpiresAt = nextStep.DueDate
+            }, cancellationToken);
+            
+            _logger.LogInformation("Created notification for next approver {ApproverId} for approval {ApprovalId}", 
+                nextStep.ApproverUserId, approval.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create notification for next approver {ApproverId} for approval {ApprovalId}", 
+                nextStep.ApproverUserId, approval.Id);
+        }
+    }
+    
+    /// <summary>
+    /// Create notification when approval is completed
+    /// </summary>
+    private async System.Threading.Tasks.Task CreateApprovalCompletedNotificationAsync(
+        ContractApproval approval,
+        Domain.Entities.Documents.Contract? contract,
+        CancellationToken cancellationToken)
+    {
+        if (approval == null || string.IsNullOrEmpty(approval.RequestedBy))
+        {
+            return;
+        }
+
+        var employeeName = contract != null ? GetEmployeeName(contract) : $"Contract #{approval.ContractId}";
+
+        try
+        {
+            await _notificationService.CreateAsync(new CreateNotificationDto
+            {
+                UserId = approval.RequestedBy,
+                Type = "approval",
+                Priority = "medium",
+                Title = $"Contract Approved: {employeeName}",
+                Message = $"Your contract approval request has been approved successfully.",
+                Icon = "check_circle",
+                ActionUrl = $"/contracts/{approval.ContractId}",
+                ActionLabel = "View Contract",
+                SourceType = "ContractApproval",
+                SourceId = approval.Id.ToString(),
+                Metadata = new Dictionary<string, object>
+                {
+                    { "contractId", approval.ContractId },
+                    { "employeeName", employeeName },
+                    { "approvedAt", approval.ApprovedAt?.ToString("O") ?? DateTime.UtcNow.ToString("O") }
+                }
+            }, cancellationToken);
+            
+            _logger.LogInformation("Created approval completed notification for requester {RequesterId} for approval {ApprovalId}", 
+                approval.RequestedBy, approval.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create approval completed notification for requester {RequesterId} for approval {ApprovalId}", 
+                approval.RequestedBy, approval.Id);
+        }
+    }
+    
+    /// <summary>
+    /// Create notification when approval is rejected
+    /// </summary>
+    private async System.Threading.Tasks.Task CreateApprovalRejectedNotificationAsync(
+        ContractApproval approval,
+        Domain.Entities.Documents.Contract? contract,
+        CancellationToken cancellationToken)
+    {
+        if (approval == null || string.IsNullOrEmpty(approval.RequestedBy))
+        {
+            return;
+        }
+
+        var employeeName = contract != null ? GetEmployeeName(contract) : $"Contract #{approval.ContractId}";
+
+        try
+        {
+            await _notificationService.CreateAsync(new CreateNotificationDto
+            {
+                UserId = approval.RequestedBy,
+                Type = "approval",
+                Priority = "high",
+                Title = $"Contract Approval Rejected: {employeeName}",
+                Message = $"Your contract approval request has been rejected. Reason: {approval.RejectionReason ?? "No reason provided"}",
+                Icon = "cancel",
+                ActionUrl = $"/contracts/{approval.ContractId}",
+                ActionLabel = "View Contract",
+                SourceType = "ContractApproval",
+                SourceId = approval.Id.ToString(),
+                Metadata = new Dictionary<string, object>
+                {
+                    { "contractId", approval.ContractId },
+                    { "employeeName", employeeName },
+                    { "rejectionReason", approval.RejectionReason ?? "" },
+                    { "rejectedAt", approval.RejectedAt?.ToString("O") ?? DateTime.UtcNow.ToString("O") }
+                }
+            }, cancellationToken);
+            
+            _logger.LogInformation("Created approval rejected notification for requester {RequesterId} for approval {ApprovalId}", 
+                approval.RequestedBy, approval.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create approval rejected notification for requester {RequesterId} for approval {ApprovalId}", 
+                approval.RequestedBy, approval.Id);
+        }
+    }
+    
+    /// <summary>
+    /// Get employee name from contract
+    /// </summary>
+    private string GetEmployeeName(Domain.Entities.Documents.Contract contract)
+    {
+        // Try to get employee name from contract navigation property
+        if (contract.Employee != null)
+        {
+            var firstName = contract.Employee.FirstName ?? "";
+            var lastName = contract.Employee.LastName ?? "";
+            return $"{firstName} {lastName}".Trim();
+        }
+        
+        // Fallback to contract ID if employee info not available
+        return $"Contract #{contract.Id}";
+    }
+    
+    /// <summary>
+    /// Calculate notification priority based on due date
+    /// </summary>
+    private string CalculatePriority(DateTime? dueDate)
+    {
+        if (!dueDate.HasValue)
+        {
+            return "medium";
+        }
+
+        var daysUntilDue = (dueDate.Value - DateTime.UtcNow).TotalDays;
+        
+        if (daysUntilDue < 1)
+        {
+            return "urgent";
+        }
+        else if (daysUntilDue < 3)
+        {
+            return "high";
+        }
+        else if (daysUntilDue < 7)
+        {
+            return "medium";
+        }
+        else
+        {
+            return "low";
+        }
     }
 
     public async Task<PagedResult<ContractApprovalDto>> GetPendingApprovalsAsync(string approverUserId, int pageNumber, int pageSize, CancellationToken cancellationToken = default)

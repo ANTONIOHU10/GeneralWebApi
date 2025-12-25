@@ -20,7 +20,6 @@ public class NotificationRepository : BaseRepository<Notification>, INotificatio
     public override async System.Threading.Tasks.Task<Notification> GetByIdAsync(object id, CancellationToken cancellationToken = default)
     {
         var notification = await GetActiveAndEnabledEntities()
-            .Include(n => n.ReadStatuses)
             .FirstOrDefaultAsync(n => n.Id.Equals(id), cancellationToken);
 
         if (notification == null)
@@ -35,7 +34,6 @@ public class NotificationRepository : BaseRepository<Notification>, INotificatio
     public async System.Threading.Tasks.Task<List<Notification>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         return await GetActiveAndEnabledEntities()
-            .Include(n => n.ReadStatuses)
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
             .ToListAsync(cancellationToken);
@@ -56,7 +54,6 @@ public class NotificationRepository : BaseRepository<Notification>, INotificatio
         CancellationToken cancellationToken = default)
     {
         var query = GetActiveAndEnabledEntities()
-            .Include(n => n.ReadStatuses)
             .Where(n => n.UserId == userId)
             .AsQueryable();
 
@@ -64,6 +61,18 @@ public class NotificationRepository : BaseRepository<Notification>, INotificatio
         if (!string.IsNullOrEmpty(type))
         {
             query = query.Where(n => n.Type == type);
+        }
+
+        // Filter by status (read/unread)
+        if (!string.IsNullOrEmpty(status))
+        {
+            query = status.ToLower() switch
+            {
+                "read" => query.Where(n => n.IsRead && !n.IsArchived),
+                "unread" => query.Where(n => !n.IsRead && !n.IsArchived),
+                "archived" => query.Where(n => n.IsArchived),
+                _ => query
+            };
         }
 
         // Filter by priority
@@ -128,14 +137,23 @@ public class NotificationRepository : BaseRepository<Notification>, INotificatio
         return await GetActiveAndEnabledEntities()
             .Where(n => n.UserId == userId)
             .Where(n => n.ExpiresAt == null || n.ExpiresAt > now)
-            .Where(n => !n.ReadStatuses.Any(rs => rs.UserId == userId && !rs.IsArchived))
+            .Where(n => !n.IsRead && !n.IsArchived)
             .CountAsync(cancellationToken);
+    }
+
+    public async System.Threading.Tasks.Task<List<Notification>> GetUnreadNotificationsAsync(string userId, CancellationToken cancellationToken = default)
+    {
+        var now = DateTime.UtcNow;
+        return await GetActiveAndEnabledEntities()
+            .Where(n => n.UserId == userId)
+            .Where(n => n.ExpiresAt == null || n.ExpiresAt > now)
+            .Where(n => !n.IsRead && !n.IsArchived)
+            .ToListAsync(cancellationToken);
     }
 
     public async System.Threading.Tasks.Task<List<Notification>> GetByTypeAsync(string userId, string type, CancellationToken cancellationToken = default)
     {
         return await GetActiveAndEnabledEntities()
-            .Include(n => n.ReadStatuses)
             .Where(n => n.UserId == userId && n.Type == type)
             .OrderByDescending(n => n.CreatedAt)
             .ToListAsync(cancellationToken);

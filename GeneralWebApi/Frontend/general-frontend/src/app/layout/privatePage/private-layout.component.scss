@@ -185,3 +185,133 @@
     }
   }
 }
+
+// Settings Panel Styles
+.settings-panel-content {
+  padding: 1.5rem;
+  
+  .settings-section {
+    margin-bottom: 2rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .settings-section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      
+      .material-icons {
+        font-size: 1.2rem;
+        color: var(--color-primary-500);
+      }
+    }
+    
+    .settings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-primary);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      .settings-label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+        
+        span:first-child {
+          font-weight: 500;
+          color: var(--text-primary);
+        }
+        
+        .settings-description {
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+        }
+      }
+      
+      .toggle-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-primary);
+        border-radius: 6px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: var(--bg-tertiary);
+          border-color: var(--color-primary-500);
+        }
+        
+        &.active {
+          background: var(--color-primary-500);
+          color: white;
+          border-color: var(--color-primary-500);
+        }
+        
+        .material-icons {
+          font-size: 1rem;
+        }
+      }
+      
+      .settings-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--color-primary-500);
+      }
+      
+      .settings-select {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-primary);
+        border-radius: 6px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        cursor: pointer;
+        min-width: 150px;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--color-primary-500);
+        }
+      }
+      
+      .settings-button {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--color-primary-500);
+        border-radius: 6px;
+        background: var(--color-primary-500);
+        color: white;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: var(--color-primary-600);
+          border-color: var(--color-primary-600);
+        }
+      }
+    }
+  }
+}
+
+// Notification Center Modal Styles
+.notification-center-modal {
+  ::ng-deep .modal-body {
+    padding: 0;
+  }
+}

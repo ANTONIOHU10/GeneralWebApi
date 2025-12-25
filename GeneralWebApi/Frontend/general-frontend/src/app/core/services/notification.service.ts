@@ -9,6 +9,29 @@ import {
   NotificationStatus
 } from 'app/contracts/notifications/notification.model';
 
+/**
+ * Backend Notification DTO for list view (from NotificationListDto)
+ * Matches the backend NotificationListDto structure
+ */
+export interface BackendNotificationListDto {
+  id: number;
+  type: string;
+  priority: string;
+  status: string;
+  title: string;
+  message: string;
+  icon?: string | null;
+  actionUrl?: string | null;
+  actionLabel?: string | null;
+  createdAt: string;
+  readAt?: string | null;
+  isExpired: boolean;
+}
+
+/**
+ * Backend Notification DTO for detail view (from NotificationDto)
+ * Matches the backend NotificationDto structure
+ */
 export interface BackendNotificationDto {
   id: number;
   userId: string;
@@ -57,8 +80,12 @@ export interface NotificationSearchRequest {
   pageSize?: number;
 }
 
+/**
+ * Paged notification response from backend
+ * Matches PagedResult<NotificationListDto> structure
+ */
 export interface PagedNotificationResponse {
-  items: BackendNotificationDto[];
+  items: BackendNotificationListDto[]; // Backend returns NotificationListDto, not NotificationDto
   totalCount: number;
   pageNumber: number;
   pageSize: number;
@@ -72,7 +99,8 @@ export interface PagedNotificationResponse {
   providedIn: 'root',
 })
 export class NotificationService extends BaseHttpService {
-  protected endpoint = '/api/v1/notifications';
+  // baseUrl already includes '/api/v1', so endpoint should be relative
+  protected endpoint = '/notifications';
 
   /**
    * Get paginated notifications
@@ -104,10 +132,10 @@ export class NotificationService extends BaseHttpService {
   }
 
   /**
-   * Mark notification as read
+   * Toggle notification read status (read <-> unread)
    */
-  markAsRead(id: number): Observable<void> {
-    return this.post<void>(`${this.endpoint}/${id}/mark-read`, {});
+  toggleReadStatus(id: number): Observable<void> {
+    return this.post<void>(`${this.endpoint}/${id}/toggle-read-status`, {});
   }
 
   /**
@@ -132,27 +160,54 @@ export class NotificationService extends BaseHttpService {
   }
 
   /**
-   * Transform backend DTO to frontend Notification model
+   * Transform backend NotificationListDto to frontend Notification model
+   * Handles the list DTO which has fewer fields than the detail DTO
    */
-  transformToNotification(dto: BackendNotificationDto): Notification {
-    return {
-      id: dto.id.toString(),
-      type: dto.type as Notification['type'],
-      priority: dto.priority as Notification['priority'],
-      status: dto.status as NotificationStatus,
-      title: dto.title,
-      message: dto.message,
-      icon: dto.icon || undefined,
-      createdAt: dto.createdAt,
-      readAt: dto.readAt || undefined,
-      archivedAt: dto.archivedAt || undefined,
-      actionUrl: dto.actionUrl || undefined,
-      actionLabel: dto.actionLabel || undefined,
-      actionData: dto.metadata || undefined,
-      sourceType: dto.sourceType || undefined,
-      sourceId: dto.sourceId || undefined,
-      metadata: dto.metadata || undefined,
-    };
+  transformToNotification(dto: BackendNotificationListDto | BackendNotificationDto): Notification {
+    // Check if it's a list DTO (missing userId) or detail DTO
+    const isListDto = !('userId' in dto);
+    
+    if (isListDto) {
+      const listDto = dto as BackendNotificationListDto;
+      return {
+        id: listDto.id.toString(),
+        type: listDto.type as Notification['type'],
+        priority: listDto.priority as Notification['priority'],
+        status: listDto.status as NotificationStatus,
+        title: listDto.title,
+        message: listDto.message,
+        icon: listDto.icon || undefined,
+        createdAt: listDto.createdAt,
+        readAt: listDto.readAt || undefined,
+        archivedAt: undefined, // Not available in list DTO
+        actionUrl: listDto.actionUrl || undefined,
+        actionLabel: listDto.actionLabel || undefined,
+        actionData: undefined, // Not available in list DTO
+        sourceType: undefined, // Not available in list DTO
+        sourceId: undefined, // Not available in list DTO
+        metadata: undefined, // Not available in list DTO
+      };
+    } else {
+      const detailDto = dto as BackendNotificationDto;
+      return {
+        id: detailDto.id.toString(),
+        type: detailDto.type as Notification['type'],
+        priority: detailDto.priority as Notification['priority'],
+        status: detailDto.status as NotificationStatus,
+        title: detailDto.title,
+        message: detailDto.message,
+        icon: detailDto.icon || undefined,
+        createdAt: detailDto.createdAt,
+        readAt: detailDto.readAt || undefined,
+        archivedAt: detailDto.archivedAt || undefined,
+        actionUrl: detailDto.actionUrl || undefined,
+        actionLabel: detailDto.actionLabel || undefined,
+        actionData: detailDto.metadata || undefined,
+        sourceType: detailDto.sourceType || undefined,
+        sourceId: detailDto.sourceId || undefined,
+        metadata: detailDto.metadata || undefined,
+      };
+    }
   }
 
   /**

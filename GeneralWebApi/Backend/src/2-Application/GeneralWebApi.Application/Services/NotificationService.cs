@@ -3,7 +3,6 @@ using AutoMapper;
 using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.Domain.Entities.Notifications;
 using GeneralWebApi.DTOs.Notification;
-using GeneralWebApi.Integration.Repository.NotificationReadStatusRepository;
 using GeneralWebApi.Integration.Repository.NotificationRepository;
 using Microsoft.Extensions.Logging;
 
@@ -15,18 +14,15 @@ namespace GeneralWebApi.Application.Services;
 public class NotificationService : INotificationService
 {
     private readonly INotificationRepository _notificationRepository;
-    private readonly INotificationReadStatusRepository _readStatusRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<NotificationService> _logger;
 
     public NotificationService(
         INotificationRepository notificationRepository,
-        INotificationReadStatusRepository readStatusRepository,
         IMapper mapper,
         ILogger<NotificationService> logger)
     {
         _notificationRepository = notificationRepository;
-        _readStatusRepository = readStatusRepository;
         _mapper = mapper;
         _logger = logger;
     }
@@ -97,12 +93,9 @@ public class NotificationService : INotificationService
 
         foreach (var notification in result.Items)
         {
-            var readStatus = notification.ReadStatuses
-                .FirstOrDefault(rs => rs.UserId == userId && !rs.IsArchived);
-
             var dto = _mapper.Map<NotificationListDto>(notification);
-            dto.Status = readStatus == null ? "unread" : "read";
-            dto.ReadAt = readStatus?.ReadAt;
+            dto.Status = notification.IsRead ? "read" : "unread";
+            dto.ReadAt = notification.ReadAt;
             dto.IsExpired = notification.ExpiresAt.HasValue && notification.ExpiresAt < now;
 
             notificationListDtos.Add(dto);
@@ -122,25 +115,31 @@ public class NotificationService : INotificationService
         return await _notificationRepository.GetUnreadCountAsync(userId, cancellationToken);
     }
 
-    public async System.Threading.Tasks.Task MarkAsReadAsync(
+    public async System.Threading.Tasks.Task ToggleReadStatusAsync(
         int notificationId,
         string userId,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Marking notification {NotificationId} as read for user: {UserId}", notificationId, userId);
+        _logger.LogInformation("Toggling read status for notification {NotificationId} for user: {UserId}", notificationId, userId);
 
         var notification = await _notificationRepository.GetByIdAsync(notificationId, cancellationToken);
 
         // Verify ownership
         if (notification.UserId != userId)
         {
-            _logger.LogWarning("User {UserId} attempted to mark notification {NotificationId} owned by {OwnerId}",
+            _logger.LogWarning("User {UserId} attempted to toggle notification {NotificationId} owned by {OwnerId}",
                 userId, notificationId, notification.UserId);
-            throw new UnauthorizedAccessException("You do not have permission to mark this notification as read");
+            throw new UnauthorizedAccessException("You do not have permission to toggle this notification's read status");
         }
 
-        await _readStatusRepository.MarkAsReadAsync(notificationId, userId, cancellationToken);
-        _logger.LogInformation("Successfully marked notification {NotificationId} as read", notificationId);
+        // Toggle read status
+        notification.IsRead = !notification.IsRead;
+        notification.ReadAt = notification.IsRead ? DateTime.UtcNow : null;
+
+        await _notificationRepository.UpdateAsync(notification, cancellationToken);
+        
+        var status = notification.IsRead ? "read" : "unread";
+        _logger.LogInformation("Successfully toggled notification {NotificationId} to {Status}", notificationId, status);
     }
 
     public async System.Threading.Tasks.Task MarkAllAsReadAsync(
@@ -148,8 +147,23 @@ public class NotificationService : INotificationService
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Marking all notifications as read for user: {UserId}", userId);
-        await _readStatusRepository.MarkAllAsReadAsync(userId, cancellationToken);
-        _logger.LogInformation("Successfully marked all notifications as read for user: {UserId}", userId);
+        
+        var unreadNotifications = await _notificationRepository.GetUnreadNotificationsAsync(userId, cancellationToken);
+        var now = DateTime.UtcNow;
+
+        foreach (var notification in unreadNotifications)
+        {
+            notification.IsRead = true;
+            notification.ReadAt = now;
+        }
+
+        if (unreadNotifications.Any())
+        {
+            await _notificationRepository.UpdateRangeAsync(unreadNotifications, cancellationToken);
+        }
+
+        _logger.LogInformation("Successfully marked {Count} notifications as read for user: {UserId}", 
+            unreadNotifications.Count, userId);
     }
 
     public async System.Threading.Tasks.Task MarkAsArchivedAsync(
@@ -169,7 +183,10 @@ public class NotificationService : INotificationService
             throw new UnauthorizedAccessException("You do not have permission to archive this notification");
         }
 
-        await _readStatusRepository.MarkAsArchivedAsync(notificationId, userId, cancellationToken);
+        notification.IsArchived = true;
+        notification.ArchivedAt = DateTime.UtcNow;
+        await _notificationRepository.UpdateAsync(notification, cancellationToken);
+        
         _logger.LogInformation("Successfully marked notification {NotificationId} as archived", notificationId);
     }
 
@@ -205,13 +222,10 @@ public class NotificationService : INotificationService
     {
         var dto = _mapper.Map<NotificationDto>(notification);
 
-        // Get read status
-        var readStatus = notification.ReadStatuses
-            .FirstOrDefault(rs => rs.UserId == userId && !rs.IsArchived);
-
-        dto.Status = readStatus == null ? "unread" : (readStatus.IsArchived ? "archived" : "read");
-        dto.ReadAt = readStatus?.ReadAt;
-        dto.ArchivedAt = readStatus?.ArchivedAt;
+        // Set status based on IsRead and IsArchived flags
+        dto.Status = notification.IsArchived ? "archived" : (notification.IsRead ? "read" : "unread");
+        dto.ReadAt = notification.ReadAt;
+        dto.ArchivedAt = notification.ArchivedAt;
 
         // Deserialize metadata
         if (!string.IsNullOrEmpty(notification.Metadata))

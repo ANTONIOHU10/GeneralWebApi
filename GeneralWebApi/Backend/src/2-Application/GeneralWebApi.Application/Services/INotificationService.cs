@@ -32,9 +32,9 @@ public interface INotificationService
     System.Threading.Tasks.Task<int> GetUnreadCountAsync(string userId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Mark notification as read
+    /// Toggle notification read status (read <-> unread)
     /// </summary>
-    System.Threading.Tasks.Task MarkAsReadAsync(int notificationId, string userId, CancellationToken cancellationToken = default);
+    System.Threading.Tasks.Task ToggleReadStatusAsync(int notificationId, string userId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Mark all notifications as read for a user

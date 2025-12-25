@@ -97,6 +97,22 @@ export class BaseHttpService {
   }
 
   /**
+   * Build full URL from endpoint
+   * If endpoint starts with http:// or https://, use it as-is
+   * Otherwise, combine with baseUrl
+   */
+  protected buildUrl(endpoint: string): string {
+    if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+      return endpoint;
+    }
+    // Remove leading slash from endpoint if baseUrl already ends with slash
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    // Remove trailing slash from baseUrl
+    const cleanBaseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
+    return `${cleanBaseUrl}${cleanEndpoint}`;
+  }
+
+  /**
    * GET request with automatic ApiResponse unwrapping
    * 
    * @param endpoint - API endpoint (relative to baseUrl or full URL)
@@ -112,8 +128,9 @@ export class BaseHttpService {
   ): Observable<T> {
     const httpParams = params ? this.buildQueryParams(params) : undefined;
     const extract = options?.extractData !== false; // Default to true
+    const url = this.buildUrl(endpoint);
 
-    const request$: Observable<ApiResponse<T>> = this.http.get<ApiResponse<T>>(endpoint, {
+    const request$: Observable<ApiResponse<T>> = this.http.get<ApiResponse<T>>(url, {
       params: httpParams,
     });
 
@@ -143,8 +160,9 @@ export class BaseHttpService {
     options?: { extractData?: boolean; headers?: HttpHeaders }
   ): Observable<T> {
     const extract = options?.extractData !== false; // Default to true
+    const url = this.buildUrl(endpoint);
 
-    const request$: Observable<ApiResponse<T>> = this.http.post<ApiResponse<T>>(endpoint, body, {
+    const request$: Observable<ApiResponse<T>> = this.http.post<ApiResponse<T>>(url, body, {
       headers: options?.headers,
     });
 
@@ -174,8 +192,9 @@ export class BaseHttpService {
     options?: { extractData?: boolean; headers?: HttpHeaders }
   ): Observable<T> {
     const extract = options?.extractData !== false; // Default to true
+    const url = this.buildUrl(endpoint);
 
-    const request$: Observable<ApiResponse<T>> = this.http.put<ApiResponse<T>>(endpoint, body, {
+    const request$: Observable<ApiResponse<T>> = this.http.put<ApiResponse<T>>(url, body, {
       headers: options?.headers,
     });
 
@@ -202,8 +221,9 @@ export class BaseHttpService {
     options?: { extractData?: boolean }
   ): Observable<T> {
     const extract = options?.extractData !== false; // Default to true
+    const url = this.buildUrl(endpoint);
 
-    const request$: Observable<ApiResponse<T>> = this.http.delete<ApiResponse<T>>(endpoint);
+    const request$: Observable<ApiResponse<T>> = this.http.delete<ApiResponse<T>>(url);
 
     if (extract) {
       return request$.pipe(
@@ -231,8 +251,9 @@ export class BaseHttpService {
     options?: { extractData?: boolean; headers?: HttpHeaders }
   ): Observable<T> {
     const extract = options?.extractData !== false; // Default to true
+    const url = this.buildUrl(endpoint);
 
-    const request$: Observable<ApiResponse<T>> = this.http.patch<ApiResponse<T>>(endpoint, body, {
+    const request$: Observable<ApiResponse<T>> = this.http.patch<ApiResponse<T>>(url, body, {
       headers: options?.headers,
     });
 

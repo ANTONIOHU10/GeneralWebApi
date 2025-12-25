@@ -35,18 +35,20 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
         // Dates
         builder.Property(n => n.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         builder.Property(n => n.ExpiresAt).IsRequired(false);
+        builder.Property(n => n.ReadAt).IsRequired(false);
+        builder.Property(n => n.ArchivedAt).IsRequired(false);
+
+        // Boolean flags
+        builder.Property(n => n.IsRead).HasDefaultValue(false);
+        builder.Property(n => n.IsArchived).HasDefaultValue(false);
 
         // Indexes
         builder.HasIndex(n => n.UserId);
         builder.HasIndex(n => n.Type);
         builder.HasIndex(n => new { n.UserId, n.Type });
         builder.HasIndex(n => n.CreatedAt);
-
-        // Relationships
-        builder.HasMany(n => n.ReadStatuses)
-            .WithOne(rs => rs.Notification)
-            .HasForeignKey(rs => rs.NotificationId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasIndex(n => new { n.UserId, n.IsRead });
+        builder.HasIndex(n => new { n.UserId, n.IsArchived });
     }
 }
 

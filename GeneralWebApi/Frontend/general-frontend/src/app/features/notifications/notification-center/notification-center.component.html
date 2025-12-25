@@ -1,1 +1,280 @@
+<div class="notification-center">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-title">
+      <span class="material-icons">notifications</span>
+      <h2>Notifications</h2>
+      @if (unreadCount() > 0) {
+        <app-base-badge
+          [text]="unreadCount().toString()"
+          variant="danger"
+          size="small"
+          shape="pill"
+          customClass="unread-badge"
+        ></app-base-badge>
+      }
+    </div>
+    <div class="header-actions">
+      @if (filteredNotifications().length > 0) {
+        <app-base-button
+          text="Mark All Read"
+          icon="done_all"
+          variant="outline"
+          size="small"
+          [disabled]="loading$.value || unreadCount() === 0"
+          (buttonClick)="markAllAsRead()"
+        ></app-base-button>
+      }
+      <app-base-button
+        [text]="loading$.value ? 'Refreshing...' : 'Refresh'"
+        icon="refresh"
+        variant="ghost"
+        size="small"
+        [loading]="loading$.value"
+        [disabled]="loading$.value"
+        (buttonClick)="loadNotifications()"
+      ></app-base-button>
+    </div>
+  </div>
 
+  <!-- Statistics Cards -->
+  @if (stats()) {
+    <div class="statistics-section">
+      <app-base-card variant="elevated" customClass="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon primary">
+            <span class="material-icons">notifications</span>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats()!.total }}</div>
+            <div class="stat-label">Total Notifications</div>
+          </div>
+        </div>
+      </app-base-card>
+
+      <app-base-card variant="elevated" customClass="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon warning">
+            <span class="material-icons">mark_email_unread</span>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats()!.unread }}</div>
+            <div class="stat-label">Unread</div>
+          </div>
+        </div>
+      </app-base-card>
+
+      <app-base-card variant="elevated" customClass="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon error">
+            <span class="material-icons">priority_high</span>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">
+              {{ (stats()!.byPriority.urgent || 0) + (stats()!.byPriority.high || 0) }}
+            </div>
+            <div class="stat-label">Urgent & High</div>
+          </div>
+        </div>
+      </app-base-card>
+    </div>
+  }
+
+  <!-- Filters Section -->
+  <app-base-card variant="outlined" customClass="filters-card">
+    <div class="filters-section">
+      <!-- Filters -->
+      <div class="filter-groups">
+        <div class="filter-group">
+          <label for="type-filter">Type</label>
+          <app-base-select
+            selectId="type-filter"
+            [options]="typeFilterOptions"
+            [ngModel]="getTypeFilterValue()"
+            (ngModelChange)="onTypeFilterValueChange($event)"
+            size="small"
+          ></app-base-select>
+        </div>
+
+        <div class="filter-group">
+          <label for="status-filter">Status</label>
+          <app-base-select
+            selectId="status-filter"
+            [options]="statusFilterOptions"
+            [ngModel]="getStatusFilterValue()"
+            (ngModelChange)="onStatusFilterValueChange($event)"
+            size="small"
+          ></app-base-select>
+        </div>
+
+        <div class="filter-group">
+          <label for="priority-filter">Priority</label>
+          <app-base-select
+            selectId="priority-filter"
+            [options]="priorityFilterOptions"
+            [ngModel]="getPriorityFilterValue()"
+            (ngModelChange)="onPriorityFilterValueChange($event)"
+            size="small"
+          ></app-base-select>
+        </div>
+
+        @if (hasActiveFilters()) {
+          <app-base-button
+            text="Clear Filters"
+            icon="clear"
+            variant="ghost"
+            size="small"
+            (buttonClick)="clearFilters()"
+          ></app-base-button>
+        }
+      </div>
+    </div>
+  </app-base-card>
+
+  <!-- Notifications List -->
+  <div class="notifications-section">
+    @if (loading$.value) {
+      <app-base-loading
+        [config]="{
+          size: 'md',
+          type: 'spinner',
+          message: 'Loading notifications...',
+          centered: true,
+          fullHeight: false
+        }"
+      ></app-base-loading>
+    } @else if (error$.value) {
+      <app-base-error
+        [message]="error$.value"
+        [showRetryButton]="true"
+        (retry)="onRetryLoad()"
+      ></app-base-error>
+    } @else if (filteredNotifications().length === 0) {
+      <app-base-empty
+        [title]="hasActiveFilters() ? 'No notifications match your filters' : 'No notifications'"
+        [description]="hasActiveFilters() ? 'Try adjusting your filters to see more notifications' : 'You\'re all caught up! No new notifications.'"
+        [config]="{
+          type: hasActiveFilters() ? 'data' : 'data',
+          size: 'md',
+          showIcon: true,
+          showActionButton: hasActiveFilters(),
+          actionButtonText: 'Clear Filters',
+          centered: true,
+          fullHeight: false
+        }"
+        (actionClick)="clearFilters()"
+      ></app-base-empty>
+    } @else {
+      <div class="notification-list">
+        @for (notification of filteredNotifications(); track notification.id) {
+          <app-base-card
+            [variant]="notification.status === 'unread' ? 'elevated' : 'outlined'"
+            [customClass]="getNotificationCardClass(notification)"
+          >
+            <div 
+              class="notification-item" 
+              (click)="onNotificationClick(notification)"
+              (keydown.enter)="onNotificationClick(notification)"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="'View notification: ' + notification.title"
+            >
+              <!-- Icon with read status indicator -->
+              <div class="notification-icon-wrapper">
+                <div class="notification-icon" [class]="'icon-' + notification.type" [class.read]="notification.status === 'read'">
+                  <span class="material-icons">{{ getTypeIcon(notification.type) }}</span>
+                  @if (notification.status === 'read') {
+                    <div class="read-overlay">
+                      <span class="material-icons">check</span>
+                    </div>
+                  }
+                </div>
+                @if (notification.status === 'unread') {
+                  <div class="unread-dot" title="Unread"></div>
+                }
+              </div>
+
+              <!-- Content -->
+              <div class="notification-content">
+                <div class="notification-header">
+                  <div class="title-section">
+                    <h3 class="notification-title" [class.read]="notification.status === 'read'">
+                      {{ notification.title }}
+                    </h3>
+                    <div class="notification-badges">
+                      @if (notification.status === 'unread') {
+                        <app-base-badge
+                          text="New"
+                          variant="danger"
+                          size="small"
+                          shape="pill"
+                          customClass="new-badge"
+                        ></app-base-badge>
+                      }
+                      <app-base-badge
+                        [text]="notification.priority"
+                        [variant]="getPriorityVariant(notification.priority)"
+                        size="small"
+                        shape="pill"
+                      ></app-base-badge>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="notification-message">{{ notification.message }}</p>
+
+                <div class="notification-footer">
+                  <div class="notification-meta">
+                    <span class="meta-item">
+                      <span class="material-icons">schedule</span>
+                      <span>{{ getTimeAgo(notification.createdAt) }}</span>
+                    </span>
+                    @if (notification.type) {
+                      <span class="meta-item">
+                        <span class="material-icons">category</span>
+                        <span>{{ notification.type }}</span>
+                      </span>
+                    }
+                  </div>
+
+                  <div 
+                    class="notification-actions"
+                    tabindex="-1"
+                  >
+                    <app-base-button
+                      [text]="notification.status === 'read' ? 'Unread' : 'Read'"
+                      [icon]="notification.status === 'read' ? 'mark_email_unread' : 'done'"
+                      [variant]="notification.status === 'read' ? 'outline' : 'outline'"
+                      size="small"
+                      [customClass]="notification.status === 'read' ? 'toggle-status-btn unread-state' : 'toggle-status-btn read-state'"
+                      (buttonClick)="toggleReadStatus(notification)"
+                      [attr.title]="notification.status === 'read' ? 'Mark as unread' : 'Mark as read'"
+                    ></app-base-button>
+                    @if (notification.actionUrl && notification.actionLabel) {
+                      <app-base-button
+                        [text]="notification.actionLabel"
+                        icon="arrow_forward"
+                        [iconRight]="true"
+                        variant="primary"
+                        size="small"
+                        (buttonClick)="onActionClick(notification)"
+                      ></app-base-button>
+                    }
+                    <app-base-button
+                      icon="delete_outline"
+                      variant="ghost"
+                      size="small"
+                      customClass="action-btn delete-btn"
+                      (buttonClick)="deleteNotification(notification)"
+                      [attr.title]="'Delete notification'"
+                    ></app-base-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </app-base-card>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -4,6 +4,7 @@ using GeneralWebApi.Integration.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeneralWebApi.Integration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251225150118_InitialCreate_Test_notification")]
+    partial class InitialCreate_Test_notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1641,9 +1644,6 @@ namespace GeneralWebApi.Integration.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<DateTime?>("ArchivedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -1669,18 +1669,8 @@ namespace GeneralWebApi.Integration.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsArchived")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsRead")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -1694,9 +1684,6 @@ namespace GeneralWebApi.Integration.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime?>("ReadAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -1744,13 +1731,86 @@ namespace GeneralWebApi.Integration.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId", "IsArchived");
-
-                    b.HasIndex("UserId", "IsRead");
-
                     b.HasIndex("UserId", "Type");
 
                     b.ToTable("Notifications", (string)null);
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Notifications.NotificationReadStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ArchivedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsArchived")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotificationId");
+
+                    b.HasIndex("ReadAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("NotificationId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("NotificationReadStatuses", (string)null);
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Permissions.EmployeeRole", b =>
@@ -2508,6 +2568,17 @@ namespace GeneralWebApi.Integration.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Notifications.NotificationReadStatus", b =>
+                {
+                    b.HasOne("GeneralWebApi.Domain.Entities.Notifications.Notification", "Notification")
+                        .WithMany("ReadStatuses")
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Notification");
+                });
+
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Permissions.EmployeeRole", b =>
                 {
                     b.HasOne("GeneralWebApi.Domain.Entities.Anagraphy.Employee", "Employee")
@@ -2619,6 +2690,11 @@ namespace GeneralWebApi.Integration.Migrations
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Documents.Approvals.ContractApproval", b =>
                 {
                     b.Navigation("ApprovalSteps");
+                });
+
+            modelBuilder.Entity("GeneralWebApi.Domain.Entities.Notifications.Notification", b =>
+                {
+                    b.Navigation("ReadStatuses");
                 });
 
             modelBuilder.Entity("GeneralWebApi.Domain.Entities.Permissions.Permission", b =>

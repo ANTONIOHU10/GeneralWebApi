@@ -68,8 +68,23 @@ public class Notification : BaseEntity
     public DateTime? ExpiresAt { get; set; }
 
     /// <summary>
-    /// Navigation property to read statuses
+    /// Whether the notification has been read
     /// </summary>
-    public ICollection<NotificationReadStatus> ReadStatuses { get; set; } = new List<NotificationReadStatus>();
+    public bool IsRead { get; set; } = false;
+
+    /// <summary>
+    /// When the notification was read
+    /// </summary>
+    public DateTime? ReadAt { get; set; }
+
+    /// <summary>
+    /// Whether the notification is archived
+    /// </summary>
+    public bool IsArchived { get; set; } = false;
+
+    /// <summary>
+    /// When the notification was archived
+    /// </summary>
+    public DateTime? ArchivedAt { get; set; }
 }
 

@@ -18,7 +18,7 @@ import {
   NotificationPriority,
   NotificationStatus
 } from 'app/contracts/notifications/notification.model';
-import { NotificationService, BackendNotificationDto } from './notification.service';
+import { NotificationService, BackendNotificationListDto } from './notification.service';
 
 /**
  * Notification Center Service
@@ -103,9 +103,9 @@ export class NotificationCenterService {
       pageSize: 100, // Load first 100 notifications
       includeExpired: false,
     }).pipe(
-      map((response: { items: BackendNotificationDto[]; totalCount: number; pageNumber: number; pageSize: number }) => {
+      map((response: { items: BackendNotificationListDto[]; totalCount: number; pageNumber: number; pageSize: number }) => {
         // Transform backend DTOs to frontend Notification models
-        const notifications = response.items.map((dto: BackendNotificationDto) => 
+        const notifications = response.items.map((dto: BackendNotificationListDto) => 
           this.notificationService.transformToNotification(dto)
         );
         
@@ -235,28 +235,32 @@ export class NotificationCenterService {
   }
 
   /**
-   * Mark notification as read
+   * Toggle notification read status (read <-> unread)
    * Modern Observable-based implementation with optimistic updates
    */
-  markAsRead(notification: Notification): Observable<void> {
+  toggleReadStatus(notification: Notification): Observable<void> {
     const notificationId = parseInt(notification.id, 10);
     
     if (isNaN(notificationId)) {
       // If ID is not a number (e.g., "approval-123"), it's from a provider
       // Update local state only
-      this.updateNotificationStatus(notification.id, 'read');
+      const newStatus = notification.status === 'read' ? 'unread' : 'read';
+      this.updateNotificationStatus(notification.id, newStatus);
       return of(void 0);
     }
 
+    // Determine new status
+    const newStatus: NotificationStatus = notification.status === 'read' ? 'unread' : 'read';
+    
     // Optimistic update: update local state immediately
-    this.updateNotificationStatus(notification.id, 'read');
+    this.updateNotificationStatus(notification.id, newStatus);
 
     // Call backend API
-    return this.notificationService.markAsRead(notificationId).pipe(
+    return this.notificationService.toggleReadStatus(notificationId).pipe(
       catchError(error => {
         // Revert on error
-        this.updateNotificationStatus(notification.id, 'unread');
-        console.error(`Failed to mark notification ${notification.id} as read:`, error);
+        this.updateNotificationStatus(notification.id, notification.status);
+        console.error(`Failed to toggle notification ${notification.id} read status:`, error);
         return EMPTY;
       }),
       map(() => void 0)
@@ -361,7 +365,7 @@ export class NotificationCenterService {
         ? { 
             ...n, 
             status, 
-            readAt: status === 'read' ? new Date().toISOString() : n.readAt 
+            readAt: status === 'read' ? new Date().toISOString() : (status === 'unread' ? undefined : n.readAt)
           }
         : n
     );

@@ -3,9 +3,9 @@ using MediatR;
 namespace GeneralWebApi.Application.Features.Notifications.Commands;
 
 /// <summary>
-/// Command for marking a notification as read
+/// Command for toggling notification read status (read <-> unread)
 /// </summary>
-public class MarkAsReadCommand : IRequest
+public class ToggleReadStatusCommand : IRequest
 {
     public int NotificationId { get; set; }
 }
