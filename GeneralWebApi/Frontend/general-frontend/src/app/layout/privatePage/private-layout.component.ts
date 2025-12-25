@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/layout/private-layout.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { HeaderComponent } from '../../Shared/components/header/header.component';
@@ -47,6 +47,9 @@ export class PrivateLayoutComponent implements OnInit {
   
   // Notification center modal state
   isNotificationCenterOpen = false;
+  
+  // Reference to header component for refreshing notification count
+  @ViewChild(HeaderComponent) headerComponent?: HeaderComponent;
   
   // Settings panel state
   isSettingsPanelOpen = false;
@@ -132,6 +135,10 @@ export class PrivateLayoutComponent implements OnInit {
    */
   onNotificationCenterClose(): void {
     this.isNotificationCenterOpen = false;
+    // Refresh notification count in header when notification center closes
+    if (this.headerComponent) {
+      this.headerComponent.loadNotificationCount();
+    }
   }
 
   /**

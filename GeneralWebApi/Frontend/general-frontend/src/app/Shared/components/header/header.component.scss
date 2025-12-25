@@ -112,17 +112,29 @@
       &.notification-btn {
         .notification-badge {
           position: absolute;
-          top: -4px;
-          right: -4px;
-          background-color: var(--danger-color);
+          top: -6px;
+          right: -6px;
+          background-color: #f44336; // Red background for unread notifications
           color: white;
           font-size: 0.7rem;
-          font-weight: 600;
-          padding: 0.2rem 0.4rem;
+          font-weight: 700;
+          padding: 0.15rem 0.4rem;
           border-radius: 10px;
           min-width: 18px;
+          height: 18px;
           text-align: center;
-          line-height: 1;
+          line-height: 1.2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          border: 2px solid var(--bg-surface); // White border to stand out
+          
+          // Handle large numbers (99+)
+          &[data-count="99+"] {
+            padding: 0.15rem 0.3rem;
+            font-size: 0.65rem;
+          }
         }
       }
 

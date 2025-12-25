@@ -1,10 +1,12 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { TokenService } from '@core/services/token.service';
-import { catchError, of } from 'rxjs';
+import { NotificationService } from '@core/services/notification.service';
+import { catchError, of, interval, Subject } from 'rxjs';
+import { takeUntil, startWith, switchMap } from 'rxjs/operators';
 
 @Component({
   standalone: true,
@@ -13,7 +15,7 @@ import { catchError, of } from 'rxjs';
   styleUrls: ['./header.component.scss'],
   imports: [CommonModule, RouterLink],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   @Input() isDarkMode = false;
   @Input() showSidebarToggle = false;
   @Input() brandTitle = 'GeneralWebApi';
@@ -27,8 +29,10 @@ export class HeaderComponent implements OnInit {
 
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
+  private notificationService = inject(NotificationService);
+  private destroy$ = new Subject<void>();
 
-  notificationCount = 3;
+  notificationCount = 0;
   userProfile = {
     name: 'Guest',
     role: 'User',
@@ -70,10 +74,57 @@ export class HeaderComponent implements OnInit {
   }
 
   /**
-   * Initialize user profile from token
+   * Initialize user profile from token and load notification count
    */
   ngOnInit(): void {
     this.loadUserProfile();
+    this.loadNotificationCount();
+    this.startNotificationCountPolling();
+  }
+
+  /**
+   * Cleanup subscriptions
+   */
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Load notification count from backend
+   * Public method to allow external refresh
+   */
+  loadNotificationCount(): void {
+    this.notificationService.getUnreadCount().pipe(
+      takeUntil(this.destroy$),
+      catchError((error) => {
+        console.error('Failed to load notification count:', error);
+        return of(0);
+      })
+    ).subscribe({
+      next: (count) => {
+        this.notificationCount = count;
+      }
+    });
+  }
+
+  /**
+   * Start polling for notification count updates (every 30 seconds)
+   */
+  private startNotificationCountPolling(): void {
+    interval(30000).pipe(
+      startWith(0),
+      switchMap(() => this.notificationService.getUnreadCount()),
+      takeUntil(this.destroy$),
+      catchError((error) => {
+        console.error('Failed to poll notification count:', error);
+        return of(0);
+      })
+    ).subscribe({
+      next: (count) => {
+        this.notificationCount = count;
+      }
+    });
   }
 
   /**

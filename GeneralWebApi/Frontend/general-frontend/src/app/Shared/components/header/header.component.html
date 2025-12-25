@@ -15,8 +15,12 @@
         [attr.aria-label]="'Notifications (' + notificationCount + ')'"
       >
         <span class="action-icon material-icons">notifications</span>
-        <span class="notification-badge" *ngIf="notificationCount > 0">
-          {{ notificationCount }}
+        <span 
+          class="notification-badge" 
+          *ngIf="notificationCount > 0"
+          [attr.data-count]="notificationCount > 99 ? '99+' : notificationCount"
+        >
+          {{ notificationCount > 99 ? '99+' : notificationCount }}
         </span>
       </button>
 
