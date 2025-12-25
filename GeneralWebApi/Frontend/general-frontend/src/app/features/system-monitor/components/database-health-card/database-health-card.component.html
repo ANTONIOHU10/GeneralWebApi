@@ -1,0 +1,164 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/system-monitor/components/database-health-card/database-health-card.component.html -->
+<div class="database-health-card">
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="header-left">
+      <div class="icon-wrapper database">
+        <span class="material-icons">storage</span>
+      </div>
+      <div class="header-info">
+        <h3>Database</h3>
+        <span class="subtitle">SQL Server Health Monitor</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <app-base-badge
+        [text]="databaseHealth?.status || 'Unknown'"
+        [variant]="getStatusVariant()"
+        size="small"
+        shape="pill"
+      ></app-base-badge>
+      <button class="refresh-btn" (click)="onRefresh()" [disabled]="isLoading" title="Refresh">
+        <span class="material-icons" [class.spinning]="isLoading">refresh</span>
+      </button>
+    </div>
+  </div>
+
+  @if (databaseHealth) {
+    <!-- Connection Status Section -->
+    <div class="metric-section">
+      <div class="section-title">
+        <span class="material-icons">cable</span>
+        Connection Status
+      </div>
+      
+      <div class="metrics-grid">
+        <!-- Response Time Metric -->
+        <div class="metric-item" [class]="getConnectionClass()">
+          <div class="metric-icon">
+            <span class="material-icons">speed</span>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">{{ databaseHealth.connection?.responseTime || 0 }}<span class="metric-unit">ms</span></span>
+            <span class="metric-label">Response Time</span>
+            <span class="metric-status">{{ getResponseTimeLevel() }}</span>
+          </div>
+        </div>
+
+        <!-- Active Users Metric -->
+        <div class="metric-item neutral">
+          <div class="metric-icon">
+            <span class="material-icons">people</span>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">{{ databaseHealth.connection?.userCount || 0 }}</span>
+            <span class="metric-label">Active Connections</span>
+            <span class="metric-status">{{ databaseHealth.connection?.status || 'Unknown' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (databaseHealth.statistics) {
+      <!-- Storage Section -->
+      <div class="metric-section">
+        <div class="section-title">
+          <span class="material-icons">inventory_2</span>
+          Storage Overview
+        </div>
+
+        <!-- Storage Progress Bar -->
+        <div class="storage-bar-container">
+          <div class="storage-bar">
+            <div class="storage-bar-fill" [style.width.%]="getStorageUsagePercent()"></div>
+            <div class="storage-bar-label">
+              <span>Data: {{ formatSize(databaseHealth.statistics.dataSizeMB) }}</span>
+              <span>Total: {{ formatSize(databaseHealth.statistics.totalSizeMB) }}</span>
+            </div>
+          </div>
+          <div class="storage-legend">
+            <div class="legend-item">
+              <span class="legend-dot data"></span>
+              <span>Data ({{ getStorageUsagePercent() }}%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot log"></span>
+              <span>Log: {{ formatSize(databaseHealth.statistics.logSizeMB) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value">{{ databaseHealth.statistics.tableCount }}</span>
+            <span class="stat-label">Tables</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{ formatNumber(databaseHealth.statistics.totalRowCount) }}</span>
+            <span class="stat-label">Total Rows</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{ formatSize(databaseHealth.statistics.totalSizeMB) }}</span>
+            <span class="stat-label">Total Size</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Largest Tables Section -->
+      @if (databaseHealth.statistics.largestTables && databaseHealth.statistics.largestTables.length > 0) {
+        <div class="metric-section tables-section">
+          <button class="section-title clickable" (click)="toggleTableList()">
+            <span class="material-icons">table_chart</span>
+            Top Tables by Size
+            <span class="material-icons expand-icon" [class.expanded]="isTableListExpanded">
+              expand_more
+            </span>
+          </button>
+
+          <div class="tables-container" [class.expanded]="isTableListExpanded">
+            <div class="tables-list">
+              @for (table of databaseHealth.statistics.largestTables; track table.tableName; let i = $index) {
+                <div class="table-row" [style.animation-delay.ms]="i * 50">
+                  <div class="table-rank">{{ i + 1 }}</div>
+                  <div class="table-info">
+                    <div class="table-name">{{ table.tableName }}</div>
+                    <div class="table-bar-container">
+                      <div class="table-bar" [style.width.%]="getTableRowPercent(table)"></div>
+                    </div>
+                  </div>
+                  <div class="table-stats">
+                    <span class="table-stat">
+                      <span class="material-icons">data_array</span>
+                      {{ formatNumber(table.rowCount) }}
+                    </span>
+                    <span class="table-stat">
+                      <span class="material-icons">sd_storage</span>
+                      {{ formatSize(table.totalSizeMB) }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
+
+    <!-- Error Message -->
+    @if (databaseHealth.error) {
+      <div class="error-banner">
+        <span class="material-icons">error_outline</span>
+        <span>{{ databaseHealth.error }}</span>
+      </div>
+    }
+  } @else {
+    <!-- Loading State -->
+    <div class="loading-state">
+      <div class="loading-shimmer"></div>
+      <div class="loading-shimmer short"></div>
+      <div class="loading-shimmer"></div>
+    </div>
+  }
+</div>
+

@@ -1,0 +1,376 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/system-monitor/components/system-overview-card/system-overview-card.component.scss
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.system-overview-card {
+  background: var(--background-primary);
+  border-radius: $border-radius-xl;
+  border: 1px solid var(--border-secondary);
+  overflow: hidden;
+  transition: box-shadow $duration-200 $ease-out;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+
+  // Dynamic theme based on status
+  &.healthy {
+    background: linear-gradient(135deg, rgba($success-500, 0.03) 0%, var(--background-primary) 50%);
+    border-color: rgba($success-500, 0.2);
+  }
+
+  &.warning {
+    background: linear-gradient(135deg, rgba($warning-500, 0.03) 0%, var(--background-primary) 50%);
+    border-color: rgba($warning-500, 0.2);
+  }
+
+  &.error {
+    background: linear-gradient(135deg, rgba($error-500, 0.03) 0%, var(--background-primary) 50%);
+    border-color: rgba($error-500, 0.2);
+  }
+
+  // Status Display Section
+  .status-display {
+    display: flex;
+    align-items: center;
+    gap: $spacing-5;
+    padding: $spacing-6;
+
+    .status-icon-container {
+      position: relative;
+      flex-shrink: 0;
+
+      .status-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: $border-radius-full;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+
+        .material-icons {
+          font-size: 2.5rem;
+          color: white;
+        }
+
+        &.healthy {
+          background: linear-gradient(135deg, $success-400 0%, $success-600 100%);
+          box-shadow: 0 4px 16px rgba($success-500, 0.4);
+        }
+
+        &.warning {
+          background: linear-gradient(135deg, $warning-400 0%, $warning-600 100%);
+          box-shadow: 0 4px 16px rgba($warning-500, 0.4);
+        }
+
+        &.error {
+          background: linear-gradient(135deg, $error-400 0%, $error-600 100%);
+          box-shadow: 0 4px 16px rgba($error-500, 0.4);
+        }
+
+        &.unknown {
+          background: linear-gradient(135deg, $gray-400 0%, $gray-600 100%);
+          box-shadow: 0 4px 16px rgba($gray-500, 0.4);
+        }
+      }
+
+      .pulse-ring {
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        right: -8px;
+        bottom: -8px;
+        border-radius: $border-radius-full;
+        opacity: 0;
+
+        &.healthy {
+          background: $success-500;
+          animation: pulse-green 2s infinite;
+        }
+
+        &.warning {
+          background: $warning-500;
+          animation: pulse-yellow 2s infinite;
+        }
+
+        &.error {
+          background: $error-500;
+          animation: pulse-red 1.5s infinite;
+        }
+      }
+    }
+
+    .status-info {
+      flex: 1;
+      min-width: 0;
+
+      .status-title {
+        margin: 0;
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        color: var(--text-primary);
+        line-height: 1.3;
+      }
+
+      .status-subtitle {
+        margin: $spacing-1 0 0 0;
+        font-size: $font-size-sm;
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  // Services Grid
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-3;
+    padding: 0 $spacing-6 $spacing-5;
+
+    .service-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-3;
+      padding: $spacing-3;
+      border-radius: $border-radius-lg;
+      background: var(--background-secondary);
+      border: 1px solid var(--border-secondary);
+      transition: all $duration-150 $ease-out;
+
+      &:hover {
+        background: var(--background-tertiary);
+      }
+
+      &.healthy {
+        border-left: 3px solid $success-500;
+        .service-indicator { color: $success-500; background: rgba($success-500, 0.1); }
+        .service-status { color: $success-600; }
+      }
+
+      &.warning {
+        border-left: 3px solid $warning-500;
+        .service-indicator { color: $warning-500; background: rgba($warning-500, 0.1); }
+        .service-status { color: $warning-600; }
+      }
+
+      &.error {
+        border-left: 3px solid $error-500;
+        .service-indicator { color: $error-500; background: rgba($error-500, 0.1); }
+        .service-status { color: $error-600; }
+      }
+
+      &.unknown {
+        border-left: 3px solid $gray-400;
+        .service-indicator { color: $gray-500; background: rgba($gray-500, 0.1); }
+        .service-status { color: $gray-500; }
+      }
+
+      .service-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: $border-radius-md;
+        background: var(--background-tertiary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        .material-icons {
+          font-size: 1.25rem;
+          color: var(--text-secondary);
+        }
+      }
+
+      .service-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+
+        .service-name {
+          font-size: $font-size-sm;
+          font-weight: $font-weight-semibold;
+          color: var(--text-primary);
+        }
+
+        .service-status {
+          font-size: $font-size-xs;
+          font-weight: $font-weight-medium;
+          text-transform: capitalize;
+          margin-top: 2px;
+        }
+      }
+
+      .service-indicator {
+        width: 28px;
+        height: 28px;
+        border-radius: $border-radius-full;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        .material-icons {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+
+  // Card Footer
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-4 $spacing-6;
+    background: var(--background-secondary);
+    border-top: 1px solid var(--border-secondary);
+
+    .last-check {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+      font-size: $font-size-xs;
+      color: var(--text-tertiary);
+
+      .material-icons {
+        font-size: 1rem;
+      }
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: $spacing-2;
+
+      .action-btn {
+        display: flex;
+        align-items: center;
+        gap: $spacing-1;
+        padding: $spacing-2 $spacing-3;
+        border-radius: $border-radius-md;
+        border: 1px solid var(--border-secondary);
+        background: var(--background-primary);
+        color: var(--text-secondary);
+        font-size: $font-size-xs;
+        font-weight: $font-weight-medium;
+        cursor: pointer;
+        transition: all $duration-150 $ease-out;
+
+        .material-icons {
+          font-size: 1rem;
+
+          &.spinning {
+            animation: spin 1s linear infinite;
+          }
+        }
+
+        &:hover:not(:disabled) {
+          background: var(--background-tertiary);
+          color: var(--text-primary);
+          border-color: var(--border-primary);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        &.primary {
+          background: $primary-500;
+          border-color: $primary-500;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: $primary-600;
+            border-color: $primary-600;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-green {
+  0% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-yellow {
+  0% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-red {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+// Responsive
+@include mobile-only {
+  .system-overview-card {
+    .status-display {
+      flex-direction: column;
+      text-align: center;
+      padding: $spacing-5;
+
+      .status-info {
+        .status-title {
+          font-size: $font-size-lg;
+        }
+      }
+    }
+
+    .services-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-footer {
+      flex-direction: column;
+      gap: $spacing-3;
+
+      .footer-actions {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+

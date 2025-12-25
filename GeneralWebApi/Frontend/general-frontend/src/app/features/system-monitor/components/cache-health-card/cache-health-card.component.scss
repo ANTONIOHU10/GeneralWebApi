@@ -1,0 +1,438 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/system-monitor/components/cache-health-card/cache-health-card.component.scss
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.cache-health-card {
+  background: var(--background-primary);
+  border-radius: $border-radius-xl;
+  border: 1px solid var(--border-secondary);
+  overflow: hidden;
+  transition: box-shadow $duration-200 $ease-out, transform $duration-200 $ease-out;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+    transform: translateY(-2px);
+  }
+
+  // Card Header
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-4 $spacing-5;
+    background: linear-gradient(135deg, rgba($info-500, 0.08) 0%, rgba($info-500, 0.02) 100%);
+    border-bottom: 1px solid var(--border-secondary);
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: $spacing-3;
+
+      .icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: $border-radius-lg;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: $shadow-md;
+
+        &.cache {
+          background: linear-gradient(135deg, $info-500 0%, $info-700 100%);
+        }
+
+        .material-icons {
+          color: white;
+          font-size: 1.5rem;
+        }
+      }
+
+      .header-info {
+        h3 {
+          margin: 0;
+          font-size: $font-size-lg;
+          font-weight: $font-weight-bold;
+          color: var(--text-primary);
+        }
+
+        .subtitle {
+          font-size: $font-size-xs;
+          color: var(--text-tertiary);
+          margin-top: 2px;
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+
+      .refresh-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: $border-radius-full;
+        border: 1px solid var(--border-secondary);
+        background: var(--background-secondary);
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all $duration-150 $ease-out;
+
+        &:hover:not(:disabled) {
+          background: var(--background-tertiary);
+          color: var(--text-primary);
+          border-color: var(--border-primary);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .material-icons {
+          font-size: 1.125rem;
+
+          &.spinning {
+            animation: spin 1s linear infinite;
+          }
+        }
+      }
+    }
+  }
+
+  // Status Section
+  .status-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-3 $spacing-5;
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--border-secondary);
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: $border-radius-full;
+        animation: pulse 2s infinite;
+      }
+
+      .status-text {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+      }
+
+      &.available {
+        .status-dot {
+          background: $success-500;
+          box-shadow: 0 0 8px rgba($success-500, 0.5);
+        }
+        .status-text { color: $success-600; }
+      }
+
+      &.unavailable {
+        .status-dot {
+          background: $error-500;
+          box-shadow: 0 0 8px rgba($error-500, 0.5);
+          animation: none;
+        }
+        .status-text { color: $error-600; }
+      }
+    }
+
+    .test-result {
+      display: flex;
+      align-items: center;
+      gap: $spacing-1;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-medium;
+
+      .material-icons {
+        font-size: 1rem;
+      }
+
+      &.passed {
+        color: $success-600;
+      }
+      &.failed {
+        color: $error-600;
+      }
+    }
+  }
+
+  // Performance Section
+  .performance-section {
+    padding: $spacing-5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid var(--border-secondary);
+
+    .performance-ring-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+
+      .performance-ring {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+
+        .ring-background {
+          fill: none;
+          stroke: var(--background-tertiary);
+          stroke-width: 8;
+        }
+
+        .ring-progress {
+          fill: none;
+          stroke-width: 8;
+          stroke-linecap: round;
+          transition: stroke-dashoffset $duration-500 $ease-out;
+
+          &.excellent { stroke: $success-500; }
+          &.good { stroke: $success-400; }
+          &.fair { stroke: $warning-500; }
+          &.slow { stroke: $warning-600; }
+          &.poor { stroke: $error-500; }
+        }
+      }
+
+      .ring-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        .score-value {
+          display: block;
+          font-size: $font-size-2xl;
+          font-weight: $font-weight-bold;
+          color: var(--text-primary);
+          line-height: 1;
+        }
+
+        .score-label {
+          display: block;
+          font-size: $font-size-xs;
+          color: var(--text-secondary);
+          margin-top: 4px;
+        }
+      }
+    }
+
+    .performance-label {
+      margin-top: $spacing-2;
+      font-size: $font-size-sm;
+      color: var(--text-tertiary);
+    }
+  }
+
+  // Operations Section
+  .operations-section {
+    padding: $spacing-4 $spacing-5;
+    border-bottom: 1px solid var(--border-secondary);
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      color: var(--text-secondary);
+      margin-bottom: $spacing-4;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      .material-icons {
+        font-size: 1rem;
+        color: var(--text-tertiary);
+      }
+    }
+
+    .operation-list {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-3;
+    }
+
+    .operation-item {
+      .operation-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-1;
+
+        .operation-name {
+          display: flex;
+          align-items: center;
+          gap: $spacing-1;
+          font-size: $font-size-sm;
+          font-weight: $font-weight-medium;
+          color: var(--text-primary);
+
+          .material-icons {
+            font-size: 1rem;
+            color: var(--text-tertiary);
+          }
+        }
+
+        .operation-value {
+          font-size: $font-size-sm;
+          font-weight: $font-weight-bold;
+
+          &.excellent { color: $success-500; }
+          &.good { color: $success-400; }
+          &.fair { color: $warning-500; }
+          &.slow { color: $warning-600; }
+          &.poor { color: $error-500; }
+        }
+      }
+
+      .operation-bar-container {
+        height: 6px;
+        background: var(--background-tertiary);
+        border-radius: $border-radius-full;
+        overflow: hidden;
+
+        .operation-bar {
+          height: 100%;
+          border-radius: $border-radius-full;
+          transition: width $duration-300 $ease-out;
+
+          &.excellent { background: $success-500; }
+          &.good { background: $success-400; }
+          &.fair { background: $warning-500; }
+          &.slow { background: $warning-600; }
+          &.poor { background: $error-500; }
+        }
+      }
+    }
+
+    .total-time {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: $spacing-4;
+      padding-top: $spacing-3;
+      border-top: 1px dashed var(--border-secondary);
+
+      .total-label {
+        font-size: $font-size-sm;
+        color: var(--text-secondary);
+      }
+
+      .total-value {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-bold;
+
+        &.excellent { color: $success-500; }
+        &.good { color: $success-400; }
+        &.fair { color: $warning-500; }
+        &.slow { color: $warning-600; }
+        &.poor { color: $error-500; }
+      }
+    }
+  }
+
+  // Fallback Section
+  .fallback-section {
+    padding: $spacing-3 $spacing-5;
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--border-secondary);
+
+    .fallback-indicator {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+      font-size: $font-size-sm;
+      color: var(--text-secondary);
+
+      .material-icons {
+        font-size: 1.125rem;
+      }
+
+      &.enabled {
+        color: $warning-600;
+      }
+    }
+  }
+
+  // Info/Error Banners
+  .info-banner,
+  .error-banner {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-3 $spacing-5;
+    font-size: $font-size-sm;
+
+    .material-icons {
+      font-size: 1.125rem;
+      flex-shrink: 0;
+    }
+  }
+
+  .info-banner {
+    background: rgba($info-500, 0.08);
+    border-top: 1px solid rgba($info-500, 0.2);
+    color: $info-600;
+  }
+
+  .error-banner {
+    background: rgba($error-500, 0.08);
+    border-top: 1px solid rgba($error-500, 0.2);
+    color: $error-600;
+  }
+
+  // Card Footer
+  .card-footer {
+    padding: $spacing-3 $spacing-5;
+    background: var(--background-secondary);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  // Loading State
+  .loading-state {
+    padding: $spacing-5;
+
+    .loading-shimmer {
+      height: 20px;
+      background: linear-gradient(90deg, var(--background-secondary) 25%, var(--background-tertiary) 50%, var(--background-secondary) 75%);
+      background-size: 200% 100%;
+      border-radius: $border-radius-base;
+      margin-bottom: $spacing-3;
+      animation: shimmer 1.5s infinite;
+
+      &.short {
+        width: 60%;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+

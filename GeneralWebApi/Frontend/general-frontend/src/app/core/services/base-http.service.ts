@@ -130,17 +130,21 @@ export class BaseHttpService {
     const extract = options?.extractData !== false; // Default to true
     const url = this.buildUrl(endpoint);
 
-    const request$: Observable<ApiResponse<T>> = this.http.get<ApiResponse<T>>(url, {
-      params: httpParams,
-    });
-
     if (extract) {
+      // When extracting, expect ApiResponse<T> format
+      const request$: Observable<ApiResponse<T>> = this.http.get<ApiResponse<T>>(url, {
+        params: httpParams,
+      });
       return request$.pipe(
         this.extractData<T>(),
         this.handleError('Failed to fetch data')
       ) as Observable<T>;
     }
 
+    // When not extracting, expect direct T format (not wrapped in ApiResponse)
+    const request$: Observable<T> = this.http.get<T>(url, {
+      params: httpParams,
+    });
     return request$.pipe(this.handleError('Failed to fetch data')) as Observable<T>;
   }
 
@@ -162,17 +166,21 @@ export class BaseHttpService {
     const extract = options?.extractData !== false; // Default to true
     const url = this.buildUrl(endpoint);
 
-    const request$: Observable<ApiResponse<T>> = this.http.post<ApiResponse<T>>(url, body, {
-      headers: options?.headers,
-    });
-
     if (extract) {
+      // When extracting, expect ApiResponse<T> format
+      const request$: Observable<ApiResponse<T>> = this.http.post<ApiResponse<T>>(url, body, {
+        headers: options?.headers,
+      });
       return request$.pipe(
         this.extractData<T>(),
         this.handleError('Failed to create resource')
       ) as Observable<T>;
     }
 
+    // When not extracting, expect direct T format (not wrapped in ApiResponse)
+    const request$: Observable<T> = this.http.post<T>(url, body, {
+      headers: options?.headers,
+    });
     return request$.pipe(this.handleError('Failed to create resource')) as Observable<T>;
   }
 

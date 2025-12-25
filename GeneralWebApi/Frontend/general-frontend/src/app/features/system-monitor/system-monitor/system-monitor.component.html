@@ -1,0 +1,98 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/system-monitor/system-monitor/system-monitor.component.html -->
+<div class="system-monitor-page">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <div class="title-icon">
+          <span class="material-icons">dashboard</span>
+        </div>
+        <div class="title-text">
+          <h1>System Monitor</h1>
+          <p>Real-time infrastructure health monitoring</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="auto-refresh-badge">
+          <span class="material-icons pulse">sync</span>
+          <span>Auto-refresh: 30s</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Grid -->
+  <main class="monitor-content">
+    <!-- Content Loading Overlay - Only covers content area -->
+    @if (isLoading && !cacheHealth && !databaseHealth && !systemHealth) {
+      <div class="loading-overlay">
+        <app-base-loading
+          [overlay]="true"
+          [centered]="true"
+          [message]="'Loading system health data...'"
+          [size]="'lg'"
+          [type]="'spinner'"
+        ></app-base-loading>
+      </div>
+    }
+
+    <!-- Content Error Overlay - Only covers content area -->
+    @if (error) {
+      <div class="error-overlay">
+        <app-base-error
+          [message]="'Connection Error'"
+          [details]="error"
+          [type]="'error'"
+          [size]="'lg'"
+          [showIcon]="true"
+          [showRetryButton]="true"
+          [retryButtonText]="'Try Again'"
+          [centered]="true"
+          (retry)="loadHealthStatus()"
+        ></app-base-error>
+      </div>
+    }
+
+    <!-- System Overview Card - Full Width -->
+    <section class="overview-section">
+      <app-system-overview-card
+        [systemHealth]="systemHealth"
+        [cacheHealth]="cacheHealth"
+        [databaseHealth]="databaseHealth"
+        [isLoading]="isLoading"
+        (refresh)="loadHealthStatus()"
+        (cleanup)="runCleanup()"
+      ></app-system-overview-card>
+    </section>
+
+    <!-- Health Details Grid -->
+    <section class="details-section">
+      <!-- Cache Health Card -->
+      <div class="health-card-wrapper">
+        <app-cache-health-card
+          [cacheHealth]="cacheHealth"
+          [isLoading]="isLoading"
+          (refresh)="loadHealthStatus()"
+          (recover)="recoverCache()"
+        ></app-cache-health-card>
+      </div>
+
+      <!-- Database Health Card -->
+      <div class="health-card-wrapper">
+        <app-database-health-card
+          [databaseHealth]="databaseHealth"
+          [isLoading]="isLoading"
+          (refresh)="loadHealthStatus()"
+        ></app-database-health-card>
+      </div>
+    </section>
+
+    <!-- Quick Info Footer -->
+    <section class="info-footer">
+      <div class="info-item">
+        <span class="material-icons">info</span>
+        <span>Health data is automatically refreshed every 30 seconds. Manual refresh available via the buttons above.</span>
+      </div>
+    </section>
+  </main>
+</div>

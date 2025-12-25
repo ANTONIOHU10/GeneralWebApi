@@ -1,0 +1,184 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/system-monitor/components/cache-health-card/cache-health-card.component.html -->
+<div class="cache-health-card">
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="header-left">
+      <div class="icon-wrapper cache">
+        <span class="material-icons">memory</span>
+      </div>
+      <div class="header-info">
+        <h3>Cache</h3>
+        <span class="subtitle">Redis Cache Monitor</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <app-base-badge
+        [text]="cacheHealth?.status || 'Unknown'"
+        [variant]="getStatusVariant()"
+        size="small"
+        shape="pill"
+      ></app-base-badge>
+      <button class="refresh-btn" (click)="onRefresh()" [disabled]="isLoading" title="Refresh">
+        <span class="material-icons" [class.spinning]="isLoading">refresh</span>
+      </button>
+    </div>
+  </div>
+
+  @if (cacheHealth) {
+    <!-- Availability Status -->
+    <div class="status-section">
+      <div class="status-indicator" [class.available]="cacheHealth.available" [class.unavailable]="!cacheHealth.available">
+        <div class="status-dot"></div>
+        <span class="status-text">{{ cacheHealth.available ? 'Available' : 'Unavailable' }}</span>
+      </div>
+      
+      @if (cacheHealth.testResult) {
+        <div class="test-result" [class.passed]="cacheHealth.testResult === 'Passed'" [class.failed]="cacheHealth.testResult !== 'Passed'">
+          <span class="material-icons">{{ cacheHealth.testResult === 'Passed' ? 'check_circle' : 'cancel' }}</span>
+          <span>Test {{ cacheHealth.testResult }}</span>
+        </div>
+      }
+    </div>
+
+    @if (cacheHealth.performance) {
+      <!-- Performance Score Ring -->
+      <div class="performance-section">
+        <div class="performance-ring-container">
+          <svg class="performance-ring" viewBox="0 0 100 100">
+            <circle class="ring-background" cx="50" cy="50" r="42" />
+            <circle 
+              class="ring-progress" 
+              [class]="getPerformanceClass()"
+              cx="50" 
+              cy="50" 
+              r="42"
+              [style.stroke-dasharray]="264"
+              [style.stroke-dashoffset]="264 - (264 * getPerformanceScore() / 100)"
+            />
+          </svg>
+          <div class="ring-content">
+            <span class="score-value">{{ getPerformanceScore() }}</span>
+            <span class="score-label">{{ getPerformanceLevel() }}</span>
+          </div>
+        </div>
+        <div class="performance-label">Performance Score</div>
+      </div>
+
+      <!-- Operation Metrics -->
+      <div class="operations-section">
+        <div class="section-title">
+          <span class="material-icons">speed</span>
+          Operation Latency
+        </div>
+        
+        <div class="operation-list">
+          <div class="operation-item">
+            <div class="operation-header">
+              <span class="operation-name">
+                <span class="material-icons">add_circle</span>
+                SET
+              </span>
+              <span class="operation-value" [class]="getOperationClass(cacheHealth.performance.setOperationMs)">
+                {{ cacheHealth.performance.setOperationMs }}ms
+              </span>
+            </div>
+            <div class="operation-bar-container">
+              <div class="operation-bar" 
+                   [class]="getOperationClass(cacheHealth.performance.setOperationMs)"
+                   [style.width.%]="getOperationBarWidth(cacheHealth.performance.setOperationMs)">
+              </div>
+            </div>
+          </div>
+
+          <div class="operation-item">
+            <div class="operation-header">
+              <span class="operation-name">
+                <span class="material-icons">download</span>
+                GET
+              </span>
+              <span class="operation-value" [class]="getOperationClass(cacheHealth.performance.getOperationMs)">
+                {{ cacheHealth.performance.getOperationMs }}ms
+              </span>
+            </div>
+            <div class="operation-bar-container">
+              <div class="operation-bar"
+                   [class]="getOperationClass(cacheHealth.performance.getOperationMs)"
+                   [style.width.%]="getOperationBarWidth(cacheHealth.performance.getOperationMs)">
+              </div>
+            </div>
+          </div>
+
+          <div class="operation-item">
+            <div class="operation-header">
+              <span class="operation-name">
+                <span class="material-icons">delete</span>
+                REMOVE
+              </span>
+              <span class="operation-value" [class]="getOperationClass(cacheHealth.performance.removeOperationMs)">
+                {{ cacheHealth.performance.removeOperationMs }}ms
+              </span>
+            </div>
+            <div class="operation-bar-container">
+              <div class="operation-bar"
+                   [class]="getOperationClass(cacheHealth.performance.removeOperationMs)"
+                   [style.width.%]="getOperationBarWidth(cacheHealth.performance.removeOperationMs)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="total-time">
+          <span class="total-label">Total Round Trip</span>
+          <span class="total-value" [class]="getPerformanceClass()">
+            {{ cacheHealth.performance.totalMs }}ms
+          </span>
+        </div>
+      </div>
+    }
+
+    <!-- Fallback Status -->
+    @if (cacheHealth.fallbackEnabled !== undefined) {
+      <div class="fallback-section">
+        <div class="fallback-indicator" [class.enabled]="cacheHealth.fallbackEnabled">
+          <span class="material-icons">{{ cacheHealth.fallbackEnabled ? 'backup' : 'cloud_off' }}</span>
+          <span>Fallback Mode: {{ cacheHealth.fallbackEnabled ? 'Enabled' : 'Disabled' }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Info/Error Messages -->
+    @if (cacheHealth.message) {
+      <div class="info-banner">
+        <span class="material-icons">info</span>
+        <span>{{ cacheHealth.message }}</span>
+      </div>
+    }
+
+    @if (cacheHealth.error) {
+      <div class="error-banner">
+        <span class="material-icons">error_outline</span>
+        <span>{{ cacheHealth.error }}</span>
+      </div>
+    }
+
+    <!-- Action Footer -->
+    <div class="card-footer">
+      <app-base-button
+        text="Recover Cache"
+        icon="healing"
+        variant="outline"
+        size="small"
+        [disabled]="isLoading || cacheHealth.available"
+        (buttonClick)="onRecover()"
+      ></app-base-button>
+    </div>
+  } @else {
+    <!-- Loading State -->
+    <div class="loading-state">
+      <div class="loading-shimmer"></div>
+      <div class="loading-shimmer short"></div>
+      <div class="loading-shimmer"></div>
+    </div>
+  }
+</div>
+

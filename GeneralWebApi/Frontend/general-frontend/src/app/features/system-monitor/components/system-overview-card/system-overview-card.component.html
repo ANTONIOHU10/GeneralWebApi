@@ -1,0 +1,89 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/system-monitor/components/system-overview-card/system-overview-card.component.html -->
+<div class="system-overview-card" [class]="getOverallStatus()">
+  <!-- Main Status Display -->
+  <div class="status-display">
+    <div class="status-icon-container">
+      <div class="status-icon" [class]="getOverallStatus()">
+        @switch (getOverallStatus()) {
+          @case ('healthy') {
+            <span class="material-icons">check_circle</span>
+          }
+          @case ('warning') {
+            <span class="material-icons">warning</span>
+          }
+          @case ('error') {
+            <span class="material-icons">error</span>
+          }
+          @default {
+            <span class="material-icons">help</span>
+          }
+        }
+      </div>
+      <div class="pulse-ring" [class]="getOverallStatus()"></div>
+    </div>
+    
+    <div class="status-info">
+      <h2 class="status-title">
+        @switch (getOverallStatus()) {
+          @case ('healthy') { All Systems Operational }
+          @case ('warning') { Degraded Performance }
+          @case ('error') { System Issues Detected }
+          @default { Checking Status... }
+        }
+      </h2>
+      <p class="status-subtitle">
+        {{ getHealthyCount() }} of {{ getTotalCount() }} services healthy
+      </p>
+    </div>
+  </div>
+
+  <!-- Services Status Grid -->
+  <div class="services-grid">
+    @for (service of getServices(); track service.name) {
+      <div class="service-item" [class]="service.status">
+        <div class="service-icon">
+          <span class="material-icons">{{ service.icon }}</span>
+        </div>
+        <div class="service-info">
+          <span class="service-name">{{ service.name }}</span>
+          <span class="service-status">{{ service.message || service.status }}</span>
+        </div>
+        <div class="service-indicator">
+          @switch (service.status) {
+            @case ('healthy') {
+              <span class="material-icons">check</span>
+            }
+            @case ('warning') {
+              <span class="material-icons">priority_high</span>
+            }
+            @case ('error') {
+              <span class="material-icons">close</span>
+            }
+            @default {
+              <span class="material-icons">more_horiz</span>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Footer Info -->
+  <div class="card-footer">
+    <div class="last-check">
+      <span class="material-icons">schedule</span>
+      <span>Last updated: {{ getTimeSinceLastCheck() }}</span>
+    </div>
+    <div class="footer-actions">
+      <button class="action-btn" (click)="onCleanup()" [disabled]="isLoading" title="Run Cleanup">
+        <span class="material-icons">cleaning_services</span>
+        Cleanup
+      </button>
+      <button class="action-btn primary" (click)="onRefresh()" [disabled]="isLoading" title="Refresh Status">
+        <span class="material-icons" [class.spinning]="isLoading">refresh</span>
+        Refresh
+      </button>
+    </div>
+  </div>
+</div>
+
