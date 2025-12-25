@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-list/position-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil, filter, take, map } from 'rxjs/operators';
@@ -46,7 +46,7 @@ import {
   templateUrl: './position-list.component.html',
   styleUrls: ['./position-list.component.scss'],
 })
-export class PositionListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class PositionListComponent implements OnInit, OnDestroy {
   private positionFacade = inject(PositionFacade);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
@@ -71,8 +71,6 @@ export class PositionListComponent implements OnInit, OnDestroy, AfterViewInit {
   viewMode = signal<'table' | 'card'>('table');
 
   // Table configuration
-  @ViewChild('isManagementTemplate', { static: false }) isManagementTemplate!: TemplateRef<unknown>;
-  
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
   tableConfig: TableConfig = {
@@ -107,13 +105,7 @@ export class PositionListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initializeTable();
   }
 
-  ngAfterViewInit(): void {
-    // Set template references for custom columns
-    const isManagementColumn = this.tableColumns.find(col => col.key === 'isManagement');
-    if (isManagementColumn && this.isManagementTemplate) {
-      isManagementColumn.template = this.isManagementTemplate;
-    }
-  }
+  // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
 
   /**
    * Initialize table columns and actions
@@ -166,6 +158,7 @@ export class PositionListComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '120px',
         align: 'center',
         type: 'custom',
+        templateKey: 'isManagement', // Matches ContentChild reference name
         sortable: false, // Backend doesn't support sorting by isManagement
       },
       {

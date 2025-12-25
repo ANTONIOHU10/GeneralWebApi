@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/department-list/department-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil, filter, take, map } from 'rxjs/operators';
@@ -47,7 +47,7 @@ import {
   templateUrl: './department-list.component.html',
   styleUrls: ['./department-list.component.scss'],
 })
-export class DepartmentListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DepartmentListComponent implements OnInit, OnDestroy {
   private departmentFacade = inject(DepartmentFacade);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
@@ -72,8 +72,6 @@ export class DepartmentListComponent implements OnInit, OnDestroy, AfterViewInit
   viewMode = signal<'table' | 'card'>('table');
 
   // Table configuration
-  @ViewChild('levelTemplate', { static: false }) levelTemplate!: TemplateRef<unknown>;
-  
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
   tableConfig: TableConfig = {
@@ -108,13 +106,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy, AfterViewInit
     this.initializeTable();
   }
 
-  ngAfterViewInit(): void {
-    // Set template references for custom columns
-    const levelColumn = this.tableColumns.find(col => col.key === 'level');
-    if (levelColumn && this.levelTemplate) {
-      levelColumn.template = this.levelTemplate;
-    }
-  }
+  // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
 
   /**
    * Initialize table columns and actions
@@ -159,6 +151,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy, AfterViewInit
         width: '80px',
         align: 'center',
         type: 'custom',
+        templateKey: 'level', // Matches ContentChild reference name
         sortable: true,
       },
       {

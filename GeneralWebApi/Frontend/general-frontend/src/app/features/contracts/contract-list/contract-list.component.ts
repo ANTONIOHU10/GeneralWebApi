@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-list/contract-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { takeUntil, filter, take, catchError, map } from 'rxjs/operators';
@@ -49,7 +49,7 @@ import { of } from 'rxjs';
   templateUrl: './contract-list.component.html',
   styleUrls: ['./contract-list.component.scss'],
 })
-export class ContractListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ContractListComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private contractService = inject(ContractService);
@@ -71,8 +71,6 @@ export class ContractListComponent implements OnInit, OnDestroy, AfterViewInit {
   viewMode = signal<'table' | 'card'>('table');
 
   // Table configuration
-  @ViewChild('statusTemplate', { static: false }) statusTemplate!: TemplateRef<unknown>;
-  
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
   tableConfig: TableConfig = {
@@ -107,13 +105,7 @@ export class ContractListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initializeTable();
   }
 
-  ngAfterViewInit(): void {
-    // Set template references for custom columns
-    const statusColumn = this.tableColumns.find(col => col.key === 'status');
-    if (statusColumn && this.statusTemplate) {
-      statusColumn.template = this.statusTemplate;
-    }
-  }
+  // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
 
   /**
    * Initialize table columns and actions
@@ -158,6 +150,7 @@ export class ContractListComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '120px',
         align: 'center',
         type: 'custom',
+        templateKey: 'status', // Matches ContentChild reference name
         sortable: true,
       },
       {

@@ -8,7 +8,8 @@ import {
   OnInit,
   OnChanges,
   ChangeDetectorRef,
-  AfterViewInit,
+  ContentChild,
+  AfterContentInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,7 +25,8 @@ export interface TableColumn {
   width?: string;
   align?: 'left' | 'center' | 'right';
   type?: 'text' | 'number' | 'date' | 'boolean' | 'custom';
-  template?: TemplateRef<unknown>;
+  templateKey?: string; // Key to match with ContentChild template reference
+  template?: TemplateRef<unknown>; // Deprecated: kept for backward compatibility
 }
 
 export interface TableAction {
@@ -72,7 +74,7 @@ export interface TableConfig {
   templateUrl: './base-table.component.html',
   styleUrls: ['./base-table.component.scss'],
 })
-export class BaseTableComponent implements OnInit, OnChanges, AfterViewInit {
+export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
   @Input() title = '';
   @Input() subtitle = '';
   @Input() data: unknown[] = [];
@@ -94,7 +96,20 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() pageSize = 10;
   @Input() customClass = '';
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  // Use ContentChild to get template references from parent component
+  // Template reference names should match the templateKey in TableColumn
+  @ContentChild('avatarTemplate') avatarTemplate?: TemplateRef<unknown>;
+  @ContentChild('statusTemplate') statusTemplate?: TemplateRef<unknown>;
+  @ContentChild('levelTemplate') levelTemplate?: TemplateRef<unknown>;
+  @ContentChild('isManagementTemplate') isManagementTemplate?: TemplateRef<unknown>;
+  
+  // Generic template registry for dynamic template lookup
+  private templateRegistry = new Map<string, TemplateRef<unknown>>();
+
+  constructor(private cdr: ChangeDetectorRef) {
+    // Initialize template registry in constructor
+    // Templates will be registered in ngAfterContentInit
+  }
 
   @Output() rowClick = new EventEmitter<unknown>();
   @Output() sortChange = new EventEmitter<{
@@ -218,14 +233,23 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges(): void {
     this.updateData();
-    // Mark for check to handle template reference changes
-    this.cdr.markForCheck();
   }
 
-  ngAfterViewInit(): void {
-    // Ensure change detection runs after view initialization
-    // This handles cases where template references are set in AfterViewInit
-    this.cdr.detectChanges();
+  ngAfterContentInit(): void {
+    // Register all ContentChild templates in the registry
+    // This allows dynamic lookup by templateKey
+    if (this.avatarTemplate) {
+      this.templateRegistry.set('avatar', this.avatarTemplate);
+    }
+    if (this.statusTemplate) {
+      this.templateRegistry.set('status', this.statusTemplate);
+    }
+    if (this.levelTemplate) {
+      this.templateRegistry.set('level', this.levelTemplate);
+    }
+    if (this.isManagementTemplate) {
+      this.templateRegistry.set('isManagement', this.isManagementTemplate);
+    }
   }
 
   onSearchChange(): void {
@@ -325,6 +349,30 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterViewInit {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   trackByFn(index: number, _item: unknown): number {
     return index;
+  }
+
+  // Track by function for columns to help Angular track template changes
+  trackByColumn(index: number, column: TableColumn): string {
+    return column.key || index.toString();
+  }
+
+  // Get template for a column using ContentChild or templateKey
+  // This method provides a stable reference during change detection
+  getColumnTemplate(column: TableColumn): TemplateRef<unknown> | null {
+    // First, try to get template using templateKey from ContentChild registry
+    if (column.templateKey) {
+      const template = this.templateRegistry.get(column.templateKey);
+      if (template) {
+        return template;
+      }
+    }
+    
+    // Fallback to legacy template property for backward compatibility
+    if (column.template) {
+      return column.template;
+    }
+    
+    return null;
   }
 
   onRowClick(item: unknown): void {

@@ -1,5 +1,5 @@
 // src/app/features/employees/employee-list/employee-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, from, Observable } from 'rxjs';
 import { takeUntil, filter, take, switchMap, concatMap, delay, map } from 'rxjs/operators';
@@ -54,7 +54,7 @@ import {
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
 })
-export class EmployeeListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class EmployeeListComponent implements OnInit, OnDestroy {
   private employeeFacade = inject(EmployeeFacade);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
@@ -80,9 +80,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy, AfterViewInit {
   viewMode = signal<'table' | 'card'>('table');
 
   // Table configuration
-  @ViewChild('avatarTemplate', { static: false }) avatarTemplate!: TemplateRef<unknown>;
-  @ViewChild('statusTemplate', { static: false }) statusTemplate!: TemplateRef<unknown>;
-  
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
   tableConfig: TableConfig = {
@@ -125,24 +122,13 @@ export class EmployeeListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initializeTable();
   }
 
-  ngAfterViewInit(): void {
-    // Set template references for custom columns
-    const avatarColumn = this.tableColumns.find(col => col.key === 'avatar');
-    if (avatarColumn && this.avatarTemplate) {
-      avatarColumn.template = this.avatarTemplate;
-    }
-    
-    const statusColumn = this.tableColumns.find(col => col.key === 'status');
-    if (statusColumn && this.statusTemplate) {
-      statusColumn.template = this.statusTemplate;
-    }
-  }
+  // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
 
   /**
    * Initialize table columns and actions
    */
   private initializeTable(): void {
-    // Configure table columns (templates will be set in ngAfterViewInit)
+    // Configure table columns with templateKey for ContentChild lookup
     this.tableColumns = [
       {
         key: 'avatar',
@@ -150,6 +136,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '60px',
         align: 'center',
         type: 'custom',
+        templateKey: 'avatar', // Matches ContentChild reference name
         sortable: false,
       },
       {
@@ -182,6 +169,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '120px',
         align: 'center',
         type: 'custom',
+        templateKey: 'status', // Matches ContentChild reference name
         sortable: true, // Will be mapped to 'employmentsstatus' in onTableSortChange
       },
       {

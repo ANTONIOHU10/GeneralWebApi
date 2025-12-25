@@ -84,17 +84,17 @@
         >
           <!-- Data Cells -->
           <td
-            *ngFor="let column of columns"
+            *ngFor="let column of columns; trackBy: trackByColumn"
             [class]="getCellClass(column)"
             [style.text-align]="column.align || 'left'"
           >
             <ng-container [ngSwitch]="column.type">
               <!-- Custom Template -->
               <ng-container *ngSwitchCase="'custom'">
-                <ng-container *ngIf="column.template">
+                <ng-container *ngIf="getColumnTemplate(column) as template">
                   <ng-container
                     *ngTemplateOutlet="
-                      column.template;
+                      template;
                       context: { $implicit: item, column: column }
                     "
                   ></ng-container>
