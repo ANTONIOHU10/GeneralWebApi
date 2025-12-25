@@ -1,10 +1,11 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { TokenService } from '@core/services/token.service';
 import { NotificationService } from '@core/services/notification.service';
+import { Notification } from 'app/contracts/notifications/notification.model';
 import { catchError, of, interval, Subject } from 'rxjs';
 import { takeUntil, startWith, switchMap } from 'rxjs/operators';
 
@@ -30,9 +31,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
   private notificationService = inject(NotificationService);
+  private router = inject(Router);
+  private elementRef = inject(ElementRef);
   private destroy$ = new Subject<void>();
 
   notificationCount = 0;
+  isNotificationDropdownOpen = false;
+  recentNotifications: Notification[] = [];
+  isLoadingNotifications = false;
   userProfile = {
     name: 'Guest',
     role: 'User',
@@ -53,10 +59,71 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle notification button click
+   * Handle notification button click - toggle dropdown
    */
-  onNotificationClick(): void {
-    this.notificationClick.emit();
+  onNotificationClick(event: Event): void {
+    event.stopPropagation();
+    this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
+    
+    if (this.isNotificationDropdownOpen) {
+      this.loadRecentNotifications();
+    }
+  }
+
+  /**
+   * Close notification dropdown when clicking outside
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.isNotificationDropdownOpen && !this.elementRef.nativeElement.contains(event.target)) {
+      this.isNotificationDropdownOpen = false;
+    }
+  }
+
+  /**
+   * Load recent notifications (last 5 unread or recent)
+   */
+  private loadRecentNotifications(): void {
+    if (this.isLoadingNotifications) return;
+    
+    this.isLoadingNotifications = true;
+    this.notificationService.getNotifications({
+      pageNumber: 1,
+      pageSize: 5,
+      includeExpired: false,
+    }).pipe(
+      takeUntil(this.destroy$),
+      catchError((error) => {
+        console.error('Failed to load recent notifications:', error);
+        this.isLoadingNotifications = false;
+        return of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 5 });
+      })
+    ).subscribe({
+      next: (response) => {
+        this.recentNotifications = response.items.map(item => 
+          this.notificationService.transformToNotification(item)
+        );
+        this.isLoadingNotifications = false;
+      }
+    });
+  }
+
+  /**
+   * Navigate to full notification center page
+   */
+  onViewAllNotifications(): void {
+    this.isNotificationDropdownOpen = false;
+    this.router.navigate(['/private/notifications']);
+  }
+
+  /**
+   * Handle notification item click
+   */
+  onNotificationItemClick(notification: Notification): void {
+    this.isNotificationDropdownOpen = false;
+    if (notification.actionUrl) {
+      this.router.navigate([notification.actionUrl]);
+    }
   }
 
   /**
@@ -104,6 +171,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (count) => {
         this.notificationCount = count;
+        // Reload recent notifications if dropdown is open
+        if (this.isNotificationDropdownOpen) {
+          this.loadRecentNotifications();
+        }
       }
     });
   }
@@ -186,5 +257,42 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!role) return 'User';
     // Convert "Admin" -> "Administrator", "User" -> "User", etc.
     return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  }
+
+  /**
+   * Get notification icon based on type
+   */
+  getNotificationIcon(type: string): string {
+    const iconMap: Record<string, string> = {
+      approval: 'check_circle',
+      task: 'assignment',
+      contract: 'description',
+      system: 'settings',
+      audit: 'history',
+      employee: 'people',
+    };
+    return iconMap[type] || 'notifications';
+  }
+
+  /**
+   * Get time ago string
+   */
+  getTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+      return 'Just now';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes}m ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours}h ago`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days}d ago`;
+    }
   }
 }
