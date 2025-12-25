@@ -59,11 +59,6 @@ export class SidebarComponent implements OnInit {
           route: '/private/departments',
         },
         { label: 'Positions', icon: 'work', route: '/private/positions' },
-        {
-          label: 'Onboarding',
-          icon: 'person_add',
-          route: '/private/onboarding',
-        },
       ],
       expandable: true,
       expanded: false,
@@ -90,29 +85,6 @@ export class SidebarComponent implements OnInit {
           label: 'Expiry Reminders',
           icon: 'schedule',
           route: '/private/contract-reminders',
-        },
-      ],
-      expandable: true,
-      expanded: false,
-    },
-    {
-      title: 'Document Center',
-      items: [
-        {
-          label: 'Identity Documents',
-          icon: 'badge',
-          route: '/private/identity-documents',
-        },
-        { label: 'Education', icon: 'school', route: '/private/education' },
-        {
-          label: 'Certifications',
-          icon: 'emoji_events',
-          route: '/private/certifications',
-        },
-        {
-          label: 'Company Documents',
-          icon: 'folder',
-          route: '/private/company-documents',
         },
       ],
       expandable: true,
