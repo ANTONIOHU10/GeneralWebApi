@@ -1,11 +1,12 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/breadcrumb/breadcrumb.component.scss
-@use '../../../../styles/components/layout' as layout;
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
 
-// Breadcrumb Component Styles
+// Modern Breadcrumb Component Styles
 .breadcrumb-nav {
-  padding: 1rem 2rem;
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color);
+  padding: $spacing-4 $spacing-8;
+  background: transparent;
+  border-bottom: none;
 
   .breadcrumb-list {
     display: flex;
@@ -13,98 +14,108 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 0.5rem;
+    gap: $spacing-1;
+    flex-wrap: wrap;
 
     .breadcrumb-item {
       display: flex;
       align-items: center;
-      font-size: 0.875rem;
+      font-size: $font-size-sm;
 
       .breadcrumb-link {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        border-radius: 4px;
+        gap: $spacing-2;
+        padding: $spacing-2 $spacing-3;
+        border-radius: $border-radius-lg;
         color: var(--text-secondary);
         text-decoration: none;
-        transition: all 0.2s ease;
+        transition: all $duration-200 $ease-out;
+        font-weight: $font-weight-medium;
 
         &:hover {
-          background-color: var(--bg-hover);
-          color: var(--primary-color);
+          background: var(--background-tertiary);
+          color: $primary-500;
         }
 
         .breadcrumb-icon {
-          font-size: 1rem;
+          font-size: 1.125rem;
           opacity: 0.8;
         }
 
         .breadcrumb-text {
-          font-weight: 500;
+          font-weight: $font-weight-medium;
         }
       }
 
       .breadcrumb-text {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        color: var(--text-secondary);
+        gap: $spacing-2;
+        padding: $spacing-2 $spacing-3;
+        color: var(--text-tertiary);
+        font-weight: $font-weight-medium;
 
         .breadcrumb-icon {
-          font-size: 1rem;
-          opacity: 0.8;
+          font-size: 1.125rem;
+          opacity: 0.7;
         }
       }
 
       .breadcrumb-current {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        color: var(--text-primary);
-        font-weight: 600;
-        background-color: var(--primary-color-light);
-        border-radius: 4px;
+        gap: $spacing-2;
+        padding: $spacing-2 $spacing-3;
+        color: $primary-600;
+        font-weight: $font-weight-semibold;
+        background: linear-gradient(135deg, rgba($primary-500, 0.1) 0%, rgba($primary-500, 0.05) 100%);
+        border-radius: $border-radius-lg;
 
         .breadcrumb-icon {
-          font-size: 0.9rem;
-          color: var(--primary-color);
+          font-size: 1.125rem;
+          color: $primary-500;
         }
 
         .breadcrumb-text {
-          color: var(--primary-color);
+          color: $primary-600;
         }
       }
 
       .breadcrumb-separator {
         color: var(--text-tertiary);
-        font-size: 1rem;
-        margin: 0 0.25rem;
+        font-size: 1.125rem;
+        margin: 0 $spacing-1;
         user-select: none;
+        opacity: 0.5;
       }
     }
   }
 }
 
 // Mobile responsive
-@media (max-width: 768px) {
+@include mobile-only {
   .breadcrumb-nav {
-    padding: 0.75rem 1rem;
+    padding: $spacing-3 $spacing-4;
 
     .breadcrumb-list {
       .breadcrumb-item {
-        font-size: 0.8rem;
+        font-size: $font-size-xs;
 
         .breadcrumb-link,
         .breadcrumb-text,
         .breadcrumb-current {
-          padding: 0.375rem 0.5rem;
+          padding: $spacing-1 $spacing-2;
+          gap: $spacing-1;
         }
 
         .breadcrumb-separator {
-          margin: 0 0.125rem;
+          margin: 0 2px;
+          font-size: 1rem;
+        }
+
+        .breadcrumb-icon {
+          font-size: 1rem !important;
         }
       }
     }

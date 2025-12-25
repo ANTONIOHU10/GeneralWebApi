@@ -1,35 +1,51 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/footer/footer.component.scss
-@use '../../../../styles/components/layout' as layout;
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
 
-// Footer Component Styles
+// Modern Footer Component Styles
 .app-footer {
-  background-color: var(--bg-secondary);
-  border-top: 1px solid var(--border-color);
-  padding: 1rem 2rem;
+  background: var(--background-primary);
+  border-top: 1px solid var(--border-secondary);
+  padding: $spacing-4 $spacing-8;
   margin-top: auto;
+  transition: all $duration-300 $ease-out;
 
   .footer-content {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    color: var(--text-tertiary);
 
     .footer-left,
     .footer-right {
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+    }
+
+    .footer-left {
+      font-weight: $font-weight-medium;
+    }
+
+    .footer-right {
+      font-size: $font-size-xs;
+      opacity: 0.8;
     }
   }
 
   // Public layout footer style
   &.public-footer {
     text-align: center;
-    padding: 2rem;
+    padding: $spacing-6 $spacing-4;
 
     .footer-content {
       justify-content: center;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: $spacing-2;
 
       .footer-right {
         display: none;
@@ -39,21 +55,21 @@
 }
 
 // Mobile responsive
-@media (max-width: 768px) {
+@include mobile-only {
   .app-footer {
-    padding: 1rem;
+    padding: $spacing-4;
 
     .footer-content {
       flex-direction: column;
-      gap: 0.5rem;
+      gap: $spacing-2;
       text-align: center;
     }
 
     &.public-footer {
-      padding: 1.5rem 1rem;
+      padding: $spacing-5 $spacing-4;
 
       .footer-content p {
-        font-size: 0.8rem;
+        font-size: $font-size-xs;
       }
     }
   }

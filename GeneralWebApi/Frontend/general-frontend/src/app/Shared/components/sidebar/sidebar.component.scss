@@ -1,52 +1,96 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/sidebar/sidebar.component.scss
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
-@use '../../../../styles/components/layout' as layout;
 
-// Sidebar Component Styles
+// Modern Sidebar Component Styles
 .app-sidebar {
-  width: 240px;
-  background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border-primary);
+  width: 280px;
+  background: var(--background-primary);
+  border-right: 1px solid var(--border-secondary);
   display: flex;
   flex-direction: column;
-  @include sidebar-transition;
-  overflow-y: auto;
+  transition: all $duration-300 cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+  
+  // Subtle gradient overlay for depth
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(180deg, rgba($primary-500, 0.02) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
   .sidebar-content {
-    padding: $spacing-6 0;
+    padding: $spacing-4 0;
     flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 1;
 
-    // Search Section
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-secondary);
+      border-radius: 3px;
+      
+      &:hover {
+        background: var(--border-primary);
+      }
+    }
+
+    // Search Section - Enhanced
     .sidebar-search {
-      padding: 0 $spacing-6 $spacing-6;
-      border-bottom: 1px solid var(--border-primary);
-      margin-bottom: $spacing-6;
+      padding: $spacing-3 $spacing-4;
+      margin-bottom: $spacing-2;
 
       .search-input-container {
         position: relative;
-        @include flex-center;
-        justify-content: flex-start;
+        display: flex;
+        align-items: center;
 
         .search-icon {
           position: absolute;
           left: $spacing-3;
           color: var(--text-tertiary);
-          font-size: $font-size-xl;
+          font-size: 1.25rem;
           z-index: 1;
+          transition: color $duration-200 $ease-out;
         }
 
         .search-input {
-          @include input-base;
-          padding: $spacing-3 $spacing-3 $spacing-3 2.5rem;
-          border-radius: $border-radius-md;
-          background-color: var(--bg-surface);
+          width: 100%;
+          padding: $spacing-3 $spacing-3 $spacing-3 $spacing-10;
+          border: 1px solid var(--border-secondary);
+          border-radius: $border-radius-xl;
+          background: var(--background-secondary);
           font-size: $font-size-sm;
+          color: var(--text-primary);
+          transition: all $duration-200 $ease-out;
 
           &:focus {
             outline: none;
-            border-color: var(--color-primary-500);
-            box-shadow: 0 0 0 2px var(--color-primary-100);
+            border-color: $primary-500;
+            background: var(--background-primary);
+            box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+
+            & + .search-icon,
+            & ~ .search-icon {
+              color: $primary-500;
+            }
           }
 
           &::placeholder {
@@ -56,48 +100,54 @@
       }
     }
 
+    // Navigation Section - Enhanced
     .nav-section {
-      margin-bottom: 2rem;
+      margin-bottom: $spacing-2;
+      padding: 0 $spacing-3;
 
       .nav-title {
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-secondary);
-        margin-bottom: 0.75rem;
-        padding: 0 1.5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: $spacing-3 $spacing-3;
+        margin-bottom: $spacing-1;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-bold;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-tertiary);
         cursor: default;
+        border-radius: $border-radius-lg;
+        transition: all $duration-200 $ease-out;
+        user-select: none;
+
+        .nav-title-text {
+          flex: 1;
+        }
 
         &.expandable {
           cursor: pointer;
-          padding: 0.5rem 1.5rem;
-          margin-bottom: 0.5rem;
-          border-radius: 6px;
-          transition: all 0.2s ease;
-          background-color: transparent;
-
+          
           &:hover {
-            background-color: var(--bg-hover);
-            color: var(--text-primary);
+            background: var(--background-secondary);
+            color: var(--text-secondary);
           }
 
           &.expanded {
-            background-color: var(--primary-color-light);
-            color: var(--primary-color);
-          }
+            color: $primary-600;
+            background: rgba($primary-500, 0.08);
 
-          .nav-title-text {
-            flex: 1;
+            .nav-arrow {
+              color: $primary-500;
+              transform: rotate(0deg);
+            }
           }
 
           .nav-arrow {
-            font-size: 0.7rem;
-            transition: transform 0.2s ease;
+            font-size: 0.625rem;
+            transition: transform $duration-200 $ease-out;
             color: var(--text-tertiary);
+            transform: rotate(-90deg);
           }
         }
       }
@@ -107,11 +157,11 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
-        transition: all 0.3s ease;
+        transition: all $duration-300 $ease-out;
         max-height: 0;
         opacity: 0;
 
-        // 非展开菜单始终显示
+        // Non-expandable menus always visible
         &:not([class*='expanded']) {
           max-height: 1000px;
           opacity: 1;
@@ -123,41 +173,87 @@
         }
 
         .nav-item {
-          margin: 0;
+          margin: $spacing-1 0;
 
           .nav-link {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            color: var(--text-primary);
+            gap: $spacing-3;
+            padding: $spacing-3 $spacing-4;
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: all 0.2s ease;
-            border-left: 3px solid transparent;
+            border-radius: $border-radius-lg;
+            transition: all $duration-200 $ease-out;
+            position: relative;
+            overflow: hidden;
+
+            // Hover effect background
+            &::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: transparent;
+              transition: background $duration-200 $ease-out;
+              z-index: -1;
+            }
 
             &:hover {
-              background-color: var(--bg-hover);
-              color: var(--primary-color);
+              color: var(--text-primary);
+              
+              &::before {
+                background: var(--background-secondary);
+              }
+
+              .nav-icon {
+                color: $primary-500;
+                transform: scale(1.1);
+              }
             }
 
             &.active {
-              background-color: var(--primary-color-light);
-              color: var(--primary-color);
-              border-left-color: var(--primary-color);
-              font-weight: 500;
+              color: $primary-600;
+              font-weight: $font-weight-semibold;
+              background: linear-gradient(135deg, rgba($primary-500, 0.12) 0%, rgba($primary-500, 0.06) 100%);
+
+              // Active indicator
+              &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 3px;
+                height: 24px;
+                background: linear-gradient(180deg, $primary-400 0%, $primary-600 100%);
+                border-radius: 0 2px 2px 0;
+              }
+
+              .nav-icon {
+                color: $primary-500;
+              }
             }
 
             .nav-icon {
-              font-size: 1.2rem;
-              width: 24px;
-              text-align: center;
+              font-size: 1.375rem;
+              width: 28px;
+              height: 28px;
               display: flex;
               align-items: center;
               justify-content: center;
+              color: var(--text-tertiary);
+              transition: all $duration-200 $ease-out;
+              flex-shrink: 0;
             }
 
             .nav-text {
-              font-size: 0.9rem;
+              font-size: $font-size-sm;
+              font-weight: $font-weight-medium;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
           }
         }
@@ -165,7 +261,7 @@
     }
   }
 
-  // Desktop: always visible, ignore isOpen state
+  // Desktop: always visible
   @media (min-width: 769px) {
     position: relative;
     transform: translateX(0) !important;
@@ -178,10 +274,12 @@
     left: 0;
     height: 100vh;
     z-index: 200;
-    display: none; // 默认隐藏
+    transform: translateX(-100%);
+    box-shadow: none;
 
     &.mobile-open {
-      display: flex; // 显示时恢复 flex 布局
+      transform: translateX(0);
+      box-shadow: 8px 0 24px rgba(0, 0, 0, 0.15);
     }
   }
 }
@@ -193,11 +291,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   z-index: 150;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: all $duration-300 $ease-out;
 
   &.active {
     opacity: 1;

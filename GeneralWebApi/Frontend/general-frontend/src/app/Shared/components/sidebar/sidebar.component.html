@@ -4,14 +4,14 @@
     <!-- Search Section -->
     <div class="sidebar-search">
       <div class="search-input-container">
-        <span class="search-icon material-icons">search</span>
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search menu..."
           class="search-input"
           [(ngModel)]="searchQuery"
           (input)="onSearchChange()"
         />
+        <span class="search-icon material-icons">search</span>
       </div>
     </div>
 
@@ -34,8 +34,8 @@
         "
       >
         <span class="nav-title-text">{{ section.title }}</span>
-        <span class="nav-arrow" *ngIf="section.expandable">
-          {{ section.expanded ? '▼' : '▶' }}
+        <span class="nav-arrow material-icons" *ngIf="section.expandable">
+          expand_more
         </span>
       </div>
       <ul
