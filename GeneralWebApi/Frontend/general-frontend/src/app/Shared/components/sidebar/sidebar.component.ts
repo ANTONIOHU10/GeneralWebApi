@@ -113,16 +113,6 @@ export class SidebarComponent implements OnInit {
           icon: 'monitor',
           route: '/private/system-monitor',
         },
-        {
-          label: 'Security Audit',
-          icon: 'shield',
-          route: '/private/security-audit',
-        },
-        {
-          label: 'Backup & Recovery',
-          icon: 'backup',
-          route: '/private/backup',
-        },
       ],
       expandable: true,
       expanded: false,
