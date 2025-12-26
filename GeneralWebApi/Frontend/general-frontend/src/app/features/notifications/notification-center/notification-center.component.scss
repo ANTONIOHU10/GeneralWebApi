@@ -69,15 +69,39 @@
   }
 }
 
-// Filters Section
+// Filters Section - Custom card without position:relative to avoid z-index issues
 .filters-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-xl;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.12);
   margin-bottom: $spacing-5;
+  overflow: visible;
 
-  .filters-section {
+  .filters-header {
     display: flex;
-    flex-direction: column;
-    gap: $spacing-4;
-    padding-top: $spacing-2;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-5 $spacing-6;
+    border-bottom: 1px solid var(--border-secondary);
+    background: var(--bg-surface);
+    border-radius: $border-radius-xl $border-radius-xl 0 0;
+
+    .material-icons {
+      font-size: 1.375rem;
+      color: $primary-500;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: var(--text-primary);
+    }
+  }
+
+  .filters-content {
+    padding: $spacing-6;
   }
 
   .filter-groups {

@@ -72,14 +72,12 @@
   }
 
   <!-- Filters Section -->
-  <app-base-card 
-    title="Filters" 
-    icon="filter_list" 
-    variant="elevated" 
-    customClass="filters-card"
-  >
-    <div class="filters-section">
-      <!-- Filters -->
+  <div class="filters-card">
+    <div class="filters-header">
+      <span class="material-icons">filter_list</span>
+      <h3>Filters</h3>
+    </div>
+    <div class="filters-content">
       <div class="filter-groups">
         <div class="filter-group">
           <label for="type-filter">Type</label>
@@ -125,7 +123,7 @@
         }
       </div>
     </div>
-  </app-base-card>
+  </div>
 
   <!-- Notifications List -->
   <div class="notifications-section">
