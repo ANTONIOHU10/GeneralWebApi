@@ -1,13 +1,23 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/add-role/add-role.component.html -->
-<app-base-form
-  [config]="formConfig"
-  [formData]="formData"
-  [loading]="loading()"
-  [fieldLoading]="fieldLoading"
-  submitText="Add Role"
-  cancelText="Cancel"
-  (formSubmit)="onFormSubmit($event)"
-  (formCancel)="onFormCancel()"
-  (fieldDropdownOpen)="onFieldDropdownOpen($event)"
-></app-base-form>
+<div class="page-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">admin_panel_settings</span>
+      {{ 'roles.add.title' | translate }}
+    </h2>
+    <p>{{ 'roles.add.subtitle' | translate }}</p>
+  </div>
+
+  <div class="page-content">
+    <app-base-form
+      [config]="formConfig"
+      [formData]="formData"
+      [loading]="loading()"
+      [fieldLoading]="fieldLoading"
+      (formSubmit)="onFormSubmit($event)"
+      (formCancel)="onFormCancel()"
+      (fieldDropdownOpen)="onFieldDropdownOpen($event)"
+    ></app-base-form>
+  </div>
+</div>
 

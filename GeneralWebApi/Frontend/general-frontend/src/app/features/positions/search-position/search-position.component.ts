@@ -51,7 +51,6 @@ export class SearchPositionComponent implements OnInit, OnDestroy {
 
   // State
   allPositions = signal<Position[]>([]); // All positions from API (already filtered by backend)
-  loading = signal(false);
 
   // Loading states for individual fields (for dropdown options loading)
   fieldLoading = signal<Record<string, boolean>>({
@@ -129,22 +128,22 @@ export class SearchPositionComponent implements OnInit, OnDestroy {
 
   /**
    * Initialize form config with translations
+   * Note: sections is empty because the form is wrapped in a card that already has title
    */
   private initializeSearchFormConfig(): void {
-    const sectionTitle = this.translationService.translate('positions.search.cardTitle');
     this.searchFormConfig = {
-      sections: [{ title: sectionTitle, description: this.translationService.translate('positions.search.subtitle') || 'Filter positions by various criteria', order: 0, collapsible: false, collapsed: false }],
+      sections: [], // No sections - card already has title
       layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
       fields: [
-        { key: 'title', type: 'input', label: this.translationService.translate('positions.search.fields.title'), placeholder: this.translationService.translate('positions.search.fields.titlePlaceholder'), section: sectionTitle, order: 0, colSpan: 1 },
-        { key: 'code', type: 'input', label: this.translationService.translate('positions.search.fields.code'), placeholder: this.translationService.translate('positions.search.fields.codePlaceholder'), section: sectionTitle, order: 1, colSpan: 1 },
-        { key: 'description', type: 'input', label: this.translationService.translate('positions.search.fields.description'), placeholder: this.translationService.translate('positions.search.fields.descriptionPlaceholder'), section: sectionTitle, order: 2, colSpan: 1 },
-        { key: 'departmentId', type: 'select', label: this.translationService.translate('positions.search.fields.department'), placeholder: this.translationService.translate('positions.search.fields.departmentPlaceholder'), section: sectionTitle, order: 3, colSpan: 1, searchable: true, options: [{ value: null, label: this.translationService.translate('positions.search.fields.allDepartments') }] as SelectOption[] },
-        { key: 'level', type: 'select', label: this.translationService.translate('positions.search.fields.level'), placeholder: this.translationService.translate('positions.search.fields.levelPlaceholder'), section: sectionTitle, order: 4, colSpan: 1, options: [
+        { key: 'title', type: 'input', label: this.translationService.translate('positions.search.fields.title'), placeholder: this.translationService.translate('positions.search.fields.titlePlaceholder'), order: 0, colSpan: 1 },
+        { key: 'code', type: 'input', label: this.translationService.translate('positions.search.fields.code'), placeholder: this.translationService.translate('positions.search.fields.codePlaceholder'), order: 1, colSpan: 1 },
+        { key: 'description', type: 'input', label: this.translationService.translate('positions.search.fields.description'), placeholder: this.translationService.translate('positions.search.fields.descriptionPlaceholder'), order: 2, colSpan: 1 },
+        { key: 'departmentId', type: 'select', label: this.translationService.translate('positions.search.fields.department'), placeholder: this.translationService.translate('positions.search.fields.departmentPlaceholder'), order: 3, colSpan: 1, searchable: true, options: [{ value: null, label: this.translationService.translate('positions.search.fields.allDepartments') }] as SelectOption[] },
+        { key: 'level', type: 'select', label: this.translationService.translate('positions.search.fields.level'), placeholder: this.translationService.translate('positions.search.fields.levelPlaceholder'), order: 4, colSpan: 1, options: [
           { value: null, label: this.translationService.translate('positions.search.fields.allLevels') },
           { value: 1, label: 'Level 1' }, { value: 2, label: 'Level 2' }, { value: 3, label: 'Level 3' }, { value: 4, label: 'Level 4' }
         ] as SelectOption[] },
-        { key: 'isManagement', type: 'select', label: this.translationService.translate('positions.search.fields.isManagement'), placeholder: this.translationService.translate('positions.search.fields.isManagementPlaceholder'), section: sectionTitle, order: 5, colSpan: 1, options: [
+        { key: 'isManagement', type: 'select', label: this.translationService.translate('positions.search.fields.isManagement'), placeholder: this.translationService.translate('positions.search.fields.isManagementPlaceholder'), order: 5, colSpan: 1, options: [
           { value: null, label: this.translationService.translate('positions.search.fields.allPositions') },
           { value: true, label: this.translationService.translate('positions.search.fields.management') },
           { value: false, label: this.translationService.translate('positions.search.fields.nonManagement') }
@@ -256,7 +255,6 @@ export class SearchPositionComponent implements OnInit, OnDestroy {
    * Search positions with backend API
    */
   private searchPositionsWithBackend(filters: Record<string, unknown>): void {
-    this.loading.set(true);
     this.loading$.next(true);
 
     // Convert filters to search parameters
@@ -281,7 +279,6 @@ export class SearchPositionComponent implements OnInit, OnDestroy {
       first(),
       catchError(err => {
         const errorMessage = err.message || 'Failed to search positions';
-        this.loading.set(false);
         this.loading$.next(false);
         this.allPositions.set([]);
         this.positionsData$.next([]);
@@ -305,7 +302,6 @@ export class SearchPositionComponent implements OnInit, OnDestroy {
         // Update positionsData$ Observable for BaseAsyncStateComponent
         this.positionsData$.next(positions);
         // Positions are already filtered by backend
-        this.loading.set(false);
         this.loading$.next(false);
 
         // Show success notification if positions found

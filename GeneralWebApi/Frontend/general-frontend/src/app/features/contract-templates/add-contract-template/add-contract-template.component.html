@@ -1,11 +1,21 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-templates/add-contract-template/add-contract-template.component.html -->
-<app-base-form
-  [config]="formConfig"
-  [formData]="formData"
-  [loading]="loading()"
-  submitText="Add Template"
-  cancelText="Cancel"
-  (formSubmit)="onFormSubmit($event)"
-  (formCancel)="onFormCancel()"
-></app-base-form>
+<div class="page-container">
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">description</span>
+      {{ 'contractTemplates.add.title' | translate }}
+    </h2>
+    <p>{{ 'contractTemplates.add.subtitle' | translate }}</p>
+  </div>
+
+  <div class="page-content">
+    <app-base-form
+      [config]="formConfig"
+      [formData]="formData"
+      [loading]="loading()"
+      (formSubmit)="onFormSubmit($event)"
+      (formCancel)="onFormCancel()"
+    ></app-base-form>
+  </div>
+</div>
 

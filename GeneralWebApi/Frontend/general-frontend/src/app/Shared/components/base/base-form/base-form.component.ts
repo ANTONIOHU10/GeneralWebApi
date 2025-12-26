@@ -37,6 +37,7 @@ import {
 } from '../index';
 // Direct import to avoid circular dependency issues
 import { BaseLoadingComponent } from '../base-loading/base-loading.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 /**
  * Form field type definitions
@@ -166,6 +167,7 @@ export interface FormConfig {
     BaseButtonComponent,
     BaseSwitchComponent,
     BaseLoadingComponent,
+    TranslatePipe,
   ],
   templateUrl: './base-form.component.html',
   styleUrls: ['./base-form.component.scss'],

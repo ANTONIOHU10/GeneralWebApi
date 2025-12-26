@@ -49,7 +49,6 @@ export class SearchDepartmentComponent implements OnInit, OnDestroy {
 
   // State
   allDepartments = signal<Department[]>([]); // All departments from API (already filtered by backend)
-  loading = signal(false);
 
   // Loading states for individual fields (for dropdown options loading)
   fieldLoading = signal<Record<string, boolean>>({
@@ -124,18 +123,18 @@ export class SearchDepartmentComponent implements OnInit, OnDestroy {
 
   /**
    * Initialize form config with translations
+   * Note: sections is empty because the form is wrapped in a card that already has title
    */
   private initializeSearchFormConfig(): void {
-    const sectionTitle = this.translationService.translate('departments.search.cardTitle');
     this.searchFormConfig = {
-      sections: [{ title: sectionTitle, description: this.translationService.translate('departments.search.subtitle') || 'Filter departments by various criteria', order: 0, collapsible: false, collapsed: false }],
+      sections: [], // No sections - card already has title
       layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
       fields: [
-        { key: 'name', type: 'input', label: this.translationService.translate('departments.search.fields.name'), placeholder: this.translationService.translate('departments.search.fields.namePlaceholder'), section: sectionTitle, order: 0, colSpan: 1 },
-        { key: 'code', type: 'input', label: this.translationService.translate('departments.search.fields.code'), placeholder: this.translationService.translate('departments.search.fields.codePlaceholder'), section: sectionTitle, order: 1, colSpan: 1 },
-        { key: 'description', type: 'input', label: this.translationService.translate('departments.search.fields.description'), placeholder: this.translationService.translate('departments.search.fields.descriptionPlaceholder'), section: sectionTitle, order: 2, colSpan: 1 },
-        { key: 'parentDepartmentId', type: 'select', label: this.translationService.translate('departments.search.fields.parentDepartment'), placeholder: this.translationService.translate('departments.search.fields.parentDepartmentPlaceholder'), section: sectionTitle, order: 3, colSpan: 1, searchable: true, options: [{ value: null, label: this.translationService.translate('departments.search.fields.allDepartments') }] as SelectOption[] },
-        { key: 'level', type: 'select', label: this.translationService.translate('departments.search.fields.level'), placeholder: this.translationService.translate('departments.search.fields.levelPlaceholder'), section: sectionTitle, order: 4, colSpan: 1, options: [
+        { key: 'name', type: 'input', label: this.translationService.translate('departments.search.fields.name'), placeholder: this.translationService.translate('departments.search.fields.namePlaceholder'), order: 0, colSpan: 1 },
+        { key: 'code', type: 'input', label: this.translationService.translate('departments.search.fields.code'), placeholder: this.translationService.translate('departments.search.fields.codePlaceholder'), order: 1, colSpan: 1 },
+        { key: 'description', type: 'input', label: this.translationService.translate('departments.search.fields.description'), placeholder: this.translationService.translate('departments.search.fields.descriptionPlaceholder'), order: 2, colSpan: 1 },
+        { key: 'parentDepartmentId', type: 'select', label: this.translationService.translate('departments.search.fields.parentDepartment'), placeholder: this.translationService.translate('departments.search.fields.parentDepartmentPlaceholder'), order: 3, colSpan: 1, searchable: true, options: [{ value: null, label: this.translationService.translate('departments.search.fields.allDepartments') }] as SelectOption[] },
+        { key: 'level', type: 'select', label: this.translationService.translate('departments.search.fields.level'), placeholder: this.translationService.translate('departments.search.fields.levelPlaceholder'), order: 4, colSpan: 1, options: [
           { value: null, label: this.translationService.translate('departments.search.fields.allLevels') },
           { value: 1, label: 'Level 1' }, { value: 2, label: 'Level 2' }, { value: 3, label: 'Level 3' }, { value: 4, label: 'Level 4' }
         ] as SelectOption[] },
@@ -246,7 +245,6 @@ export class SearchDepartmentComponent implements OnInit, OnDestroy {
    * Search departments with backend API
    */
   private searchDepartmentsWithBackend(filters: Record<string, unknown>): void {
-    this.loading.set(true);
     this.loading$.next(true);
 
     // Convert filters to search parameters
@@ -268,7 +266,6 @@ export class SearchDepartmentComponent implements OnInit, OnDestroy {
       first(),
       catchError(err => {
         const errorMessage = err.message || 'Failed to search departments';
-        this.loading.set(false);
         this.loading$.next(false);
         this.allDepartments.set([]);
         this.departmentsData$.next([]);
@@ -292,7 +289,6 @@ export class SearchDepartmentComponent implements OnInit, OnDestroy {
         // Update departmentsData$ Observable for BaseAsyncStateComponent
         this.departmentsData$.next(departments);
         // Departments are already filtered by backend
-        this.loading.set(false);
         this.loading$.next(false);
 
         // Show success notification if departments found

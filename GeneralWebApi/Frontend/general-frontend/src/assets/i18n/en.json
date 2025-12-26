@@ -658,6 +658,8 @@
       "duplicate": "Duplicate"
     },
     "add": {
+      "title": "Add Contract Template",
+      "subtitle": "Create a new contract template",
       "sections": {
         "templateInfo": "Template Information",
         "templateInfoDescription": "Enter template basic information",
@@ -733,11 +735,20 @@
       "successMessage": "Renewal initiated for {{name}}"
     }
   },
+  "users": {
+    "add": {
+      "title": "Add New User",
+      "subtitle": "Create a new user account in the system"
+    }
+  },
   "roles": {
     "title": "Role Management",
     "subtitle": "Manage user roles and their permissions",
     "list": "Role List",
-    "add": "Add Role",
+    "add": {
+      "title": "Add New Role",
+      "subtitle": "Create a new role and assign permissions"
+    },
     "edit": "Edit Role",
     "details": "Role Details",
     "searchPlaceholder": "Search roles...",
@@ -848,6 +859,8 @@
       "custom": "Custom"
     },
     "add": {
+      "title": "Add New Permission",
+      "subtitle": "Create a new system permission",
       "sections": {
         "permissionInfo": "Permission Information",
         "permissionInfoDescription": "Enter permission basic information"

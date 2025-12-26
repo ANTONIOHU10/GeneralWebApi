@@ -1,2 +1,13 @@
 /* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/add-user/add-user.component.scss */
 
+// Custom icon color for user management
+.page-container {
+  .page-header {
+    h2 {
+      .material-icons {
+        color: var(--color-primary-500);
+      }
+    }
+  }
+}
+

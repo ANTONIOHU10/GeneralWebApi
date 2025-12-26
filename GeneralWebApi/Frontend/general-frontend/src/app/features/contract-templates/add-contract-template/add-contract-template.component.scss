@@ -1,2 +1,13 @@
 /* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-templates/add-contract-template/add-contract-template.component.scss */
 
+// Custom icon color for contract template management
+.page-container {
+  .page-header {
+    h2 {
+      .material-icons {
+        color: var(--color-info);
+      }
+    }
+  }
+}
+

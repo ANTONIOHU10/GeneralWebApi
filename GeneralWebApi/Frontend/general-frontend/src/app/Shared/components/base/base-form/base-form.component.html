@@ -3,7 +3,7 @@
   <!-- Loading Overlay - Only shows when loading is true -->
   <div *ngIf="loading" class="form-loading-overlay">
     <app-base-loading
-      [message]="'Processing...'"
+      [message]="'common.loading' | translate"
       [size]="'md'"
       [type]="'spinner'"
       [centered]="false"

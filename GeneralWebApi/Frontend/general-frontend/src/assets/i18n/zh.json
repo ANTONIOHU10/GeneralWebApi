@@ -636,6 +636,8 @@
       "duplicate": "复制"
     },
     "add": {
+      "title": "添加合同模板",
+      "subtitle": "创建新的合同模板",
       "sections": {
         "templateInfo": "模板信息",
         "templateInfoDescription": "输入模板基本信息",
@@ -711,11 +713,20 @@
       "successMessage": "已发起 {{name}} 的合同续签"
     }
   },
+  "users": {
+    "add": {
+      "title": "添加新用户",
+      "subtitle": "在系统中创建新用户账户"
+    }
+  },
   "roles": {
     "title": "角色管理",
     "subtitle": "管理用户角色及其权限",
     "list": "角色列表",
-    "add": "添加角色",
+    "add": {
+      "title": "添加新角色",
+      "subtitle": "创建新角色并分配权限"
+    },
     "edit": "编辑角色",
     "details": "角色详情",
     "searchPlaceholder": "搜索角色...",
@@ -826,6 +837,8 @@
       "custom": "自定义"
     },
     "add": {
+      "title": "添加新权限",
+      "subtitle": "创建新的系统权限",
       "sections": {
         "permissionInfo": "权限信息",
         "permissionInfoDescription": "输入权限基本信息"

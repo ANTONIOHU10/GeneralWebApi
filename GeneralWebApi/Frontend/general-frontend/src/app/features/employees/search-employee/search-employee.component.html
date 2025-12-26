@@ -25,7 +25,6 @@
         <app-base-form
           [config]="searchFormConfig"
           [formData]="searchFilters()"
-          [loading]="loading()"
           [fieldLoading]="fieldLoading()"
           (formSubmit)="onSearchFormSubmit($event)"
           (formCancel)="onSearchFormCancel()"

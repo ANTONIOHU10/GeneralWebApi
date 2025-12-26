@@ -6,6 +6,42 @@
 @use '../core/mixin' as *;
 
 // ===========================================
+// Page Container - Used by tab content components (add-employee, add-user, etc.)
+// ===========================================
+.page-container {
+  padding: $spacing-6;
+  height: 100%;
+  overflow-y: auto;
+
+  .page-header {
+    margin-bottom: $spacing-6;
+
+    h2 {
+      @include heading-style($font-size-xl, $font-weight-semibold);
+      margin: 0 0 $spacing-2 0;
+      display: flex;
+      align-items: center;
+      gap: $spacing-3;
+
+      .material-icons {
+        font-size: $font-size-xl;
+        color: var(--color-primary-500);
+      }
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: $font-size-sm;
+    }
+  }
+
+  .page-content {
+    // Content wrapper - flexible for form or other content
+  }
+}
+
+// ===========================================
 // Layout Components - Namespaced with layout- prefix
 // ===========================================
 // All layout classes use "layout-" prefix to avoid conflicts with component-level classes

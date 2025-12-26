@@ -3,7 +3,6 @@
   <app-base-form
     [config]="searchFormConfig"
     [formData]="searchFilters()"
-    [loading]="loading()"
     (formSubmit)="onFormSubmit($event)"
     (formCancel)="onFormReset()"
   ></app-base-form>

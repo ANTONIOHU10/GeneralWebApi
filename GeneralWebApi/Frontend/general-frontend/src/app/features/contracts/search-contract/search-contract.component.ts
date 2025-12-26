@@ -45,7 +45,6 @@ export class SearchContractComponent implements OnInit, OnDestroy {
 
   // State
   allContracts = signal<Contract[]>([]);
-  loading = signal(false);
 
   // Search filters
   searchFilters = signal<Record<string, unknown>>({
@@ -201,24 +200,24 @@ export class SearchContractComponent implements OnInit, OnDestroy {
 
   /**
    * Initialize form config with translations
+   * Note: sections is empty because the form is wrapped in a card that already has title
    */
   private initializeSearchFormConfig(): void {
-    const sectionTitle = this.translationService.translate('contracts.search.cardTitle');
     this.searchFormConfig = {
-      sections: [{ title: sectionTitle, description: this.translationService.translate('contracts.search.subtitle') || 'Filter contracts by various criteria', order: 0, collapsible: false, collapsed: false }],
+      sections: [], // No sections - card already has title
       layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
       fields: [
-        { key: 'employeeName', type: 'input', label: this.translationService.translate('contracts.search.fields.employeeName'), placeholder: this.translationService.translate('contracts.search.fields.employeeNamePlaceholder'), section: sectionTitle, order: 0, colSpan: 1 },
-        { key: 'contractType', type: 'select', label: this.translationService.translate('contracts.search.fields.contractType'), placeholder: this.translationService.translate('contracts.search.fields.contractTypePlaceholder'), section: sectionTitle, order: 1, colSpan: 1, options: [
+        { key: 'employeeName', type: 'input', label: this.translationService.translate('contracts.search.fields.employeeName'), placeholder: this.translationService.translate('contracts.search.fields.employeeNamePlaceholder'), order: 0, colSpan: 1 },
+        { key: 'contractType', type: 'select', label: this.translationService.translate('contracts.search.fields.contractType'), placeholder: this.translationService.translate('contracts.search.fields.contractTypePlaceholder'), order: 1, colSpan: 1, options: [
           { value: null, label: this.translationService.translate('contracts.search.fields.allTypes') },
           ...CONTRACT_TYPES.map(type => ({ value: type.value, label: type.label })) as SelectOption[]
         ] },
-        { key: 'status', type: 'select', label: this.translationService.translate('contracts.search.fields.status'), placeholder: this.translationService.translate('contracts.search.fields.statusPlaceholder'), section: sectionTitle, order: 2, colSpan: 1, options: [
+        { key: 'status', type: 'select', label: this.translationService.translate('contracts.search.fields.status'), placeholder: this.translationService.translate('contracts.search.fields.statusPlaceholder'), order: 2, colSpan: 1, options: [
           { value: null, label: this.translationService.translate('contracts.search.fields.allStatuses') },
           ...CONTRACT_STATUSES.map(status => ({ value: status.value, label: status.label })) as SelectOption[]
         ] },
-        { key: 'startDateFrom', type: 'datepicker', label: this.translationService.translate('contracts.search.fields.startDateFrom'), placeholder: this.translationService.translate('contracts.search.fields.startDateFromPlaceholder'), section: sectionTitle, order: 3, colSpan: 1 },
-        { key: 'startDateTo', type: 'datepicker', label: this.translationService.translate('contracts.search.fields.startDateTo'), placeholder: this.translationService.translate('contracts.search.fields.startDateToPlaceholder'), section: sectionTitle, order: 4, colSpan: 1 },
+        { key: 'startDateFrom', type: 'datepicker', label: this.translationService.translate('contracts.search.fields.startDateFrom'), placeholder: this.translationService.translate('contracts.search.fields.startDateFromPlaceholder'), order: 3, colSpan: 1 },
+        { key: 'startDateTo', type: 'datepicker', label: this.translationService.translate('contracts.search.fields.startDateTo'), placeholder: this.translationService.translate('contracts.search.fields.startDateToPlaceholder'), order: 4, colSpan: 1 },
       ],
       submitButtonText: this.translationService.translate('contracts.search.submitButton'),
       cancelButtonText: this.translationService.translate('common.clear'),
@@ -247,7 +246,6 @@ export class SearchContractComponent implements OnInit, OnDestroy {
    * Search contracts with filters (using mock data)
    */
   private searchContractsWithFilters(filters: Record<string, unknown>): void {
-    this.loading.set(true);
     this.loading$.next(true);
 
     // Simulate API call with delay
@@ -256,7 +254,6 @@ export class SearchContractComponent implements OnInit, OnDestroy {
       first(),
       catchError(err => {
         const errorMessage = err.message || 'Failed to search contracts';
-        this.loading.set(false);
         this.loading$.next(false);
         this.allContracts.set([]);
         this.contractsData$.next([]);
@@ -313,7 +310,6 @@ export class SearchContractComponent implements OnInit, OnDestroy {
 
         this.allContracts.set(filteredContracts);
         this.contractsData$.next(filteredContracts);
-        this.loading.set(false);
         this.loading$.next(false);
 
         if (filteredContracts.length > 0) {

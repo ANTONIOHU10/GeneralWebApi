@@ -55,7 +55,6 @@ export class SearchEmployeeComponent implements OnInit {
   // State
   selectedDepartmentId = signal<number | null>(null);
   allEmployees = signal<Employee[]>([]); // All employees from API (before filtering)
-  loading = signal(false);
   error = signal<string | null>(null);
 
   // Loading states for individual fields (for dropdown options loading)
@@ -137,37 +136,28 @@ export class SearchEmployeeComponent implements OnInit {
 
   /**
    * Initialize search form config with translations
+   * Note: sections is empty because the form is wrapped in a card that already has title
    */
   private initializeSearchFormConfig(): void {
-    const sectionTitle = this.translationService.translate('employees.search.cardTitle');
-
     this.searchFormConfig = {
-      sections: [
-        {
-          title: sectionTitle,
-          description: this.translationService.translate('employees.search.subtitle'),
-          order: 0,
-          collapsible: false,
-          collapsed: false,
-        },
-      ],
+      sections: [], // No sections - card already has title
       layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
       fields: [
-        { key: 'departmentId', type: 'select', label: this.translationService.translate('employees.columns.department'), placeholder: this.translationService.translate('employees.search.fields.departmentPlaceholder'), required: true, section: sectionTitle, order: 0, colSpan: 1, searchable: true, options: [] as SelectOption[] },
-        { key: 'firstName', type: 'input', label: this.translationService.translate('employees.columns.firstName'), placeholder: this.translationService.translate('employees.search.fields.firstNamePlaceholder'), section: sectionTitle, order: 1, colSpan: 1 },
-        { key: 'lastName', type: 'input', label: this.translationService.translate('employees.columns.lastName'), placeholder: this.translationService.translate('employees.search.fields.lastNamePlaceholder'), section: sectionTitle, order: 2, colSpan: 1 },
-        { key: 'email', type: 'input', label: this.translationService.translate('employees.columns.email'), placeholder: this.translationService.translate('employees.search.fields.emailPlaceholder'), inputType: 'email', section: sectionTitle, order: 3, colSpan: 1 },
-        { key: 'employeeNumber', type: 'input', label: this.translationService.translate('employees.columns.employeeNumber'), placeholder: this.translationService.translate('employees.search.fields.employeeNumberPlaceholder'), section: sectionTitle, order: 4, colSpan: 1 },
-        { key: 'phone', type: 'input', label: this.translationService.translate('employees.columns.phone'), placeholder: this.translationService.translate('employees.search.fields.phonePlaceholder'), inputType: 'tel', section: sectionTitle, order: 5, colSpan: 1 },
-        { key: 'positionId', type: 'select', label: this.translationService.translate('employees.columns.position'), placeholder: this.translationService.translate('employees.search.fields.positionPlaceholder'), section: sectionTitle, order: 6, colSpan: 1, searchable: true, options: [] as SelectOption[] },
-        { key: 'employmentStatus', type: 'select', label: this.translationService.translate('employees.columns.status'), placeholder: this.translationService.translate('employees.search.fields.statusPlaceholder'), section: sectionTitle, order: 7, colSpan: 1, options: [
+        { key: 'departmentId', type: 'select', label: this.translationService.translate('employees.columns.department'), placeholder: this.translationService.translate('employees.search.fields.departmentPlaceholder'), required: true, order: 0, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'firstName', type: 'input', label: this.translationService.translate('employees.columns.firstName'), placeholder: this.translationService.translate('employees.search.fields.firstNamePlaceholder'), order: 1, colSpan: 1 },
+        { key: 'lastName', type: 'input', label: this.translationService.translate('employees.columns.lastName'), placeholder: this.translationService.translate('employees.search.fields.lastNamePlaceholder'), order: 2, colSpan: 1 },
+        { key: 'email', type: 'input', label: this.translationService.translate('employees.columns.email'), placeholder: this.translationService.translate('employees.search.fields.emailPlaceholder'), inputType: 'email', order: 3, colSpan: 1 },
+        { key: 'employeeNumber', type: 'input', label: this.translationService.translate('employees.columns.employeeNumber'), placeholder: this.translationService.translate('employees.search.fields.employeeNumberPlaceholder'), order: 4, colSpan: 1 },
+        { key: 'phone', type: 'input', label: this.translationService.translate('employees.columns.phone'), placeholder: this.translationService.translate('employees.search.fields.phonePlaceholder'), inputType: 'tel', order: 5, colSpan: 1 },
+        { key: 'positionId', type: 'select', label: this.translationService.translate('employees.columns.position'), placeholder: this.translationService.translate('employees.search.fields.positionPlaceholder'), order: 6, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'employmentStatus', type: 'select', label: this.translationService.translate('employees.columns.status'), placeholder: this.translationService.translate('employees.search.fields.statusPlaceholder'), order: 7, colSpan: 1, options: [
           { value: '', label: this.translationService.translate('employees.search.fields.allStatuses') },
           { value: 'Active', label: this.translationService.translate('employees.status.active') },
           { value: 'Inactive', label: this.translationService.translate('employees.status.inactive') },
           { value: 'Terminated', label: this.translationService.translate('employees.status.terminated') },
         ] as SelectOption[] },
-        { key: 'hireDateFrom', type: 'datepicker', label: this.translationService.translate('employees.search.fields.hireDateFrom'), placeholder: this.translationService.translate('employees.search.fields.selectStartDate'), section: sectionTitle, order: 8, colSpan: 1 },
-        { key: 'hireDateTo', type: 'datepicker', label: this.translationService.translate('employees.search.fields.hireDateTo'), placeholder: this.translationService.translate('employees.search.fields.selectEndDate'), section: sectionTitle, order: 9, colSpan: 1 },
+        { key: 'hireDateFrom', type: 'datepicker', label: this.translationService.translate('employees.search.fields.hireDateFrom'), placeholder: this.translationService.translate('employees.search.fields.selectStartDate'), order: 8, colSpan: 1 },
+        { key: 'hireDateTo', type: 'datepicker', label: this.translationService.translate('employees.search.fields.hireDateTo'), placeholder: this.translationService.translate('employees.search.fields.selectEndDate'), order: 9, colSpan: 1 },
       ],
       submitButtonText: this.translationService.translate('employees.search.loadEmployees'),
       cancelButtonText: this.translationService.translate('common.clear'),
@@ -355,7 +345,6 @@ export class SearchEmployeeComponent implements OnInit {
   }
 
   private searchEmployeesWithBackend(filters: Record<string, unknown>): void {
-    this.loading.set(true);
     this.loading$.next(true);
     this.error.set(null);
 
@@ -380,7 +369,6 @@ export class SearchEmployeeComponent implements OnInit {
       catchError(err => {
         const errorMessage = err.message || 'Failed to search employees';
         this.error.set(errorMessage);
-        this.loading.set(false);
         this.loading$.next(false);
         this.allEmployees.set([]);
         this.employees$.next([]);
@@ -404,7 +392,6 @@ export class SearchEmployeeComponent implements OnInit {
         // Update employees$ Observable for BaseAsyncStateComponent
         this.employees$.next(employees);
         // Employees are already filtered by backend
-        this.loading.set(false);
         this.loading$.next(false);
         
         // Show success notification if employees found
@@ -454,7 +441,6 @@ export class SearchEmployeeComponent implements OnInit {
       this.selectedDepartmentId.set(null);
       this.allEmployees.set([]);
       this.employees$.next([]);
-      this.loading.set(false);
       this.loading$.next(false);
     }
   }

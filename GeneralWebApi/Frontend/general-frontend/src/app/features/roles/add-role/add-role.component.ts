@@ -10,6 +10,7 @@ import {
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { CreateRoleRequest } from '../../../roles/role.model';
 import { RoleService } from '../../../core/services/role.service';
 import { PermissionService, PermissionList } from '../../../core/services/permission.service';
@@ -20,6 +21,7 @@ import { PermissionService, PermissionList } from '../../../core/services/permis
   imports: [
     CommonModule,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './add-role.component.html',
   styleUrls: ['./add-role.component.scss'],

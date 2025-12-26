@@ -1,3 +1,13 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/permissions/add-permission/add-permission.component.scss
-// Add any custom styles if needed
+
+// Custom icon color for permission management
+.page-container {
+  .page-header {
+    h2 {
+      .material-icons {
+        color: var(--color-error);
+      }
+    }
+  }
+}
 

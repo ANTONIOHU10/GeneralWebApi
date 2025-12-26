@@ -45,7 +45,6 @@ export class SearchAuditLogComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   allLogs = signal<AuditLog[]>([]);
-  loading = signal(false);
   loading$ = new BehaviorSubject<boolean>(false);
   logsData$ = new BehaviorSubject<AuditLog[] | null>(null);
 
@@ -210,7 +209,6 @@ export class SearchAuditLogComponent implements OnInit, OnDestroy {
   }
 
   searchLogs(): void {
-    this.loading.set(true);
     this.loading$.next(true);
 
     const filters = this.searchFilters();
@@ -234,7 +232,6 @@ export class SearchAuditLogComponent implements OnInit, OnDestroy {
       first(),
       catchError(err => {
         const errorMessage = err.message || 'Failed to search audit logs';
-        this.loading.set(false);
         this.loading$.next(false);
         this.allLogs.set([]);
         this.logsData$.next([]);
@@ -247,7 +244,6 @@ export class SearchAuditLogComponent implements OnInit, OnDestroy {
 
       this.allLogs.set(mappedLogs);
       this.logsData$.next(mappedLogs);
-      this.loading.set(false);
       this.loading$.next(false);
 
       if (mappedLogs.length > 0) {
