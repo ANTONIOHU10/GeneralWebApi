@@ -23,7 +23,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
     z-index: 1000;
   }
 
@@ -44,6 +44,7 @@
   color: var(--text-secondary);
   text-align: center;
   margin-top: $spacing-2;
+  font-weight: $font-weight-medium;
 }
 
 // Spinner Animation
@@ -51,33 +52,31 @@
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border-primary);
-    border-top: 3px solid var(--color-primary-500);
+    border: 3px solid var(--border-secondary);
+    border-top: 3px solid $primary-500;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+    box-shadow: 0 2px 8px rgba($primary-500, 0.2);
   }
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 // Dots Animation
 .loading-dots {
   display: flex;
-  gap: $spacing-1;
+  gap: $spacing-2;
 
   .dot {
-    width: 8px;
-    height: 8px;
-    background: var(--color-primary-500);
+    width: 10px;
+    height: 10px;
+    background: $primary-500;
     border-radius: 50%;
     animation: dots-bounce 1.4s ease-in-out infinite both;
+    box-shadow: 0 2px 4px rgba($primary-500, 0.3);
 
     &:nth-child(1) {
       animation-delay: -0.32s;
@@ -92,13 +91,13 @@
 }
 
 @keyframes dots-bounce {
-  0%,
-  80%,
-  100% {
+  0%, 80%, 100% {
     transform: scale(0);
+    opacity: 0.5;
   }
   40% {
     transform: scale(1);
+    opacity: 1;
   }
 }
 
@@ -107,9 +106,10 @@
   .pulse-circle {
     width: 40px;
     height: 40px;
-    background: var(--color-primary-500);
+    background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
     border-radius: 50%;
     animation: pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 4px 12px rgba($primary-500, 0.4);
   }
 }
 
@@ -118,8 +118,8 @@
     transform: scale(0.95);
     opacity: 0.7;
   }
-  70% {
-    transform: scale(1);
+  50% {
+    transform: scale(1.05);
     opacity: 1;
   }
   100% {
@@ -145,7 +145,7 @@
     );
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s infinite;
-    border-radius: var(--border-radius-sm);
+    border-radius: $border-radius-md;
     height: 12px;
 
     &.skeleton-title {

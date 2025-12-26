@@ -1,11 +1,35 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/footer/footer.component.html -->
 <footer class="app-footer" [class.public-footer]="isPublicLayout">
   <div class="footer-content">
+    <!-- Left Section: Copyright & Brand -->
     <div class="footer-left">
-      <span>&copy; {{ year }} {{ copyrightText }}</span>
+      <div class="footer-brand">
+        <div class="brand-icon">
+          <span>GW</span>
+        </div>
+        <span class="brand-text">{{ copyrightText }}</span>
+      </div>
+      <span class="copyright">© {{ year }} All rights reserved.</span>
     </div>
-    <div class="footer-right" *ngIf="showVersion">
-      <span>Version {{ version }}</span>
+
+    <!-- Center Section: Links (optional) -->
+    <div class="footer-center">
+      <a href="#" class="footer-link">Privacy</a>
+      <span class="footer-dot">·</span>
+      <a href="#" class="footer-link">Terms</a>
+      <span class="footer-dot">·</span>
+      <a href="#" class="footer-link">Help</a>
     </div>
+
+    <!-- Right Section: Version & Status -->
+    @if (showVersion) {
+      <div class="footer-right">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">All systems operational</span>
+        </div>
+        <span class="version-badge">v{{ version }}</span>
+      </div>
+    }
   </div>
 </footer>

@@ -55,10 +55,6 @@
       width: 20px;
       height: 20px;
     }
-
-    .radio-label {
-      font-size: $font-size-base;
-    }
   }
 
   &.size-lg {
@@ -92,13 +88,18 @@
   height: 0;
   width: 0;
 
-  &:focus + .radio-dot {
-    outline: 2px solid var(--color-primary-500);
+  &:focus-visible + .radio-dot {
+    outline: 2px solid $primary-500;
     outline-offset: 2px;
   }
 
   &:checked + .radio-dot {
-    border-color: var(--color-primary-500);
+    border-color: $primary-500;
+    box-shadow: 0 0 0 4px rgba($primary-500, 0.2);
+
+    .radio-inner-dot {
+      transform: scale(1);
+    }
   }
 }
 
@@ -112,11 +113,14 @@
   border: 2px solid var(--border-primary);
   border-radius: 50%;
   background: var(--bg-surface);
-  transition: all $duration-200 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &:hover:not(.disabled) {
-    border-color: var(--color-primary-300);
+    border-color: $primary-500;
+    background: rgba($primary-500, 0.08);
+    transform: scale(1.1);
   }
 }
 
@@ -124,8 +128,9 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--color-primary-500);
-  transition: all $duration-200 $ease-in-out;
+  background: $primary-500;
+  transition: all $duration-200 $ease-out;
+  transform: scale(0);
 }
 
 .radio-label {
@@ -133,7 +138,7 @@
   font-weight: $font-weight-medium;
   line-height: 1.4;
   cursor: pointer;
-  transition: color $duration-300 $ease-in-out;
+  transition: color $duration-200 $ease-out;
 }
 
 .radio-wrapper.disabled .radio-label {
@@ -144,16 +149,17 @@
 .radio-hint {
   font-size: $font-size-xs;
   color: var(--text-tertiary);
-  transition: color $duration-300 $ease-in-out;
+  transition: color $duration-200 $ease-out;
 }
 
 .radio-error {
   font-size: $font-size-xs;
-  color: var(--color-error);
+  color: $error-600;
   display: flex;
   align-items: center;
   gap: $spacing-1;
-  transition: color $duration-300 $ease-in-out;
+  font-weight: $font-weight-medium;
+  transition: color $duration-200 $ease-out;
 
   .material-icons {
     font-size: 1rem;
@@ -175,4 +181,3 @@
     }
   }
 }
-

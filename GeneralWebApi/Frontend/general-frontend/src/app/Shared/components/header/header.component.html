@@ -1,129 +1,164 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.html -->
 <header class="app-header">
+  <!-- Brand Section -->
   <div class="header-brand">
-    <div class="brand-logo">
+    <div class="brand-logo" role="img" aria-label="Logo">
       <span class="logo-text">GW</span>
     </div>
     <div class="brand-title">{{ brandTitle }}</div>
   </div>
+
+  <!-- Actions Section -->
   <div class="header-actions">
-    <!-- Quick Actions -->
+    <!-- Quick Actions Group -->
     <div class="quick-actions">
+      <!-- Notification Button with Dropdown -->
       <div class="notification-wrapper" [class.open]="isNotificationDropdownOpen">
         <button
           class="action-button notification-btn"
           (click)="onNotificationClick($event)"
           [attr.aria-label]="'Notifications (' + notificationCount + ')'"
           [attr.aria-expanded]="isNotificationDropdownOpen"
+          [class.has-notifications]="notificationCount > 0"
         >
           <span class="action-icon material-icons">notifications</span>
-          <span 
-            class="notification-badge" 
-            *ngIf="notificationCount > 0"
-            [attr.data-count]="notificationCount > 99 ? '99+' : notificationCount"
-          >
-            {{ notificationCount > 99 ? '99+' : notificationCount }}
-          </span>
+          @if (notificationCount > 0) {
+            <span 
+              class="notification-badge" 
+              [attr.data-count]="notificationCount > 99 ? '99+' : notificationCount"
+            >
+              {{ notificationCount > 99 ? '99+' : notificationCount }}
+            </span>
+          }
         </button>
 
         <!-- Notification Dropdown -->
-        <div class="notification-dropdown" *ngIf="isNotificationDropdownOpen">
-          <div class="dropdown-header">
-            <h3>Notifications</h3>
-            <span class="unread-count" *ngIf="notificationCount > 0">
-              {{ notificationCount }} unread
-            </span>
-          </div>
+        @if (isNotificationDropdownOpen) {
+          <div class="notification-dropdown" role="dialog" aria-label="Notifications">
+            <div class="dropdown-header">
+              <div class="dropdown-title">
+                <span class="material-icons">notifications</span>
+                <h3>Notifications</h3>
+              </div>
+              @if (notificationCount > 0) {
+                <span class="unread-count">{{ notificationCount }} new</span>
+              }
+            </div>
 
-          <div class="dropdown-content">
-            @if (isLoadingNotifications) {
-              <div class="loading-state">
-                <span class="material-icons">hourglass_empty</span>
-                <span>Loading...</span>
-              </div>
-            } @else if (recentNotifications.length === 0) {
-              <div class="empty-state">
-                <span class="material-icons">notifications_none</span>
-                <span>No notifications</span>
-              </div>
-            } @else {
-              <div class="notification-list">
-                @for (notification of recentNotifications; track notification.id) {
-                  <div 
-                    class="notification-item"
-                    [class.unread]="notification.status === 'unread'"
-                    (click)="onNotificationItemClick(notification)"
-                  >
-                    <div class="notification-icon-wrapper">
-                      <span class="material-icons">{{ getNotificationIcon(notification.type) }}</span>
-                      @if (notification.status === 'unread') {
-                        <span class="unread-dot"></span>
-                      }
-                    </div>
-                    <div class="notification-content">
-                      <div class="notification-title">{{ notification.title }}</div>
-                      <div class="notification-message">{{ notification.message }}</div>
-                      <div class="notification-time">{{ getTimeAgo(notification.createdAt) }}</div>
-                    </div>
+            <div class="dropdown-content">
+              @if (isLoadingNotifications) {
+                <div class="loading-state">
+                  <div class="loading-spinner"></div>
+                  <span>Loading notifications...</span>
+                </div>
+              } @else if (recentNotifications.length === 0) {
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <span class="material-icons">notifications_none</span>
                   </div>
-                }
-              </div>
-            }
-          </div>
+                  <span class="empty-title">All caught up!</span>
+                  <span class="empty-desc">No new notifications</span>
+                </div>
+              } @else {
+                <div class="notification-list">
+                  @for (notification of recentNotifications; track notification.id) {
+                    <div 
+                      class="notification-item"
+                      [class.unread]="notification.status === 'unread'"
+                      (click)="onNotificationItemClick(notification)"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div class="notification-icon-wrapper" [attr.data-type]="notification.type">
+                        <span class="material-icons">{{ getNotificationIcon(notification.type) }}</span>
+                      </div>
+                      <div class="notification-content">
+                        <div class="notification-header">
+                          <span class="notification-title">{{ notification.title }}</span>
+                          @if (notification.status === 'unread') {
+                            <span class="unread-indicator"></span>
+                          }
+                        </div>
+                        <p class="notification-message">{{ notification.message }}</p>
+                        <span class="notification-time">
+                          <span class="material-icons">schedule</span>
+                          {{ getTimeAgo(notification.createdAt) }}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
 
-          <div class="dropdown-footer">
-            <button class="view-all-btn" (click)="onViewAllNotifications()">
-              <span>View All Notifications</span>
-              <span class="material-icons">arrow_forward</span>
-            </button>
+            <div class="dropdown-footer">
+              <button class="view-all-btn" (click)="onViewAllNotifications()">
+                <span>View All Notifications</span>
+                <span class="material-icons">east</span>
+              </button>
+            </div>
           </div>
-        </div>
+        }
       </div>
 
+      <!-- Settings Button -->
       <button
-        class="action-button settings-btn"
+        class="action-button"
         (click)="onSettingsClick()"
         aria-label="Settings"
+        title="Settings"
       >
         <span class="action-icon material-icons">settings</span>
       </button>
 
-      <button class="action-button theme-toggle" (click)="onThemeToggle()">
-        <span class="action-icon material-icons">{{
-          isDarkMode ? 'light_mode' : 'dark_mode'
-        }}</span>
+      <!-- Theme Toggle Button -->
+      <button 
+        class="action-button theme-toggle" 
+        (click)="onThemeToggle()"
+        [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+        [title]="isDarkMode ? 'Light Mode' : 'Dark Mode'"
+      >
+        <span class="action-icon material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
       </button>
     </div>
+
+    <!-- Divider -->
+    <div class="header-divider"></div>
 
     <!-- User Profile -->
     <button
       class="user-profile"
       (click)="onProfileClick()"
-      (keyup.enter)="onProfileClick()"
-      (keyup.space)="onProfileClick()"
       aria-label="User profile menu"
+      title="Profile"
     >
       <div class="user-avatar">
         <span class="material-icons">person</span>
       </div>
       <div class="user-info">
-        <div class="user-name">{{ userProfile.name }}</div>
-        <div class="user-role">{{ userProfile.role }}</div>
+        <span class="user-name">{{ userProfile.name }}</span>
+        <span class="user-role">{{ userProfile.role }}</span>
       </div>
+      <span class="profile-arrow material-icons">expand_more</span>
     </button>
 
     <!-- Mobile Menu Toggle -->
-    <button
-      *ngIf="showSidebarToggle"
-      class="action-button mobile-menu-toggle"
-      (click)="onSidebarToggle()"
-    >
-      <span class="action-icon material-icons">menu</span>
-    </button>
+    @if (showSidebarToggle) {
+      <button
+        class="action-button mobile-menu-toggle"
+        (click)="onSidebarToggle()"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="action-icon material-icons">menu</span>
+      </button>
+    }
 
-    <!-- Login Button -->
-    <a *ngIf="showLoginButton" routerLink="/login" class="btn btn-primary">
-      Login
-    </a>
+    <!-- Login Button (Public Layout) -->
+    @if (showLoginButton) {
+      <a routerLink="/login" class="login-btn">
+        <span class="material-icons">login</span>
+        <span>Login</span>
+      </a>
+    }
   </div>
 </header>

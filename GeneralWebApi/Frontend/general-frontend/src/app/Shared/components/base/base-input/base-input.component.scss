@@ -11,17 +11,17 @@
 
 .input-label {
   font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: $spacing-1;
-  transition: color $duration-300 $ease-in-out;
+  transition: color $duration-200 $ease-out;
 }
 
 .required-asterisk {
-  color: var(--color-error);
-  font-weight: $font-weight-semibold;
+  color: $error-500;
+  font-weight: $font-weight-bold;
 }
 
 .input-wrapper {
@@ -29,25 +29,27 @@
   display: flex;
   align-items: center;
   background: var(--input-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--border-radius-base);
-  transition: all $duration-300 $ease-in-out;
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-lg;
+  transition: all $duration-200 $ease-out;
   overflow: hidden;
 
   &:focus-within {
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(var(--color-primary-500), 0.1);
+    border-color: $primary-500;
+    box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+    transform: translateY(-1px);
   }
 
   &.error {
-    border-color: var(--border-error);
-    box-shadow: 0 0 0 3px rgba(var(--color-error), 0.1);
+    border-color: $error-500;
+    box-shadow: 0 0 0 3px rgba($error-500, 0.1);
   }
 
   &.disabled {
     background: var(--bg-tertiary);
     border-color: var(--border-secondary);
     cursor: not-allowed;
+    opacity: 0.7;
   }
 }
 
@@ -55,15 +57,15 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: var(--text-tertiary);
-  transition: color $duration-300 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.25rem;
+  height: 1.25rem;
 
   &.prefix-icon {
     left: $spacing-3;
@@ -74,20 +76,25 @@
   }
 }
 
+.input-wrapper:focus-within .input-icon {
+  color: $primary-500;
+}
+
 input {
   flex: 1;
   border: none;
   outline: none;
   background: transparent;
-  padding: $spacing-3;
+  padding: $spacing-3 $spacing-4;
   font-size: $font-size-base;
   color: var(--text-primary);
-  transition: all $duration-300 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   width: 100%;
   box-sizing: border-box;
 
   &::placeholder {
     color: var(--text-tertiary);
+    opacity: 0.7;
   }
 
   &:disabled {
@@ -99,15 +106,12 @@ input {
     cursor: default;
   }
 
-  // Add left padding when prefix icon exists
-  // Icon left (12px) + icon width (19.2px) + gap (8px) = 39.2px
   &.with-prefix {
-    padding-left: 2.5rem; // 40px - ensures text doesn't overlap icon
+    padding-left: 2.75rem;
   }
 
-  // Add right padding when suffix icon exists
   &.with-suffix {
-    padding-right: 2.5rem; // 40px - ensures text doesn't overlap icon
+    padding-right: 2.75rem;
   }
 }
 
@@ -116,21 +120,24 @@ input {
   right: $spacing-3;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: var(--background-secondary);
   border: none;
   cursor: pointer;
   padding: $spacing-1;
-  border-radius: 50%;
+  border-radius: $border-radius-full;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-tertiary);
-  transition: all $duration-200 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   z-index: 1;
+  width: 24px;
+  height: 24px;
 
   &:hover {
-    background: var(--bg-secondary);
+    background: var(--background-tertiary);
     color: var(--text-primary);
+    transform: translateY(-50%) scale(1.1);
   }
 
   .material-icons {
@@ -144,16 +151,17 @@ input {
   display: flex;
   align-items: center;
   gap: $spacing-1;
-  transition: color $duration-300 $ease-in-out;
+  transition: color $duration-200 $ease-out;
 }
 
 .input-error {
   font-size: $font-size-xs;
-  color: var(--color-error);
+  color: $error-600;
   display: flex;
   align-items: center;
   gap: $spacing-1;
-  transition: color $duration-300 $ease-in-out;
+  font-weight: $font-weight-medium;
+  transition: color $duration-200 $ease-out;
 
   .material-icons {
     font-size: 1rem;
@@ -163,51 +171,53 @@ input {
 /* Input sizes */
 .base-input-container.small {
   .input-wrapper {
+    border-radius: $border-radius-md;
+
     input {
       padding: $spacing-2 $spacing-3;
       font-size: $font-size-sm;
 
-      // Adjust padding for icons in small size
       &.with-prefix {
-        padding-left: 2rem; // 32px for small size
+        padding-left: 2.25rem;
       }
 
       &.with-suffix {
-        padding-right: 2rem; // 32px for small size
+        padding-right: 2.25rem;
       }
     }
 
     .input-icon {
-      font-size: 1rem;
+      font-size: 1.125rem;
     }
   }
 }
 
 .base-input-container.large {
   .input-wrapper {
+    border-radius: $border-radius-xl;
+
     input {
       padding: $spacing-4 $spacing-5;
       font-size: $font-size-lg;
 
-      // Adjust padding for icons in large size
       &.with-prefix {
-        padding-left: 3rem; // 48px for large size
+        padding-left: 3.25rem;
       }
 
       &.with-suffix {
-        padding-right: 3rem; // 48px for large size
+        padding-right: 3.25rem;
       }
     }
 
     .input-icon {
-      font-size: 1.4rem;
+      font-size: 1.375rem;
     }
   }
 }
 
 /* Input variants */
 .base-input-container.outlined .input-wrapper {
-  background: transparent;
+  background: var(--input-bg);
   border: 2px solid var(--border-primary);
 }
 

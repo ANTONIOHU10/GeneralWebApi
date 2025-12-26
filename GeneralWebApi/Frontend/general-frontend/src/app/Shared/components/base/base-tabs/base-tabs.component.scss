@@ -16,6 +16,7 @@
     .tabs-nav {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: $spacing-1;
     }
   }
 
@@ -26,7 +27,7 @@
       scrollbar-color: var(--border-primary) transparent;
 
       &::-webkit-scrollbar {
-        height: 4px;
+        height: 6px;
       }
 
       &::-webkit-scrollbar-track {
@@ -34,8 +35,8 @@
       }
 
       &::-webkit-scrollbar-thumb {
-        background: var(--border-primary);
-        border-radius: 2px;
+        background: var(--border-secondary);
+        border-radius: 3px;
       }
     }
   }
@@ -44,7 +45,7 @@
 .tabs-nav {
   display: flex;
   gap: $spacing-1;
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 2px solid var(--border-secondary);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -64,30 +65,47 @@
   padding: $spacing-3 $spacing-4;
   background: transparent;
   border: none;
-  border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
   color: var(--text-secondary);
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: all $duration-200 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   white-space: nowrap;
   position: relative;
   outline: none;
 
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 0;
+    height: 2px;
+    background: $primary-500;
+    transition: all $duration-200 $ease-out;
+  }
+
   &:hover:not(.disabled) {
     color: var(--text-primary);
-    background: var(--bg-hover);
+    background: var(--bg-secondary);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-primary-500);
+    outline: 2px solid $primary-500;
     outline-offset: 2px;
   }
 
   &.active {
-    color: var(--color-primary-600);
-    background: var(--color-primary-50);
-    border-bottom: 2px solid var(--color-primary-500);
+    color: $primary-600;
+    font-weight: $font-weight-semibold;
+    background: linear-gradient(135deg, rgba($primary-500, 0.08) 0%, transparent 100%);
+
+    &::after {
+      width: calc(100% - #{$spacing-4});
+      transform: translateX(-50%) scaleX(1);
+    }
   }
 
   &.disabled {
@@ -103,7 +121,7 @@
     gap: $spacing-1;
 
     .tab-icon {
-      font-size: 16px;
+      font-size: 1rem;
     }
 
     .tab-badge {
@@ -118,7 +136,7 @@
     gap: $spacing-3;
 
     .tab-icon {
-      font-size: 20px;
+      font-size: 1.25rem;
     }
 
     .tab-badge {
@@ -129,59 +147,79 @@
 
   // Variant styles
   &.variant-pills {
-    border-radius: var(--border-radius-full);
+    border-radius: $border-radius-full;
     border-bottom: none;
 
+    &::after {
+      display: none;
+    }
+
     &.active {
-      background: var(--color-primary-500);
+      background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
       color: var(--color-white);
-      border-bottom: none;
+      box-shadow: 0 2px 8px rgba($primary-500, 0.3);
     }
 
     &:hover:not(.disabled) {
-      background: var(--color-primary-100);
+      background: rgba($primary-500, 0.1);
     }
   }
 
   &.variant-underline {
     border-radius: 0;
     border-bottom: 2px solid transparent;
+    background: transparent;
+
+    &::after {
+      display: none;
+    }
 
     &.active {
-      background: transparent;
-      border-bottom-color: var(--color-primary-500);
+      border-bottom-color: $primary-500;
     }
 
     &:hover:not(.disabled) {
-      background: transparent;
-      border-bottom-color: var(--color-primary-200);
+      border-bottom-color: rgba($primary-500, 0.5);
     }
   }
 
   &.variant-cards {
-    border: 1px solid var(--border-primary);
-    border-radius: var(--border-radius-base);
+    border: 1px solid var(--border-secondary);
+    border-radius: $border-radius-lg;
     margin-bottom: $spacing-2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    &::after {
+      display: none;
+    }
 
     &.active {
-      background: var(--color-primary-500);
+      background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
       color: var(--color-white);
-      border-color: var(--color-primary-500);
-      box-shadow: var(--shadow-md);
+      border-color: $primary-500;
+      box-shadow: 0 4px 12px rgba($primary-500, 0.3);
+      transform: translateY(-2px);
     }
 
     &:hover:not(.disabled) {
-      background: var(--bg-hover);
-      border-color: var(--color-primary-300);
+      background: var(--bg-secondary);
+      border-color: $primary-500;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
   }
 }
 
 .tab-icon {
-  font-size: 18px;
+  font-size: 1.125rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform $duration-200 $ease-out;
+}
+
+.tab-button.active .tab-icon {
+  transform: scale(1.1);
 }
 
 .tab-label {
@@ -193,15 +231,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 1px $spacing-1;
+  min-width: 20px;
+  height: 20px;
+  padding: 1px $spacing-2;
   background: var(--color-primary-100);
   color: var(--color-primary-700);
-  border-radius: var(--border-radius-full);
+  border-radius: $border-radius-full;
   font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-bold;
   line-height: 1;
+  box-shadow: 0 1px 3px rgba($primary-500, 0.2);
 
   &.badge-number {
     min-width: 20px;
@@ -213,18 +252,15 @@
   }
 
   .tab-button.active & {
-    background: var(--color-white);
-    color: var(--color-primary-600);
+    background: white;
+    color: $primary-600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .tab-button.variant-pills.active & {
-    background: var(--color-white);
-    color: var(--color-primary-600);
-  }
-
+  .tab-button.variant-pills.active &,
   .tab-button.variant-cards.active & {
-    background: var(--color-white);
-    color: var(--color-primary-600);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
   }
 }
 
@@ -243,7 +279,7 @@
     font-size: $font-size-sm;
 
     .tab-icon {
-      font-size: 16px;
+      font-size: 1rem;
     }
   }
 }

@@ -8,29 +8,27 @@
   flex-direction: column;
   gap: $spacing-2;
   width: 100%;
-  overflow: visible; // Allow dropdown to overflow
-  // Default z-index
+  overflow: visible;
   z-index: 1;
   
-  // When dropdown is open, raise the entire container above other fields
   &.dropdown-open {
-    z-index: 10001; // Higher than dropdown itself to ensure label and control are also above
+    z-index: 10001;
   }
 }
 
 .select-label {
   font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: $spacing-1;
-  transition: color $duration-300 $ease-in-out;
+  transition: color $duration-200 $ease-out;
 }
 
 .required-asterisk {
-  color: var(--color-error);
-  font-weight: $font-weight-semibold;
+  color: $error-500;
+  font-weight: $font-weight-bold;
 }
 
 .select-wrapper {
@@ -39,31 +37,33 @@
   align-items: center;
   justify-content: space-between;
   background: var(--input-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--border-radius-base);
-  padding: $spacing-3;
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-lg;
+  padding: $spacing-3 $spacing-4;
   cursor: pointer;
-  transition: all $duration-300 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   min-height: 40px;
 
   &:hover {
-    border-color: var(--border-focus);
+    border-color: $primary-500;
   }
 
   &:focus-within {
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(var(--color-primary-500), 0.1);
+    border-color: $primary-500;
+    box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+    transform: translateY(-1px);
   }
 
   &.error {
-    border-color: var(--border-error);
-    box-shadow: 0 0 0 3px rgba(var(--color-error), 0.1);
+    border-color: $error-500;
+    box-shadow: 0 0 0 3px rgba($error-500, 0.1);
   }
 
   &.disabled {
     background: var(--bg-tertiary);
     border-color: var(--border-secondary);
     cursor: not-allowed;
+    opacity: 0.7;
   }
 }
 
@@ -77,8 +77,13 @@
 }
 
 .option-icon {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: var(--text-tertiary);
+  transition: color $duration-200 $ease-out;
+}
+
+.select-wrapper:focus-within .option-icon {
+  color: $primary-500;
 }
 
 .select-text {
@@ -89,9 +94,9 @@
 }
 
 .select-arrow {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: var(--text-tertiary);
-  transition: transform $duration-300 $ease-in-out;
+  transition: transform $duration-200 $ease-out;
 
   &.rotated {
     transform: rotate(180deg);
@@ -100,40 +105,61 @@
 
 .select-dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + $spacing-1);
   left: 0;
   right: 0;
-  background: var(--bg-surface, #ffffff); // Ensure solid background
-  border: 1px solid var(--border-primary);
-  border-radius: var(--border-radius-base);
-  box-shadow: var(--shadow-lg);
-  z-index: 10000; // Higher z-index to ensure it appears above modal (1050) and other elements
+  background: var(--bg-surface);
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-xl;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+  z-index: 10000;
   max-height: 300px;
-  overflow-y: auto; // Allow scrolling within dropdown
-  margin-top: $spacing-1;
-  // Ensure dropdown is not clipped by parent containers
-  isolation: isolate;
-  // Ensure background is opaque to prevent text bleeding through
-  backdrop-filter: blur(0);
-  -webkit-backdrop-filter: blur(0);
+  overflow-y: auto;
+  animation: dropdown-enter 0.2s $ease-out;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-secondary);
+    border-radius: 3px;
+  }
+}
+
+@keyframes dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdown-search {
   padding: $spacing-3;
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border-secondary);
 
   .search-input {
     width: 100%;
     padding: $spacing-2 $spacing-3;
-    border: 1px solid var(--border-primary);
-    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-secondary);
+    border-radius: $border-radius-md;
     background: var(--input-bg);
     color: var(--text-primary);
     font-size: $font-size-sm;
+    transition: all $duration-200 $ease-out;
 
     &:focus {
       outline: none;
-      border-color: var(--border-focus);
+      border-color: $primary-500;
+      box-shadow: 0 0 0 2px rgba($primary-500, 0.1);
     }
   }
 }
@@ -147,7 +173,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: $spacing-4;
+  padding: $spacing-6;
   min-height: 100px;
 }
 
@@ -155,12 +181,12 @@
   .group-header {
     padding: $spacing-2 $spacing-3;
     font-size: $font-size-xs;
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-bold;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     color: var(--text-secondary);
     background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-primary);
+    border-bottom: 1px solid var(--border-secondary);
   }
 }
 
@@ -168,29 +194,38 @@
   display: flex;
   align-items: center;
   gap: $spacing-2;
-  padding: $spacing-3;
+  padding: $spacing-3 $spacing-4;
   cursor: pointer;
-  transition: all $duration-200 $ease-in-out;
+  transition: all $duration-150 $ease-out;
   color: var(--text-primary);
+  border-radius: $border-radius-md;
+  margin: $spacing-1;
 
   &:hover:not(.disabled) {
     background: var(--bg-secondary);
+    transform: translateX(4px);
   }
 
   &.selected {
-    background: var(--color-primary-50);
-    color: var(--color-primary-700);
-    font-weight: $font-weight-medium;
+    background: linear-gradient(135deg, rgba($primary-500, 0.12) 0%, rgba($primary-500, 0.06) 100%);
+    color: $primary-700;
+    font-weight: $font-weight-semibold;
+    border-left: 3px solid $primary-500;
   }
 
   &.disabled {
     color: var(--text-disabled);
     cursor: not-allowed;
+    opacity: 0.6;
   }
 
   .option-icon {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     color: var(--text-tertiary);
+  }
+
+  &.selected .option-icon {
+    color: $primary-500;
   }
 
   .option-label {
@@ -198,13 +233,13 @@
   }
 
   .check-icon {
-    font-size: 1rem;
-    color: var(--color-primary-500);
+    font-size: 1.125rem;
+    color: $primary-500;
   }
 }
 
 .no-options {
-  padding: $spacing-4;
+  padding: $spacing-6;
   text-align: center;
   color: var(--text-tertiary);
   font-size: $font-size-sm;
@@ -216,16 +251,17 @@
   display: flex;
   align-items: center;
   gap: $spacing-1;
-  transition: color $duration-300 $ease-in-out;
+  transition: color $duration-200 $ease-out;
 }
 
 .select-error {
   font-size: $font-size-xs;
-  color: var(--color-error);
+  color: $error-600;
   display: flex;
   align-items: center;
   gap: $spacing-1;
-  transition: color $duration-300 $ease-in-out;
+  font-weight: $font-weight-medium;
+  transition: color $duration-200 $ease-out;
 
   .material-icons {
     font-size: 1rem;
@@ -237,6 +273,7 @@
   .select-wrapper {
     padding: $spacing-2 $spacing-3;
     min-height: 32px;
+    border-radius: $border-radius-md;
   }
 
   .select-display {
@@ -248,6 +285,7 @@
   .select-wrapper {
     padding: $spacing-4 $spacing-5;
     min-height: 48px;
+    border-radius: $border-radius-xl;
   }
 
   .select-display {

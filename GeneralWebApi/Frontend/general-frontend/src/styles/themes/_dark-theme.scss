@@ -93,6 +93,11 @@
   --bg-tertiary: #{$gray-700};
   --bg-surface: #{$gray-800};
 
+  // Background Color Aliases (for backward compatibility and component usage)
+  --background-primary: var(--bg-primary);
+  --background-secondary: var(--bg-secondary);
+  --background-tertiary: var(--bg-tertiary);
+
   // Text Colors (inverted for dark mode)
   --text-primary: #{$white};
   --text-secondary: #{$gray-300};

@@ -7,109 +7,120 @@
   align-items: center;
   justify-content: center;
   gap: $spacing-1;
-  padding: $spacing-1 $spacing-2;
-  border-radius: var(--border-radius-full);
+  padding: $spacing-1 $spacing-3;
+  border-radius: $border-radius-full;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
-  line-height: 1;
+  line-height: 1.2;
   white-space: nowrap;
-  transition: all $duration-200 $ease-in-out;
+  transition: all $duration-200 $ease-out;
+  border: 1px solid transparent;
 
   /* Variants */
   &.primary {
     background: var(--color-primary-100);
     color: var(--color-primary-700);
-    border: 1px solid var(--color-primary-200);
+    border-color: var(--color-primary-200);
+    box-shadow: 0 1px 3px rgba($primary-500, 0.2);
   }
 
   &.secondary {
     background: var(--color-gray-100);
     color: var(--color-gray-700);
-    border: 1px solid var(--color-gray-200);
+    border-color: var(--color-gray-200);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   &.success {
     background: var(--color-success-100);
     color: var(--color-success-700);
-    border: 1px solid var(--color-success-200);
+    border-color: var(--color-success-200);
+    box-shadow: 0 1px 3px rgba($success-500, 0.2);
   }
 
   &.warning {
     background: var(--color-warning-100);
     color: var(--color-warning-700);
-    border: 1px solid var(--color-warning-200);
+    border-color: var(--color-warning-200);
+    box-shadow: 0 1px 3px rgba($warning-500, 0.2);
   }
 
   &.danger {
     background: var(--color-error-100);
     color: var(--color-error-700);
-    border: 1px solid var(--color-error-200);
+    border-color: var(--color-error-200);
+    box-shadow: 0 1px 3px rgba($error-500, 0.2);
   }
 
   &.info {
     background: var(--color-info-100);
     color: var(--color-info-700);
-    border: 1px solid var(--color-info-200);
+    border-color: var(--color-info-200);
+    box-shadow: 0 1px 3px rgba($info-500, 0.2);
   }
 
   /* Sizes */
   &.small {
-    padding: 2px $spacing-1;
-    font-size: $font-size-xs;
+    padding: 2px $spacing-2;
+    font-size: 0.625rem;
+    border-radius: $border-radius-sm;
 
     .material-icons {
-      font-size: 12px;
+      font-size: 0.75rem;
     }
   }
 
   &.medium {
-    padding: $spacing-1 $spacing-2;
+    padding: $spacing-1 $spacing-3;
     font-size: $font-size-xs;
 
     .material-icons {
-      font-size: 14px;
+      font-size: 0.875rem;
     }
   }
 
   &.large {
-    padding: $spacing-2 $spacing-3;
+    padding: $spacing-2 $spacing-4;
     font-size: $font-size-sm;
+    border-radius: $border-radius-lg;
 
     .material-icons {
-      font-size: 16px;
+      font-size: 1rem;
     }
   }
 
   /* Pills/Dot variants */
   &.pill {
-    border-radius: var(--border-radius-full);
+    border-radius: $border-radius-full;
   }
 
   &.square {
-    border-radius: var(--border-radius-sm);
+    border-radius: $border-radius-md;
   }
 
   &.dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     padding: 0;
     border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
     &.small {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
     }
 
     &.large {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
     }
   }
 }
 
 .material-icons {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1;
+  transition: transform $duration-200 $ease-out;
 }
 
 .badge-count {
@@ -120,9 +131,6 @@
 @include mobile-only {
   .base-badge {
     font-size: $font-size-xs;
-    padding: 2px $spacing-1;
+    padding: 2px $spacing-2;
   }
 }
-
-
-

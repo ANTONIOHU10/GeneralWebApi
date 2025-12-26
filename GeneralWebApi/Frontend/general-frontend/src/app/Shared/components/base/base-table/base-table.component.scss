@@ -4,32 +4,39 @@
 
 .base-table-container {
   background: var(--bg-surface);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-xl;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all $duration-300 $ease-out;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
 }
 
 .table-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $spacing-4 $spacing-6;
-  border-bottom: 1px solid var(--border-primary);
+  padding: $spacing-5 $spacing-6;
+  border-bottom: 1px solid var(--border-secondary);
   background: var(--bg-secondary);
 
   .table-title-section {
     .table-title {
       margin: 0 0 $spacing-1 0;
       font-size: $font-size-lg;
-      font-weight: $font-weight-semibold;
+      font-weight: $font-weight-bold;
       color: var(--text-primary);
+      letter-spacing: -0.01em;
     }
 
     .table-subtitle {
       margin: 0;
       font-size: $font-size-sm;
       color: var(--text-secondary);
+      font-weight: $font-weight-medium;
     }
   }
 
@@ -43,17 +50,30 @@
 .table-wrapper {
   position: relative;
   overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-secondary);
+    border-radius: 4px;
+  }
 }
 
 .table-loading,
 .table-empty {
-  padding: $spacing-8;
+  padding: $spacing-10;
   text-align: center;
 }
 
 .base-table {
   width: 100%;
-  table-layout: fixed; // Fixed table layout for consistent column widths
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
   background: var(--bg-surface);
@@ -67,15 +87,16 @@
   &.hoverable {
     tbody tr:hover {
       background: var(--bg-hover);
+      transform: scale(1.01);
     }
   }
 
   &.bordered {
-    border: 1px solid var(--border-primary);
+    border: 1px solid var(--border-secondary);
 
     th,
     td {
-      border: 1px solid var(--border-primary);
+      border: 1px solid var(--border-secondary);
     }
   }
 
@@ -99,26 +120,25 @@
 }
 
 .table-header-row {
-  th {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
   background: var(--bg-secondary);
 
   th {
     padding: $spacing-4 $spacing-5;
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-bold;
     font-size: $font-size-sm;
     color: var(--text-primary);
-    border-bottom: 2px solid var(--border-primary);
+    border-bottom: 2px solid var(--border-secondary);
     cursor: pointer;
-    transition: all $duration-200 $ease-in-out;
+    transition: all $duration-200 $ease-out;
     user-select: none;
     white-space: nowrap;
     position: sticky;
     top: 0;
     z-index: 10;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover {
       background: var(--bg-hover);
@@ -159,28 +179,30 @@
   }
 
   .sort-icon {
-    font-size: 18px;
+    font-size: 1.125rem;
     color: var(--text-tertiary);
-    transition: all $duration-200 $ease-in-out;
+    transition: all $duration-200 $ease-out;
 
     &.active {
-      color: var(--color-primary-500);
+      color: $primary-500;
+      transform: scale(1.2);
     }
   }
 }
 
 .table-body {
   tr {
-    transition: all $duration-200 $ease-in-out;
+    transition: all $duration-200 $ease-out;
     cursor: pointer;
-    border-bottom: 1px solid var(--border-primary);
+    border-bottom: 1px solid var(--border-secondary);
 
     &:hover {
       background: var(--bg-hover);
     }
 
     &.selected {
-      background: var(--color-primary-50);
+      background: linear-gradient(135deg, rgba($primary-500, 0.08) 0%, rgba($primary-500, 0.04) 100%);
+      border-left: 3px solid $primary-500;
     }
 
     &.disabled {
@@ -196,14 +218,13 @@
   td {
     padding: $spacing-4 $spacing-5;
     color: var(--text-primary);
-    border-bottom: 1px solid var(--border-primary);
+    border-bottom: 1px solid var(--border-secondary);
     vertical-align: middle;
     font-size: $font-size-sm;
-    line-height: 1.5;
+    line-height: 1.6;
     word-wrap: break-word;
     overflow-wrap: break-word;
     
-    // For number and percentage columns, prevent wrapping
     &[style*="text-align: right"],
     &[style*="text-align: center"] {
       white-space: nowrap;
@@ -223,7 +244,6 @@
       width: auto;
       min-width: 140px;
 
-      // Ensure background matches row on hover
       tr:hover & {
         background: var(--bg-hover);
       }
@@ -237,11 +257,12 @@
   justify-content: center;
 
   .material-icons {
-    font-size: 20px;
-    color: var(--color-error-500);
+    font-size: 1.25rem;
+    color: $error-500;
+    transition: transform $duration-200 $ease-out;
 
     &.true {
-      color: var(--color-success-500);
+      color: $success-500;
     }
   }
 }
@@ -263,24 +284,25 @@
   height: 36px;
   padding: $spacing-1 $spacing-2;
   border: 1px solid transparent;
-  border-radius: var(--border-radius-md);
+  border-radius: $border-radius-md;
   background: transparent;
   color: var(--text-secondary);
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: all $duration-200 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   text-decoration: none;
   position: relative;
 
   &:hover:not(:disabled) {
     background: var(--bg-hover);
     color: var(--text-primary);
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   &:active:not(:disabled) {
-    transform: scale(0.95);
+    transform: translateY(0);
   }
 
   &:disabled {
@@ -290,13 +312,18 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-primary-500);
+    outline: 2px solid $primary-500;
     outline-offset: 2px;
   }
 
   .material-icons {
-    font-size: 18px;
+    font-size: 1.125rem;
     line-height: 1;
+    transition: transform $duration-200 $ease-out;
+  }
+
+  &:hover:not(:disabled) .material-icons {
+    transform: scale(1.1);
   }
 
   .action-label {
@@ -304,20 +331,18 @@
     font-size: $font-size-xs;
   }
 
-  // Icon-only button style (when no label is shown)
   &.icon-only {
     padding: $spacing-1;
     min-width: 32px;
     width: 32px;
   }
 
-  // Action variants - Modern icon button styles
   &.primary {
-    color: var(--color-primary-600);
+    color: $primary-600;
 
     &:hover:not(:disabled) {
-      background: var(--color-primary-50);
-      color: var(--color-primary-700);
+      background: rgba($primary-500, 0.1);
+      color: $primary-700;
     }
   }
 
@@ -331,29 +356,29 @@
   }
 
   &.success {
-    color: var(--color-success-600);
+    color: $success-600;
 
     &:hover:not(:disabled) {
-      background: var(--color-success-50);
-      color: var(--color-success-700);
+      background: rgba($success-500, 0.1);
+      color: $success-700;
     }
   }
 
   &.warning {
-    color: var(--color-warning-600);
+    color: $warning-600;
 
     &:hover:not(:disabled) {
-      background: var(--color-warning-50);
-      color: var(--color-warning-700);
+      background: rgba($warning-500, 0.1);
+      color: $warning-700;
     }
   }
 
   &.danger {
-    color: var(--color-error-600);
+    color: $error-600;
 
     &:hover:not(:disabled) {
-      background: var(--color-error-50);
-      color: var(--color-error-700);
+      background: rgba($error-500, 0.1);
+      color: $error-700;
     }
   }
 
@@ -363,8 +388,8 @@
 
     &:hover:not(:disabled) {
       background: var(--bg-hover);
-      border-color: var(--color-primary-300);
-      color: var(--color-primary-600);
+      border-color: $primary-500;
+      color: $primary-600;
     }
   }
 
@@ -380,7 +405,7 @@
 
 .table-footer {
   padding: $spacing-4 $spacing-6;
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid var(--border-secondary);
   background: var(--bg-secondary);
 
   .table-pagination {

@@ -8,7 +8,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--bg-overlay);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 1050;
   display: flex;
   align-items: center;
@@ -16,7 +17,7 @@
   padding: $spacing-4;
   opacity: 0;
   visibility: hidden;
-  transition: all $duration-300 $ease-in-out;
+  transition: all $duration-300 $ease-out;
 
   &.show {
     opacity: 1;
@@ -25,25 +26,26 @@
 
   &.fade {
     transition:
-      opacity $duration-300 $ease-in-out,
-      visibility $duration-300 $ease-in-out;
+      opacity $duration-300 $ease-out,
+      visibility $duration-300 $ease-out;
   }
 }
 
 .modal {
   background: var(--bg-surface);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-2xl;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.15);
   max-width: 90vw;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  transform: scale(0.9);
-  transition: transform $duration-300 $ease-in-out;
+  transform: scale(0.95) translateY(20px);
+  transition: all $duration-300 $ease-out;
+  overflow: hidden;
 
   .modal-backdrop.show & {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 
   &.small {
@@ -63,6 +65,7 @@
     height: 95vh;
     max-width: none;
     max-height: none;
+    border-radius: $border-radius-xl;
   }
 
   &.centered {
@@ -78,9 +81,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $spacing-6;
-  border-bottom: 1px solid var(--border-primary);
+  padding: $spacing-5 $spacing-6;
+  border-bottom: 1px solid var(--border-secondary);
   background: var(--bg-surface);
+  border-radius: $border-radius-2xl $border-radius-2xl 0 0;
 
   .modal-title {
     display: flex;
@@ -89,14 +93,15 @@
 
     .modal-icon {
       font-size: 1.5rem;
-      color: var(--color-primary-500);
+      color: $primary-500;
     }
 
     .modal-title-text {
       margin: 0;
       font-size: $font-size-xl;
-      font-weight: $font-weight-semibold;
+      font-weight: $font-weight-bold;
       color: var(--text-primary);
+      letter-spacing: -0.02em;
     }
   }
 
@@ -109,22 +114,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 2rem;
-      height: 2rem;
+      width: 36px;
+      height: 36px;
       border: none;
-      background: none;
-      border-radius: 50%;
+      background: var(--background-secondary);
+      border-radius: $border-radius-full;
       cursor: pointer;
       color: var(--text-tertiary);
-      transition: all $duration-200 $ease-in-out;
+      transition: all $duration-200 $ease-out;
 
       &:hover {
-        background: var(--bg-secondary);
+        background: var(--background-tertiary);
         color: var(--text-primary);
+        transform: rotate(90deg) scale(1.1);
       }
 
       .material-icons {
-        font-size: 1.2rem;
+        font-size: 1.25rem;
       }
     }
   }
@@ -134,10 +140,22 @@
   padding: $spacing-6;
   flex: 1;
   overflow-y: auto;
-  overflow-x: visible; // Allow horizontal overflow for dropdowns
+  overflow-x: visible;
   color: var(--text-primary);
-  // Prevent clipping of absolutely positioned children (like select dropdowns)
   position: relative;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-secondary);
+    border-radius: 4px;
+  }
 
   &.scrollable {
     max-height: 60vh;
@@ -154,8 +172,9 @@
   justify-content: flex-end;
   gap: $spacing-3;
   padding: $spacing-4 $spacing-6;
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid var(--border-secondary);
   background: var(--bg-secondary);
+  border-radius: 0 0 $border-radius-2xl $border-radius-2xl;
 }
 
 /* Modal sizes */
@@ -179,38 +198,38 @@
 .modal-backdrop.fade {
   .modal {
     &.slide-down {
-      transform: translateY(-50px);
-      transition: transform $duration-300 $ease-in-out;
+      transform: translateY(-50px) scale(0.95);
+      transition: all $duration-300 $ease-out;
 
       .modal-backdrop.show & {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
     &.slide-up {
-      transform: translateY(50px);
-      transition: transform $duration-300 $ease-in-out;
+      transform: translateY(50px) scale(0.95);
+      transition: all $duration-300 $ease-out;
 
       .modal-backdrop.show & {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
     &.slide-left {
-      transform: translateX(-50px);
-      transition: transform $duration-300 $ease-in-out;
+      transform: translateX(-50px) scale(0.95);
+      transition: all $duration-300 $ease-out;
 
       .modal-backdrop.show & {
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
       }
     }
 
     &.slide-right {
-      transform: translateX(50px);
-      transition: transform $duration-300 $ease-in-out;
+      transform: translateX(50px) scale(0.95);
+      transition: all $duration-300 $ease-out;
 
       .modal-backdrop.show & {
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
       }
     }
   }
@@ -226,6 +245,7 @@
     width: 100% !important;
     max-width: 100% !important;
     margin: 0;
+    border-radius: $border-radius-xl;
 
     &.small,
     &.medium,

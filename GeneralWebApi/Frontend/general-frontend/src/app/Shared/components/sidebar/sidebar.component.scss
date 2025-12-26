@@ -127,7 +127,7 @@
 
         &.expandable {
           cursor: pointer;
-          
+
           &:hover {
             background: var(--background-secondary);
             color: var(--text-secondary);
@@ -140,7 +140,7 @@
             .nav-arrow {
               color: $primary-500;
               transform: rotate(0deg);
-            }
+          }
           }
 
           .nav-arrow {

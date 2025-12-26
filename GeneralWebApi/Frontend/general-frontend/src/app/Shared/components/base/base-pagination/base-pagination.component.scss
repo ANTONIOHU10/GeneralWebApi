@@ -9,15 +9,17 @@
   gap: $spacing-4;
   padding: $spacing-4;
   background: var(--bg-surface);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-xl;
   flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .pagination-info {
   .info-text {
     font-size: $font-size-sm;
     color: var(--text-secondary);
+    font-weight: $font-weight-medium;
   }
 }
 
@@ -29,20 +31,22 @@
   .page-size-label {
     font-size: $font-size-sm;
     color: var(--text-secondary);
+    font-weight: $font-weight-medium;
   }
 
   .page-size-select {
-    padding: $spacing-2;
-    border: 1px solid var(--border-primary);
-    border-radius: var(--border-radius-sm);
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid var(--border-secondary);
+    border-radius: $border-radius-md;
     background: var(--input-bg);
     color: var(--text-primary);
     font-size: $font-size-sm;
+    transition: all $duration-200 $ease-out;
 
     &:focus {
       outline: none;
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(var(--color-primary-500), 0.1);
+      border-color: $primary-500;
+      box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
     }
   }
 
@@ -71,21 +75,25 @@
   min-width: 2.5rem;
   height: 2.5rem;
   padding: $spacing-2;
-  border: 1px solid var(--border-primary);
-  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-secondary);
+  border-radius: $border-radius-md;
   background: var(--bg-surface);
   color: var(--text-primary);
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: all $duration-200 $ease-in-out;
+  transition: all $duration-200 $ease-out;
   text-decoration: none;
 
   &:hover:not(:disabled) {
     background: var(--bg-secondary);
-    border-color: var(--border-focus);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+    border-color: $primary-500;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   &:disabled {
@@ -96,10 +104,11 @@
   }
 
   &.active {
-    background: var(--color-primary-500);
+    background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
     color: var(--color-white);
-    border-color: var(--color-primary-500);
+    border-color: $primary-500;
     font-weight: $font-weight-semibold;
+    box-shadow: 0 2px 8px rgba($primary-500, 0.3);
   }
 
   &.ellipsis {
@@ -117,7 +126,12 @@
   }
 
   .material-icons {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    transition: transform $duration-200 $ease-out;
+  }
+
+  &:hover:not(:disabled) .material-icons {
+    transform: scale(1.1);
   }
 }
 
@@ -129,41 +143,46 @@
   .jump-label {
     font-size: $font-size-sm;
     color: var(--text-secondary);
+    font-weight: $font-weight-medium;
   }
 
   .jump-input {
     width: 4rem;
-    padding: $spacing-2;
-    border: 1px solid var(--border-primary);
-    border-radius: var(--border-radius-sm);
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid var(--border-secondary);
+    border-radius: $border-radius-md;
     background: var(--input-bg);
     color: var(--text-primary);
     font-size: $font-size-sm;
     text-align: center;
+    transition: all $duration-200 $ease-out;
 
     &:focus {
       outline: none;
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(var(--color-primary-500), 0.1);
+      border-color: $primary-500;
+      box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
     }
   }
 
   .jump-btn {
     padding: $spacing-2 $spacing-4;
-    border: 1px solid var(--color-primary-500);
-    border-radius: var(--border-radius-sm);
-    background: var(--color-primary-500);
+    border: 1px solid $primary-500;
+    border-radius: $border-radius-md;
+    background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
     color: var(--color-white);
     font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
+    font-weight: $font-weight-semibold;
     cursor: pointer;
-    transition: all $duration-200 $ease-in-out;
+    transition: all $duration-200 $ease-out;
+    box-shadow: 0 2px 4px rgba($primary-500, 0.2);
 
     &:hover:not(:disabled) {
-      background: var(--color-primary-600);
-      border-color: var(--color-primary-600);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba($primary-500, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     &:disabled {

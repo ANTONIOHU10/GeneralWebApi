@@ -161,14 +161,14 @@
 // Settings Panel Styles - Enhanced
 .settings-panel-content {
   padding: $spacing-6;
-
+  
   .settings-section {
     margin-bottom: $spacing-8;
-
+    
     &:last-child {
       margin-bottom: 0;
     }
-
+    
     .settings-section-title {
       display: flex;
       align-items: center;
@@ -179,13 +179,13 @@
       margin-bottom: $spacing-4;
       padding-bottom: $spacing-3;
       border-bottom: 1px solid var(--border-secondary);
-
+      
       .material-icons {
         font-size: 1.25rem;
         color: $primary-500;
       }
     }
-
+    
     .settings-item {
       display: flex;
       justify-content: space-between;
@@ -195,7 +195,7 @@
       background: var(--background-secondary);
       margin-bottom: $spacing-3;
       transition: all $duration-200 $ease-out;
-
+      
       &:last-child {
         margin-bottom: 0;
       }
@@ -203,25 +203,25 @@
       &:hover {
         background: var(--background-tertiary);
       }
-
+      
       .settings-label {
         display: flex;
         flex-direction: column;
         gap: $spacing-1;
         flex: 1;
-
+        
         span:first-child {
           font-weight: $font-weight-semibold;
           color: var(--text-primary);
           font-size: $font-size-sm;
         }
-
+        
         .settings-description {
           font-size: $font-size-xs;
           color: var(--text-tertiary);
         }
       }
-
+      
       .toggle-button {
         display: flex;
         align-items: center;
@@ -235,31 +235,31 @@
         font-size: $font-size-sm;
         font-weight: $font-weight-medium;
         transition: all $duration-200 $ease-out;
-
+        
         &:hover {
           background: var(--background-tertiary);
           border-color: $primary-500;
         }
-
+        
         &.active {
           background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
           color: white;
           border-color: transparent;
           box-shadow: 0 4px 12px rgba($primary-500, 0.3);
         }
-
+        
         .material-icons {
           font-size: 1.125rem;
         }
       }
-
+      
       .settings-checkbox {
         width: 20px;
         height: 20px;
         cursor: pointer;
         accent-color: $primary-500;
       }
-
+      
       .settings-select {
         padding: $spacing-2 $spacing-4;
         border: 1px solid var(--border-secondary);
@@ -270,7 +270,7 @@
         min-width: 160px;
         font-size: $font-size-sm;
         transition: all $duration-200 $ease-out;
-
+        
         &:focus {
           outline: none;
           border-color: $primary-500;
@@ -281,7 +281,7 @@
           border-color: var(--border-primary);
         }
       }
-
+      
       .settings-button {
         padding: $spacing-2 $spacing-4;
         border: none;
@@ -293,7 +293,7 @@
         font-weight: $font-weight-medium;
         transition: all $duration-200 $ease-out;
         box-shadow: 0 2px 8px rgba($primary-500, 0.25);
-
+        
         &:hover {
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba($primary-500, 0.35);
@@ -322,7 +322,6 @@
         background: linear-gradient(
           180deg,
           rgba($primary-500, 0.03) 0%,
-          transparent 100%
         );
       }
     }
