@@ -9,6 +9,7 @@ import {
   BaseCardComponent,
   BaseButtonComponent,
 } from '../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { EmployeeService } from '@core/services/employee.service';
 import { ContractService } from '@core/services/contract.service';
 import { DepartmentService } from '@core/services/department.service';
@@ -40,19 +41,20 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
     BasePageHeaderComponent,
     BaseCardComponent,
     BaseButtonComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="dashboard-container">
       <app-base-page-header
-        title="Dashboard Overview"
-        subtitle="Welcome to your management dashboard"
+        [title]="'dashboard.title' | translate"
+        [subtitle]="'dashboard.subtitle' | translate"
         icon="dashboard"
         iconColor="var(--color-primary-500)"
         [showActions]="true"
       >
         <div slot="actions">
           <app-base-button
-            text="Refresh"
+            [text]="'dashboard.refresh' | translate"
             icon="refresh"
             variant="outline"
             size="small"
@@ -64,10 +66,10 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
       </app-base-page-header>
 
       <div class="stats-grid" *ngIf="!isLoading(); else loadingTemplate">
-        <app-base-card title="Total Employees" icon="people" variant="elevated">
+        <app-base-card [title]="'dashboard.stats.totalEmployees' | translate" icon="people" variant="elevated">
           <div class="stat-number">{{ totalEmployees() }}</div>
           <app-base-button
-            text="View Details"
+            [text]="'dashboard.actions.viewDetails' | translate"
             variant="primary"
             size="small"
             (buttonClick)="navigateToEmployees()"
@@ -76,13 +78,13 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
         </app-base-card>
 
         <app-base-card
-          title="Active Contracts"
+          [title]="'dashboard.stats.activeContracts' | translate"
           icon="description"
           variant="elevated"
         >
           <div class="stat-number">{{ activeContracts() }}</div>
           <app-base-button
-            text="Manage"
+            [text]="'dashboard.actions.manage' | translate"
             variant="primary"
             size="small"
             (buttonClick)="navigateToContracts()"
@@ -90,10 +92,10 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
           </app-base-button>
         </app-base-card>
 
-        <app-base-card title="Departments" icon="business" variant="elevated">
+        <app-base-card [title]="'dashboard.stats.departments' | translate" icon="business" variant="elevated">
           <div class="stat-number">{{ totalDepartments() }}</div>
           <app-base-button
-            text="View All"
+            [text]="'dashboard.actions.viewAll' | translate"
             variant="primary"
             size="small"
             (buttonClick)="navigateToDepartments()"
@@ -102,13 +104,13 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
         </app-base-card>
 
         <app-base-card
-          title="Pending Approvals"
+          [title]="'dashboard.stats.pendingApprovals' | translate"
           icon="pending_actions"
           variant="elevated"
         >
           <div class="stat-number">{{ pendingApprovals() }}</div>
           <app-base-button
-            text="Review"
+            [text]="'dashboard.actions.review' | translate"
             variant="primary"
             size="small"
             (buttonClick)="navigateToApprovals()"
@@ -120,13 +122,13 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
       <ng-template #loadingTemplate>
         <div class="loading-container">
           <div class="loading-spinner"></div>
-          <p>Loading dashboard data...</p>
+          <p>{{ 'dashboard.loading' | translate }}</p>
         </div>
       </ng-template>
 
       <app-base-card
-        title="Recent Activities"
-        subtitle="Latest updates and notifications"
+        [title]="'dashboard.recentActivities.title' | translate"
+        [subtitle]="'dashboard.recentActivities.subtitle' | translate"
         icon="history"
         variant="elevated"
         *ngIf="!isLoading()"
@@ -143,12 +145,12 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
             <span class="activity-time">{{ activity.time }}</span>
           </div>
           <div *ngIf="recentActivities().length === 0" class="no-activities">
-            No recent activities
+            {{ 'dashboard.recentActivities.noActivities' | translate }}
           </div>
         </div>
         <div slot="footer">
           <app-base-button
-            text="View All Activities"
+            [text]="'dashboard.recentActivities.viewAll' | translate"
             icon="arrow_forward"
             variant="outline"
             size="small"

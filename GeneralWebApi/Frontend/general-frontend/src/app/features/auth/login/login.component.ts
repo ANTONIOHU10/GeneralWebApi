@@ -15,6 +15,7 @@ import {
   BaseButtonComponent,
   BaseCheckboxComponent,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ import {
     BaseInputComponent,
     BaseButtonComponent,
     BaseCheckboxComponent,
+    TranslatePipe,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

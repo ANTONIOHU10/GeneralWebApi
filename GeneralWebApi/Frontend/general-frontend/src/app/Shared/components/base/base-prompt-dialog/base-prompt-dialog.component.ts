@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { BaseModalComponent, ModalConfig } from '../base-modal/base-modal.component';
 import { BaseButtonComponent } from '../base-button/base-button.component';
 import { BaseTextareaComponent } from '../base-textarea/base-textarea.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 export interface PromptDialogConfig {
   title?: string;
@@ -36,7 +37,7 @@ export interface PromptDialogConfig {
 @Component({
   selector: 'app-base-prompt-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseModalComponent, BaseButtonComponent, BaseTextareaComponent],
+  imports: [CommonModule, FormsModule, BaseModalComponent, BaseButtonComponent, BaseTextareaComponent, TranslatePipe],
   templateUrl: './base-prompt-dialog.component.html',
   styleUrls: ['./base-prompt-dialog.component.scss'],
 })
@@ -44,10 +45,10 @@ export class BasePromptDialogComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isOpen = false;
   @Input() config: PromptDialogConfig = {
     message: '',
-    placeholder: 'Enter your response...',
-    label: 'Response',
-    confirmText: 'Confirm',
-    cancelText: 'Cancel',
+    placeholder: '',
+    label: '',
+    confirmText: '',
+    cancelText: '',
     confirmVariant: 'primary',
     cancelVariant: 'outline',
     showCancel: true,

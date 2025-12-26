@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-templates/contract-template-list/contract-template-list.component.ts
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, delay, of } from 'rxjs';
-import { first, catchError, filter, take } from 'rxjs/operators';
+import { BehaviorSubject, delay, of, Subject } from 'rxjs';
+import { first, catchError, filter, take, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
   BaseAsyncStateComponent,
@@ -16,6 +16,8 @@ import {
   BadgeVariant,
 } from '../../../Shared/components/base';
 import { NotificationService, DialogService } from '../../../Shared/services';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { ContractTemplate } from 'app/contracts/contract-templates/contract-template.model';
 import { ContractTemplateDetailComponent } from '../contract-template-detail/contract-template-detail.component';
 import { AddContractTemplateComponent } from '../add-contract-template/add-contract-template.component';
@@ -33,13 +35,16 @@ import { AddContractTemplateComponent } from '../add-contract-template/add-contr
     BaseSearchComponent,
     ContractTemplateDetailComponent,
     AddContractTemplateComponent,
+    TranslatePipe,
   ],
   templateUrl: './contract-template-list.component.html',
   styleUrls: ['./contract-template-list.component.scss'],
 })
-export class ContractTemplateListComponent implements OnInit {
+export class ContractTemplateListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   templates = signal<ContractTemplate[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -53,10 +58,52 @@ export class ContractTemplateListComponent implements OnInit {
   detailMode: 'edit' | 'view' = 'view';
 
   filterOptions: ('all' | 'active' | 'inactive' | 'default')[] = ['all', 'active', 'inactive', 'default'];
-  tabs: TabItem[] = [
-    { id: 'list', label: 'Template List', icon: 'list' },
-    { id: 'add', label: 'Add Template', icon: 'add' },
-  ];
+  tabs: TabItem[] = [];
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
+
+  /**
+   * Get translated filter label
+   */
+  getFilterLabel(filter: string): string {
+    return this.translationService.translate(`contractTemplates.filterOptions.${filter}`);
+  }
+
+  /**
+   * Initialize tabs with translations
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('contractTemplates.tabs.list'), icon: 'list' },
+      { id: 'add', label: this.translationService.translate('contractTemplates.tabs.add'), icon: 'add' },
+    ];
+  }
+
+  /**
+   * Initialize table config with translations
+   */
+  private initializeTableConfig(): void {
+    this.tableColumns = [
+      { key: 'name', label: this.translationService.translate('contractTemplates.columns.name'), sortable: true, width: '200px' },
+      { key: 'description', label: this.translationService.translate('contractTemplates.columns.description'), sortable: false, width: '200px' },
+      { key: 'contractType', label: this.translationService.translate('contractTemplates.columns.contractType'), sortable: true, width: '120px' },
+      { key: 'category', label: this.translationService.translate('contractTemplates.columns.category'), sortable: true, width: '120px' },
+      { key: 'usageCount', label: this.translationService.translate('contractTemplates.columns.usageCount'), sortable: true, type: 'number', width: '100px' },
+      { key: 'isActive', label: this.translationService.translate('contractTemplates.columns.status'), sortable: true, width: '100px' },
+      { key: 'isDefault', label: this.translationService.translate('contractTemplates.columns.default'), sortable: true, width: '100px' },
+    ];
+
+    this.tableActions = [
+      { label: this.translationService.translate('contractTemplates.actions.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as ContractTemplate) },
+      { label: this.translationService.translate('contractTemplates.actions.edit'), icon: 'edit', variant: 'primary', showLabel: false, onClick: (item) => this.onEdit(item as ContractTemplate) },
+      { label: this.translationService.translate('contractTemplates.actions.delete'), icon: 'delete', variant: 'danger', showLabel: false, onClick: (item) => this.onDelete(item as ContractTemplate) },
+    ];
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   // Computed statistics
   activeCount = computed(() => this.allTemplates.filter(t => t.isActive).length);
@@ -161,25 +208,17 @@ export class ContractTemplateListComponent implements OnInit {
     },
   ];
 
-  tableColumns: TableColumn[] = [
-    { key: 'name', label: 'Name', sortable: true, width: '200px' },
-    { key: 'contractType', label: 'Type', sortable: true, width: '120px' },
-    { key: 'category', label: 'Category', sortable: true, width: '120px' },
-    { key: 'isActive', label: 'Status', sortable: true, width: '100px' },
-    { key: 'isDefault', label: 'Default', sortable: true, width: '100px' },
-    { key: 'usageCount', label: 'Usage', sortable: true, type: 'number', width: '100px' },
-    { key: 'version', label: 'Version', sortable: true, type: 'number', width: '100px' },
-    { key: 'createdAt', label: 'Created At', sortable: true, type: 'date', width: '150px' },
-  ];
-
-  tableActions: TableAction[] = [
-    { label: 'View', icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as ContractTemplate) },
-    { label: 'Edit', icon: 'edit', variant: 'ghost', showLabel: false, onClick: (item) => this.onEdit(item as ContractTemplate) },
-    { label: 'Duplicate', icon: 'content_copy', variant: 'ghost', showLabel: false, onClick: (item) => this.onDuplicate(item as ContractTemplate) },
-    { label: 'Delete', icon: 'delete', variant: 'danger', showLabel: false, onClick: (item) => this.onDelete(item as ContractTemplate) },
-  ];
-
   ngOnInit(): void {
+    // Wait for translations to load before initializing tabs and table
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTableConfig();
+    });
+
     this.loadTemplates();
   }
 

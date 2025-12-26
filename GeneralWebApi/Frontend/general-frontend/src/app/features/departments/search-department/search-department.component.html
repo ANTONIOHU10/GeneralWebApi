@@ -3,21 +3,21 @@
   <div class="page-header">
     <h2>
       <span class="material-icons">search</span>
-      Search Department
+      {{ 'departments.search.title' | translate }}
     </h2>
-    <p>Search and filter departments by various criteria</p>
+    <p>{{ 'departments.search.subtitle' | translate }}</p>
   </div>
 
   <!-- Search Form Section -->
   <div class="search-section">
     <app-base-card
-      [title]="'Search & Filter Departments'"
+      [title]="'departments.search.cardTitle' | translate"
       [icon]="'search'"
       [variant]="'elevated'"
     >
       <div class="search-stats" *ngIf="allDepartments().length > 0">
         <span class="stat-text">
-          Showing {{ allDepartments().length }} department(s)
+          {{ 'departments.search.showing' | translate: {count: allDepartments().length} }}
         </span>
       </div>
 
@@ -40,9 +40,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="departmentsData$"
-      loadingMessage="Loading departments..."
-      emptyTitle="No departments found"
-      emptyDescription="No departments match your search criteria"
+      [loadingMessage]="'departments.search.loadingMessage' | translate"
+      [emptyTitle]="'departments.search.emptyTitle' | translate"
+      [emptyDescription]="'departments.search.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <!-- Success content: Department table -->
@@ -61,7 +61,7 @@
           bordered: false,
           size: 'medium',
           loading: false,
-          emptyMessage: 'No departments match your search criteria'
+          emptyMessage: ''
         }"
         [pageSize]="10"
         (rowClick)="onRowClick($event)"

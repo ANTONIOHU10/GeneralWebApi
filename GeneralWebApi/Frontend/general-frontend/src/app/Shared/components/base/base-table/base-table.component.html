@@ -23,7 +23,7 @@
     <div class="table-loading" *ngIf="config.loading">
       <app-base-loading
         [config]="loadingConfig"
-        message="Loading data..."
+        [message]="'table.loading' | translate"
       ></app-base-loading>
     </div>
 
@@ -34,7 +34,7 @@
     >
       <app-base-empty
         [config]="emptyConfig"
-        [title]="config.emptyMessage || 'No data available'"
+        [title]="config.emptyMessage || ('table.emptyMessage' | translate)"
       ></app-base-empty>
     </div>
 
@@ -70,7 +70,7 @@
             class="actions-header"
             [style.width]="actionsWidth"
           >
-            Actions
+            {{ 'common.actions' | translate }}
           </th>
         </tr>
       </thead>

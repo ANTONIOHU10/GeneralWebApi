@@ -34,7 +34,7 @@
       <button
         class="action-button mobile-menu-toggle"
         (click)="onSidebarToggle()"
-        aria-label="Toggle navigation menu"
+        [attr.aria-label]="'common.actions' | translate"
       >
         <span class="action-icon material-icons">menu</span>
       </button>
@@ -44,7 +44,7 @@
     @if (showLoginButton) {
       <a routerLink="/login" class="login-btn">
         <span class="material-icons">login</span>
-        <span>Login</span>
+        <span>{{ 'auth.login' | translate }}</span>
       </a>
     }
   </div>

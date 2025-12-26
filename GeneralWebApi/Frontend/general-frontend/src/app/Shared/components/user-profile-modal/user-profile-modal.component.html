@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/user-profile-modal/user-profile-modal.component.html -->
 <app-base-detail
   [isOpen]="isOpen"
-  title="User Profile"
+  [title]="'profile.title' | translate"
   [mode]="'view'"
   [sections]="sections()"
   [customViewTemplate]="customViewTemplate"
@@ -71,7 +71,7 @@
       <!-- Logout Button -->
       <div class="logout-section">
         <app-base-button
-          text="Logout"
+          [text]="'auth.logout' | translate"
           icon="logout"
           variant="danger"
           size="medium"

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subject, interval, EMPTY } from 'rxjs';
-import { takeUntil, catchError, startWith, switchMap } from 'rxjs/operators';
+import { takeUntil, catchError, startWith, switchMap, filter, distinctUntilChanged } from 'rxjs/operators';
 import {
   BadgeVariant,
   BaseCardComponent,
@@ -19,6 +19,8 @@ import {
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
 import { NotificationCenterService } from '../../../core/services/notification-center.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { ApprovalNotificationProvider } from '../../../core/services/notification-providers/approval-notification.provider';
 import { TaskNotificationProvider } from '../../../core/services/notification-providers/task-notification.provider';
 import { ContractNotificationProvider } from '../../../core/services/notification-providers/contract-notification.provider';
@@ -45,6 +47,7 @@ import {
     BaseEmptyComponent,
     BaseLoadingComponent,
     BaseErrorComponent,
+    TranslatePipe,
   ],
   templateUrl: './notification-center.component.html',
   styleUrls: ['./notification-center.component.scss'],
@@ -52,6 +55,7 @@ import {
 export class NotificationCenterComponent implements OnInit, OnDestroy {
   private notificationCenterService = inject(NotificationCenterService);
   private notificationService = inject(NotificationService);
+  private translationService = inject(TranslationService);
   private router = inject(Router);
   private approvalProvider = inject(ApprovalNotificationProvider);
   private taskProvider = inject(TaskNotificationProvider);
@@ -74,31 +78,10 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   // Statistics
   stats = signal<NotificationStats | null>(null);
 
-  // Filter options for select components
-  typeFilterOptions: SelectOption[] = [
-    { value: 'all', label: 'All Types' },
-    { value: 'approval', label: 'Approval' },
-    { value: 'task', label: 'Task' },
-    { value: 'contract', label: 'Contract' },
-    { value: 'system', label: 'System' },
-    { value: 'audit', label: 'Audit' },
-    { value: 'employee', label: 'Employee' },
-  ];
-
-  statusFilterOptions: SelectOption[] = [
-    { value: 'all', label: 'All Status' },
-    { value: 'unread', label: 'Unread' },
-    { value: 'read', label: 'Read' },
-    { value: 'archived', label: 'Archived' },
-  ];
-
-  priorityFilterOptions: SelectOption[] = [
-    { value: 'all', label: 'All Priorities' },
-    { value: 'urgent', label: 'Urgent' },
-    { value: 'high', label: 'High' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'low', label: 'Low' },
-  ];
+  // Filter options for select components - will be initialized in ngOnInit
+  typeFilterOptions: SelectOption[] = [];
+  statusFilterOptions: SelectOption[] = [];
+  priorityFilterOptions: SelectOption[] = [];
 
   // Computed values
   filteredNotifications = computed(() => {
@@ -138,6 +121,15 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   totalCount = computed(() => this.stats()?.total || 0);
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing filter options
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFilterOptions();
+    });
+
     // Register notification providers
     this.registerProviders();
     
@@ -153,6 +145,36 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.loadNotifications();
       });
+  }
+
+  /**
+   * Initialize filter options with translations
+   */
+  private initializeFilterOptions(): void {
+    this.typeFilterOptions = [
+      { value: 'all', label: this.translationService.translate('notifications.filters.allTypes') },
+      { value: 'approval', label: this.translationService.translate('notifications.types.approval') },
+      { value: 'task', label: this.translationService.translate('notifications.types.task') },
+      { value: 'contract', label: this.translationService.translate('notifications.types.contract') },
+      { value: 'system', label: this.translationService.translate('notifications.types.system') },
+      { value: 'audit', label: this.translationService.translate('notifications.types.audit') },
+      { value: 'employee', label: this.translationService.translate('notifications.types.employee') },
+    ];
+
+    this.statusFilterOptions = [
+      { value: 'all', label: this.translationService.translate('notifications.filters.allStatus') },
+      { value: 'unread', label: this.translationService.translate('notifications.unread') },
+      { value: 'read', label: this.translationService.translate('notifications.read') },
+      { value: 'archived', label: this.translationService.translate('notifications.archived') },
+    ];
+
+    this.priorityFilterOptions = [
+      { value: 'all', label: this.translationService.translate('notifications.filters.allPriorities') },
+      { value: 'urgent', label: this.translationService.translate('notifications.priorities.urgent') },
+      { value: 'high', label: this.translationService.translate('notifications.priorities.high') },
+      { value: 'medium', label: this.translationService.translate('notifications.priorities.medium') },
+      { value: 'low', label: this.translationService.translate('notifications.priorities.low') },
+    ];
   }
 
   ngOnDestroy(): void {
@@ -466,5 +488,20 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
     if (!readAt) return '';
     const date = new Date(readAt);
     return date.toLocaleString();
+  }
+
+  /**
+   * Get empty state config
+   */
+  getEmptyStateConfig(): any {
+    return {
+      type: 'data',
+      size: 'md',
+      showIcon: true,
+      showActionButton: this.hasActiveFilters(),
+      actionButtonText: this.translationService.translate('notifications.clearFilters'),
+      centered: true,
+      fullHeight: false
+    };
   }
 }

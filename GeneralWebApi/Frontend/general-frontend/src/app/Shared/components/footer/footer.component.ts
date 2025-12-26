@@ -1,13 +1,14 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/footer/footer.component.ts
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   standalone: true,
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
 })
 export class FooterComponent {
   @Input() showVersion = true;

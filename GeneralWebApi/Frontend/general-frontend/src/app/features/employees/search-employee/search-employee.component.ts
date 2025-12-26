@@ -3,7 +3,7 @@ import { Component, OnInit, inject, signal, computed, effect } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, of, Observable } from 'rxjs';
-import { filter, startWith, first, catchError, take } from 'rxjs/operators';
+import { filter, startWith, first, catchError, take, distinctUntilChanged } from 'rxjs/operators';
 import { EmployeeDetailComponent } from '../employee-detail/employee-detail.component';
 import {
   BaseCardComponent,
@@ -21,6 +21,8 @@ import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
 import { NotificationService } from '../../../Shared/services/notification.service';
 import { DialogService } from '../../../Shared/services/dialog.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { Department } from 'app/contracts/departments/department.model';
 import { Position } from 'app/contracts/positions/position.model';
@@ -36,6 +38,7 @@ import { Position } from 'app/contracts/positions/position.model';
     BaseAsyncStateComponent,
     BaseFormComponent,
     BaseTableComponent,
+    TranslatePipe,
   ],
   templateUrl: './search-employee.component.html',
   styleUrls: ['./search-employee.component.scss'],
@@ -47,6 +50,7 @@ export class SearchEmployeeComponent implements OnInit {
   private positionFacade = inject(PositionFacade);
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private translationService = inject(TranslationService);
 
   // State
   selectedDepartmentId = signal<number | null>(null);
@@ -93,173 +97,96 @@ export class SearchEmployeeComponent implements OnInit {
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
 
-  // Table configuration
-  tableColumns: TableColumn[] = [
-    { key: 'employeeNumber', label: 'Employee Number', sortable: true, width: '120px' },
-    { key: 'firstName', label: 'First Name', sortable: true, width: '120px' },
-    { key: 'lastName', label: 'Last Name', sortable: true, width: '120px' },
-    { key: 'email', label: 'Email', sortable: true, width: '200px' },
-    { key: 'phone', label: 'Phone', sortable: false, width: '120px' },
-    { key: 'department', label: 'Department', sortable: true, width: '150px' },
-    { key: 'position', label: 'Position', sortable: true, width: '150px' },
-    { key: 'status', label: 'Status', sortable: true, width: '100px' },
-    { key: 'hireDate', label: 'Hire Date', sortable: true, type: 'date', width: '120px' },
-  ];
+  // Table configuration - will be initialized in ngOnInit
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
 
-  tableActions: TableAction[] = [
-    {
-      label: 'View',
-      icon: 'visibility',
-      variant: 'ghost',
-      showLabel: false, // Icon-only button
-      onClick: (item: unknown) => this.onViewEmployee(item as Employee),
-    },
-    {
-      label: 'Edit',
-      icon: 'edit',
-      variant: 'primary',
-      showLabel: false, // Icon-only button
-      onClick: (item: unknown) => this.onEditEmployee(item as Employee),
-    },
-    {
-      label: 'Delete',
-      icon: 'delete',
-      variant: 'danger',
-      showLabel: false, // Icon-only button
-      onClick: (item: unknown) => this.onDeleteEmployee(item as Employee),
-    },
-  ];
-
-  // Search form configuration
+  // Search form configuration - will be initialized with translations
   searchFormConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Search & Filter Employees',
-        description: 'Select department and filter employees by various criteria',
-        order: 0,
-        collapsible: false,
-        collapsed: false,
-      },
-    ],
-    layout: {
-      columns: 3,
-      gap: '1rem',
-      sectionGap: '1.5rem',
-      labelPosition: 'top',
-      showSectionDividers: false,
-    },
-    fields: [
-      {
-        key: 'departmentId',
-        type: 'select',
-        label: 'Department',
-        placeholder: 'Select a department (required)',
-        required: true,
-        section: 'Search & Filter Employees',
-        order: 0,
-        colSpan: 1,
-        searchable: true,
-        options: [] as SelectOption[],
-      },
-      {
-        key: 'firstName',
-        type: 'input',
-        label: 'First Name',
-        placeholder: 'Search by first name',
-        section: 'Search & Filter Employees',
-        order: 1,
-        colSpan: 1,
-      },
-      {
-        key: 'lastName',
-        type: 'input',
-        label: 'Last Name',
-        placeholder: 'Search by last name',
-        section: 'Search & Filter Employees',
-        order: 2,
-        colSpan: 1,
-      },
-      {
-        key: 'email',
-        type: 'input',
-        label: 'Email',
-        placeholder: 'Search by email',
-        inputType: 'email',
-        section: 'Search & Filter Employees',
-        order: 3,
-        colSpan: 1,
-      },
-      {
-        key: 'employeeNumber',
-        type: 'input',
-        label: 'Employee Number',
-        placeholder: 'Search by employee number',
-        section: 'Search & Filter Employees',
-        order: 4,
-        colSpan: 1,
-      },
-      {
-        key: 'phone',
-        type: 'input',
-        label: 'Phone',
-        placeholder: 'Search by phone',
-        inputType: 'tel',
-        section: 'Search & Filter Employees',
-        order: 5,
-        colSpan: 1,
-      },
-      {
-        key: 'positionId',
-        type: 'select',
-        label: 'Position',
-        placeholder: 'Filter by position',
-        section: 'Search & Filter Employees',
-        order: 6,
-        colSpan: 1,
-        searchable: true,
-        options: [] as SelectOption[],
-      },
-      {
-        key: 'employmentStatus',
-        type: 'select',
-        label: 'Employment Status',
-        placeholder: 'Filter by status',
-        section: 'Search & Filter Employees',
-        order: 7,
-        colSpan: 1,
-        options: [
-          { value: '', label: 'All Statuses' },
-          { value: 'Active', label: 'Active' },
-          { value: 'Inactive', label: 'Inactive' },
-          { value: 'Terminated', label: 'Terminated' },
-        ] as SelectOption[],
-      },
-      {
-        key: 'hireDateFrom',
-        type: 'datepicker',
-        label: 'Hire Date From',
-        placeholder: 'Select start date',
-        section: 'Search & Filter Employees',
-        order: 8,
-        colSpan: 1,
-      },
-      {
-        key: 'hireDateTo',
-        type: 'datepicker',
-        label: 'Hire Date To',
-        placeholder: 'Select end date',
-        section: 'Search & Filter Employees',
-        order: 9,
-        colSpan: 1,
-      },
-    ],
-    submitButtonText: 'Load Employees',
-    cancelButtonText: 'Clear',
+    sections: [],
+    layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
+  /**
+   * Initialize table columns and actions with translations
+   */
+  private initializeTableConfig(): void {
+    this.tableColumns = [
+      { key: 'employeeNumber', label: this.translationService.translate('employees.columns.employeeNumber'), sortable: true, width: '120px' },
+      { key: 'firstName', label: this.translationService.translate('employees.columns.firstName'), sortable: true, width: '120px' },
+      { key: 'lastName', label: this.translationService.translate('employees.columns.lastName'), sortable: true, width: '120px' },
+      { key: 'email', label: this.translationService.translate('employees.columns.email'), sortable: true, width: '200px' },
+      { key: 'phone', label: this.translationService.translate('employees.columns.phone'), sortable: false, width: '120px' },
+      { key: 'department', label: this.translationService.translate('employees.columns.department'), sortable: true, width: '150px' },
+      { key: 'position', label: this.translationService.translate('employees.columns.position'), sortable: true, width: '150px' },
+      { key: 'status', label: this.translationService.translate('employees.columns.status'), sortable: true, width: '100px' },
+      { key: 'hireDate', label: this.translationService.translate('employees.columns.hireDate'), sortable: true, type: 'date', width: '120px' },
+    ];
+
+    this.tableActions = [
+      { label: this.translationService.translate('employees.actions.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item: unknown) => this.onViewEmployee(item as Employee) },
+      { label: this.translationService.translate('employees.actions.edit'), icon: 'edit', variant: 'primary', showLabel: false, onClick: (item: unknown) => this.onEditEmployee(item as Employee) },
+      { label: this.translationService.translate('employees.actions.delete'), icon: 'delete', variant: 'danger', showLabel: false, onClick: (item: unknown) => this.onDeleteEmployee(item as Employee) },
+    ];
+  }
+
+  /**
+   * Initialize search form config with translations
+   */
+  private initializeSearchFormConfig(): void {
+    const sectionTitle = this.translationService.translate('employees.search.cardTitle');
+
+    this.searchFormConfig = {
+      sections: [
+        {
+          title: sectionTitle,
+          description: this.translationService.translate('employees.search.subtitle'),
+          order: 0,
+          collapsible: false,
+          collapsed: false,
+        },
+      ],
+      layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+      fields: [
+        { key: 'departmentId', type: 'select', label: this.translationService.translate('employees.columns.department'), placeholder: this.translationService.translate('employees.search.fields.departmentPlaceholder'), required: true, section: sectionTitle, order: 0, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'firstName', type: 'input', label: this.translationService.translate('employees.columns.firstName'), placeholder: this.translationService.translate('employees.search.fields.firstNamePlaceholder'), section: sectionTitle, order: 1, colSpan: 1 },
+        { key: 'lastName', type: 'input', label: this.translationService.translate('employees.columns.lastName'), placeholder: this.translationService.translate('employees.search.fields.lastNamePlaceholder'), section: sectionTitle, order: 2, colSpan: 1 },
+        { key: 'email', type: 'input', label: this.translationService.translate('employees.columns.email'), placeholder: this.translationService.translate('employees.search.fields.emailPlaceholder'), inputType: 'email', section: sectionTitle, order: 3, colSpan: 1 },
+        { key: 'employeeNumber', type: 'input', label: this.translationService.translate('employees.columns.employeeNumber'), placeholder: this.translationService.translate('employees.search.fields.employeeNumberPlaceholder'), section: sectionTitle, order: 4, colSpan: 1 },
+        { key: 'phone', type: 'input', label: this.translationService.translate('employees.columns.phone'), placeholder: this.translationService.translate('employees.search.fields.phonePlaceholder'), inputType: 'tel', section: sectionTitle, order: 5, colSpan: 1 },
+        { key: 'positionId', type: 'select', label: this.translationService.translate('employees.columns.position'), placeholder: this.translationService.translate('employees.search.fields.positionPlaceholder'), section: sectionTitle, order: 6, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'employmentStatus', type: 'select', label: this.translationService.translate('employees.columns.status'), placeholder: this.translationService.translate('employees.search.fields.statusPlaceholder'), section: sectionTitle, order: 7, colSpan: 1, options: [
+          { value: '', label: this.translationService.translate('employees.search.fields.allStatuses') },
+          { value: 'Active', label: this.translationService.translate('employees.status.active') },
+          { value: 'Inactive', label: this.translationService.translate('employees.status.inactive') },
+          { value: 'Terminated', label: this.translationService.translate('employees.status.terminated') },
+        ] as SelectOption[] },
+        { key: 'hireDateFrom', type: 'datepicker', label: this.translationService.translate('employees.search.fields.hireDateFrom'), placeholder: this.translationService.translate('employees.search.fields.selectStartDate'), section: sectionTitle, order: 8, colSpan: 1 },
+        { key: 'hireDateTo', type: 'datepicker', label: this.translationService.translate('employees.search.fields.hireDateTo'), placeholder: this.translationService.translate('employees.search.fields.selectEndDate'), section: sectionTitle, order: 9, colSpan: 1 },
+      ],
+      submitButtonText: this.translationService.translate('employees.search.loadEmployees'),
+      cancelButtonText: this.translationService.translate('common.clear'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
   ngOnInit(): void {
+    // Wait for translations to load before initializing
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      first()
+    ).subscribe(() => {
+      this.initializeTableConfig();
+      this.initializeSearchFormConfig();
+    });
+
     // Trigger initial load if needed (simplified - using first() to only check once)
     this.departments$.pipe(
       startWith([]),

@@ -9,15 +9,15 @@
       <div class="prompt-dialog-icon" *ngIf="iconType">
         <span class="material-icons">{{ iconType }}</span>
       </div>
-      <h3 class="prompt-dialog-title">{{ config.title || 'Confirm Action' }}</h3>
+      <h3 class="prompt-dialog-title">{{ config.title || ('common.confirm' | translate) }}</h3>
     </div>
 
     <div class="prompt-dialog-body">
       <p class="prompt-dialog-message" *ngIf="config.message">{{ config.message }}</p>
       
       <app-base-textarea
-        [label]="config.label || 'Response'"
-        [placeholder]="config.placeholder || 'Enter your response...'"
+        [label]="config.label || ('common.name' | translate)"
+        [placeholder]="config.placeholder || ('common.description' | translate)"
         [required]="config.required || false"
         [rows]="config.rows || 4"
         [maxLength]="config.maxLength ?? 500"
@@ -29,12 +29,12 @@
     <div class="prompt-dialog-footer">
       <app-base-button
         *ngIf="config.showCancel !== false"
-        [text]="config.cancelText || 'Cancel'"
+        [text]="config.cancelText || ('common.cancel' | translate)"
         [variant]="cancelButtonVariant"
         (click)="onCancel()"
       ></app-base-button>
       <app-base-button
-        [text]="config.confirmText || 'Confirm'"
+        [text]="config.confirmText || ('common.confirm' | translate)"
         [variant]="confirmButtonVariant"
         [disabled]="!canConfirm"
         (click)="onConfirm()"

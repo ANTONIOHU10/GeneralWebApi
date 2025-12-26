@@ -3,21 +3,21 @@
   <div class="page-header">
     <h2>
       <span class="material-icons">search</span>
-      Search Employee
+      {{ 'employees.search.title' | translate }}
     </h2>
-    <p>Search and filter employees by various criteria</p>
+    <p>{{ 'employees.search.subtitle' | translate }}</p>
   </div>
 
   <!-- Search Form Section -->
   <div class="search-section">
     <app-base-card
-      [title]="'Search & Filter Employees'"
+      [title]="'employees.search.cardTitle' | translate"
       [icon]="'search'"
       [variant]="'elevated'"
     >
       <div class="search-stats" *ngIf="allEmployees().length > 0">
         <span class="stat-text">
-          Showing {{ filteredEmployees().length }} of {{ allEmployees().length }} employees
+          {{ 'employees.search.showing' | translate: {count: filteredEmployees().length, total: allEmployees().length} }}
         </span>
       </div>
 
@@ -40,9 +40,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="employees$"
-      loadingMessage="Loading employees..."
-      emptyTitle="No employees found"
-      emptyDescription="No employees match your search criteria"
+      [loadingMessage]="'employees.search.loadingMessage' | translate"
+      [emptyTitle]="'employees.search.emptyTitle' | translate"
+      [emptyDescription]="'employees.search.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <!-- Success content: Employee table -->
@@ -61,7 +61,7 @@
           bordered: false,
           size: 'medium',
           loading: false,
-          emptyMessage: 'No employees match your search criteria'
+          emptyMessage: ''
         }"
         [pageSize]="10"
         (rowClick)="onRowClick($event)"
@@ -73,8 +73,8 @@
   <div class="empty-state" *ngIf="!selectedDepartmentId()">
     <div class="empty-state-content">
       <span class="material-icons empty-icon">search</span>
-      <h3>No Results</h3>
-      <p>Use the form above to search for employees</p>
+      <h3>{{ 'employees.search.noResults' | translate }}</h3>
+      <p>{{ 'employees.search.noResultsDescription' | translate }}</p>
     </div>
   </div>
 </div>

@@ -7,6 +7,8 @@ import { BaseTableComponent } from '../../../Shared/components/base/base-table/b
 import { BaseAsyncStateComponent } from '../../../Shared/components/base/base-async-state/base-async-state.component';
 import { EmployeeService } from '@core/services/employee.service';
 import { NotificationService } from '../../../Shared/services/notification.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { TableColumn, TableAction } from '../../../Shared/components/base';
 
@@ -113,6 +115,7 @@ interface RecentHire {
     BaseCardComponent,
     BaseTableComponent,
     BaseAsyncStateComponent,
+    TranslatePipe,
   ],
   templateUrl: './employee-reports.component.html',
   styleUrls: ['./employee-reports.component.scss'],
@@ -120,6 +123,7 @@ interface RecentHire {
 export class EmployeeReportsComponent implements OnInit {
   private employeeService = inject(EmployeeService);
   private notificationService = inject(NotificationService);
+  private translationService = inject(TranslationService);
 
   // Employee data state - using BehaviorSubject for Observable compatibility
   employees$ = new BehaviorSubject<Employee[]>([]);

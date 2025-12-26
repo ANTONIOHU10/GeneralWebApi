@@ -4,8 +4,8 @@
   <button
     class="action-button"
     (click)="onSettingsClick()"
-    aria-label="Settings"
-    title="Settings"
+    [attr.aria-label]="'header.settings' | translate"
+    [title]="'header.settings' | translate"
   >
     <span class="action-icon material-icons">settings</span>
   </button>
@@ -14,8 +14,8 @@
   <button 
     class="action-button theme-toggle" 
     (click)="onThemeToggle()"
-    [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
-    [title]="isDarkMode ? 'Light Mode' : 'Dark Mode'"
+    [attr.aria-label]="isDarkMode ? ('header.switchToLightMode' | translate) : ('header.switchToDarkMode' | translate)"
+    [title]="isDarkMode ? ('header.lightMode' | translate) : ('header.darkMode' | translate)"
   >
     <span class="action-icon material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
   </button>

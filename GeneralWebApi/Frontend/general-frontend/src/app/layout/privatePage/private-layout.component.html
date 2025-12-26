@@ -50,7 +50,7 @@
   <!-- Notification Center Panel -->
   <app-base-modal
     [isOpen]="isNotificationCenterOpen"
-    [title]="'Notifications'"
+    [title]="'notifications.title' | translate"
     [icon]="'notifications'"
     [config]="{
       size: 'large',
@@ -70,7 +70,7 @@
   <!-- Settings Panel -->
   <app-base-modal
     [isOpen]="isSettingsPanelOpen"
-    [title]="'Settings'"
+    [title]="'settings.title' | translate"
     [icon]="'settings'"
     [config]="{
       size: 'medium',
@@ -88,12 +88,12 @@
       <div class="settings-section">
         <h3 class="settings-section-title">
           <span class="material-icons">palette</span>
-          Appearance
+          {{ 'settings.appearance' | translate }}
         </h3>
         <div class="settings-item">
           <label class="settings-label">
-            <span>Dark Mode</span>
-            <span class="settings-description">Toggle between light and dark theme</span>
+            <span>{{ 'settings.darkMode' | translate }}</span>
+            <span class="settings-description">{{ 'settings.darkModeDescription' | translate }}</span>
           </label>
           <button
             class="toggle-button"
@@ -102,7 +102,7 @@
             type="button"
           >
             <span class="material-icons">{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</span>
-            <span>{{ isDarkMode ? 'Dark' : 'Light' }}</span>
+            <span>{{ isDarkMode ? ('settings.dark' | translate) : ('settings.light' | translate) }}</span>
           </button>
         </div>
       </div>
@@ -110,19 +110,19 @@
       <div class="settings-section">
         <h3 class="settings-section-title">
           <span class="material-icons">notifications</span>
-          Notifications
+          {{ 'settings.notifications' | translate }}
         </h3>
         <div class="settings-item">
           <label class="settings-label">
-            <span>Email Notifications</span>
-            <span class="settings-description">Receive notifications via email</span>
+            <span>{{ 'settings.emailNotifications' | translate }}</span>
+            <span class="settings-description">{{ 'settings.emailNotificationsDescription' | translate }}</span>
           </label>
           <input type="checkbox" checked class="settings-checkbox" />
         </div>
         <div class="settings-item">
           <label class="settings-label">
-            <span>Push Notifications</span>
-            <span class="settings-description">Receive push notifications in browser</span>
+            <span>{{ 'settings.pushNotifications' | translate }}</span>
+            <span class="settings-description">{{ 'settings.pushNotificationsDescription' | translate }}</span>
           </label>
           <input type="checkbox" class="settings-checkbox" />
         </div>
@@ -131,50 +131,54 @@
       <div class="settings-section">
         <h3 class="settings-section-title">
           <span class="material-icons">language</span>
-          Language & Region
+          {{ 'settings.languageRegion' | translate }}
         </h3>
         <div class="settings-item">
           <label class="settings-label">
-            <span>Language</span>
-            <span class="settings-description">Select your preferred language</span>
+            <span>{{ 'settings.language' | translate }}</span>
+            <span class="settings-description">{{ 'settings.languageDescription' | translate }}</span>
           </label>
-          <select class="settings-select">
-            <option>English</option>
-            <option>中文</option>
-            <option>Español</option>
-          </select>
+          <app-base-select
+            selectId="language-select"
+            [options]="languageOptions"
+            [ngModel]="currentLanguage"
+            (ngModelChange)="onLanguageChange($event)"
+            size="small"
+          ></app-base-select>
         </div>
         <div class="settings-item">
           <label class="settings-label">
-            <span>Time Zone</span>
-            <span class="settings-description">Set your time zone</span>
+            <span>{{ 'settings.timeZone' | translate }}</span>
+            <span class="settings-description">{{ 'settings.timeZoneDescription' | translate }}</span>
           </label>
-          <select class="settings-select">
-            <option>UTC</option>
-            <option>Asia/Shanghai</option>
-            <option>America/New_York</option>
-          </select>
+          <app-base-select
+            selectId="timezone-select"
+            [options]="timezoneOptions"
+            [ngModel]="currentTimezone"
+            (ngModelChange)="onTimezoneChange($event)"
+            size="small"
+          ></app-base-select>
         </div>
       </div>
 
       <div class="settings-section">
         <h3 class="settings-section-title">
           <span class="material-icons">security</span>
-          Security
+          {{ 'settings.security' | translate }}
         </h3>
         <div class="settings-item">
           <label class="settings-label">
-            <span>Two-Factor Authentication</span>
-            <span class="settings-description">Add an extra layer of security</span>
+            <span>{{ 'settings.twoFactorAuth' | translate }}</span>
+            <span class="settings-description">{{ 'settings.twoFactorAuthDescription' | translate }}</span>
           </label>
-          <button class="settings-button" type="button">Enable 2FA</button>
+          <button class="settings-button" type="button">{{ 'settings.enable2FA' | translate }}</button>
         </div>
         <div class="settings-item">
           <label class="settings-label">
-            <span>Change Password</span>
-            <span class="settings-description">Update your account password</span>
+            <span>{{ 'settings.changePassword' | translate }}</span>
+            <span class="settings-description">{{ 'settings.changePasswordDescription' | translate }}</span>
           </label>
-          <button class="settings-button" type="button">Change Password</button>
+          <button class="settings-button" type="button">{{ 'settings.changePassword' | translate }}</button>
         </div>
       </div>
     </div>

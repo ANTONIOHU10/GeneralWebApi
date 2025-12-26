@@ -1,9 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-list/contract-approval-list.component.ts
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, of } from 'rxjs';
-import { first, catchError, filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { first, catchError, filter, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
   BaseAsyncStateComponent,
@@ -16,6 +15,8 @@ import {
 } from '../../../Shared/components/base';
 import { BasePromptDialogComponent } from '../../../Shared/components/base/base-prompt-dialog/base-prompt-dialog.component';
 import { NotificationService } from '../../../Shared/services';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { ContractApproval, ApprovalActionRequest, RejectionActionRequest } from 'app/contracts/contract-approvals/contract-approval.model';
 import { ContractApprovalDetailComponent } from '../contract-approval-detail/contract-approval-detail.component';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
@@ -32,6 +33,7 @@ import { ContractApprovalService } from '../../../core/services/contract-approva
     BaseBadgeComponent,
     ContractApprovalDetailComponent,
     BasePromptDialogComponent,
+    TranslatePipe,
   ],
   templateUrl: './contract-approval-list.component.html',
   styleUrls: ['./contract-approval-list.component.scss'],
@@ -39,6 +41,7 @@ import { ContractApprovalService } from '../../../core/services/contract-approva
 export class ContractApprovalListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private contractApprovalService = inject(ContractApprovalService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   approvals = signal<ContractApproval[]>([]);
@@ -59,22 +62,46 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
   approvedCount = computed(() => this.allApprovals().filter(a => a.status === 'Approved').length);
   rejectedCount = computed(() => this.allApprovals().filter(a => a.status === 'Rejected').length);
 
-  tableColumns: TableColumn[] = [
-    { key: 'contractEmployeeName', label: 'Employee', sortable: true, width: '150px' },
-    { key: 'contractType', label: 'Contract Type', sortable: true, width: '120px' },
-    { key: 'status', label: 'Status', sortable: true, width: '100px' },
-    { key: 'currentApprovalLevel', label: 'Progress', sortable: true, width: '120px' },
-    { key: 'requestedBy', label: 'Requested By', sortable: true, width: '150px' },
-    { key: 'requestedAt', label: 'Requested At', sortable: true, type: 'date', width: '150px' },
-  ];
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
 
-  tableActions: TableAction[] = [
-    { label: 'View', icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as ContractApproval) },
-    { label: 'Approve', icon: 'check', variant: 'primary', showLabel: false, onClick: (item) => this.onApprove(item as ContractApproval), visible: (item) => (item as ContractApproval).status === 'Pending' },
-    { label: 'Reject', icon: 'close', variant: 'danger', showLabel: false, onClick: (item) => this.onReject(item as ContractApproval), visible: (item) => (item as ContractApproval).status === 'Pending' },
-  ];
+  /**
+   * Get translated filter label
+   */
+  getFilterLabel(filter: string): string {
+    return this.translationService.translate(`contractApprovals.filterOptions.${filter}`);
+  }
+
+  /**
+   * Initialize table columns and actions with translations
+   */
+  private initializeTableConfig(): void {
+    this.tableColumns = [
+      { key: 'contractEmployeeName', label: this.translationService.translate('contractApprovals.columns.employee'), sortable: true, width: '150px' },
+      { key: 'contractType', label: this.translationService.translate('contractApprovals.columns.contractType'), sortable: true, width: '120px' },
+      { key: 'status', label: this.translationService.translate('contractApprovals.columns.status'), sortable: true, width: '100px' },
+      { key: 'currentApprovalLevel', label: this.translationService.translate('contractApprovals.columns.progress'), sortable: true, width: '120px' },
+      { key: 'requestedBy', label: this.translationService.translate('contractApprovals.columns.requestedBy'), sortable: true, width: '150px' },
+      { key: 'requestedAt', label: this.translationService.translate('contractApprovals.columns.requestedAt'), sortable: true, type: 'date', width: '150px' },
+    ];
+
+    this.tableActions = [
+      { label: this.translationService.translate('contractApprovals.actions.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as ContractApproval) },
+      { label: this.translationService.translate('contractApprovals.actions.approve'), icon: 'check', variant: 'primary', showLabel: false, onClick: (item) => this.onApprove(item as ContractApproval), visible: (item) => (item as ContractApproval).status === 'Pending' },
+      { label: this.translationService.translate('contractApprovals.actions.reject'), icon: 'close', variant: 'danger', showLabel: false, onClick: (item) => this.onReject(item as ContractApproval), visible: (item) => (item as ContractApproval).status === 'Pending' },
+    ];
+  }
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing table config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTableConfig();
+    });
+
     this.loadApprovals();
   }
 

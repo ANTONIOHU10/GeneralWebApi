@@ -1,7 +1,7 @@
 <!-- src/app/Shared/components/base/base-confirm-dialog/base-confirm-dialog.component.html -->
 <app-base-modal
   [isOpen]="isOpen"
-  [title]="config.title || 'Confirm'"
+  [title]="config.title || ('common.confirm' | translate)"
   [icon]="iconType"
   [config]="modalConfig"
   [showHeader]="true"
@@ -19,13 +19,13 @@
   <div slot="footer" class="confirm-dialog-footer">
     <app-base-button
       *ngIf="config.showCancel !== false"
-      [text]="config.cancelText || 'Cancel'"
+      [text]="config.cancelText || ('common.cancel' | translate)"
       [variant]="cancelButtonVariant"
       size="medium"
       (buttonClick)="onCancel()"
     />
     <app-base-button
-      [text]="config.confirmText || 'Confirm'"
+      [text]="config.confirmText || ('common.confirm' | translate)"
       [variant]="confirmButtonVariant"
       size="medium"
       (buttonClick)="onConfirm()"

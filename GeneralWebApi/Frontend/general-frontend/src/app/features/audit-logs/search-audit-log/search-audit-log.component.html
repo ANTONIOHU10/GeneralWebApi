@@ -1,11 +1,9 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/search-audit-log/search-audit-log.component.html -->
-<app-base-card [title]="'Advanced Search'" [icon]="'search'" [variant]="'elevated'">
+<app-base-card [title]="'auditLogs.search.title' | translate" [icon]="'search'" [variant]="'elevated'">
   <app-base-form
     [config]="searchFormConfig"
     [formData]="searchFilters()"
     [loading]="loading()"
-    submitText="Search"
-    cancelText="Reset"
     (formSubmit)="onFormSubmit($event)"
     (formCancel)="onFormReset()"
   ></app-base-form>
@@ -14,9 +12,9 @@
 <app-base-async-state
   [loading$]="loading$"
   [data$]="logsData$"
-  loadingMessage="Searching audit logs..."
-  emptyTitle="No Results"
-  emptyDescription="No audit logs match your search criteria"
+  [loadingMessage]="'auditLogs.search.loading' | translate"
+  [emptyTitle]="'auditLogs.search.emptyTitle' | translate"
+  [emptyDescription]="'auditLogs.search.emptyDescription' | translate"
   [onRetry]="onRetryLoad"
 >
   <app-base-table

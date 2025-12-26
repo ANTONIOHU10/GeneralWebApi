@@ -12,6 +12,8 @@ import {
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
@@ -39,6 +41,7 @@ import { Position } from 'app/contracts/positions/position.model';
     BaseAvatarComponent,
     BaseBadgeComponent,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './employee-detail.component.html',
   styleUrls: ['./employee-detail.component.scss'],
@@ -49,6 +52,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
   private positionFacade = inject(PositionFacade);
   private dialogService = inject(DialogService);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
   private cdr = inject(ChangeDetectorRef);
 
   @Input() employee: Employee | null = null;

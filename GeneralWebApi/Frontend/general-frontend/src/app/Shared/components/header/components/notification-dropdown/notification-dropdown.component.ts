@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { NotificationItemComponent } from './components/notification-item/notification-item.component';
 import { BaseLoadingComponent } from '../../../base/base-loading/base-loading.component';
 import { BaseEmptyComponent } from '../../../base/base-empty/base-empty.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   standalone: true,
@@ -21,6 +22,7 @@ import { BaseEmptyComponent } from '../../../base/base-empty/base-empty.componen
     NotificationItemComponent,
     BaseLoadingComponent,
     BaseEmptyComponent,
+    TranslatePipe,
   ],
 })
 export class NotificationDropdownComponent implements OnInit, OnDestroy {

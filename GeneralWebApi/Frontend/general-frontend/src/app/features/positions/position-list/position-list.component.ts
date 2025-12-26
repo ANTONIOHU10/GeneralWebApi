@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-list/position-list.component.ts
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, Observable } from 'rxjs';
-import { takeUntil, filter, take, map } from 'rxjs/operators';
+import { Subject, Observable, combineLatest } from 'rxjs';
+import { takeUntil, filter, take, map, distinctUntilChanged } from 'rxjs/operators';
 import { PositionCardComponent } from '../position-card/position-card.component';
 import { AddPositionComponent } from '../add-position/add-position.component';
 import { PositionDetailComponent } from '../position-detail/position-detail.component';
@@ -19,6 +19,8 @@ import {
   TableAction,
   TableConfig,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { PositionFacade } from '@store/position/position.facade';
 import { Position } from 'app/contracts/positions/position.model';
 import {
@@ -42,6 +44,7 @@ import {
     BaseTableComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
+    TranslatePipe,
   ],
   templateUrl: './position-list.component.html',
   styleUrls: ['./position-list.component.scss'],
@@ -51,6 +54,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   // Observable streams from NgRx store
@@ -84,7 +88,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
     bordered: false,
     size: 'medium',
     loading: false,
-    emptyMessage: 'No positions found',
+    emptyMessage: '', // Will be set after translations load
   };
   
   // Convert positions$ to array for table
@@ -92,17 +96,43 @@ export class PositionListComponent implements OnInit, OnDestroy {
     map(positions => positions || [])
   );
 
-  // Tab configuration
-  tabs: TabItem[] = [
-    { id: 'list', label: 'Position List', icon: 'list' },
-    { id: 'add', label: 'Add Position', icon: 'add' },
-    { id: 'search', label: 'Search Position', icon: 'search' },
-  ];
+  // Tab configuration - will be initialized in ngOnInit
+  tabs: TabItem[] = [];
 
   ngOnInit() {
+    // Wait for translations to load before initializing tabs and table
+    this.translationService.getTranslationsLoaded$().pipe(
+      filter(loaded => loaded),
+      take(1),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTable();
+    });
+
+    // Also listen for language changes to reinitialize translations
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTable();
+    });
+
     this.loadPositions();
     this.setupOperationListeners();
-    this.initializeTable();
+  }
+
+  /**
+   * Initialize tabs with translations
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('positions.tabs.list'), icon: 'list' },
+      { id: 'add', label: this.translationService.translate('positions.tabs.add'), icon: 'add' },
+      { id: 'search', label: this.translationService.translate('positions.tabs.search'), icon: 'search' },
+    ];
   }
 
   // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
@@ -111,10 +141,16 @@ export class PositionListComponent implements OnInit, OnDestroy {
    * Initialize table columns and actions
    */
   private initializeTable(): void {
+    // Update table config with translated empty message
+    this.tableConfig = {
+      ...this.tableConfig,
+      emptyMessage: this.translationService.translate('positions.emptyTitle'),
+    };
+
     this.tableColumns = [
       {
         key: 'code',
-        label: 'Code',
+        label: this.translationService.translate('positions.columns.code'),
         width: '100px',
         align: 'left',
         type: 'text',
@@ -122,7 +158,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'title',
-        label: 'Title',
+        label: this.translationService.translate('positions.columns.name'),
         width: '200px',
         align: 'left',
         type: 'text',
@@ -130,7 +166,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'description',
-        label: 'Description',
+        label: this.translationService.translate('positions.columns.description'),
         width: '250px',
         align: 'left',
         type: 'text',
@@ -138,7 +174,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'departmentName',
-        label: 'Department',
+        label: this.translationService.translate('positions.columns.department'),
         width: '150px',
         align: 'left',
         type: 'text',
@@ -146,7 +182,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'level',
-        label: 'Level',
+        label: this.translationService.translate('positions.columns.level'),
         width: '80px',
         align: 'center',
         type: 'number',
@@ -154,7 +190,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'isManagement',
-        label: 'Management',
+        label: this.translationService.translate('positions.columns.isManagement'),
         width: '120px',
         align: 'center',
         type: 'custom',
@@ -163,7 +199,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'minSalary',
-        label: 'Min Salary',
+        label: this.translationService.translate('positions.columns.minSalary'),
         width: '120px',
         align: 'right',
         type: 'number',
@@ -171,7 +207,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'maxSalary',
-        label: 'Max Salary',
+        label: this.translationService.translate('positions.columns.maxSalary'),
         width: '120px',
         align: 'right',
         type: 'number',
@@ -181,7 +217,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
 
     this.tableActions = [
       {
-        label: 'View',
+        label: this.translationService.translate('table.actions.view'),
         icon: 'visibility',
         variant: 'primary',
         showLabel: false,
@@ -190,7 +226,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Edit',
+        label: this.translationService.translate('table.actions.edit'),
         icon: 'edit',
         variant: 'warning',
         showLabel: false,
@@ -199,7 +235,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Delete',
+        label: this.translationService.translate('table.actions.delete'),
         icon: 'delete',
         variant: 'danger',
         showLabel: false,
@@ -228,7 +264,9 @@ export class PositionListComponent implements OnInit, OnDestroy {
    * Get view mode label
    */
   getViewModeLabel(): string {
-    return this.viewMode() === 'table' ? 'Card View' : 'Table View';
+    return this.viewMode() === 'table' 
+      ? this.translationService.translate('view.cardView') 
+      : this.translationService.translate('view.tableView');
   }
 
   /**
@@ -298,10 +336,10 @@ export class PositionListComponent implements OnInit, OnDestroy {
     const positionTitle = position.title;
 
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Delete',
-      message: `Are you sure you want to delete position ${positionTitle}? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('positions.delete.confirmTitle'),
+      message: this.translationService.translate('positions.delete.confirmMessage', { name: positionTitle }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     });

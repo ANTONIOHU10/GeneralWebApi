@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/audit-log-list/audit-log-list.component.html -->
 <app-base-private-page-container
-  title="Audit Logs"
-  subtitle="Track and review all system activities and changes"
+  [title]="'auditLogs.title' | translate"
+  [subtitle]="'auditLogs.subtitle' | translate"
   icon="history"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -14,7 +14,7 @@
     *ngIf="activeTab() === 'list'"
     slot="search"
     [config]="{
-      placeholder: 'Search audit logs...',
+      placeholder: ('auditLogs.searchPlaceholder' | translate),
       debounceTime: 300,
       minLength: 1,
       showClearButton: true,
@@ -35,7 +35,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ totalCount() }}</div>
-            <div class="stat-label">Total Logs</div>
+            <div class="stat-label">{{ 'auditLogs.stats.totalLogs' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -46,7 +46,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ infoCount() }}</div>
-            <div class="stat-label">Info</div>
+            <div class="stat-label">{{ 'auditLogs.stats.info' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -57,7 +57,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ warningCount() }}</div>
-            <div class="stat-label">Warning</div>
+            <div class="stat-label">{{ 'auditLogs.stats.warning' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -68,7 +68,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ errorCount() }}</div>
-            <div class="stat-label">Error</div>
+            <div class="stat-label">{{ 'auditLogs.stats.error' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -79,7 +79,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ criticalCount() }}</div>
-            <div class="stat-label">Critical</div>
+            <div class="stat-label">{{ 'auditLogs.stats.critical' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -89,9 +89,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="logsData$"
-      loadingMessage="Loading audit logs..."
-      emptyTitle="No Audit Logs"
-      emptyDescription="No audit logs found"
+      [loadingMessage]="'auditLogs.loading' | translate"
+      [emptyTitle]="'auditLogs.emptyTitle' | translate"
+      [emptyDescription]="'auditLogs.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <app-base-table

@@ -2,7 +2,7 @@
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, filter, take, map } from 'rxjs/operators';
+import { takeUntil, filter, take, map, distinctUntilChanged } from 'rxjs/operators';
 import { DepartmentCardComponent } from '../department-card/department-card.component';
 import { AddDepartmentComponent } from '../add-department/add-department.component';
 import { DepartmentDetailComponent } from '../department-detail/department-detail.component';
@@ -20,6 +20,8 @@ import {
   TableConfig,
   BadgeVariant,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { Department } from 'app/contracts/departments/department.model';
 import {
@@ -43,6 +45,7 @@ import {
     BaseTableComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
+    TranslatePipe,
   ],
   templateUrl: './department-list.component.html',
   styleUrls: ['./department-list.component.scss'],
@@ -52,6 +55,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   // Observable streams from NgRx store
@@ -93,17 +97,33 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
     map(departments => departments || [])
   );
 
-  // Tab configuration
-  tabs: TabItem[] = [
-    { id: 'list', label: 'Department List', icon: 'list' },
-    { id: 'add', label: 'Add Department', icon: 'add' },
-    { id: 'search', label: 'Search Department', icon: 'search' },
-  ];
+  // Tab configuration - will be initialized in ngOnInit
+  tabs: TabItem[] = [];
 
   ngOnInit() {
+    // Wait for translations to load before initializing tabs and table
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTable();
+    });
+
     this.loadDepartments();
     this.setupOperationListeners();
-    this.initializeTable();
+  }
+
+  /**
+   * Initialize tabs with translations
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('departments.tabs.list'), icon: 'list' },
+      { id: 'add', label: this.translationService.translate('departments.tabs.add'), icon: 'add' },
+      { id: 'search', label: this.translationService.translate('departments.tabs.search'), icon: 'search' },
+    ];
   }
 
   // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
@@ -115,7 +135,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
     this.tableColumns = [
       {
         key: 'code',
-        label: 'Code',
+        label: this.translationService.translate('departments.columns.code'),
         width: '100px',
         align: 'left',
         type: 'text',
@@ -123,7 +143,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'name',
-        label: 'Name',
+        label: this.translationService.translate('departments.columns.name'),
         width: '200px',
         align: 'left',
         type: 'text',
@@ -131,7 +151,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'description',
-        label: 'Description',
+        label: this.translationService.translate('departments.columns.description'),
         width: '250px',
         align: 'left',
         type: 'text',
@@ -139,7 +159,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'parentDepartmentName',
-        label: 'Parent Department',
+        label: this.translationService.translate('departments.columns.parentDepartment'),
         width: '180px',
         align: 'left',
         type: 'text',
@@ -147,7 +167,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'level',
-        label: 'Level',
+        label: this.translationService.translate('departments.columns.level'),
         width: '80px',
         align: 'center',
         type: 'custom',
@@ -174,7 +194,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
 
     this.tableActions = [
       {
-        label: 'View',
+        label: this.translationService.translate('table.actions.view'),
         icon: 'visibility',
         variant: 'primary',
         showLabel: false,
@@ -183,7 +203,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Edit',
+        label: this.translationService.translate('table.actions.edit'),
         icon: 'edit',
         variant: 'warning',
         showLabel: false,

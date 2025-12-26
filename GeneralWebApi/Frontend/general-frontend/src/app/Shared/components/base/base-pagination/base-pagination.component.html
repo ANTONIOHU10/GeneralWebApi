@@ -3,13 +3,13 @@
   <!-- Pagination Info -->
   <div class="pagination-info" *ngIf="config.showInfo">
     <span class="info-text">
-      Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} entries
+      {{ 'pagination.showing' | translate }} {{ startItem }} {{ 'pagination.to' | translate }} {{ endItem }} {{ 'pagination.ofTotal' | translate: {total: totalItems} }}
     </span>
   </div>
 
   <!-- Page Size Selector -->
   <div class="page-size-selector" *ngIf="config.showPageSize">
-    <label class="page-size-label" for="page-size-select">Show:</label>
+    <label class="page-size-label" for="page-size-select">{{ 'pagination.itemsPerPage' | translate }}:</label>
     <select
       id="page-size-select"
       [value]="pageSize"
@@ -20,7 +20,7 @@
         {{ size }}
       </option>
     </select>
-    <span class="page-size-text">per page</span>
+    <span class="page-size-text">{{ 'pagination.itemsPerPage' | translate }}</span>
   </div>
 
   <!-- Pagination Controls -->
@@ -87,7 +87,7 @@
 
   <!-- Quick Jump -->
   <div class="quick-jump" *ngIf="showQuickJump">
-    <label class="jump-label" for="jump-input">Go to:</label>
+    <label class="jump-label" for="jump-input">{{ 'pagination.goTo' | translate }}:</label>
     <input
       id="jump-input"
       type="number"
@@ -103,7 +103,7 @@
       (click)="jumpToPage()"
       [disabled]="!isValidJumpPage()"
     >
-      Go
+      {{ 'pagination.go' | translate }}
     </button>
   </div>
 </div>

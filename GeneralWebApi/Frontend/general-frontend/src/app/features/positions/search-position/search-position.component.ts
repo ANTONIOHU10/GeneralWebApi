@@ -1,9 +1,9 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/search-position/search-position.component.ts
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, of, Observable } from 'rxjs';
-import { filter, startWith, first, catchError, take, delay } from 'rxjs/operators';
+import { BehaviorSubject, of, Observable, Subject } from 'rxjs';
+import { filter, startWith, first, catchError, take, delay, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { PositionDetailComponent } from '../position-detail/position-detail.component';
 import {
   BaseCardComponent,
@@ -20,6 +20,8 @@ import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionService } from '@core/services/position.service';
 import { NotificationService } from '../../../Shared/services/notification.service';
 import { DialogService } from '../../../Shared/services/dialog.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Position } from 'app/contracts/positions/position.model';
 
 @Component({
@@ -33,16 +35,19 @@ import { Position } from 'app/contracts/positions/position.model';
     BaseAsyncStateComponent,
     BaseFormComponent,
     BaseTableComponent,
+    TranslatePipe,
   ],
   templateUrl: './search-position.component.html',
   styleUrls: ['./search-position.component.scss'],
 })
-export class SearchPositionComponent implements OnInit {
+export class SearchPositionComponent implements OnInit, OnDestroy {
   private positionFacade = inject(PositionFacade);
   private departmentFacade = inject(DepartmentFacade);
   private positionService = inject(PositionService);
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   // State
   allPositions = signal<Position[]>([]); // All positions from API (already filtered by backend)
@@ -113,99 +118,55 @@ export class SearchPositionComponent implements OnInit {
 
   // Search form configuration
   searchFormConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Search & Filter Positions',
-        description: 'Filter positions by various criteria',
-        order: 0,
-        collapsible: false,
-        collapsed: false,
-      },
-    ],
-    layout: {
-      columns: 3,
-      gap: '1rem',
-      sectionGap: '1.5rem',
-      labelPosition: 'top',
-      showSectionDividers: false,
-    },
-    fields: [
-      {
-        key: 'title',
-        type: 'input',
-        label: 'Position Title',
-        placeholder: 'Search by title',
-        section: 'Search & Filter Positions',
-        order: 0,
-        colSpan: 1,
-      },
-      {
-        key: 'code',
-        type: 'input',
-        label: 'Position Code',
-        placeholder: 'Search by code',
-        section: 'Search & Filter Positions',
-        order: 1,
-        colSpan: 1,
-      },
-      {
-        key: 'description',
-        type: 'input',
-        label: 'Description',
-        placeholder: 'Search by description',
-        section: 'Search & Filter Positions',
-        order: 2,
-        colSpan: 1,
-      },
-      {
-        key: 'departmentId',
-        type: 'select',
-        label: 'Department',
-        placeholder: 'Filter by department',
-        section: 'Search & Filter Positions',
-        order: 3,
-        colSpan: 1,
-        searchable: true,
-        options: [] as SelectOption[],
-      },
-      {
-        key: 'level',
-        type: 'select',
-        label: 'Level',
-        placeholder: 'Filter by level',
-        section: 'Search & Filter Positions',
-        order: 4,
-        colSpan: 1,
-        options: [
-          { value: null, label: 'All Levels' },
-          { value: 1, label: 'Level 1' },
-          { value: 2, label: 'Level 2' },
-          { value: 3, label: 'Level 3' },
-          { value: 4, label: 'Level 4' },
-        ] as SelectOption[],
-      },
-      {
-        key: 'isManagement',
-        type: 'select',
-        label: 'Management Position',
-        placeholder: 'Filter by management status',
-        section: 'Search & Filter Positions',
-        order: 5,
-        colSpan: 1,
-        options: [
-          { value: null, label: 'All Positions' },
-          { value: true, label: 'Management' },
-          { value: false, label: 'Non-Management' },
-        ] as SelectOption[],
-      },
-    ],
-    submitButtonText: 'Search Positions',
-    cancelButtonText: 'Clear',
+    sections: [],
+    layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeSearchFormConfig(): void {
+    const sectionTitle = this.translationService.translate('positions.search.cardTitle');
+    this.searchFormConfig = {
+      sections: [{ title: sectionTitle, description: this.translationService.translate('positions.search.subtitle') || 'Filter positions by various criteria', order: 0, collapsible: false, collapsed: false }],
+      layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+      fields: [
+        { key: 'title', type: 'input', label: this.translationService.translate('positions.search.fields.title'), placeholder: this.translationService.translate('positions.search.fields.titlePlaceholder'), section: sectionTitle, order: 0, colSpan: 1 },
+        { key: 'code', type: 'input', label: this.translationService.translate('positions.search.fields.code'), placeholder: this.translationService.translate('positions.search.fields.codePlaceholder'), section: sectionTitle, order: 1, colSpan: 1 },
+        { key: 'description', type: 'input', label: this.translationService.translate('positions.search.fields.description'), placeholder: this.translationService.translate('positions.search.fields.descriptionPlaceholder'), section: sectionTitle, order: 2, colSpan: 1 },
+        { key: 'departmentId', type: 'select', label: this.translationService.translate('positions.search.fields.department'), placeholder: this.translationService.translate('positions.search.fields.departmentPlaceholder'), section: sectionTitle, order: 3, colSpan: 1, searchable: true, options: [{ value: null, label: this.translationService.translate('positions.search.fields.allDepartments') }] as SelectOption[] },
+        { key: 'level', type: 'select', label: this.translationService.translate('positions.search.fields.level'), placeholder: this.translationService.translate('positions.search.fields.levelPlaceholder'), section: sectionTitle, order: 4, colSpan: 1, options: [
+          { value: null, label: this.translationService.translate('positions.search.fields.allLevels') },
+          { value: 1, label: 'Level 1' }, { value: 2, label: 'Level 2' }, { value: 3, label: 'Level 3' }, { value: 4, label: 'Level 4' }
+        ] as SelectOption[] },
+        { key: 'isManagement', type: 'select', label: this.translationService.translate('positions.search.fields.isManagement'), placeholder: this.translationService.translate('positions.search.fields.isManagementPlaceholder'), section: sectionTitle, order: 5, colSpan: 1, options: [
+          { value: null, label: this.translationService.translate('positions.search.fields.allPositions') },
+          { value: true, label: this.translationService.translate('positions.search.fields.management') },
+          { value: false, label: this.translationService.translate('positions.search.fields.nonManagement') }
+        ] as SelectOption[] },
+      ],
+      submitButtonText: this.translationService.translate('positions.search.submitButton'),
+      cancelButtonText: this.translationService.translate('common.clear'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
   ngOnInit(): void {
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeSearchFormConfig();
+    });
+
     // Load departments from store for department dropdown
     this.departments$.pipe(
       startWith([]),
@@ -217,6 +178,11 @@ export class SearchPositionComponent implements OnInit {
 
     // Update form options when data changes
     this.updateFormOptions();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**

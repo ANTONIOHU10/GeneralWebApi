@@ -2,7 +2,7 @@
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, from, Observable } from 'rxjs';
-import { takeUntil, filter, take, switchMap, concatMap, delay, map } from 'rxjs/operators';
+import { takeUntil, filter, take, switchMap, concatMap, delay, map, distinctUntilChanged } from 'rxjs/operators';
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeCardComponent } from '../employee-card/employee-card.component';
 import { EmployeeReportsComponent } from '../employee-reports/employee-reports.component';
@@ -23,6 +23,8 @@ import {
   TableConfig,
   BadgeVariant,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { Employee } from 'app/contracts/employees/employee.model';
 import {
@@ -50,6 +52,7 @@ import {
     BaseAvatarComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
+    TranslatePipe,
   ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
@@ -60,6 +63,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private loadingService = inject(LoadingService);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   // Observable streams from NgRx store
@@ -107,19 +111,35 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     })
   );
 
-  // Tab configuration
-  tabs: TabItem[] = [
-    { id: 'list', label: 'Employee List', icon: 'list' },
-    { id: 'add', label: 'Add Employee', icon: 'person_add' },
-    { id: 'byDepartment', label: 'Search Employee', icon: 'search' },
-    { id: 'reports', label: 'Reports', icon: 'assessment' },
-    { id: 'settings', label: 'Settings', icon: 'settings' },
-  ];
+  // Tab configuration - will be initialized in ngOnInit after translations are loaded
+  tabs: TabItem[] = [];
 
   ngOnInit() {
+    // Wait for translations to load before initializing tabs and table
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTable();
+    });
+
     this.loadEmployees();
     this.setupOperationListeners();
-    this.initializeTable();
+  }
+
+  /**
+   * Initialize tabs with translations
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('employees.tabs.list'), icon: 'list' },
+      { id: 'add', label: this.translationService.translate('employees.tabs.add'), icon: 'person_add' },
+      { id: 'byDepartment', label: this.translationService.translate('employees.tabs.search'), icon: 'search' },
+      { id: 'reports', label: this.translationService.translate('employees.tabs.reports'), icon: 'assessment' },
+      { id: 'settings', label: this.translationService.translate('employees.tabs.settings'), icon: 'settings' },
+    ];
   }
 
   // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
@@ -141,7 +161,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'fullName',
-        label: 'Name',
+        label: this.translationService.translate('employees.columns.name'),
         width: '200px',
         align: 'left',
         type: 'text',
@@ -149,7 +169,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'position',
-        label: 'Position',
+        label: this.translationService.translate('employees.columns.position'),
         width: '150px',
         align: 'left',
         type: 'text',
@@ -157,7 +177,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'department',
-        label: 'Department',
+        label: this.translationService.translate('employees.columns.department'),
         width: '150px',
         align: 'left',
         type: 'text',
@@ -165,7 +185,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'status',
-        label: 'Status',
+        label: this.translationService.translate('employees.columns.status'),
         width: '120px',
         align: 'center',
         type: 'custom',
@@ -174,7 +194,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'email',
-        label: 'Email',
+        label: this.translationService.translate('employees.columns.email'),
         width: '200px',
         align: 'left',
         type: 'text',
@@ -182,7 +202,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'phone',
-        label: 'Phone',
+        label: this.translationService.translate('employees.columns.phone'),
         width: '140px',
         align: 'left',
         type: 'text',
@@ -193,7 +213,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     // Configure table actions
     this.tableActions = [
       {
-        label: 'View',
+        label: this.translationService.translate('table.actions.view'),
         icon: 'visibility',
         variant: 'primary',
         showLabel: false,
@@ -202,7 +222,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Edit',
+        label: this.translationService.translate('table.actions.edit'),
         icon: 'edit',
         variant: 'warning',
         showLabel: false,
@@ -211,7 +231,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Delete',
+        label: this.translationService.translate('table.actions.delete'),
         icon: 'delete',
         variant: 'danger',
         showLabel: false,

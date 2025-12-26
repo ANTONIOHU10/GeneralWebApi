@@ -1,13 +1,13 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-list/contract-approval-list.component.html -->
 <app-base-private-page-container
-  title="Contract Approvals"
-  subtitle="Manage and review contract approval requests"
+  [title]="'contractApprovals.title' | translate"
+  [subtitle]="'contractApprovals.subtitle' | translate"
   icon="check_circle"
   [showTabs]="false"
   [showSearch]="false"
 >
   <!-- Filter -->
-  <app-base-card [title]="'Filter'" [icon]="'filter_list'" [variant]="'elevated'">
+  <app-base-card [title]="'common.filter' | translate" [icon]="'filter_list'" [variant]="'elevated'">
     <div class="filter-buttons">
       <button
         *ngFor="let filter of filterOptions"
@@ -15,7 +15,7 @@
         (click)="onFilterChange(filter)"
         class="filter-button"
       >
-        {{ filter | titlecase }}
+        {{ getFilterLabel(filter) }}
         <span *ngIf="filter !== 'all'">({{ getFilterCount(filter) }})</span>
       </button>
     </div>
@@ -30,7 +30,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ pendingCount() }}</div>
-          <div class="stat-label">Pending</div>
+          <div class="stat-label">{{ 'contractApprovals.stats.pending' | translate }}</div>
         </div>
       </div>
     </app-base-card>
@@ -41,7 +41,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ approvedCount() }}</div>
-          <div class="stat-label">Approved</div>
+          <div class="stat-label">{{ 'contractApprovals.stats.approved' | translate }}</div>
         </div>
       </div>
     </app-base-card>
@@ -52,7 +52,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ rejectedCount() }}</div>
-          <div class="stat-label">Rejected</div>
+          <div class="stat-label">{{ 'contractApprovals.stats.rejected' | translate }}</div>
         </div>
       </div>
     </app-base-card>
@@ -63,9 +63,9 @@
     [loading$]="loading$"
     [error$]="error$"
     [data$]="approvalsData$"
-    loadingMessage="Loading approvals..."
-    emptyTitle="No Approvals"
-    emptyDescription="No contract approvals match the selected filter"
+    [loadingMessage]="'contractApprovals.loading' | translate"
+    [emptyTitle]="'contractApprovals.emptyTitle' | translate"
+    [emptyDescription]="'contractApprovals.emptyDescription' | translate"
     [onRetry]="onRetryLoad"
   >
     <app-base-table

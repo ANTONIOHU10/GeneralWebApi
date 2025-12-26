@@ -1,0 +1,1262 @@
+{
+  "common": {
+    "appName": "GeneralWebApi",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "search": "搜索",
+    "filter": "筛选",
+    "clear": "清除",
+    "refresh": "刷新",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "submit": "提交",
+    "reset": "重置",
+    "actions": "操作",
+    "status": "状态",
+    "type": "类型",
+    "priority": "优先级",
+    "date": "日期",
+    "time": "时间",
+    "name": "名称",
+    "description": "描述",
+    "createdAt": "创建时间",
+    "updatedAt": "更新时间",
+    "noData": "暂无数据",
+    "noResults": "未找到结果",
+    "retry": "重试",
+    "dismiss": "关闭",
+    "view": "查看",
+    "notAvailable": "不适用",
+    "create": "创建",
+    "validationError": "验证错误"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "登出",
+    "username": "用户名",
+    "password": "密码",
+    "email": "邮箱",
+    "forgotPassword": "忘记密码？",
+    "rememberMe": "记住我",
+    "loginSuccess": "登录成功",
+    "loginFailed": "登录失败",
+    "invalidCredentials": "用户名或密码错误",
+    "sessionExpired": "会话已过期，请重新登录"
+  },
+  "settings": {
+    "title": "设置",
+    "appearance": "外观",
+    "darkMode": "深色模式",
+    "darkModeDescription": "在浅色和深色主题之间切换",
+    "light": "浅色",
+    "dark": "深色",
+    "notifications": "通知",
+    "emailNotifications": "邮件通知",
+    "emailNotificationsDescription": "通过邮件接收通知",
+    "pushNotifications": "推送通知",
+    "pushNotificationsDescription": "在浏览器中接收推送通知",
+    "languageRegion": "语言和地区",
+    "language": "语言",
+    "languageDescription": "选择您的首选语言",
+    "timeZone": "时区",
+    "timeZoneDescription": "设置您的时区",
+    "security": "安全",
+    "twoFactorAuth": "双因素认证",
+    "twoFactorAuthDescription": "添加额外的安全层",
+    "enable2FA": "启用双因素认证",
+    "changePassword": "修改密码",
+    "changePasswordDescription": "更新您的账户密码"
+  },
+  "header": {
+    "notifications": "通知",
+    "viewAll": "查看所有通知",
+    "newNotifications": "{{count}} 条新通知",
+    "noNotifications": "全部已读！",
+    "profile": "个人资料",
+    "settings": "设置",
+    "userProfileMenu": "用户个人资料菜单",
+    "lightMode": "浅色模式",
+    "darkMode": "深色模式",
+    "switchToLightMode": "切换到浅色模式",
+    "switchToDarkMode": "切换到深色模式"
+  },
+  "sidebar": {
+    "workspace": "工作区",
+    "dashboard": "仪表板",
+    "tasks": "任务",
+    "myApprovals": "我的审批",
+    "notifications": "通知",
+    "approvals": "审批",
+    "hrManagement": "人力资源管理",
+    "employees": "员工",
+    "departments": "部门",
+    "positions": "职位",
+    "onboarding": "入职",
+    "contractManagement": "合同管理",
+    "contracts": "合同",
+    "contractApprovals": "合同审批",
+    "contractTemplates": "合同模板",
+    "contractReminders": "合同提醒",
+    "documentCenter": "文档中心",
+    "identityDocuments": "身份文档",
+    "education": "教育",
+    "certifications": "证书",
+    "companyDocuments": "公司文档",
+    "systemManagement": "系统管理",
+    "users": "用户",
+    "roles": "角色",
+    "permissions": "权限",
+    "monitoringAudit": "监控与审计",
+    "auditLogs": "审计日志",
+    "systemMonitor": "系统监控"
+  },
+  "notifications": {
+    "title": "通知",
+    "unreadCount": "{{count}} 条未读通知",
+    "allCaughtUp": "全部已读！",
+    "markAllRead": "全部标记为已读",
+    "totalNotifications": "总通知数",
+    "unread": "未读",
+    "urgentHigh": "紧急和高优先级",
+    "filters": "筛选",
+    "allTypes": "所有类型",
+    "allStatus": "所有状态",
+    "allPriorities": "所有优先级",
+    "clearFilters": "清除筛选",
+    "noNotifications": "没有通知",
+    "noNotificationsDescription": "您已全部读完！没有新通知。",
+    "noMatchFilters": "没有匹配筛选条件的通知",
+    "noMatchFiltersDescription": "尝试调整筛选条件以查看更多通知",
+    "loading": "加载通知中...",
+    "read": "已读",
+    "unread": "未读",
+    "new": "新",
+    "viewDetails": "查看详情",
+    "deleteNotification": "删除通知"
+  },
+  "errors": {
+    "generic": "发生错误",
+    "networkError": "网络错误，请检查您的连接。",
+    "serverError": "服务器错误，请稍后重试。",
+    "notFound": "未找到资源",
+    "unauthorized": "您无权执行此操作",
+    "forbidden": "访问被禁止",
+    "validationError": "验证错误",
+    "timeout": "请求超时，请重试。"
+  },
+  "empty": {
+    "noData": "暂无数据",
+    "noResults": "未找到结果",
+    "tryAgain": "重试",
+    "refresh": "刷新"
+  },
+  "pagination": {
+    "page": "页",
+    "of": "共",
+    "itemsPerPage": "每页条数",
+    "showing": "显示",
+    "to": "到",
+    "ofTotal": "共 {{total}} 条",
+    "goTo": "跳转到",
+    "go": "跳转",
+    "entries": "条"
+  },
+  "time": {
+    "justNow": "刚刚",
+    "minutesAgo": "{{count}} 分钟前",
+    "minutesAgo_plural": "{{count}} 分钟前",
+    "hoursAgo": "{{count}} 小时前",
+    "hoursAgo_plural": "{{count}} 小时前",
+    "daysAgo": "{{count}} 天前",
+    "daysAgo_plural": "{{count}} 天前",
+    "weeksAgo": "{{count}} 周前",
+    "weeksAgo_plural": "{{count}} 周前",
+    "monthsAgo": "{{count}} 个月前",
+    "monthsAgo_plural": "{{count}} 个月前",
+    "yearsAgo": "{{count}} 年前",
+    "yearsAgo_plural": "{{count}} 年前"
+  },
+  "login": {
+    "welcomeBack": "欢迎回来",
+    "signInToContinue": "登录以继续访问您的账户",
+    "username": "用户名",
+    "password": "密码",
+    "rememberMe": "记住我",
+    "forgotPassword": "忘记密码？",
+    "signIn": "登录",
+    "dontHaveAccount": "没有账户？",
+    "contactAdministrator": "联系管理员",
+    "enterpriseManagementSystem": "企业管理系统",
+    "employeeManagement": "员工管理",
+    "analyticsDashboard": "分析仪表板",
+    "secureAccess": "安全访问",
+    "switchToLightMode": "切换到浅色模式",
+    "switchToDarkMode": "切换到深色模式"
+  },
+  "workspace": {
+    "title": "工作区",
+    "dashboard": "仪表板",
+    "tasks": "任务",
+    "myApprovals": "我的审批"
+  },
+  "contractManagement": {
+    "title": "合同管理",
+    "contracts": "合同",
+    "contractApprovals": "合同审批",
+    "contractTemplates": "合同模板",
+    "expiryReminders": "到期提醒"
+  },
+  "systemManagement": {
+    "title": "系统管理"
+  },
+  "footer": {
+    "allRightsReserved": "版权所有",
+    "privacy": "隐私",
+    "terms": "条款",
+    "help": "帮助",
+    "allSystemsOperational": "所有系统运行正常"
+  },
+  "profile": {
+    "title": "用户资料",
+    "sections": {
+      "userInformation": "用户信息",
+      "basicInformation": "基本信息",
+      "contactInformation": "联系信息",
+      "compensation": "薪酬",
+      "emergencyContact": "紧急联系人",
+      "additionalInformation": "其他信息"
+    },
+    "fields": {
+      "username": "用户名",
+      "email": "邮箱",
+      "phone": "电话",
+      "role": "角色",
+      "defaultRole": "用户",
+      "accountCreated": "账户创建时间",
+      "lastLogin": "上次登录",
+      "fullName": "全名",
+      "employeeNumber": "员工编号",
+      "position": "职位",
+      "department": "部门",
+      "manager": "经理",
+      "hireDate": "入职日期",
+      "employmentType": "雇佣类型",
+      "status": "状态",
+      "workingHours": "每周工作时长",
+      "hours": "小时",
+      "workEmail": "工作邮箱",
+      "address": "地址",
+      "salary": "薪资",
+      "name": "姓名",
+      "relation": "关系",
+      "taxCode": "税号"
+    },
+    "logout": {
+      "confirmTitle": "确认退出",
+      "confirmMessage": "您确定要退出登录吗？",
+      "successTitle": "退出成功",
+      "successMessage": "您已成功退出登录"
+    }
+  },
+  "employees": {
+    "title": "员工管理",
+    "subtitle": "管理和查看系统中的所有员工",
+    "searchPlaceholder": "搜索员工...",
+    "loading": "加载员工中...",
+    "emptyTitle": "未找到员工",
+    "emptyDescription": "目前没有可显示的员工",
+    "emptyActionText": "添加第一个员工",
+    "columns": {
+      "name": "姓名",
+      "position": "职位",
+      "department": "部门",
+      "status": "状态",
+      "email": "邮箱",
+      "phone": "电话",
+      "employeeNumber": "员工编号",
+      "firstName": "名",
+      "lastName": "姓",
+      "hireDate": "入职日期"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "tabs": {
+      "list": "员工列表",
+      "add": "添加员工",
+      "search": "搜索",
+      "reports": "报告",
+      "settings": "设置"
+    },
+    "add": {
+      "title": "添加新员工",
+      "subtitle": "在系统中创建新的员工记录",
+      "sections": {
+        "personalInformation": "个人信息",
+        "personalInformationDescription": "输入员工的个人详细信息",
+        "workInformation": "工作信息",
+        "workInformationDescription": "输入雇佣详情",
+        "addressInformation": "地址信息",
+        "addressInformationDescription": "可选地址详情",
+        "emergencyContact": "紧急联系人",
+        "emergencyContactDescription": "可选紧急联系人信息"
+      },
+      "fields": {
+        "firstName": "名",
+        "firstNamePlaceholder": "输入名",
+        "lastName": "姓",
+        "lastNamePlaceholder": "输入姓",
+        "email": "邮箱",
+        "emailPlaceholder": "输入邮箱地址",
+        "phoneNumber": "电话号码",
+        "phoneNumberPlaceholder": "输入电话号码",
+        "employeeNumber": "员工编号",
+        "employeeNumberPlaceholder": "留空则自动生成",
+        "hireDate": "入职日期",
+        "employmentStatus": "雇佣状态",
+        "employmentType": "雇佣类型",
+        "department": "部门",
+        "position": "职位",
+        "manager": "经理",
+        "currentSalary": "当前薪资",
+        "salaryCurrency": "薪资货币",
+        "address": "地址",
+        "addressPlaceholder": "输入街道地址",
+        "city": "城市",
+        "cityPlaceholder": "输入城市",
+        "postalCode": "邮政编码",
+        "postalCodePlaceholder": "输入邮政编码",
+        "country": "国家",
+        "countryPlaceholder": "输入国家",
+        "emergencyContactName": "紧急联系人姓名",
+        "emergencyContactNamePlaceholder": "输入紧急联系人姓名",
+        "emergencyContactPhone": "紧急联系人电话",
+        "emergencyContactPhonePlaceholder": "输入紧急联系人电话",
+        "emergencyContactRelation": "关系",
+        "emergencyContactRelationPlaceholder": "输入关系",
+        "taxCode": "税号",
+        "taxCodePlaceholder": "输入税号"
+      }
+    },
+    "detail": {
+      "sections": {
+        "userInformation": "用户信息",
+        "userInformationDescription": "用户账户详情",
+        "personalInformation": "个人信息",
+        "personalInformationDescription": "员工个人详情",
+        "workInformation": "工作信息",
+        "workInformationDescription": "雇佣和工作详情",
+        "addressInformation": "地址信息",
+        "addressInformationDescription": "地址详情"
+      },
+      "id": "编号"
+    },
+    "search": {
+      "title": "搜索员工",
+      "subtitle": "按各种条件搜索和筛选员工",
+      "cardTitle": "搜索和筛选员工",
+      "showing": "显示 {{count}} / {{total}} 名员工",
+      "noResults": "无结果",
+      "noResultsDescription": "使用上方表单搜索员工",
+      "loadingMessage": "加载员工中...",
+      "emptyTitle": "未找到员工",
+      "emptyDescription": "没有符合搜索条件的员工",
+      "loadEmployees": "加载员工",
+      "fields": {
+        "departmentPlaceholder": "选择部门（必填）",
+        "firstNamePlaceholder": "按名字搜索",
+        "lastNamePlaceholder": "按姓氏搜索",
+        "emailPlaceholder": "按邮箱搜索",
+        "employeeNumberPlaceholder": "按员工编号搜索",
+        "phonePlaceholder": "按电话搜索",
+        "positionPlaceholder": "按职位筛选",
+        "statusPlaceholder": "按状态筛选",
+        "allStatuses": "所有状态",
+        "hireDateFrom": "入职日期从",
+        "hireDateTo": "入职日期至",
+        "selectStartDate": "选择开始日期",
+        "selectEndDate": "选择结束日期"
+      }
+    },
+    "status": {
+      "active": "在职",
+      "inactive": "离职",
+      "terminated": "终止"
+    },
+    "reports": {
+      "title": "员工统计与报告",
+      "subtitle": "关于您员工队伍的全面分析和洞察",
+      "departmentDistribution": "部门分布",
+      "statusDistribution": "雇佣状态分布",
+      "positionDistribution": "职位分布",
+      "salaryRangeDistribution": "薪资范围分布",
+      "hiringTrends": "招聘趋势（过去12个月）",
+      "employmentTypeDistribution": "雇佣类型分布",
+      "cityDistribution": "城市分布",
+      "countryDistribution": "国家分布",
+      "contractTypeDistribution": "合同类型分布",
+      "workingHoursDistribution": "工作时间分布",
+      "departmentSalaryComparison": "部门薪资对比",
+      "recentHires": "近期入职（过去90天）"
+    },
+    "settings": {
+      "title": "员工设置",
+      "subtitle": "配置员工管理偏好和系统设置",
+      "generalSettings": "通用设置",
+      "autoGenerateId": "自动生成员工编号",
+      "autoGenerateIdDescription": "为新员工自动生成唯一的员工编号",
+      "sendWelcomeEmail": "发送欢迎邮件",
+      "sendWelcomeEmailDescription": "在创建新员工时发送欢迎邮件",
+      "requireManagerApproval": "需要经理批准",
+      "requireManagerApprovalDescription": "添加新员工需要经理批准",
+      "notificationSettings": "通知设置",
+      "enableNotifications": "启用通知",
+      "enableNotificationsDescription": "接收重要员工事件的通知",
+      "emailNotifications": "邮件通知",
+      "emailNotificationsDescription": "通过邮件发送通知",
+      "smsNotifications": "短信通知",
+      "smsNotificationsDescription": "通过短信发送通知",
+      "dataManagement": "数据管理",
+      "autoBackup": "自动备份员工数据",
+      "autoBackupDescription": "每天自动备份员工数据",
+      "archiveInactive": "归档非活跃员工",
+      "archiveInactiveDescription": "1年后将非活跃员工移至归档",
+      "accessControl": "访问控制",
+      "restrictPersonalData": "限制个人数据访问",
+      "restrictPersonalDataDescription": "只有人力资源和经理可以查看个人员工数据",
+      "requireTwoFactor": "需要双因素认证",
+      "requireTwoFactorDescription": "访问员工数据需要双因素认证",
+      "resetToDefault": "重置为默认",
+      "saveSettings": "保存设置"
+    }
+  },
+  "contracts": {
+    "title": "合同管理",
+    "subtitle": "管理和查看系统中的所有合同",
+    "searchPlaceholder": "搜索合同...",
+    "loading": "加载合同中...",
+    "emptyTitle": "未找到合同",
+    "emptyDescription": "目前没有可显示的合同",
+    "emptyActionText": "添加第一个合同",
+    "columns": {
+      "employee": "员工",
+      "contractType": "合同类型",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "status": "状态",
+      "salary": "薪资"
+    },
+    "types": {
+      "indefinite": "无固定期限",
+      "fixed": "固定期限",
+      "partTime": "兼职",
+      "temporary": "临时",
+      "internship": "实习"
+    },
+    "status": {
+      "active": "有效",
+      "expired": "已过期",
+      "terminated": "已终止",
+      "pending": "待处理"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "tabs": {
+      "list": "合同列表",
+      "add": "添加合同",
+      "search": "搜索合同",
+      "submitApproval": "提交审批"
+    },
+    "search": {
+      "title": "搜索合同",
+      "subtitle": "按各种条件搜索和筛选合同",
+      "cardTitle": "搜索和筛选合同",
+      "showing": "显示 {{count}} 个合同",
+      "loadingMessage": "加载合同中...",
+      "emptyTitle": "未找到合同",
+      "emptyDescription": "没有符合搜索条件的合同",
+      "submitButton": "搜索合同",
+      "fields": {
+        "employeeName": "员工姓名",
+        "employeeNamePlaceholder": "按员工姓名搜索",
+        "contractType": "合同类型",
+        "contractTypePlaceholder": "按合同类型筛选",
+        "allTypes": "所有类型",
+        "status": "状态",
+        "statusPlaceholder": "按状态筛选",
+        "allStatuses": "所有状态",
+        "startDateFrom": "开始日期从",
+        "startDateFromPlaceholder": "选择开始日期从",
+        "startDateTo": "开始日期至",
+        "startDateToPlaceholder": "选择开始日期至"
+      }
+    },
+    "add": {
+      "sections": {
+        "contractInfo": "合同信息",
+        "contractInfoDescription": "输入合同详情",
+        "approvalSettings": "审批设置",
+        "approvalSettingsDescription": "配置合同审批流程（可选）"
+      },
+      "fields": {
+        "employee": "员工",
+        "employeePlaceholder": "选择员工",
+        "contractType": "合同类型",
+        "contractTypePlaceholder": "选择合同类型",
+        "status": "状态",
+        "statusPlaceholder": "选择状态",
+        "startDate": "开始日期",
+        "startDatePlaceholder": "选择开始日期",
+        "endDate": "结束日期",
+        "endDatePlaceholder": "选择结束日期（可选）",
+        "salary": "薪资",
+        "salaryPlaceholder": "输入薪资（可选）",
+        "renewalReminder": "续约提醒日期",
+        "renewalReminderPlaceholder": "选择续约提醒日期（可选）",
+        "notes": "备注",
+        "notesPlaceholder": "输入附加备注（可选）",
+        "submitForApproval": "提交审批",
+        "submitForApprovalPlaceholder": "创建后自动提交合同审批",
+        "approvers": "审批人",
+        "approversPlaceholder": "选择特定用户作为审批人（留空使用默认角色流程）",
+        "approversHint": "选择将审批此合同的特定用户。如果未选择用户，系统将使用默认的基于角色的审批流程。",
+        "approvalComments": "审批意见",
+        "approvalCommentsPlaceholder": "输入审批请求意见（可选）"
+      },
+      "submitButton": "创建合同"
+    },
+    "submitApproval": {
+      "sections": {
+        "contractSelection": "选择合同",
+        "approvalSettings": "审批设置"
+      },
+      "fields": {
+        "contract": "合同",
+        "contractPlaceholder": "选择一个合同",
+        "approvers": "审批人",
+        "approversPlaceholder": "选择审批人（多选）",
+        "comments": "审批意见",
+        "commentsPlaceholder": "输入审批请求意见（可选）"
+      },
+      "submitButton": "提交审批"
+    }
+  },
+  "contractApprovals": {
+    "title": "合同审批",
+    "subtitle": "管理和审核合同审批请求",
+    "loading": "加载审批中...",
+    "emptyTitle": "没有审批",
+    "emptyDescription": "没有符合所选筛选条件的合同审批",
+    "stats": {
+      "pending": "待审批",
+      "approved": "已批准",
+      "rejected": "已拒绝"
+    },
+    "columns": {
+      "employee": "员工",
+      "contractType": "合同类型",
+      "status": "状态",
+      "progress": "进度",
+      "requestedBy": "申请人",
+      "requestedAt": "申请时间"
+    },
+    "actions": {
+      "view": "查看",
+      "approve": "批准",
+      "reject": "拒绝"
+    },
+    "filterOptions": {
+      "all": "全部",
+      "pending": "待审批",
+      "approved": "已批准",
+      "rejected": "已拒绝"
+    },
+    "dialog": {
+      "approveTitle": "批准合同",
+      "approveMessage": "批准 {{name}} 的合同？",
+      "rejectTitle": "拒绝合同",
+      "rejectMessage": "拒绝 {{name}} 的合同？"
+    }
+  },
+  "contractTemplates": {
+    "title": "合同模板",
+    "subtitle": "管理合同模板以快速创建合同",
+    "searchPlaceholder": "搜索模板...",
+    "loading": "加载模板中...",
+    "emptyTitle": "没有模板",
+    "emptyDescription": "没有符合所选筛选条件的合同模板",
+    "tabs": {
+      "list": "模板列表",
+      "add": "添加模板"
+    },
+    "columns": {
+      "name": "名称",
+      "description": "描述",
+      "contractType": "类型",
+      "category": "类别",
+      "usageCount": "使用次数",
+      "status": "状态",
+      "default": "默认",
+      "version": "版本"
+    },
+    "stats": {
+      "active": "活跃",
+      "inactive": "非活跃",
+      "default": "默认"
+    },
+    "status": {
+      "active": "活跃",
+      "inactive": "非活跃",
+      "default": "默认"
+    },
+    "filterOptions": {
+      "all": "全部",
+      "active": "活跃",
+      "inactive": "非活跃",
+      "default": "默认"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除",
+      "duplicate": "复制"
+    },
+    "add": {
+      "sections": {
+        "templateInfo": "模板信息",
+        "templateInfoDescription": "输入模板基本信息",
+        "templateContent": "模板内容",
+        "templateContentDescription": "输入模板内容和变量",
+        "settings": "设置",
+        "settingsDescription": "配置模板设置"
+      },
+      "fields": {
+        "name": "模板名称",
+        "namePlaceholder": "输入模板名称",
+        "description": "描述",
+        "descriptionPlaceholder": "输入模板描述",
+        "contractType": "合同类型",
+        "contractTypePlaceholder": "选择合同类型",
+        "category": "类别",
+        "categoryPlaceholder": "选择类别",
+        "templateContent": "模板内容",
+        "templateContentPlaceholder": "输入模板内容（支持变量如 {{employeeName}}）",
+        "variables": "变量（JSON）",
+        "legalRequirements": "法律要求",
+        "legalRequirementsPlaceholder": "输入法律要求或合规说明",
+        "tags": "标签（JSON数组）",
+        "isActive": "活跃",
+        "isDefault": "设为默认"
+      },
+      "submitButton": "创建模板",
+      "confirmTitle": "确认添加",
+      "confirmMessage": "您确定要添加模板 \"{{name}}\" 吗？"
+    }
+  },
+  "contractReminders": {
+    "title": "合同到期提醒",
+    "subtitle": "监控即将到期的合同",
+    "loading": "加载提醒中...",
+    "loadingFailed": "加载提醒失败",
+    "emptyTitle": "没有提醒",
+    "emptyDescription": "所选期间内没有即将到期的合同",
+    "filterLabel": "显示即将到期的合同：",
+    "filterOptions": {
+      "7days": "7天内",
+      "30days": "30天内",
+      "60days": "60天内",
+      "90days": "90天内"
+    },
+    "stats": {
+      "expired": "已过期",
+      "urgent": "紧急（≤7天）",
+      "warning": "警告（8-30天）",
+      "info": "信息（>30天）"
+    },
+    "columns": {
+      "employee": "员工",
+      "type": "类型",
+      "endDate": "结束日期",
+      "daysLeft": "剩余天数",
+      "status": "状态"
+    },
+    "status": {
+      "expired": "已过期",
+      "today": "今天",
+      "tomorrow": "明天",
+      "daysLeft": "{{count}} 天"
+    },
+    "actions": {
+      "view": "查看",
+      "renew": "续签"
+    },
+    "renew": {
+      "confirmTitle": "续签合同",
+      "confirmMessage": "续签 {{name}} 的合同？",
+      "successTitle": "合同续签",
+      "successMessage": "已发起 {{name}} 的合同续签"
+    }
+  },
+  "roles": {
+    "title": "角色管理",
+    "subtitle": "管理用户角色及其权限",
+    "list": "角色列表",
+    "add": "添加角色",
+    "edit": "编辑角色",
+    "details": "角色详情",
+    "searchPlaceholder": "搜索角色...",
+    "loading": "加载角色中...",
+    "emptyTitle": "没有角色",
+    "emptyDescription": "未找到角色",
+    "stats": {
+      "totalRoles": "角色总数",
+      "systemRoles": "系统角色",
+      "customRoles": "自定义角色"
+    },
+    "columns": {
+      "name": "角色名称",
+      "description": "描述",
+      "permissions": "权限",
+      "users": "用户",
+      "type": "类型",
+      "createdAt": "创建时间"
+    },
+    "form": {
+      "roleInformation": "角色信息",
+      "roleInformationDescription": "输入角色基本信息",
+      "permissions": "权限",
+      "permissionsDescription": "为此角色选择权限",
+      "name": "角色名称",
+      "namePlaceholder": "输入角色名称",
+      "description": "描述",
+      "descriptionPlaceholder": "输入角色描述",
+      "permissionsPlaceholder": "选择权限",
+      "submitButton": "创建角色",
+      "confirmTitle": "确认创建",
+      "confirmMessage": "您确定要创建角色 {{name}} 吗？"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "update": "更新角色",
+    "tabs": {
+      "list": "角色列表",
+      "add": "添加角色"
+    },
+    "type": {
+      "system": "系统",
+      "custom": "自定义"
+    },
+    "morePermissions": "+{{count}} 更多"
+  },
+  "permissions": {
+    "title": "权限管理",
+    "subtitle": "查看和管理系统权限",
+    "searchPlaceholder": "搜索权限...",
+    "loading": "加载权限中...",
+    "loadingFailed": "加载权限失败",
+    "emptyTitle": "没有权限",
+    "emptyDescription": "未找到权限",
+    "filterByModule": "按模块筛选",
+    "filterAll": "全部",
+    "tabs": {
+      "list": "权限列表",
+      "add": "添加权限"
+    },
+    "stats": {
+      "totalPermissions": "权限总数"
+    },
+    "columns": {
+      "name": "权限名称",
+      "description": "描述",
+      "category": "类别",
+      "module": "模块",
+      "roles": "角色",
+      "type": "类型"
+    },
+    "form": {
+      "resource": "资源",
+      "action": "操作",
+      "category": "类别"
+    },
+    "actions": {
+      "create": "创建",
+      "read": "读取",
+      "update": "更新",
+      "delete": "删除",
+      "assign": "分配",
+      "approve": "审批",
+      "export": "导出",
+      "admin": "管理员",
+      "config": "配置",
+      "audit": "审计",
+      "manage": "管理"
+    },
+    "categories": {
+      "employeeManagement": "员工管理",
+      "roleManagement": "角色管理",
+      "permissionManagement": "权限管理",
+      "departmentManagement": "部门管理",
+      "positionManagement": "职位管理",
+      "contractManagement": "合同管理",
+      "systemAdministration": "系统管理",
+      "userManagement": "用户管理"
+    },
+    "details": {
+      "title": "权限详情"
+    },
+    "type": {
+      "system": "系统",
+      "custom": "自定义"
+    },
+    "add": {
+      "sections": {
+        "permissionInfo": "权限信息",
+        "permissionInfoDescription": "输入权限基本信息"
+      },
+      "fields": {
+        "name": "权限名称",
+        "namePlaceholder": "根据资源和操作自动生成",
+        "nameHint": "自动生成为 资源.操作（如 Employees.View）",
+        "description": "描述",
+        "descriptionPlaceholder": "输入权限描述",
+        "resource": "资源",
+        "resourcePlaceholder": "选择资源",
+        "action": "操作",
+        "actionPlaceholder": "选择操作",
+        "category": "类别",
+        "categoryPlaceholder": "选择类别"
+      },
+      "confirmTitle": "确认添加",
+      "confirmMessage": "添加权限 \"{{name}}\"？",
+      "messages": {
+        "selectResourceAction": "请选择资源和操作以生成权限名称"
+      }
+    }
+  },
+  "departments": {
+    "title": "部门管理",
+    "subtitle": "管理和查看系统中的所有部门",
+    "searchPlaceholder": "搜索部门...",
+    "loading": "加载部门中...",
+    "emptyTitle": "未找到部门",
+    "emptyDescription": "目前没有可显示的部门",
+    "emptyActionText": "添加第一个部门",
+    "columns": {
+      "code": "代码",
+      "name": "名称",
+      "description": "描述",
+      "parentDepartment": "上级部门",
+      "level": "级别"
+    },
+    "tabs": {
+      "list": "部门列表",
+      "add": "添加部门",
+      "search": "搜索部门"
+    },
+    "search": {
+      "title": "搜索部门",
+      "subtitle": "按各种条件搜索和筛选部门",
+      "cardTitle": "搜索和筛选部门",
+      "showing": "显示 {{count}} 个部门",
+      "loadingMessage": "加载部门中...",
+      "emptyTitle": "未找到部门",
+      "emptyDescription": "没有符合搜索条件的部门",
+      "submitButton": "搜索部门",
+      "fields": {
+        "name": "部门名称",
+        "namePlaceholder": "按名称搜索",
+        "code": "部门代码",
+        "codePlaceholder": "按代码搜索",
+        "description": "描述",
+        "descriptionPlaceholder": "按描述搜索",
+        "parentDepartment": "上级部门",
+        "parentDepartmentPlaceholder": "按上级部门筛选",
+        "allDepartments": "所有部门",
+        "level": "级别",
+        "levelPlaceholder": "按级别筛选",
+        "allLevels": "所有级别"
+      }
+    },
+    "add": {
+      "sectionTitle": "部门信息",
+      "sectionDescription": "输入部门详情",
+      "fields": {
+        "name": "部门名称",
+        "namePlaceholder": "输入部门名称",
+        "code": "部门代码",
+        "codePlaceholder": "输入部门代码",
+        "level": "层级",
+        "levelPlaceholder": "输入层级",
+        "parentDepartment": "上级部门",
+        "parentDepartmentPlaceholder": "选择上级部门（可选）",
+        "description": "描述",
+        "descriptionPlaceholder": "输入部门描述"
+      },
+      "submitButton": "创建部门",
+      "cancelButton": "取消",
+      "confirmTitle": "确认创建",
+      "confirmMessage": "您确定要创建部门 {{name}} 吗？",
+      "confirmButton": "创建"
+    }
+  },
+  "positions": {
+    "title": "职位管理",
+    "subtitle": "管理和查看系统中的所有职位",
+    "searchPlaceholder": "搜索职位...",
+    "loading": "加载职位中...",
+    "emptyTitle": "未找到职位",
+    "emptyDescription": "目前没有可显示的职位",
+    "emptyActionText": "添加第一个职位",
+    "columns": {
+      "code": "代码",
+      "name": "名称",
+      "description": "描述",
+      "department": "部门",
+      "isManagement": "管理层",
+      "level": "级别",
+      "minSalary": "最低薪资",
+      "maxSalary": "最高薪资"
+    },
+    "tabs": {
+      "list": "职位列表",
+      "add": "添加职位",
+      "search": "搜索职位"
+    },
+    "delete": {
+      "confirmTitle": "确认删除",
+      "confirmMessage": "您确定要删除职位 {{name}} 吗？此操作无法撤销。"
+    },
+    "yes": "是",
+    "no": "否",
+    "search": {
+      "title": "搜索职位",
+      "subtitle": "按各种条件搜索和筛选职位",
+      "cardTitle": "搜索和筛选职位",
+      "showing": "显示 {{count}} 个职位",
+      "loadingMessage": "加载职位中...",
+      "emptyTitle": "未找到职位",
+      "emptyDescription": "没有符合搜索条件的职位",
+      "submitButton": "搜索职位",
+      "fields": {
+        "title": "职位名称",
+        "titlePlaceholder": "按名称搜索",
+        "code": "职位代码",
+        "codePlaceholder": "按代码搜索",
+        "description": "描述",
+        "descriptionPlaceholder": "按描述搜索",
+        "department": "部门",
+        "departmentPlaceholder": "按部门筛选",
+        "allDepartments": "所有部门",
+        "level": "级别",
+        "levelPlaceholder": "按级别筛选",
+        "allLevels": "所有级别",
+        "isManagement": "管理职位",
+        "isManagementPlaceholder": "按管理状态筛选",
+        "allPositions": "所有职位",
+        "management": "管理层",
+        "nonManagement": "非管理层"
+      }
+    },
+    "add": {
+      "sections": {
+        "positionInfo": "职位信息",
+        "positionInfoDescription": "输入职位详情",
+        "salaryInfo": "薪资信息",
+        "salaryInfoDescription": "可选的薪资范围详情"
+      },
+      "fields": {
+        "title": "职位名称",
+        "titlePlaceholder": "输入职位名称",
+        "code": "职位代码",
+        "codePlaceholder": "输入职位代码",
+        "level": "级别",
+        "levelPlaceholder": "输入级别",
+        "department": "部门",
+        "departmentPlaceholder": "选择部门",
+        "parentPosition": "上级职位",
+        "parentPositionPlaceholder": "选择上级职位（可选）",
+        "isManagement": "是否管理职位",
+        "description": "描述",
+        "descriptionPlaceholder": "输入职位描述",
+        "minSalary": "最低薪资",
+        "minSalaryPlaceholder": "输入最低薪资",
+        "maxSalary": "最高薪资",
+        "maxSalaryPlaceholder": "输入最高薪资"
+      },
+      "submitButton": "创建职位",
+      "confirmTitle": "确认创建",
+      "confirmMessage": "您确定要创建职位 {{name}} 吗？"
+    }
+  },
+  "users": {
+    "title": "用户管理",
+    "subtitle": "管理系统用户及其访问权限",
+    "searchPlaceholder": "搜索用户...",
+    "loading": "加载用户中...",
+    "emptyTitle": "没有用户",
+    "emptyDescription": "未找到用户",
+    "stats": {
+      "active": "活跃",
+      "inactive": "非活跃",
+      "locked": "已锁定"
+    },
+    "tabs": {
+      "list": "用户列表",
+      "add": "添加用户"
+    },
+    "status": {
+      "active": "活跃",
+      "inactive": "非活跃"
+    },
+    "add": {
+      "sections": {
+        "userInfo": "用户信息",
+        "userInfoDescription": "输入用户基本信息",
+        "accountSettings": "账户设置",
+        "accountSettingsDescription": "配置账户设置"
+      },
+      "fields": {
+        "username": "用户名",
+        "usernamePlaceholder": "输入用户名",
+        "email": "邮箱",
+        "emailPlaceholder": "输入邮箱",
+        "firstName": "名",
+        "firstNamePlaceholder": "输入名",
+        "lastName": "姓",
+        "lastNamePlaceholder": "输入姓",
+        "phone": "电话号码",
+        "phonePlaceholder": "输入电话号码",
+        "password": "密码",
+        "passwordPlaceholder": "输入密码",
+        "confirmPassword": "确认密码",
+        "confirmPasswordPlaceholder": "确认密码",
+        "roles": "角色",
+        "rolesPlaceholder": "选择角色",
+        "isActive": "活跃"
+      },
+      "submitButton": "创建用户",
+      "confirmTitle": "确认创建",
+      "confirmMessage": "您确定要创建用户 {{name}} 吗？"
+    }
+  },
+  "auditLogs": {
+    "title": "审计日志",
+    "subtitle": "跟踪和审查所有系统活动和更改",
+    "searchPlaceholder": "搜索审计日志...",
+    "loading": "加载审计日志中...",
+    "emptyTitle": "没有审计日志",
+    "emptyDescription": "未找到审计日志",
+    "stats": {
+      "totalLogs": "总日志数",
+      "info": "信息",
+      "warning": "警告",
+      "error": "错误",
+      "critical": "严重"
+    },
+    "tabs": {
+      "list": "审计日志列表",
+      "search": "搜索审计日志"
+    },
+    "search": {
+      "title": "高级搜索",
+      "loading": "搜索审计日志中...",
+      "emptyTitle": "无结果",
+      "emptyDescription": "没有符合搜索条件的审计日志",
+      "filtersSection": "搜索筛选",
+      "filtersDescription": "按各种条件筛选审计日志"
+    }
+  },
+  "systemMonitor": {
+    "title": "系统监控",
+    "subtitle": "实时基础设施健康监控",
+    "autoRefresh": "自动刷新：{{seconds}}秒",
+    "loading": "加载系统健康数据中...",
+    "connectionError": "连接错误",
+    "tryAgain": "重试",
+    "info": "健康数据每30秒自动刷新一次。可通过上方按钮手动刷新。"
+  },
+  "view": {
+    "switchToCard": "切换到卡片视图",
+    "switchToTable": "切换到表格视图",
+    "cardView": "卡片视图",
+    "tableView": "表格视图"
+  },
+  "table": {
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "emptyMessage": "暂无数据",
+    "loading": "加载中..."
+  },
+  "tabs": {
+    "list": "列表",
+    "add": "添加",
+    "search": "搜索",
+    "edit": "编辑",
+    "details": "详情",
+    "reports": "报告",
+    "settings": "设置",
+    "submitApproval": "提交审批"
+  },
+  "dashboard": {
+    "title": "仪表板概览",
+    "subtitle": "欢迎使用您的管理仪表板",
+    "refresh": "刷新",
+    "loading": "加载仪表板数据中...",
+    "stats": {
+      "totalEmployees": "员工总数",
+      "activeContracts": "有效合同",
+      "departments": "部门",
+      "pendingApprovals": "待审批"
+    },
+    "actions": {
+      "viewDetails": "查看详情",
+      "manage": "管理",
+      "viewAll": "查看全部",
+      "review": "审核"
+    },
+    "recentActivities": {
+      "title": "最近活动",
+      "subtitle": "最新更新和通知",
+      "noActivities": "没有最近活动",
+      "viewAll": "查看所有活动"
+    }
+  },
+  "tasks": {
+    "title": "我的任务",
+    "subtitle": "管理您的个人待办事项",
+    "loading": "加载任务中...",
+    "emptyTitle": "未找到任务",
+    "emptyDescription": "您还没有任何任务。创建第一个任务开始吧！",
+    "emptyActionText": "创建第一个任务",
+    "newTask": "新建任务",
+    "editTask": "编辑任务",
+    "createNewTask": "创建新任务",
+    "updateTask": "更新任务",
+    "createTask": "创建任务",
+    "deleteTask": "删除任务",
+    "titleLabel": "标题",
+    "titlePlaceholder": "输入任务标题",
+    "descriptionLabel": "描述",
+    "descriptionPlaceholder": "输入任务描述（可选）",
+    "status": "状态",
+    "priority": "优先级",
+    "statusAll": "全部",
+    "statusPending": "待处理",
+    "statusInProgress": "进行中",
+    "statusCompleted": "已完成",
+    "statusCancelled": "已取消",
+    "priorityLow": "低",
+    "priorityMedium": "中",
+    "priorityHigh": "高",
+    "priorityUrgent": "紧急"
+  },
+  "approvals": {
+    "title": "审批管理",
+    "subtitle": "管理和审查待审批事项",
+    "loading": "加载审批中...",
+    "emptyTitle": "没有审批",
+    "emptyDescription": "没有匹配所选筛选条件的审批",
+    "filter": "筛选",
+    "stats": {
+      "pending": "待审批",
+      "approved": "已批准",
+      "rejected": "已拒绝"
+    },
+    "columns": {
+      "type": "类型",
+      "title": "标题",
+      "requester": "申请人",
+      "status": "状态",
+      "priority": "优先级",
+      "progress": "进度",
+      "approver": "审批人",
+      "dueDate": "截止日期"
+    },
+    "actions": {
+      "view": "查看",
+      "approve": "批准",
+      "reject": "拒绝"
+    },
+    "filterOptions": {
+      "all": "全部",
+      "pending": "待审批",
+      "approved": "已批准",
+      "rejected": "已拒绝"
+    },
+    "dialog": {
+      "approveTitle": "批准请求",
+      "approveMessage": "请为此批准提供评论：",
+      "approvePlaceholder": "输入批准评论（可选）",
+      "rejectTitle": "拒绝请求",
+      "rejectMessage": "请提供拒绝原因：",
+      "rejectPlaceholder": "输入拒绝原因（必填）"
+    }
+  },
+  "notifications": {
+    "title": "通知",
+    "subtitle": "查看和管理您的通知",
+    "loading": "加载通知中...",
+    "emptyTitle": "没有通知",
+    "emptyDescription": "您目前没有任何通知",
+    "noMatchFilters": "没有匹配筛选条件的通知",
+    "noMatchFiltersDescription": "尝试调整筛选条件以查看更多通知",
+    "totalNotifications": "通知总数",
+    "unread": "未读",
+    "unreadCount": "{{count}} 条未读通知",
+    "allCaughtUp": "全部已读！",
+    "markAllRead": "全部标记为已读",
+    "new": "新",
+    "urgentHigh": "紧急和高优先级",
+    "read": "已读",
+    "archived": "已归档",
+    "deleteNotification": "删除通知",
+    "filters": {
+      "title": "筛选",
+      "type": "类型",
+      "status": "状态",
+      "priority": "优先级",
+      "clearFilters": "清除筛选",
+      "allTypes": "所有类型",
+      "allStatus": "所有状态",
+      "allPriorities": "所有优先级"
+    },
+    "types": {
+      "approval": "审批",
+      "task": "任务",
+      "contract": "合同",
+      "system": "系统",
+      "audit": "审计",
+      "employee": "员工"
+    },
+    "priorities": {
+      "urgent": "紧急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "noNotifications": "没有通知",
+    "noNotificationsDescription": "您已全部读完！没有新通知。",
+    "viewDetails": "查看详情"
+  }
+}
+

@@ -2,7 +2,7 @@
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, of } from 'rxjs';
-import { takeUntil, catchError } from 'rxjs/operators';
+import { takeUntil, catchError, filter, distinctUntilChanged } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
@@ -14,6 +14,7 @@ import { ContractService } from '../../../core/services/contract.service';
 import { EmployeeService } from '../../../core/services/employee.service';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { UserService, UserWithEmployee } from '../../../core/services/user.service';
+import { TranslationService } from '@core/services/translation.service';
 
 @Component({
   selector: 'app-add-contract',
@@ -31,6 +32,7 @@ export class AddContractComponent implements OnInit, OnDestroy {
   private contractService = inject(ContractService);
   private employeeService = inject(EmployeeService);
   private userService = inject(UserService);
+  private translationService = inject(TranslationService);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
@@ -60,165 +62,63 @@ export class AddContractComponent implements OnInit, OnDestroy {
   approverOptions: SelectOption[] = [];
 
   formConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Contract Information',
-        description: 'Enter contract details',
-        order: 0,
-      },
-      {
-        title: 'Approval Settings',
-        description: 'Configure contract approval workflow (optional)',
-        order: 1,
-      },
-    ],
-    layout: {
-      columns: 2,
-      gap: '1.5rem',
-      sectionGap: '2rem',
-      labelPosition: 'top',
-      showSectionDividers: true,
-    },
-    fields: [
-      {
-        key: 'employeeId',
-        type: 'select',
-        label: 'Employee',
-        placeholder: 'Select employee',
-        required: true,
-        section: 'Contract Information',
-        order: 0,
-        colSpan: 2,
-        searchable: true,
-        options: this.employeeOptions,
-      },
-      {
-        key: 'contractType',
-        type: 'select',
-        label: 'Contract Type',
-        placeholder: 'Select contract type',
-        required: true,
-        section: 'Contract Information',
-        order: 1,
-        colSpan: 1,
-        options: CONTRACT_TYPES.map(type => ({
-          value: type.value,
-          label: type.label,
-        })) as SelectOption[],
-      },
-      {
-        key: 'status',
-        type: 'select',
-        label: 'Status',
-        placeholder: 'Select status',
-        required: true,
-        section: 'Contract Information',
-        order: 2,
-        colSpan: 1,
-        options: CONTRACT_STATUSES.map(status => ({
-          value: status.value,
-          label: status.label,
-        })) as SelectOption[],
-      },
-      {
-        key: 'startDate',
-        type: 'datepicker',
-        label: 'Start Date',
-        placeholder: 'Select start date',
-        required: true,
-        section: 'Contract Information',
-        order: 3,
-        colSpan: 1,
-      },
-      {
-        key: 'endDate',
-        type: 'datepicker',
-        label: 'End Date',
-        placeholder: 'Select end date (optional)',
-        required: false,
-        section: 'Contract Information',
-        order: 4,
-        colSpan: 1,
-      },
-      {
-        key: 'salary',
-        type: 'number',
-        label: 'Salary',
-        placeholder: 'Enter salary (optional)',
-        required: false,
-        section: 'Contract Information',
-        order: 5,
-        colSpan: 1,
-        min: 0,
-      },
-      {
-        key: 'renewalReminderDate',
-        type: 'datepicker',
-        label: 'Renewal Reminder Date',
-        placeholder: 'Select renewal reminder date (optional)',
-        required: false,
-        section: 'Contract Information',
-        order: 6,
-        colSpan: 1,
-      },
-      {
-        key: 'notes',
-        type: 'textarea',
-        label: 'Notes',
-        placeholder: 'Enter additional notes (optional)',
-        required: false,
-        section: 'Contract Information',
-        order: 7,
-        colSpan: 2,
-        rows: 4,
-      },
-      {
-        key: 'submitForApproval',
-        type: 'checkbox',
-        label: 'Submit for Approval',
-        placeholder: 'Automatically submit contract for approval after creation',
-        required: false,
-        section: 'Approval Settings',
-        order: 0,
-        colSpan: 2,
-      },
-      {
-        key: 'approvers',
-        type: 'select',
-        label: 'Approvers',
-        placeholder: 'Select specific users as approvers (leave empty to use default role-based workflow)',
-        hint: 'Select specific users who will approve this contract. If no users are selected, the system will use the default role-based approval workflow.',
-        required: false,
-        section: 'Approval Settings',
-        order: 1,
-        colSpan: 2,
-        searchable: true,
-        multiple: true,
-        options: this.approverOptions,
-      },
-      {
-        key: 'approvalComments',
-        type: 'textarea',
-        label: 'Approval Comments',
-        placeholder: 'Enter comments for approval request (optional)',
-        required: false,
-        section: 'Approval Settings',
-        order: 2,
-        colSpan: 2,
-        rows: 3,
-      },
-    ],
-    submitButtonText: 'Create Contract',
-    cancelButtonText: 'Clear',
+    sections: [],
+    layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+    });
+
     // Load employees for contract employee selection
     this.loadEmployees();
     // Load users for approver selection
     this.loadUsers();
+  }
+
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const contractInfoSection = this.translationService.translate('contracts.add.sections.contractInfo');
+    const approvalSection = this.translationService.translate('contracts.add.sections.approvalSettings');
+
+    this.formConfig = {
+      sections: [
+        { title: contractInfoSection, description: this.translationService.translate('contracts.add.sections.contractInfoDescription'), order: 0 },
+        { title: approvalSection, description: this.translationService.translate('contracts.add.sections.approvalSettingsDescription'), order: 1 },
+      ],
+      layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+      fields: [
+        { key: 'employeeId', type: 'select', label: this.translationService.translate('contracts.add.fields.employee'), placeholder: this.translationService.translate('contracts.add.fields.employeePlaceholder'), required: true, section: contractInfoSection, order: 0, colSpan: 2, searchable: true, options: this.employeeOptions },
+        { key: 'contractType', type: 'select', label: this.translationService.translate('contracts.add.fields.contractType'), placeholder: this.translationService.translate('contracts.add.fields.contractTypePlaceholder'), required: true, section: contractInfoSection, order: 1, colSpan: 1, options: CONTRACT_TYPES.map(type => ({ value: type.value, label: type.label })) as SelectOption[] },
+        { key: 'status', type: 'select', label: this.translationService.translate('contracts.add.fields.status'), placeholder: this.translationService.translate('contracts.add.fields.statusPlaceholder'), required: true, section: contractInfoSection, order: 2, colSpan: 1, options: CONTRACT_STATUSES.map(status => ({ value: status.value, label: status.label })) as SelectOption[] },
+        { key: 'startDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.startDate'), placeholder: this.translationService.translate('contracts.add.fields.startDatePlaceholder'), required: true, section: contractInfoSection, order: 3, colSpan: 1 },
+        { key: 'endDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.endDate'), placeholder: this.translationService.translate('contracts.add.fields.endDatePlaceholder'), required: false, section: contractInfoSection, order: 4, colSpan: 1 },
+        { key: 'salary', type: 'number', label: this.translationService.translate('contracts.add.fields.salary'), placeholder: this.translationService.translate('contracts.add.fields.salaryPlaceholder'), required: false, section: contractInfoSection, order: 5, colSpan: 1, min: 0 },
+        { key: 'renewalReminderDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.renewalReminder'), placeholder: this.translationService.translate('contracts.add.fields.renewalReminderPlaceholder'), required: false, section: contractInfoSection, order: 6, colSpan: 1 },
+        { key: 'notes', type: 'textarea', label: this.translationService.translate('contracts.add.fields.notes'), placeholder: this.translationService.translate('contracts.add.fields.notesPlaceholder'), required: false, section: contractInfoSection, order: 7, colSpan: 2, rows: 4 },
+        { key: 'submitForApproval', type: 'checkbox', label: this.translationService.translate('contracts.add.fields.submitForApproval'), placeholder: this.translationService.translate('contracts.add.fields.submitForApprovalPlaceholder'), required: false, section: approvalSection, order: 0, colSpan: 2 },
+        { key: 'approvers', type: 'select', label: this.translationService.translate('contracts.add.fields.approvers'), placeholder: this.translationService.translate('contracts.add.fields.approversPlaceholder'), hint: this.translationService.translate('contracts.add.fields.approversHint'), required: false, section: approvalSection, order: 1, colSpan: 2, searchable: true, multiple: true, options: this.approverOptions },
+        { key: 'approvalComments', type: 'textarea', label: this.translationService.translate('contracts.add.fields.approvalComments'), placeholder: this.translationService.translate('contracts.add.fields.approvalCommentsPlaceholder'), required: false, section: approvalSection, order: 2, colSpan: 2, rows: 3 },
+      ],
+      submitButtonText: this.translationService.translate('contracts.add.submitButton'),
+      cancelButtonText: this.translationService.translate('common.clear'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+    this.cdr.markForCheck();
   }
 
   /**

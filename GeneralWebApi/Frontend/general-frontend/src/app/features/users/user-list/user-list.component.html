@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/user-list/user-list.component.html -->
 <app-base-private-page-container
-  title="User Management"
-  subtitle="Manage system users and their access"
+  [title]="'users.title' | translate"
+  [subtitle]="'users.subtitle' | translate"
   icon="people"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -14,7 +14,7 @@
     *ngIf="activeTab() === 'list'"
     slot="search"
     [config]="{
-      placeholder: 'Search users...',
+      placeholder: ('users.searchPlaceholder' | translate),
       debounceTime: 300,
       minLength: 1,
       showClearButton: true,
@@ -35,7 +35,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ activeCount() }}</div>
-            <div class="stat-label">Active</div>
+            <div class="stat-label">{{ 'users.stats.active' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -46,7 +46,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ inactiveCount() }}</div>
-            <div class="stat-label">Inactive</div>
+            <div class="stat-label">{{ 'users.stats.inactive' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -57,7 +57,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ lockedCount() }}</div>
-            <div class="stat-label">Locked</div>
+            <div class="stat-label">{{ 'users.stats.locked' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -67,9 +67,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="usersData$"
-      loadingMessage="Loading users..."
-      emptyTitle="No Users"
-      emptyDescription="No users found"
+      [loadingMessage]="'users.loading' | translate"
+      [emptyTitle]="'users.emptyTitle' | translate"
+      [emptyDescription]="'users.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <app-base-table
@@ -93,7 +93,7 @@
             </div>
           </ng-container>
           <ng-container *ngIf="column.key === 'isActive'">
-            <app-base-badge [text]="row.isActive ? 'Active' : 'Inactive'" [variant]="getStatusVariant(row.isActive)" size="small"></app-base-badge>
+            <app-base-badge [text]="row.isActive ? ('users.status.active' | translate) : ('users.status.inactive' | translate)" [variant]="getStatusVariant(row.isActive)" size="small"></app-base-badge>
           </ng-container>
         </ng-template>
       </app-base-table>

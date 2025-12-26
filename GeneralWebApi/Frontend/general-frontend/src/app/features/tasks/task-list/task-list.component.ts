@@ -17,6 +17,8 @@ import {
   BaseBadgeComponent,
   BaseAsyncStateComponent,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 
 @Component({
   selector: 'app-task-list',
@@ -30,6 +32,7 @@ import {
     BaseCardComponent,
     BaseBadgeComponent,
     BaseAsyncStateComponent,
+    TranslatePipe,
   ],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
@@ -38,6 +41,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private taskService = inject(TaskService);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
   private destroyRef = inject(DestroyRef);
 
@@ -343,6 +347,32 @@ export class TaskListComponent implements OnInit, OnDestroy {
       default:
         return 'secondary';
     }
+  }
+
+  /**
+   * Get translated status text
+   */
+  getStatusText(status: string): string {
+    const statusMap: Record<string, string> = {
+      'Pending': this.translationService.translate('tasks.statusPending'),
+      'InProgress': this.translationService.translate('tasks.statusInProgress'),
+      'Completed': this.translationService.translate('tasks.statusCompleted'),
+      'Cancelled': this.translationService.translate('tasks.statusCancelled'),
+    };
+    return statusMap[status] || status;
+  }
+
+  /**
+   * Get translated priority text
+   */
+  getPriorityText(priority: string): string {
+    const priorityMap: Record<string, string> = {
+      'Low': this.translationService.translate('tasks.priorityLow'),
+      'Medium': this.translationService.translate('tasks.priorityMedium'),
+      'High': this.translationService.translate('tasks.priorityHigh'),
+      'Urgent': this.translationService.translate('tasks.priorityUrgent'),
+    };
+    return priorityMap[priority] || priority;
   }
 
   /**

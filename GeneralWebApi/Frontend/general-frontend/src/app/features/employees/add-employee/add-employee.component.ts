@@ -10,6 +10,8 @@ import {
   SelectOption,
 } from '../../../Shared/components/base';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
@@ -23,6 +25,7 @@ import { Position } from 'app/contracts/positions/position.model';
   imports: [
     CommonModule,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'],
@@ -33,6 +36,7 @@ export class AddEmployeeComponent implements OnInit {
   private departmentFacade = inject(DepartmentFacade);
   private positionFacade = inject(PositionFacade);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
   private cdr = inject(ChangeDetectorRef);
 
   /**
@@ -329,13 +333,16 @@ export class AddEmployeeComponent implements OnInit {
         colSpan: 1,
       },
     ],
-    submitButtonText: 'Add Employee',
-    cancelButtonText: 'Cancel',
+    submitButtonText: '', // Will be set in applyTranslationsToFormConfig
+    cancelButtonText: '', // Will be set in applyTranslationsToFormConfig
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
   ngOnInit() {
+    // Apply translations to form config
+    this.applyTranslationsToFormConfig();
+
     // Note: OperationNotificationService is already setup in parent component (employee-list)
     // No need to setup again here to avoid duplicate notifications
 
@@ -669,6 +676,62 @@ export class AddEmployeeComponent implements OnInit {
   onFormCancel(): void {
     // Reset form
     this.resetForm();
+  }
+
+  /**
+   * Apply translations to form config
+   */
+  private applyTranslationsToFormConfig(): void {
+    // Translate sections
+    if (this.formConfig.sections) {
+      this.formConfig.sections.forEach(section => {
+      if (section.title === 'Personal Information') {
+        section.title = this.translationService.translate('employees.add.sections.personalInformation');
+        section.description = this.translationService.translate('employees.add.sections.personalInformationDescription');
+      } else if (section.title === 'Work Information') {
+        section.title = this.translationService.translate('employees.add.sections.workInformation');
+        section.description = this.translationService.translate('employees.add.sections.workInformationDescription');
+      } else if (section.title === 'Address Information') {
+        section.title = this.translationService.translate('employees.add.sections.addressInformation');
+        section.description = this.translationService.translate('employees.add.sections.addressInformationDescription');
+      } else if (section.title === 'Emergency Contact') {
+        section.title = this.translationService.translate('employees.add.sections.emergencyContact');
+        section.description = this.translationService.translate('employees.add.sections.emergencyContactDescription');
+      }
+      });
+    }
+
+    // Translate fields
+    if (this.formConfig.fields) {
+      this.formConfig.fields.forEach(field => {
+        const fieldKey = String(field.key);
+        const translationKey = `employees.add.fields.${fieldKey}`;
+      const translatedLabel = this.translationService.translate(translationKey);
+      const translatedPlaceholder = this.translationService.translate(`${translationKey}Placeholder`);
+      
+      if (translatedLabel && translatedLabel !== translationKey) {
+        field.label = translatedLabel;
+      }
+      if (translatedPlaceholder && translatedPlaceholder !== `${translationKey}Placeholder`) {
+        field.placeholder = translatedPlaceholder;
+      }
+
+      // Translate section names in fields
+      if (field.section === 'Personal Information') {
+        field.section = this.translationService.translate('employees.add.sections.personalInformation');
+      } else if (field.section === 'Work Information') {
+        field.section = this.translationService.translate('employees.add.sections.workInformation');
+      } else if (field.section === 'Address Information') {
+        field.section = this.translationService.translate('employees.add.sections.addressInformation');
+      } else if (field.section === 'Emergency Contact') {
+        field.section = this.translationService.translate('employees.add.sections.emergencyContact');
+      }
+      });
+    }
+
+    // Translate button texts
+    this.formConfig.submitButtonText = this.translationService.translate('employees.tabs.add');
+    this.formConfig.cancelButtonText = this.translationService.translate('common.cancel');
   }
 
   /**

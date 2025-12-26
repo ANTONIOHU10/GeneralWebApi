@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/search-audit-log/search-audit-log.component.ts
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, of } from 'rxjs';
-import { first, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { first, catchError, takeUntil, filter, distinctUntilChanged } from 'rxjs/operators';
 import {
   BaseCardComponent,
   BaseAsyncStateComponent,
@@ -16,6 +16,8 @@ import {
   BadgeVariant,
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { AuditLog, AUDIT_LOG_ACTIONS, AUDIT_LOG_SEVERITIES, AUDIT_LOG_MODULES, AUDIT_LOG_ENTITY_TYPES } from '../../../audit-logs/audit-log.model';
 import { AuditLogDetailComponent } from '../audit-log-detail/audit-log-detail.component';
 import { AuditLogService, BackendAuditLog, AuditLogSearch } from '../../../core/services/audit-log.service';
@@ -31,13 +33,16 @@ import { AuditLogService, BackendAuditLog, AuditLogSearch } from '../../../core/
     BaseFormComponent,
     BaseTableComponent,
     BaseBadgeComponent,
+    TranslatePipe,
   ],
   templateUrl: './search-audit-log.component.html',
   styleUrls: ['./search-audit-log.component.scss'],
 })
-export class SearchAuditLogComponent implements OnInit {
+export class SearchAuditLogComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private auditLogService = inject(AuditLogService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   allLogs = signal<AuditLog[]>([]);
   loading = signal(false);
@@ -149,6 +154,10 @@ export class SearchAuditLogComponent implements OnInit {
         colSpan: 1,
       },
     ],
+    submitButtonText: 'Search',
+    cancelButtonText: 'Reset',
+    submitButtonVariant: 'primary',
+    cancelButtonVariant: 'secondary',
   };
 
   tableColumns: TableColumn[] = [
@@ -166,7 +175,38 @@ export class SearchAuditLogComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+    });
+
     this.searchLogs();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const sectionTitle = this.translationService.translate('auditLogs.search.filtersSection');
+    this.searchFormConfig.sections = [
+      { title: sectionTitle || 'Search Filters', description: this.translationService.translate('auditLogs.search.filtersDescription') || 'Filter audit logs by various criteria', order: 0 }
+    ];
+    this.searchFormConfig.submitButtonText = this.translationService.translate('common.search');
+    this.searchFormConfig.cancelButtonText = this.translationService.translate('common.reset');
+    
+    // Update field sections
+    this.searchFormConfig.fields.forEach(field => {
+      field.section = sectionTitle || 'Search Filters';
+    });
   }
 
   searchLogs(): void {

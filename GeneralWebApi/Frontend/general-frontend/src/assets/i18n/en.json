@@ -1,0 +1,1237 @@
+{
+  "common": {
+    "appName": "GeneralWebApi",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "refresh": "Refresh",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "actions": "Actions",
+    "status": "Status",
+    "type": "Type",
+    "priority": "Priority",
+    "date": "Date",
+    "time": "Time",
+    "name": "Name",
+    "description": "Description",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "noData": "No data available",
+    "noResults": "No results found",
+    "retry": "Retry",
+    "dismiss": "Dismiss",
+    "view": "View",
+    "notAvailable": "N/A",
+    "create": "Create",
+    "validationError": "Validation Error"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "email": "Email",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me",
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed",
+    "invalidCredentials": "Invalid username or password",
+    "sessionExpired": "Your session has expired. Please login again."
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "darkMode": "Dark Mode",
+    "darkModeDescription": "Toggle between light and dark theme",
+    "light": "Light",
+    "dark": "Dark",
+    "notifications": "Notifications",
+    "emailNotifications": "Email Notifications",
+    "emailNotificationsDescription": "Receive notifications via email",
+    "pushNotifications": "Push Notifications",
+    "pushNotificationsDescription": "Receive push notifications in browser",
+    "languageRegion": "Language & Region",
+    "language": "Language",
+    "languageDescription": "Select your preferred language",
+    "timeZone": "Time Zone",
+    "timeZoneDescription": "Set your time zone",
+    "security": "Security",
+    "twoFactorAuth": "Two-Factor Authentication",
+    "twoFactorAuthDescription": "Add an extra layer of security",
+    "enable2FA": "Enable 2FA",
+    "changePassword": "Change Password",
+    "changePasswordDescription": "Update your account password"
+  },
+  "header": {
+    "notifications": "Notifications",
+    "viewAll": "View All Notifications",
+    "newNotifications": "{{count}} new",
+    "noNotifications": "All caught up!",
+    "profile": "Profile",
+    "settings": "Settings",
+    "userProfileMenu": "User profile menu",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "switchToLightMode": "Switch to light mode",
+    "switchToDarkMode": "Switch to dark mode"
+  },
+  "sidebar": {
+    "workspace": "Workspace",
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "myApprovals": "My Approvals",
+    "notifications": "Notifications",
+    "approvals": "Approvals",
+    "hrManagement": "HR Management",
+    "employees": "Employees",
+    "departments": "Departments",
+    "positions": "Positions",
+    "onboarding": "Onboarding",
+    "contractManagement": "Contract Management",
+    "contracts": "Contracts",
+    "contractApprovals": "Contract Approvals",
+    "contractTemplates": "Contract Templates",
+    "contractReminders": "Contract Reminders",
+    "documentCenter": "Document Center",
+    "identityDocuments": "Identity Documents",
+    "education": "Education",
+    "certifications": "Certifications",
+    "companyDocuments": "Company Documents",
+    "systemManagement": "System Management",
+    "users": "Users",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "monitoringAudit": "Monitoring & Audit",
+    "auditLogs": "Audit Logs",
+    "systemMonitor": "System Monitor"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "View and manage your notifications",
+    "unreadCount": "{{count}} unread notification(s)",
+    "allCaughtUp": "All caught up!",
+    "markAllRead": "Mark All as Read",
+    "loading": "Loading notifications...",
+    "emptyTitle": "No Notifications",
+    "emptyDescription": "You don't have any notifications at the moment",
+    "noMatchFilters": "No notifications match the filters",
+    "noMatchFiltersDescription": "Try adjusting your filters to see more notifications",
+    "totalNotifications": "Total Notifications",
+    "unread": "Unread",
+    "new": "New",
+    "urgentHigh": "Urgent & High Priority",
+    "read": "Read",
+    "archived": "Archived",
+    "deleteNotification": "Delete Notification",
+    "filters": {
+      "title": "Filters",
+      "type": "Type",
+      "status": "Status",
+      "priority": "Priority",
+      "clearFilters": "Clear Filters",
+      "allTypes": "All Types",
+      "allStatus": "All Status",
+      "allPriorities": "All Priorities"
+    },
+    "types": {
+      "approval": "Approval",
+      "task": "Task",
+      "contract": "Contract",
+      "system": "System",
+      "audit": "Audit",
+      "employee": "Employee"
+    },
+    "priorities": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "noNotifications": "No notifications",
+    "noNotificationsDescription": "You're all caught up! No new notifications.",
+    "viewDetails": "View Details"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "notFound": "Resource not found",
+    "unauthorized": "You are not authorized to perform this action",
+    "forbidden": "Access forbidden",
+    "validationError": "Validation error",
+    "timeout": "Request timeout. Please try again."
+  },
+  "empty": {
+    "noData": "No data available",
+    "noResults": "No results found",
+    "tryAgain": "Try again",
+    "refresh": "Refresh"
+  },
+  "pagination": {
+    "page": "Page",
+    "of": "of",
+    "itemsPerPage": "Items per page",
+    "showing": "Showing",
+    "to": "to",
+    "ofTotal": "of {{total}}",
+    "goTo": "Go to",
+    "go": "Go",
+    "entries": "entries"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} minute ago",
+    "minutesAgo_plural": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hour ago",
+    "hoursAgo_plural": "{{count}} hours ago",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago",
+    "weeksAgo": "{{count}} week ago",
+    "weeksAgo_plural": "{{count}} weeks ago",
+    "monthsAgo": "{{count}} month ago",
+    "monthsAgo_plural": "{{count}} months ago",
+    "yearsAgo": "{{count}} year ago",
+    "yearsAgo_plural": "{{count}} years ago"
+  },
+  "login": {
+    "welcomeBack": "Welcome Back",
+    "signInToContinue": "Sign in to continue to your account",
+    "username": "Username",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign In",
+    "dontHaveAccount": "Don't have an account?",
+    "contactAdministrator": "Contact Administrator",
+    "enterpriseManagementSystem": "Enterprise Management System",
+    "employeeManagement": "Employee Management",
+    "analyticsDashboard": "Analytics Dashboard",
+    "secureAccess": "Secure Access",
+    "switchToLightMode": "Switch to light mode",
+    "switchToDarkMode": "Switch to dark mode"
+  },
+  "workspace": {
+    "title": "Workspace",
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "myApprovals": "My Approvals"
+  },
+  "contractManagement": {
+    "title": "Contract Management",
+    "contracts": "Contracts",
+    "contractApprovals": "Contract Approvals",
+    "contractTemplates": "Contract Templates",
+    "expiryReminders": "Expiry Reminders"
+  },
+  "systemManagement": {
+    "title": "System Management"
+  },
+  "footer": {
+    "allRightsReserved": "All rights reserved",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "help": "Help",
+    "allSystemsOperational": "All systems operational"
+  },
+  "profile": {
+    "title": "User Profile",
+    "sections": {
+      "userInformation": "User Information",
+      "basicInformation": "Basic Information",
+      "contactInformation": "Contact Information",
+      "compensation": "Compensation",
+      "emergencyContact": "Emergency Contact",
+      "additionalInformation": "Additional Information"
+    },
+    "fields": {
+      "username": "Username",
+      "email": "Email",
+      "phone": "Phone",
+      "role": "Role",
+      "defaultRole": "User",
+      "accountCreated": "Account Created",
+      "lastLogin": "Last Login",
+      "fullName": "Full Name",
+      "employeeNumber": "Employee Number",
+      "position": "Position",
+      "department": "Department",
+      "manager": "Manager",
+      "hireDate": "Hire Date",
+      "employmentType": "Employment Type",
+      "status": "Status",
+      "workingHours": "Working Hours/Week",
+      "hours": "hours",
+      "workEmail": "Work Email",
+      "address": "Address",
+      "salary": "Salary",
+      "name": "Name",
+      "relation": "Relation",
+      "taxCode": "Tax Code"
+    },
+    "logout": {
+      "confirmTitle": "Confirm Logout",
+      "confirmMessage": "Are you sure you want to logout?",
+      "successTitle": "Logout Successful",
+      "successMessage": "You have been logged out successfully"
+    }
+  },
+  "employees": {
+    "title": "Employee Management",
+    "subtitle": "Manage and view all employees in the system",
+    "searchPlaceholder": "Search employees...",
+    "loading": "Loading employees...",
+    "emptyTitle": "No employees found",
+    "emptyDescription": "There are no employees to display at the moment",
+    "emptyActionText": "Add First Employee",
+    "columns": {
+      "name": "Name",
+      "position": "Position",
+      "department": "Department",
+      "status": "Status",
+      "email": "Email",
+      "phone": "Phone",
+      "employeeNumber": "Employee Number",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "hireDate": "Hire Date"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "tabs": {
+      "list": "Employee List",
+      "add": "Add Employee",
+      "search": "Search",
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "add": {
+      "title": "Add New Employee",
+      "subtitle": "Create a new employee record in the system",
+      "sections": {
+        "personalInformation": "Personal Information",
+        "personalInformationDescription": "Enter the employee's personal details",
+        "workInformation": "Work Information",
+        "workInformationDescription": "Enter employment details",
+        "addressInformation": "Address Information",
+        "addressInformationDescription": "Optional address details",
+        "emergencyContact": "Emergency Contact",
+        "emergencyContactDescription": "Optional emergency contact information"
+      },
+      "fields": {
+        "firstName": "First Name",
+        "firstNamePlaceholder": "Enter first name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Enter last name",
+        "email": "Email",
+        "emailPlaceholder": "Enter email address",
+        "phoneNumber": "Phone Number",
+        "phoneNumberPlaceholder": "Enter phone number",
+        "employeeNumber": "Employee Number",
+        "employeeNumberPlaceholder": "Auto-generated if empty",
+        "hireDate": "Hire Date",
+        "employmentStatus": "Employment Status",
+        "employmentType": "Employment Type",
+        "department": "Department",
+        "position": "Position",
+        "manager": "Manager",
+        "currentSalary": "Current Salary",
+        "salaryCurrency": "Salary Currency",
+        "address": "Address",
+        "addressPlaceholder": "Enter street address",
+        "city": "City",
+        "cityPlaceholder": "Enter city",
+        "postalCode": "Postal Code",
+        "postalCodePlaceholder": "Enter postal code",
+        "country": "Country",
+        "countryPlaceholder": "Enter country",
+        "emergencyContactName": "Emergency Contact Name",
+        "emergencyContactNamePlaceholder": "Enter emergency contact name",
+        "emergencyContactPhone": "Emergency Contact Phone",
+        "emergencyContactPhonePlaceholder": "Enter emergency contact phone",
+        "emergencyContactRelation": "Relation",
+        "emergencyContactRelationPlaceholder": "Enter relation",
+        "taxCode": "Tax Code",
+        "taxCodePlaceholder": "Enter tax code"
+      }
+    },
+    "detail": {
+      "sections": {
+        "userInformation": "User Information",
+        "userInformationDescription": "User account details",
+        "personalInformation": "Personal Information",
+        "personalInformationDescription": "Employee personal details",
+        "workInformation": "Work Information",
+        "workInformationDescription": "Employment and work details",
+        "addressInformation": "Address Information",
+        "addressInformationDescription": "Address details"
+      },
+      "id": "ID"
+    },
+    "search": {
+      "title": "Search Employee",
+      "subtitle": "Search and filter employees by various criteria",
+      "cardTitle": "Search & Filter Employees",
+      "showing": "Showing {{count}} of {{total}} employees",
+      "noResults": "No Results",
+      "noResultsDescription": "Use the form above to search for employees",
+      "loadingMessage": "Loading employees...",
+      "emptyTitle": "No employees found",
+      "emptyDescription": "No employees match your search criteria",
+      "loadEmployees": "Load Employees",
+      "fields": {
+        "departmentPlaceholder": "Select a department (required)",
+        "firstNamePlaceholder": "Search by first name",
+        "lastNamePlaceholder": "Search by last name",
+        "emailPlaceholder": "Search by email",
+        "employeeNumberPlaceholder": "Search by employee number",
+        "phonePlaceholder": "Search by phone",
+        "positionPlaceholder": "Filter by position",
+        "statusPlaceholder": "Filter by status",
+        "allStatuses": "All Statuses",
+        "hireDateFrom": "Hire Date From",
+        "hireDateTo": "Hire Date To",
+        "selectStartDate": "Select start date",
+        "selectEndDate": "Select end date"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "terminated": "Terminated"
+    },
+    "reports": {
+      "title": "Employee Statistics & Reports",
+      "subtitle": "Comprehensive analytics and insights about your workforce",
+      "departmentDistribution": "Department Distribution",
+      "statusDistribution": "Employment Status Distribution",
+      "positionDistribution": "Position Distribution",
+      "salaryRangeDistribution": "Salary Range Distribution",
+      "hiringTrends": "Hiring Trends (Last 12 Months)",
+      "employmentTypeDistribution": "Employment Type Distribution",
+      "cityDistribution": "Top Cities Distribution",
+      "countryDistribution": "Country Distribution",
+      "contractTypeDistribution": "Contract Type Distribution",
+      "workingHoursDistribution": "Working Hours Distribution",
+      "departmentSalaryComparison": "Department Salary Comparison",
+      "recentHires": "Recent Hires (Last 90 Days)"
+    },
+    "settings": {
+      "title": "Employee Settings",
+      "subtitle": "Configure employee management preferences and system settings",
+      "generalSettings": "General Settings",
+      "autoGenerateId": "Auto-generate employee ID",
+      "autoGenerateIdDescription": "Automatically generate unique employee IDs for new employees",
+      "sendWelcomeEmail": "Send welcome email",
+      "sendWelcomeEmailDescription": "Send welcome email to new employees upon creation",
+      "requireManagerApproval": "Require manager approval",
+      "requireManagerApprovalDescription": "Require manager approval for new employee additions",
+      "notificationSettings": "Notification Settings",
+      "enableNotifications": "Enable notifications",
+      "enableNotificationsDescription": "Receive notifications for important employee events",
+      "emailNotifications": "Email notifications",
+      "emailNotificationsDescription": "Send notifications via email",
+      "smsNotifications": "SMS notifications",
+      "smsNotificationsDescription": "Send notifications via SMS",
+      "dataManagement": "Data Management",
+      "autoBackup": "Auto-backup employee data",
+      "autoBackupDescription": "Automatically backup employee data daily",
+      "archiveInactive": "Archive inactive employees",
+      "archiveInactiveDescription": "Move inactive employees to archive after 1 year",
+      "accessControl": "Access Control",
+      "restrictPersonalData": "Restrict personal data access",
+      "restrictPersonalDataDescription": "Only HR and managers can view personal employee data",
+      "requireTwoFactor": "Require two-factor authentication",
+      "requireTwoFactorDescription": "Require 2FA for accessing employee data",
+      "resetToDefault": "Reset to Default",
+      "saveSettings": "Save Settings"
+    }
+  },
+  "contracts": {
+    "title": "Contract Management",
+    "subtitle": "Manage and view all contracts in the system",
+    "searchPlaceholder": "Search contracts...",
+    "loading": "Loading contracts...",
+    "emptyTitle": "No contracts found",
+    "emptyDescription": "There are no contracts to display at the moment",
+    "emptyActionText": "Add First Contract",
+    "columns": {
+      "employee": "Employee",
+      "contractType": "Contract Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Status",
+      "salary": "Salary"
+    },
+    "types": {
+      "indefinite": "Indefinite",
+      "fixed": "Fixed Term",
+      "partTime": "Part Time",
+      "temporary": "Temporary",
+      "internship": "Internship"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "terminated": "Terminated",
+      "pending": "Pending"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "tabs": {
+      "list": "Contract List",
+      "add": "Add Contract",
+      "search": "Search",
+      "submitApproval": "Submit for Approval"
+    },
+    "search": {
+      "title": "Search Contracts",
+      "subtitle": "Search and filter contracts by various criteria",
+      "cardTitle": "Search & Filter Contracts",
+      "showing": "Showing {{count}} contract(s)",
+      "loadingMessage": "Loading contracts...",
+      "emptyTitle": "No contracts found",
+      "emptyDescription": "No contracts match your search criteria",
+      "submitButton": "Search Contracts",
+      "fields": {
+        "employeeName": "Employee Name",
+        "employeeNamePlaceholder": "Search by employee name",
+        "contractType": "Contract Type",
+        "contractTypePlaceholder": "Filter by contract type",
+        "allTypes": "All Types",
+        "status": "Status",
+        "statusPlaceholder": "Filter by status",
+        "allStatuses": "All Statuses",
+        "startDateFrom": "Start Date From",
+        "startDateFromPlaceholder": "Select start date from",
+        "startDateTo": "Start Date To",
+        "startDateToPlaceholder": "Select start date to"
+      }
+    },
+    "add": {
+      "sections": {
+        "contractInfo": "Contract Information",
+        "contractInfoDescription": "Enter contract details",
+        "approvalSettings": "Approval Settings",
+        "approvalSettingsDescription": "Configure contract approval workflow (optional)"
+      },
+      "fields": {
+        "employee": "Employee",
+        "employeePlaceholder": "Select employee",
+        "contractType": "Contract Type",
+        "contractTypePlaceholder": "Select contract type",
+        "status": "Status",
+        "statusPlaceholder": "Select status",
+        "startDate": "Start Date",
+        "startDatePlaceholder": "Select start date",
+        "endDate": "End Date",
+        "endDatePlaceholder": "Select end date (optional)",
+        "salary": "Salary",
+        "salaryPlaceholder": "Enter salary (optional)",
+        "renewalReminder": "Renewal Reminder Date",
+        "renewalReminderPlaceholder": "Select renewal reminder date (optional)",
+        "notes": "Notes",
+        "notesPlaceholder": "Enter additional notes (optional)",
+        "submitForApproval": "Submit for Approval",
+        "submitForApprovalPlaceholder": "Automatically submit contract for approval after creation",
+        "approvers": "Approvers",
+        "approversPlaceholder": "Select specific users as approvers (leave empty to use default role-based workflow)",
+        "approversHint": "Select specific users who will approve this contract. If no users are selected, the system will use the default role-based approval workflow.",
+        "approvalComments": "Approval Comments",
+        "approvalCommentsPlaceholder": "Enter comments for approval request (optional)"
+      },
+      "submitButton": "Create Contract"
+    },
+    "submitApproval": {
+      "sections": {
+        "contractSelection": "Contract Selection",
+        "approvalSettings": "Approval Settings"
+      },
+      "fields": {
+        "contract": "Contract",
+        "contractPlaceholder": "Select a contract",
+        "approvers": "Approvers",
+        "approversPlaceholder": "Select approvers (multiple)",
+        "comments": "Approval Comments",
+        "commentsPlaceholder": "Enter comments for approval request (optional)"
+      },
+      "submitButton": "Submit for Approval"
+    }
+  },
+  "contractApprovals": {
+    "title": "Contract Approvals",
+    "subtitle": "Manage and review contract approval requests",
+    "loading": "Loading approvals...",
+    "emptyTitle": "No Approvals",
+    "emptyDescription": "No contract approvals match the selected filter",
+    "stats": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "columns": {
+      "employee": "Employee",
+      "contractType": "Contract Type",
+      "status": "Status",
+      "progress": "Progress",
+      "requestedBy": "Requested By",
+      "requestedAt": "Requested At"
+    },
+    "actions": {
+      "view": "View",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "filterOptions": {
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "dialog": {
+      "approveTitle": "Approve Contract",
+      "approveMessage": "Approve contract for {{name}}?",
+      "rejectTitle": "Reject Contract",
+      "rejectMessage": "Reject contract for {{name}}?"
+    }
+  },
+  "contractTemplates": {
+    "title": "Contract Templates",
+    "subtitle": "Manage contract templates for quick contract creation",
+    "searchPlaceholder": "Search templates...",
+    "loading": "Loading templates...",
+    "emptyTitle": "No Templates",
+    "emptyDescription": "No contract templates match the selected filter",
+    "tabs": {
+      "list": "Template List",
+      "add": "Add Template"
+    },
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "contractType": "Type",
+      "category": "Category",
+      "usageCount": "Usage",
+      "status": "Status",
+      "default": "Default",
+      "version": "Version"
+    },
+    "stats": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "default": "Default"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "default": "Default"
+    },
+    "filterOptions": {
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "default": "Default"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "duplicate": "Duplicate"
+    },
+    "add": {
+      "sections": {
+        "templateInfo": "Template Information",
+        "templateInfoDescription": "Enter template basic information",
+        "templateContent": "Template Content",
+        "templateContentDescription": "Enter template content and variables",
+        "settings": "Settings",
+        "settingsDescription": "Configure template settings"
+      },
+      "fields": {
+        "name": "Template Name",
+        "namePlaceholder": "Enter template name",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter template description",
+        "contractType": "Contract Type",
+        "contractTypePlaceholder": "Select contract type",
+        "category": "Category",
+        "categoryPlaceholder": "Select category",
+        "templateContent": "Template Content",
+        "templateContentPlaceholder": "Enter template content (supports variables like {{employeeName}})",
+        "variables": "Variables (JSON)",
+        "legalRequirements": "Legal Requirements",
+        "legalRequirementsPlaceholder": "Enter legal requirements or compliance notes",
+        "tags": "Tags (JSON array)",
+        "isActive": "Active",
+        "isDefault": "Set as Default"
+      },
+      "submitButton": "Create Template",
+      "confirmTitle": "Confirm Add",
+      "confirmMessage": "Are you sure you want to add template \"{{name}}\"?"
+    }
+  },
+  "contractReminders": {
+    "title": "Contract Expiry Reminders",
+    "subtitle": "Monitor contracts expiring soon",
+    "loading": "Loading reminders...",
+    "loadingFailed": "Failed to load reminders",
+    "emptyTitle": "No Reminders",
+    "emptyDescription": "No contracts expiring within selected period",
+    "filterLabel": "Show contracts expiring within:",
+    "filterOptions": {
+      "7days": "7 days",
+      "30days": "30 days",
+      "60days": "60 days",
+      "90days": "90 days"
+    },
+    "stats": {
+      "expired": "Expired",
+      "urgent": "Urgent (≤7 days)",
+      "warning": "Warning (8-30 days)",
+      "info": "Info (>30 days)"
+    },
+    "columns": {
+      "employee": "Employee",
+      "type": "Type",
+      "endDate": "End Date",
+      "daysLeft": "Days Left",
+      "status": "Status"
+    },
+    "status": {
+      "expired": "Expired",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "daysLeft": "{{count}} Days"
+    },
+    "actions": {
+      "view": "View",
+      "renew": "Renew"
+    },
+    "renew": {
+      "confirmTitle": "Renew Contract",
+      "confirmMessage": "Renew contract for {{name}}?",
+      "successTitle": "Contract Renewal",
+      "successMessage": "Renewal initiated for {{name}}"
+    }
+  },
+  "roles": {
+    "title": "Role Management",
+    "subtitle": "Manage user roles and their permissions",
+    "list": "Role List",
+    "add": "Add Role",
+    "edit": "Edit Role",
+    "details": "Role Details",
+    "searchPlaceholder": "Search roles...",
+    "loading": "Loading roles...",
+    "emptyTitle": "No Roles",
+    "emptyDescription": "No roles found",
+    "stats": {
+      "totalRoles": "Total Roles",
+      "systemRoles": "System Roles",
+      "customRoles": "Custom Roles"
+    },
+    "columns": {
+      "name": "Role Name",
+      "description": "Description",
+      "permissions": "Permissions",
+      "users": "Users",
+      "type": "Type",
+      "createdAt": "Created At"
+    },
+    "form": {
+      "roleInformation": "Role Information",
+      "roleInformationDescription": "Enter role basic information",
+      "permissions": "Permissions",
+      "permissionsDescription": "Select permissions for this role",
+      "name": "Role Name",
+      "namePlaceholder": "Enter role name",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter role description",
+      "permissionsPlaceholder": "Select permissions",
+      "submitButton": "Create Role",
+      "confirmTitle": "Confirm Create",
+      "confirmMessage": "Are you sure you want to create role {{name}}?"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "update": "Update Role",
+    "tabs": {
+      "list": "Role List",
+      "add": "Add Role"
+    },
+    "type": {
+      "system": "System",
+      "custom": "Custom"
+    },
+    "morePermissions": "+{{count}} more"
+  },
+  "permissions": {
+    "title": "Permission Management",
+    "subtitle": "View and manage system permissions",
+    "searchPlaceholder": "Search permissions...",
+    "loading": "Loading permissions...",
+    "loadingFailed": "Failed to load permissions",
+    "emptyTitle": "No Permissions",
+    "emptyDescription": "No permissions found",
+    "filterByModule": "Filter by Module",
+    "filterAll": "All",
+    "tabs": {
+      "list": "Permission List",
+      "add": "Add Permission"
+    },
+    "stats": {
+      "totalPermissions": "Total Permissions"
+    },
+    "columns": {
+      "name": "Permission Name",
+      "description": "Description",
+      "category": "Category",
+      "module": "Module",
+      "roles": "Roles",
+      "type": "Type"
+    },
+    "form": {
+      "resource": "Resource",
+      "action": "Action",
+      "category": "Category"
+    },
+    "actions": {
+      "create": "Create",
+      "read": "Read",
+      "update": "Update",
+      "delete": "Delete",
+      "assign": "Assign",
+      "approve": "Approve",
+      "export": "Export",
+      "admin": "Admin",
+      "config": "Config",
+      "audit": "Audit",
+      "manage": "Manage"
+    },
+    "categories": {
+      "employeeManagement": "Employee Management",
+      "roleManagement": "Role Management",
+      "permissionManagement": "Permission Management",
+      "departmentManagement": "Department Management",
+      "positionManagement": "Position Management",
+      "contractManagement": "Contract Management",
+      "systemAdministration": "System Administration",
+      "userManagement": "User Management"
+    },
+    "details": {
+      "title": "Permission Details"
+    },
+    "type": {
+      "system": "System",
+      "custom": "Custom"
+    },
+    "add": {
+      "sections": {
+        "permissionInfo": "Permission Information",
+        "permissionInfoDescription": "Enter permission basic information"
+      },
+      "fields": {
+        "name": "Permission Name",
+        "namePlaceholder": "Auto-generated from Resource and Action",
+        "nameHint": "Auto-generated as Resource.Action (e.g., Employees.View)",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter permission description",
+        "resource": "Resource",
+        "resourcePlaceholder": "Select resource",
+        "action": "Action",
+        "actionPlaceholder": "Select action",
+        "category": "Category",
+        "categoryPlaceholder": "Select category"
+      },
+      "confirmTitle": "Confirm Add",
+      "confirmMessage": "Add permission \"{{name}}\"?",
+      "messages": {
+        "selectResourceAction": "Please select Resource and Action to generate permission name"
+      }
+    }
+  },
+  "departments": {
+    "title": "Department Management",
+    "subtitle": "Manage and view all departments in the system",
+    "searchPlaceholder": "Search departments...",
+    "loading": "Loading departments...",
+    "emptyTitle": "No departments found",
+    "emptyDescription": "There are no departments to display at the moment",
+    "emptyActionText": "Add First Department",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "description": "Description",
+      "parentDepartment": "Parent Department",
+      "level": "Level"
+    },
+    "tabs": {
+      "list": "Department List",
+      "add": "Add Department",
+      "search": "Search Department"
+    },
+    "search": {
+      "title": "Search Department",
+      "subtitle": "Search and filter departments by various criteria",
+      "cardTitle": "Search & Filter Departments",
+      "showing": "Showing {{count}} department(s)",
+      "loadingMessage": "Loading departments...",
+      "emptyTitle": "No departments found",
+      "emptyDescription": "No departments match your search criteria",
+      "submitButton": "Search Departments",
+      "fields": {
+        "name": "Department Name",
+        "namePlaceholder": "Search by name",
+        "code": "Department Code",
+        "codePlaceholder": "Search by code",
+        "description": "Description",
+        "descriptionPlaceholder": "Search by description",
+        "parentDepartment": "Parent Department",
+        "parentDepartmentPlaceholder": "Filter by parent department",
+        "allDepartments": "All Departments",
+        "level": "Level",
+        "levelPlaceholder": "Filter by level",
+        "allLevels": "All Levels"
+      }
+    },
+    "add": {
+      "sectionTitle": "Department Information",
+      "sectionDescription": "Enter department details",
+      "fields": {
+        "name": "Department Name",
+        "namePlaceholder": "Enter department name",
+        "code": "Department Code",
+        "codePlaceholder": "Enter department code",
+        "level": "Level",
+        "levelPlaceholder": "Enter level",
+        "parentDepartment": "Parent Department",
+        "parentDepartmentPlaceholder": "Select parent department (optional)",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter department description"
+      },
+      "submitButton": "Create Department",
+      "cancelButton": "Cancel",
+      "confirmTitle": "Confirm Create",
+      "confirmMessage": "Are you sure you want to create department {{name}}?",
+      "confirmButton": "Create"
+    }
+  },
+  "positions": {
+    "title": "Position Management",
+    "subtitle": "Manage and view all positions in the system",
+    "searchPlaceholder": "Search positions...",
+    "loading": "Loading positions...",
+    "emptyTitle": "No positions found",
+    "emptyDescription": "There are no positions to display at the moment",
+    "emptyActionText": "Add First Position",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "description": "Description",
+      "department": "Department",
+      "isManagement": "Management",
+      "level": "Level",
+      "minSalary": "Min Salary",
+      "maxSalary": "Max Salary"
+    },
+    "tabs": {
+      "list": "Position List",
+      "add": "Add Position",
+      "search": "Search Position"
+    },
+    "delete": {
+      "confirmTitle": "Confirm Delete",
+      "confirmMessage": "Are you sure you want to delete position {{name}}? This action cannot be undone."
+    },
+    "yes": "Yes",
+    "no": "No",
+    "search": {
+      "title": "Search Position",
+      "subtitle": "Search and filter positions by various criteria",
+      "cardTitle": "Search & Filter Positions",
+      "showing": "Showing {{count}} position(s)",
+      "loadingMessage": "Loading positions...",
+      "emptyTitle": "No positions found",
+      "emptyDescription": "No positions match your search criteria",
+      "submitButton": "Search Positions",
+      "fields": {
+        "title": "Position Title",
+        "titlePlaceholder": "Search by title",
+        "code": "Position Code",
+        "codePlaceholder": "Search by code",
+        "description": "Description",
+        "descriptionPlaceholder": "Search by description",
+        "department": "Department",
+        "departmentPlaceholder": "Filter by department",
+        "allDepartments": "All Departments",
+        "level": "Level",
+        "levelPlaceholder": "Filter by level",
+        "allLevels": "All Levels",
+        "isManagement": "Management Position",
+        "isManagementPlaceholder": "Filter by management status",
+        "allPositions": "All Positions",
+        "management": "Management",
+        "nonManagement": "Non-Management"
+      }
+    },
+    "add": {
+      "sections": {
+        "positionInfo": "Position Information",
+        "positionInfoDescription": "Enter position details",
+        "salaryInfo": "Salary Information",
+        "salaryInfoDescription": "Optional salary range details"
+      },
+      "fields": {
+        "title": "Position Title",
+        "titlePlaceholder": "Enter position title",
+        "code": "Position Code",
+        "codePlaceholder": "Enter position code",
+        "level": "Level",
+        "levelPlaceholder": "Enter level",
+        "department": "Department",
+        "departmentPlaceholder": "Select department",
+        "parentPosition": "Parent Position",
+        "parentPositionPlaceholder": "Select parent position (optional)",
+        "isManagement": "Is Management Position",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter position description",
+        "minSalary": "Minimum Salary",
+        "minSalaryPlaceholder": "Enter minimum salary",
+        "maxSalary": "Maximum Salary",
+        "maxSalaryPlaceholder": "Enter maximum salary"
+      },
+      "submitButton": "Create Position",
+      "confirmTitle": "Confirm Create",
+      "confirmMessage": "Are you sure you want to create position {{name}}?"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage system users and their access",
+    "searchPlaceholder": "Search users...",
+    "loading": "Loading users...",
+    "emptyTitle": "No Users",
+    "emptyDescription": "No users found",
+    "stats": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "locked": "Locked"
+    },
+    "tabs": {
+      "list": "User List",
+      "add": "Add User"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "add": {
+      "sections": {
+        "userInfo": "User Information",
+        "userInfoDescription": "Enter user basic information",
+        "accountSettings": "Account Settings",
+        "accountSettingsDescription": "Configure account settings"
+      },
+      "fields": {
+        "username": "Username",
+        "usernamePlaceholder": "Enter username",
+        "email": "Email",
+        "emailPlaceholder": "Enter email",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "Enter first name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Enter last name",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter phone number",
+        "password": "Password",
+        "passwordPlaceholder": "Enter password",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm password",
+        "roles": "Roles",
+        "rolesPlaceholder": "Select roles",
+        "isActive": "Active"
+      },
+      "submitButton": "Create User",
+      "confirmTitle": "Confirm Create",
+      "confirmMessage": "Are you sure you want to create user {{name}}?"
+    }
+  },
+  "auditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "Track and review all system activities and changes",
+    "searchPlaceholder": "Search audit logs...",
+    "loading": "Loading audit logs...",
+    "emptyTitle": "No Audit Logs",
+    "emptyDescription": "No audit logs found",
+    "stats": {
+      "totalLogs": "Total Logs",
+      "info": "Info",
+      "warning": "Warning",
+      "error": "Error",
+      "critical": "Critical"
+    },
+    "tabs": {
+      "list": "Audit Log List",
+      "search": "Search Audit Log"
+    },
+    "search": {
+      "title": "Advanced Search",
+      "loading": "Searching audit logs...",
+      "emptyTitle": "No Results",
+      "emptyDescription": "No audit logs match your search criteria",
+      "filtersSection": "Search Filters",
+      "filtersDescription": "Filter audit logs by various criteria"
+    }
+  },
+  "systemMonitor": {
+    "title": "System Monitor",
+    "subtitle": "Real-time infrastructure health monitoring",
+    "autoRefresh": "Auto-refresh: {{seconds}}s",
+    "loading": "Loading system health data...",
+    "connectionError": "Connection Error",
+    "tryAgain": "Try Again",
+    "info": "Health data is automatically refreshed every 30 seconds. Manual refresh available via the buttons above."
+  },
+  "view": {
+    "switchToCard": "Switch to card view",
+    "switchToTable": "Switch to table view",
+    "cardView": "Card View",
+    "tableView": "Table View"
+  },
+  "dashboard": {
+    "title": "Dashboard Overview",
+    "subtitle": "Welcome to your management dashboard",
+    "refresh": "Refresh",
+    "loading": "Loading dashboard data...",
+    "stats": {
+      "totalEmployees": "Total Employees",
+      "activeContracts": "Active Contracts",
+      "departments": "Departments",
+      "pendingApprovals": "Pending Approvals"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "manage": "Manage",
+      "viewAll": "View All",
+      "review": "Review"
+    },
+    "recentActivities": {
+      "title": "Recent Activities",
+      "subtitle": "Latest updates and notifications",
+      "noActivities": "No recent activities",
+      "viewAll": "View All Activities"
+    }
+  },
+  "table": {
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "emptyMessage": "No data available",
+    "loading": "Loading..."
+  },
+  "tabs": {
+    "list": "List",
+    "add": "Add",
+    "search": "Search",
+    "edit": "Edit",
+    "details": "Details",
+    "reports": "Reports",
+    "settings": "Settings",
+    "submitApproval": "Submit for Approval"
+  },
+  "tasks": {
+    "title": "My Tasks",
+    "subtitle": "Manage your personal todo list",
+    "loading": "Loading tasks...",
+    "emptyTitle": "No tasks found",
+    "emptyDescription": "You don't have any tasks yet. Create your first task to get started!",
+    "emptyActionText": "Create First Task",
+    "newTask": "New Task",
+    "editTask": "Edit Task",
+    "createNewTask": "Create New Task",
+    "updateTask": "Update Task",
+    "createTask": "Create Task",
+    "deleteTask": "Delete task",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Enter task title",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Enter task description (optional)",
+    "status": "Status",
+    "priority": "Priority",
+    "statusAll": "All",
+    "statusPending": "Pending",
+    "statusInProgress": "In Progress",
+    "statusCompleted": "Completed",
+    "statusCancelled": "Cancelled",
+    "priorityLow": "Low",
+    "priorityMedium": "Medium",
+    "priorityHigh": "High",
+    "priorityUrgent": "Urgent"
+  },
+  "approvals": {
+    "title": "Approval Management",
+    "subtitle": "Manage and review pending approvals",
+    "loading": "Loading approvals...",
+    "emptyTitle": "No Approvals",
+    "emptyDescription": "No approvals match the selected filter",
+    "filter": "Filter",
+    "stats": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "columns": {
+      "type": "Type",
+      "title": "Title",
+      "requester": "Requester",
+      "status": "Status",
+      "priority": "Priority",
+      "progress": "Progress",
+      "approver": "Approver",
+      "dueDate": "Due Date"
+    },
+    "actions": {
+      "view": "View",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "filterOptions": {
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "dialog": {
+      "approveTitle": "Approve Request",
+      "approveMessage": "Please provide a comment for this approval:",
+      "approvePlaceholder": "Enter approval comment (optional)",
+      "rejectTitle": "Reject Request",
+      "rejectMessage": "Please provide a reason for rejection:",
+      "rejectPlaceholder": "Enter rejection reason (required)"
+    }
+  }
+}

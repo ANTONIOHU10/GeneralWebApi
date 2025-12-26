@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 export interface PaginationConfig {
   showFirstLast?: boolean;
@@ -24,7 +25,7 @@ export interface PaginationConfig {
 @Component({
   selector: 'app-base-pagination',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './base-pagination.component.html',
   styleUrls: ['./base-pagination.component.scss'],
 })

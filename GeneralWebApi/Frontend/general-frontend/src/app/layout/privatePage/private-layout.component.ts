@@ -2,6 +2,7 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../Shared/components/header/header.component';
 import { FooterComponent } from '../../Shared/components/footer/footer.component';
 import { SidebarComponent } from '../../Shared/components/sidebar/sidebar.component';
@@ -9,11 +10,14 @@ import { BreadcrumbComponent } from '../../Shared/components/breadcrumb/breadcru
 import { UserProfileModalComponent } from '../../Shared/components/user-profile-modal/user-profile-modal.component';
 import { NotificationCenterComponent } from '../../features/notifications/notification-center/notification-center.component';
 import { BaseModalComponent } from '../../Shared/components/base/base-modal/base-modal.component';
+import { BaseSelectComponent } from '../../Shared/components/base/base-select/base-select.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { User } from 'app/users/user.model';
 import { AuthService } from '@core/services/auth.service';
 import { UserService } from '@core/services/user.service';
 import { EmployeeService } from '@core/services/employee.service';
+import { LocaleService } from '@core/services/locale.service';
 import { catchError, of, Observable } from 'rxjs';
 
 @Component({
@@ -23,6 +27,7 @@ import { catchError, of, Observable } from 'rxjs';
   styleUrls: ['./private-layout.component.scss'],
   imports: [
     CommonModule,
+    FormsModule,
     RouterOutlet,
     HeaderComponent,
     FooterComponent,
@@ -31,6 +36,8 @@ import { catchError, of, Observable } from 'rxjs';
     UserProfileModalComponent,
     NotificationCenterComponent,
     BaseModalComponent,
+    BaseSelectComponent,
+    TranslatePipe,
   ],
 })
 export class PrivateLayoutComponent implements OnInit {
@@ -39,6 +46,7 @@ export class PrivateLayoutComponent implements OnInit {
   private userService = inject(UserService);
   private employeeService = inject(EmployeeService);
   private router = inject(Router);
+  private localeService = inject(LocaleService);
 
   // User profile modal state
   isUserProfileModalOpen = false;
@@ -53,6 +61,12 @@ export class PrivateLayoutComponent implements OnInit {
   
   // Settings panel state
   isSettingsPanelOpen = false;
+
+  // Language and timezone settings
+  currentLanguage = this.localeService.getCurrentLanguage();
+  currentTimezone = this.localeService.getCurrentTimezone();
+  languageOptions = this.localeService.getLanguageOptions();
+  timezoneOptions = this.localeService.getTimezoneOptions();
 
   // Real user and employee data
   currentEmployee: Employee | null = null;
@@ -179,6 +193,22 @@ export class PrivateLayoutComponent implements OnInit {
    */
   onSettingsPanelClose(): void {
     this.isSettingsPanelOpen = false;
+  }
+
+  /**
+   * Handle language change
+   */
+  onLanguageChange(languageCode: string): void {
+    this.localeService.setLanguage(languageCode);
+    this.currentLanguage = languageCode;
+  }
+
+  /**
+   * Handle timezone change
+   */
+  onTimezoneChange(timezone: string): void {
+    this.localeService.setTimezone(timezone);
+    this.currentTimezone = timezone;
   }
 
   /**

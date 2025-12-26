@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseButtonComponent } from '../../../Shared/components/base/base-button/base-button.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-employee-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseButtonComponent],
+  imports: [CommonModule, FormsModule, BaseButtonComponent, TranslatePipe],
   templateUrl: './employee-settings.component.html',
   styleUrls: ['./employee-settings.component.scss'],
 })

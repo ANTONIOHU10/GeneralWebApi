@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-list/position-list.component.html -->
 <app-base-private-page-container
-  title="Position Management"
-  subtitle="Manage and view all positions in the system"
+  [title]="'positions.title' | translate"
+  [subtitle]="'positions.subtitle' | translate"
   icon="work"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -13,7 +13,7 @@
   <div *ngIf="activeTab() === 'list'" slot="search" class="header-actions">
     <app-base-search
       [config]="{
-        placeholder: 'Search positions...',
+        placeholder: ('positions.searchPlaceholder' | translate),
         debounceTime: 300,
         minLength: 1,
         showClearButton: true,
@@ -31,7 +31,7 @@
       variant="outline"
       size="small"
       (buttonClick)="toggleViewMode()"
-      [title]="'Switch to ' + (viewMode() === 'table' ? 'card' : 'table') + ' view'"
+      [title]="(viewMode() === 'table' ? ('view.switchToCard' | translate) : ('view.switchToTable' | translate))"
       customClass="view-toggle-btn"
     ></app-base-button>
   </div>
@@ -42,10 +42,10 @@
       [loading$]="loading$"
       [error$]="error$"
       [data$]="positions$"
-      loadingMessage="Loading positions..."
-      emptyTitle="No positions found"
-      emptyDescription="There are no positions to display at the moment"
-      emptyActionText="Add First Position"
+      [loadingMessage]="'positions.loading' | translate"
+      [emptyTitle]="'positions.emptyTitle' | translate"
+      [emptyDescription]="'positions.emptyDescription' | translate"
+      [emptyActionText]="'positions.emptyActionText' | translate"
       [onRetry]="onRetryLoad"
       [onEmptyAction]="onEmptyActionClick"
     >
@@ -65,7 +65,7 @@
         <!-- Is Management Template -->
         <ng-template #isManagementTemplate let-position="$implicit">
           <app-base-badge
-            [text]="position.isManagement ? 'Yes' : 'No'"
+            [text]="position.isManagement ? ('positions.yes' | translate) : ('positions.no' | translate)"
             [variant]="position.isManagement ? 'success' : 'secondary'"
             size="small"
           ></app-base-badge>

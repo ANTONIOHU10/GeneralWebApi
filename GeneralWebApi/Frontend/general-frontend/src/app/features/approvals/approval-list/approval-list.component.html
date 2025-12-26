@@ -1,13 +1,13 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/approvals/approval-list/approval-list.component.html -->
 <app-base-private-page-container
-  title="Approval Management"
-  subtitle="Manage and review pending approvals"
+  [title]="'approvals.title' | translate"
+  [subtitle]="'approvals.subtitle' | translate"
   icon="approval"
   [showTabs]="false"
   [showSearch]="false"
 >
   <!-- Filter -->
-  <app-base-card [title]="'Filter'" [icon]="'filter_list'" [variant]="'elevated'">
+  <app-base-card [title]="'approvals.filter' | translate" [icon]="'filter_list'" [variant]="'elevated'">
     <div class="filter-buttons">
       <button
         *ngFor="let filter of filterOptions"
@@ -16,7 +16,7 @@
         class="filter-button"
         [class.active]="activeFilter() === filter"
       >
-        {{ filter | titlecase }}
+        {{ getFilterLabel(filter) }}
         <span *ngIf="filter !== 'all'">({{ getFilterCount(filter) }})</span>
       </button>
     </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ pendingCount() }}</div>
-          <div class="stat-label">Pending</div>
+          <div class="stat-label">{{ 'approvals.stats.pending' | translate }}</div>
         </div>
       </div>
     </app-base-card>
@@ -42,7 +42,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ approvedCount() }}</div>
-          <div class="stat-label">Approved</div>
+          <div class="stat-label">{{ 'approvals.stats.approved' | translate }}</div>
         </div>
       </div>
     </app-base-card>
@@ -53,7 +53,7 @@
         </div>
         <div class="stat-content">
           <div class="stat-value">{{ rejectedCount() }}</div>
-          <div class="stat-label">Rejected</div>
+          <div class="stat-label">{{ 'approvals.stats.rejected' | translate }}</div>
         </div>
       </div>
     </app-base-card>
@@ -63,9 +63,9 @@
   <app-base-async-state
     [loading$]="loading$"
     [data$]="approvalsData$"
-    loadingMessage="Loading approvals..."
-    emptyTitle="No Approvals"
-    emptyDescription="No approvals match the selected filter"
+      [loadingMessage]="'approvals.loading' | translate"
+      [emptyTitle]="'approvals.emptyTitle' | translate"
+      [emptyDescription]="'approvals.emptyDescription' | translate"
     [onRetry]="onRetryLoad"
   >
     <app-base-table
@@ -78,7 +78,7 @@
     >
       <ng-template #cellTemplate let-row="row" let-column="column">
         <ng-container *ngIf="column.key === 'status'">
-          <app-base-badge [text]="row.status" [variant]="getStatusVariant(row.status)" size="small"></app-base-badge>
+          <app-base-badge [text]="getStatusText(row.status)" [variant]="getStatusVariant(row.status)" size="small"></app-base-badge>
         </ng-container>
         <ng-container *ngIf="column.key === 'priority'">
           <app-base-badge [text]="row.priority" [variant]="getPriorityVariant(row.priority)" size="small"></app-base-badge>

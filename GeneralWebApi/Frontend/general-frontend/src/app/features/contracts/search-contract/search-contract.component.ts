@@ -1,9 +1,9 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/search-contract/search-contract.component.ts
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, of, delay } from 'rxjs';
-import { first, catchError, filter } from 'rxjs/operators';
+import { BehaviorSubject, of, delay, Subject } from 'rxjs';
+import { first, catchError, filter, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { ContractDetailComponent } from '../contract-detail/contract-detail.component';
 import {
   BaseCardComponent,
@@ -17,6 +17,8 @@ import {
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services/notification.service';
 import { DialogService } from '../../../Shared/services/dialog.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES } from 'app/contracts/contracts/contract.model';
 
 @Component({
@@ -30,13 +32,16 @@ import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES } from 'app/contracts/contr
     BaseAsyncStateComponent,
     BaseFormComponent,
     BaseTableComponent,
+    TranslatePipe,
   ],
   templateUrl: './search-contract.component.html',
   styleUrls: ['./search-contract.component.scss'],
 })
-export class SearchContractComponent implements OnInit {
+export class SearchContractComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   // State
   allContracts = signal<Contract[]>([]);
@@ -185,91 +190,57 @@ export class SearchContractComponent implements OnInit {
 
   // Search form configuration
   searchFormConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Search & Filter Contracts',
-        description: 'Filter contracts by various criteria',
-        order: 0,
-        collapsible: false,
-        collapsed: false,
-      },
-    ],
-    layout: {
-      columns: 3,
-      gap: '1rem',
-      sectionGap: '1.5rem',
-      labelPosition: 'top',
-      showSectionDividers: false,
-    },
-    fields: [
-      {
-        key: 'employeeName',
-        type: 'input',
-        label: 'Employee Name',
-        placeholder: 'Search by employee name',
-        section: 'Search & Filter Contracts',
-        order: 0,
-        colSpan: 1,
-      },
-      {
-        key: 'contractType',
-        type: 'select',
-        label: 'Contract Type',
-        placeholder: 'Filter by contract type',
-        section: 'Search & Filter Contracts',
-        order: 1,
-        colSpan: 1,
-        options: [
-          { value: null, label: 'All Types' },
-          ...CONTRACT_TYPES.map(type => ({
-            value: type.value,
-            label: type.label,
-          })) as SelectOption[],
-        ],
-      },
-      {
-        key: 'status',
-        type: 'select',
-        label: 'Status',
-        placeholder: 'Filter by status',
-        section: 'Search & Filter Contracts',
-        order: 2,
-        colSpan: 1,
-        options: [
-          { value: null, label: 'All Statuses' },
-          ...CONTRACT_STATUSES.map(status => ({
-            value: status.value,
-            label: status.label,
-          })) as SelectOption[],
-        ],
-      },
-      {
-        key: 'startDateFrom',
-        type: 'datepicker',
-        label: 'Start Date From',
-        placeholder: 'Select start date from',
-        section: 'Search & Filter Contracts',
-        order: 3,
-        colSpan: 1,
-      },
-      {
-        key: 'startDateTo',
-        type: 'datepicker',
-        label: 'Start Date To',
-        placeholder: 'Select start date to',
-        section: 'Search & Filter Contracts',
-        order: 4,
-        colSpan: 1,
-      },
-    ],
-    submitButtonText: 'Search Contracts',
-    cancelButtonText: 'Clear',
+    sections: [],
+    layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeSearchFormConfig(): void {
+    const sectionTitle = this.translationService.translate('contracts.search.cardTitle');
+    this.searchFormConfig = {
+      sections: [{ title: sectionTitle, description: this.translationService.translate('contracts.search.subtitle') || 'Filter contracts by various criteria', order: 0, collapsible: false, collapsed: false }],
+      layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+      fields: [
+        { key: 'employeeName', type: 'input', label: this.translationService.translate('contracts.search.fields.employeeName'), placeholder: this.translationService.translate('contracts.search.fields.employeeNamePlaceholder'), section: sectionTitle, order: 0, colSpan: 1 },
+        { key: 'contractType', type: 'select', label: this.translationService.translate('contracts.search.fields.contractType'), placeholder: this.translationService.translate('contracts.search.fields.contractTypePlaceholder'), section: sectionTitle, order: 1, colSpan: 1, options: [
+          { value: null, label: this.translationService.translate('contracts.search.fields.allTypes') },
+          ...CONTRACT_TYPES.map(type => ({ value: type.value, label: type.label })) as SelectOption[]
+        ] },
+        { key: 'status', type: 'select', label: this.translationService.translate('contracts.search.fields.status'), placeholder: this.translationService.translate('contracts.search.fields.statusPlaceholder'), section: sectionTitle, order: 2, colSpan: 1, options: [
+          { value: null, label: this.translationService.translate('contracts.search.fields.allStatuses') },
+          ...CONTRACT_STATUSES.map(status => ({ value: status.value, label: status.label })) as SelectOption[]
+        ] },
+        { key: 'startDateFrom', type: 'datepicker', label: this.translationService.translate('contracts.search.fields.startDateFrom'), placeholder: this.translationService.translate('contracts.search.fields.startDateFromPlaceholder'), section: sectionTitle, order: 3, colSpan: 1 },
+        { key: 'startDateTo', type: 'datepicker', label: this.translationService.translate('contracts.search.fields.startDateTo'), placeholder: this.translationService.translate('contracts.search.fields.startDateToPlaceholder'), section: sectionTitle, order: 4, colSpan: 1 },
+      ],
+      submitButtonText: this.translationService.translate('contracts.search.submitButton'),
+      cancelButtonText: this.translationService.translate('common.clear'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
   ngOnInit(): void {
-    // Component initialization
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeSearchFormConfig();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**

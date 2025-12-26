@@ -1,9 +1,9 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/search-department/search-department.component.ts
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, of, Observable } from 'rxjs';
-import { filter, startWith, first, catchError, take, delay } from 'rxjs/operators';
+import { BehaviorSubject, of, Observable, Subject } from 'rxjs';
+import { filter, startWith, first, catchError, take, delay, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { DepartmentDetailComponent } from '../department-detail/department-detail.component';
 import {
   BaseCardComponent,
@@ -19,6 +19,8 @@ import { DepartmentFacade } from '@store/department/department.facade';
 import { DepartmentService } from '@core/services/department.service';
 import { NotificationService } from '../../../Shared/services/notification.service';
 import { DialogService } from '../../../Shared/services/dialog.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Department } from 'app/contracts/departments/department.model';
 
 @Component({
@@ -32,15 +34,18 @@ import { Department } from 'app/contracts/departments/department.model';
     BaseAsyncStateComponent,
     BaseFormComponent,
     BaseTableComponent,
+    TranslatePipe,
   ],
   templateUrl: './search-department.component.html',
   styleUrls: ['./search-department.component.scss'],
 })
-export class SearchDepartmentComponent implements OnInit {
+export class SearchDepartmentComponent implements OnInit, OnDestroy {
   private departmentFacade = inject(DepartmentFacade);
   private departmentService = inject(DepartmentService);
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   // State
   allDepartments = signal<Department[]>([]); // All departments from API (already filtered by backend)
@@ -108,85 +113,50 @@ export class SearchDepartmentComponent implements OnInit {
 
   // Search form configuration
   searchFormConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Search & Filter Departments',
-        description: 'Filter departments by various criteria',
-        order: 0,
-        collapsible: false,
-        collapsed: false,
-      },
-    ],
-    layout: {
-      columns: 3,
-      gap: '1rem',
-      sectionGap: '1.5rem',
-      labelPosition: 'top',
-      showSectionDividers: false,
-    },
-    fields: [
-      {
-        key: 'name',
-        type: 'input',
-        label: 'Department Name',
-        placeholder: 'Search by name',
-        section: 'Search & Filter Departments',
-        order: 0,
-        colSpan: 1,
-      },
-      {
-        key: 'code',
-        type: 'input',
-        label: 'Department Code',
-        placeholder: 'Search by code',
-        section: 'Search & Filter Departments',
-        order: 1,
-        colSpan: 1,
-      },
-      {
-        key: 'description',
-        type: 'input',
-        label: 'Description',
-        placeholder: 'Search by description',
-        section: 'Search & Filter Departments',
-        order: 2,
-        colSpan: 1,
-      },
-      {
-        key: 'parentDepartmentId',
-        type: 'select',
-        label: 'Parent Department',
-        placeholder: 'Filter by parent department',
-        section: 'Search & Filter Departments',
-        order: 3,
-        colSpan: 1,
-        searchable: true,
-        options: [] as SelectOption[],
-      },
-      {
-        key: 'level',
-        type: 'select',
-        label: 'Level',
-        placeholder: 'Filter by level',
-        section: 'Search & Filter Departments',
-        order: 4,
-        colSpan: 1,
-        options: [
-          { value: null, label: 'All Levels' },
-          { value: 1, label: 'Level 1' },
-          { value: 2, label: 'Level 2' },
-          { value: 3, label: 'Level 3' },
-          { value: 4, label: 'Level 4' },
-        ] as SelectOption[],
-      },
-    ],
-    submitButtonText: 'Search Departments',
-    cancelButtonText: 'Clear',
+    sections: [],
+    layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeSearchFormConfig(): void {
+    const sectionTitle = this.translationService.translate('departments.search.cardTitle');
+    this.searchFormConfig = {
+      sections: [{ title: sectionTitle, description: this.translationService.translate('departments.search.subtitle') || 'Filter departments by various criteria', order: 0, collapsible: false, collapsed: false }],
+      layout: { columns: 3, gap: '1rem', sectionGap: '1.5rem', labelPosition: 'top', showSectionDividers: false },
+      fields: [
+        { key: 'name', type: 'input', label: this.translationService.translate('departments.search.fields.name'), placeholder: this.translationService.translate('departments.search.fields.namePlaceholder'), section: sectionTitle, order: 0, colSpan: 1 },
+        { key: 'code', type: 'input', label: this.translationService.translate('departments.search.fields.code'), placeholder: this.translationService.translate('departments.search.fields.codePlaceholder'), section: sectionTitle, order: 1, colSpan: 1 },
+        { key: 'description', type: 'input', label: this.translationService.translate('departments.search.fields.description'), placeholder: this.translationService.translate('departments.search.fields.descriptionPlaceholder'), section: sectionTitle, order: 2, colSpan: 1 },
+        { key: 'parentDepartmentId', type: 'select', label: this.translationService.translate('departments.search.fields.parentDepartment'), placeholder: this.translationService.translate('departments.search.fields.parentDepartmentPlaceholder'), section: sectionTitle, order: 3, colSpan: 1, searchable: true, options: [{ value: null, label: this.translationService.translate('departments.search.fields.allDepartments') }] as SelectOption[] },
+        { key: 'level', type: 'select', label: this.translationService.translate('departments.search.fields.level'), placeholder: this.translationService.translate('departments.search.fields.levelPlaceholder'), section: sectionTitle, order: 4, colSpan: 1, options: [
+          { value: null, label: this.translationService.translate('departments.search.fields.allLevels') },
+          { value: 1, label: 'Level 1' }, { value: 2, label: 'Level 2' }, { value: 3, label: 'Level 3' }, { value: 4, label: 'Level 4' }
+        ] as SelectOption[] },
+      ],
+      submitButtonText: this.translationService.translate('departments.search.submitButton'),
+      cancelButtonText: this.translationService.translate('common.clear'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
   ngOnInit(): void {
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeSearchFormConfig();
+    });
+
     // Load departments from store for parent department dropdown
     this.departments$.pipe(
       startWith([]),
@@ -198,6 +168,11 @@ export class SearchDepartmentComponent implements OnInit {
 
     // Update form options when data changes
     this.updateFormOptions();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**

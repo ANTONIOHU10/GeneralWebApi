@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BehaviorSubject, of, Subject } from 'rxjs';
-import { first, catchError, filter, takeUntil } from 'rxjs/operators';
+import { first, catchError, filter, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
   BaseAsyncStateComponent,
@@ -14,6 +14,8 @@ import {
   TableAction,
   BadgeVariant,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { NotificationService, DialogService } from '../../../Shared/services';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 import { ContractApproval, ApprovalActionRequest, RejectionActionRequest } from 'app/contracts/contract-approvals/contract-approval.model';
@@ -44,6 +46,7 @@ interface Approval {
     BaseCardComponent,
     BaseBadgeComponent,
     BasePromptDialogComponent,
+    TranslatePipe,
   ],
   templateUrl: './approval-list.component.html',
   styleUrls: ['./approval-list.component.scss'],
@@ -52,6 +55,7 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
   private contractApprovalService = inject(ContractApprovalService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   approvals = signal<Approval[]>([]);
@@ -68,25 +72,49 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
   approvedCount = computed(() => this.allApprovals().filter(a => a.status === 'Approved').length);
   rejectedCount = computed(() => this.allApprovals().filter(a => a.status === 'Rejected').length);
 
-  tableColumns: TableColumn[] = [
-    { key: 'type', label: 'Type', sortable: true, width: '100px' },
-    { key: 'title', label: 'Title', sortable: true, width: '200px' },
-    { key: 'requester', label: 'Requester', sortable: true, width: '150px' },
-    { key: 'status', label: 'Status', sortable: true, width: '100px' },
-    { key: 'priority', label: 'Priority', sortable: true, width: '100px' },
-    { key: 'currentStep', label: 'Progress', sortable: true, width: '120px' },
-    { key: 'approver', label: 'Approver', sortable: true, width: '150px' },
-    { key: 'dueDate', label: 'Due Date', sortable: true, type: 'date', width: '150px' },
-  ];
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
 
-  tableActions: TableAction[] = [
-    { label: 'View', icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as Approval) },
-    { label: 'Approve', icon: 'check', variant: 'primary', showLabel: false, onClick: (item) => this.onApprove(item as Approval), visible: (item) => (item as Approval).status === 'Pending' },
-    { label: 'Reject', icon: 'close', variant: 'danger', showLabel: false, onClick: (item) => this.onReject(item as Approval), visible: (item) => (item as Approval).status === 'Pending' },
-  ];
+  /**
+   * Get translated filter label
+   */
+  getFilterLabel(filter: string): string {
+    return this.translationService.translate(`approvals.filterOptions.${filter}`);
+  }
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing table
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTable();
+    });
+
     this.loadApprovals();
+  }
+
+  /**
+   * Initialize table columns and actions with translations
+   */
+  private initializeTable(): void {
+    this.tableColumns = [
+      { key: 'type', label: this.translationService.translate('approvals.columns.type'), sortable: true, width: '100px' },
+      { key: 'title', label: this.translationService.translate('approvals.columns.title'), sortable: true, width: '200px' },
+      { key: 'requester', label: this.translationService.translate('approvals.columns.requester'), sortable: true, width: '150px' },
+      { key: 'status', label: this.translationService.translate('approvals.columns.status'), sortable: true, width: '100px' },
+      { key: 'priority', label: this.translationService.translate('approvals.columns.priority'), sortable: true, width: '100px' },
+      { key: 'currentStep', label: this.translationService.translate('approvals.columns.progress'), sortable: true, width: '120px' },
+      { key: 'approver', label: this.translationService.translate('approvals.columns.approver'), sortable: true, width: '150px' },
+      { key: 'dueDate', label: this.translationService.translate('approvals.columns.dueDate'), sortable: true, type: 'date', width: '150px' },
+    ];
+
+    this.tableActions = [
+      { label: this.translationService.translate('approvals.actions.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as Approval) },
+      { label: this.translationService.translate('approvals.actions.approve'), icon: 'check', variant: 'primary', showLabel: false, onClick: (item) => this.onApprove(item as Approval), visible: (item) => (item as Approval).status === 'Pending' },
+      { label: this.translationService.translate('approvals.actions.reject'), icon: 'close', variant: 'danger', showLabel: false, onClick: (item) => this.onReject(item as Approval), visible: (item) => (item as Approval).status === 'Pending' },
+    ];
   }
 
   /**
@@ -201,6 +229,31 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
     return Math.round((approval.currentStep / approval.totalSteps) * 100);
   }
 
+  /**
+   * Get translated filter text
+   */
+  getFilterText(filter: string): string {
+    const filterMap: Record<string, string> = {
+      'all': this.translationService.translate('approvals.filterOptions.all'),
+      'pending': this.translationService.translate('approvals.filterOptions.pending'),
+      'approved': this.translationService.translate('approvals.filterOptions.approved'),
+      'rejected': this.translationService.translate('approvals.filterOptions.rejected'),
+    };
+    return filterMap[filter] || filter;
+  }
+
+  /**
+   * Get translated status text
+   */
+  getStatusText(status: string): string {
+    const statusMap: Record<string, string> = {
+      'Pending': this.translationService.translate('approvals.stats.pending'),
+      'Approved': this.translationService.translate('approvals.stats.approved'),
+      'Rejected': this.translationService.translate('approvals.stats.rejected'),
+    };
+    return statusMap[status] || status;
+  }
+
   onView(approval: Approval): void {
     this.dialogService.confirm({
       title: approval.title,
@@ -218,12 +271,12 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
   approveDialogConfig = computed(() => {
     const approval = this.showApproveDialog().approval;
     return {
-      title: 'Approve Request',
-      message: `Approve "${approval?.title || 'this request'}"?`,
-      label: 'Comments (Optional)',
-      placeholder: 'Enter approval comments...',
-      confirmText: 'Approve',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('approvals.dialog.approveTitle'),
+      message: this.translationService.translate('approvals.dialog.approveMessage'),
+      label: this.translationService.translate('common.description'),
+      placeholder: this.translationService.translate('approvals.dialog.approvePlaceholder'),
+      confirmText: this.translationService.translate('approvals.actions.approve'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'primary' as const,
       icon: 'check',
       required: false,
@@ -235,12 +288,12 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
   rejectDialogConfig = computed(() => {
     const approval = this.showRejectDialog().approval;
     return {
-      title: 'Reject Request',
-      message: `Reject "${approval?.title || 'this request'}"?`,
-      label: 'Rejection Reason',
-      placeholder: 'Please provide a reason for rejection...',
-      confirmText: 'Reject',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('approvals.dialog.rejectTitle'),
+      message: this.translationService.translate('approvals.dialog.rejectMessage'),
+      label: this.translationService.translate('common.description'),
+      placeholder: this.translationService.translate('approvals.dialog.rejectPlaceholder'),
+      confirmText: this.translationService.translate('approvals.actions.reject'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger' as const,
       icon: 'close',
       required: true,

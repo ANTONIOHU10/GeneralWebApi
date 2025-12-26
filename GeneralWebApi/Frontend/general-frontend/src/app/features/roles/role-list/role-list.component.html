@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/role-list/role-list.component.html -->
 <app-base-private-page-container
-  title="Role Management"
-  subtitle="Manage user roles and their permissions"
+  [title]="'roles.title' | translate"
+  [subtitle]="'roles.subtitle' | translate"
   icon="admin_panel_settings"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -14,7 +14,7 @@
     *ngIf="activeTab() === 'list'"
     slot="search"
     [config]="{
-      placeholder: 'Search roles...',
+      placeholder: ('roles.searchPlaceholder' | translate),
       debounceTime: 300,
       minLength: 1,
       showClearButton: true,
@@ -35,7 +35,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ totalCount() }}</div>
-            <div class="stat-label">Total Roles</div>
+            <div class="stat-label">{{ 'roles.stats.totalRoles' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -46,7 +46,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ systemRoleCount() }}</div>
-            <div class="stat-label">System Roles</div>
+            <div class="stat-label">{{ 'roles.stats.systemRoles' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -57,7 +57,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ customRoleCount() }}</div>
-            <div class="stat-label">Custom Roles</div>
+            <div class="stat-label">{{ 'roles.stats.customRoles' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -67,9 +67,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="rolesData$"
-      loadingMessage="Loading roles..."
-      emptyTitle="No Roles"
-      emptyDescription="No roles found"
+      [loadingMessage]="'roles.loading' | translate"
+      [emptyTitle]="'roles.emptyTitle' | translate"
+      [emptyDescription]="'roles.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <app-base-table
@@ -90,11 +90,11 @@
                 size="small"
                 style="margin-right: 0.25rem;"
               ></app-base-badge>
-              <span *ngIf="row.permissions.length > 3" class="more-permissions">+{{ row.permissions.length - 3 }} more</span>
+              <span *ngIf="row.permissions.length > 3" class="more-permissions">{{ 'roles.morePermissions' | translate: {count: row.permissions.length - 3} }}</span>
             </div>
           </ng-container>
           <ng-container *ngIf="column.key === 'isSystemRole'">
-            <app-base-badge [text]="row.isSystemRole ? 'System' : 'Custom'" [variant]="getTypeVariant(row.isSystemRole)" size="small"></app-base-badge>
+            <app-base-badge [text]="row.isSystemRole ? ('roles.type.system' | translate) : ('roles.type.custom' | translate)" [variant]="getTypeVariant(row.isSystemRole)" size="small"></app-base-badge>
           </ng-container>
         </ng-template>
       </app-base-table>

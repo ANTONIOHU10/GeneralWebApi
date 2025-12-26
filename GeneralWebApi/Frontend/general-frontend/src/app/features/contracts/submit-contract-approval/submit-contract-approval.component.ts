@@ -2,12 +2,13 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, of } from 'rxjs';
-import { takeUntil, catchError } from 'rxjs/operators';
+import { takeUntil, catchError, filter, distinctUntilChanged } from 'rxjs/operators';
 import { BaseFormComponent, FormConfig } from '../../../Shared/components/base/base-form/base-form.component';
 import { NotificationService } from '../../../Shared/services';
 import { ContractService } from '../../../core/services/contract.service';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 import { UserService, UserWithEmployee } from '../../../core/services/user.service';
+import { TranslationService } from '@core/services/translation.service';
 import { Contract } from 'app/contracts/contracts/contract.model';
 import { SubmitApprovalRequest, ApprovalStepRequest } from 'app/contracts/contract-approvals/contract-approval.model';
 import type { SelectOption } from '../../../Shared/components/base/base-select/base-select.component';
@@ -27,6 +28,7 @@ export class SubmitContractApprovalComponent implements OnInit, OnDestroy {
   private contractService = inject(ContractService);
   private contractApprovalService = inject(ContractApprovalService);
   private userService = inject(UserService);
+  private translationService = inject(TranslationService);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
@@ -40,46 +42,9 @@ export class SubmitContractApprovalComponent implements OnInit, OnDestroy {
   approverOptions: SelectOption[] = [];
 
   formConfig: FormConfig = {
-    fields: [
-      {
-        key: 'contractId',
-        type: 'select',
-        label: 'Contract',
-        placeholder: 'Select a contract',
-        required: true,
-        section: 'Contract Selection',
-        order: 1,
-        colSpan: 2,
-        options: [],
-        searchable: true,
-      },
-      {
-        key: 'approvers',
-        type: 'select',
-        label: 'Approvers',
-        placeholder: 'Select approvers (multiple)',
-        required: true,
-        section: 'Approval Settings',
-        order: 1,
-        colSpan: 2,
-        options: [],
-        multiple: true,
-        searchable: true,
-      },
-      {
-        key: 'comments',
-        type: 'textarea',
-        label: 'Approval Comments',
-        placeholder: 'Enter comments for approval request (optional)',
-        required: false,
-        section: 'Approval Settings',
-        order: 2,
-        colSpan: 2,
-        rows: 4,
-      },
-    ],
-    submitButtonText: 'Submit for Approval',
-    cancelButtonText: 'Clear',
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
@@ -87,8 +52,38 @@ export class SubmitContractApprovalComponent implements OnInit, OnDestroy {
   formData: Record<string, unknown> = {};
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+    });
+
     this.loadContracts();
     this.loadUsers();
+  }
+
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const contractSection = this.translationService.translate('contracts.submitApproval.sections.contractSelection');
+    const approvalSection = this.translationService.translate('contracts.submitApproval.sections.approvalSettings');
+
+    this.formConfig = {
+      fields: [
+        { key: 'contractId', type: 'select', label: this.translationService.translate('contracts.submitApproval.fields.contract'), placeholder: this.translationService.translate('contracts.submitApproval.fields.contractPlaceholder'), required: true, section: contractSection, order: 1, colSpan: 2, options: this.contractOptions, searchable: true },
+        { key: 'approvers', type: 'select', label: this.translationService.translate('contracts.submitApproval.fields.approvers'), placeholder: this.translationService.translate('contracts.submitApproval.fields.approversPlaceholder'), required: true, section: approvalSection, order: 1, colSpan: 2, options: this.approverOptions, multiple: true, searchable: true },
+        { key: 'comments', type: 'textarea', label: this.translationService.translate('contracts.submitApproval.fields.comments'), placeholder: this.translationService.translate('contracts.submitApproval.fields.commentsPlaceholder'), required: false, section: approvalSection, order: 2, colSpan: 2, rows: 4 },
+      ],
+      submitButtonText: this.translationService.translate('contracts.submitApproval.submitButton'),
+      cancelButtonText: this.translationService.translate('common.clear'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy(): void {

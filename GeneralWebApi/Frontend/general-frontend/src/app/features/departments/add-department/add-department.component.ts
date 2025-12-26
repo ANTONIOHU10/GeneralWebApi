@@ -2,7 +2,7 @@
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs/operators';
+import { takeUntil, filter, take, pairwise, debounceTime, startWith, distinctUntilChanged } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
@@ -10,6 +10,7 @@ import {
 } from '../../../Shared/components/base';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { DepartmentFacade } from '@store/department/department.facade';
+import { TranslationService } from '@core/services/translation.service';
 import { Department } from 'app/contracts/departments/department.model';
 
 @Component({
@@ -26,6 +27,7 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private departmentFacade = inject(DepartmentFacade);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   @Output() departmentCreated = new EventEmitter<void>();
@@ -41,13 +43,7 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
   };
 
   formConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Department Information',
-        description: 'Enter department details',
-        order: 0,
-      },
-    ],
+    sections: [],
     layout: {
       columns: 2,
       gap: '1.5rem',
@@ -55,68 +51,105 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
       labelPosition: 'top',
       showSectionDividers: true,
     },
-    fields: [
-      {
-        key: 'name',
-        type: 'input',
-        label: 'Department Name',
-        placeholder: 'Enter department name',
-        required: true,
-        section: 'Department Information',
-        order: 0,
-        colSpan: 2,
-      },
-      {
-        key: 'code',
-        type: 'input',
-        label: 'Department Code',
-        placeholder: 'Enter department code',
-        required: true,
-        section: 'Department Information',
-        order: 1,
-        colSpan: 1,
-      },
-      {
-        key: 'level',
-        type: 'number',
-        label: 'Level',
-        placeholder: 'Enter level',
-        required: true,
-        section: 'Department Information',
-        order: 2,
-        colSpan: 1,
-        min: 1,
-      },
-      {
-        key: 'parentDepartmentId',
-        type: 'select',
-        label: 'Parent Department',
-        placeholder: 'Select parent department (optional)',
-        section: 'Department Information',
-        order: 3,
-        colSpan: 2,
-        searchable: true,
-        options: [] as SelectOption[],
-      },
-      {
-        key: 'description',
-        type: 'textarea',
-        label: 'Description',
-        placeholder: 'Enter department description',
-        section: 'Department Information',
-        order: 4,
-        colSpan: 2,
-        rows: 4,
-      },
-    ],
-    submitButtonText: 'Create Department',
-    cancelButtonText: 'Cancel',
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const sectionTitle = this.translationService.translate('departments.add.sectionTitle');
+
+    this.formConfig = {
+      sections: [
+        {
+          title: sectionTitle,
+          description: this.translationService.translate('departments.add.sectionDescription'),
+          order: 0,
+        },
+      ],
+      layout: {
+        columns: 2,
+        gap: '1.5rem',
+        sectionGap: '2rem',
+        labelPosition: 'top',
+        showSectionDividers: true,
+      },
+      fields: [
+        {
+          key: 'name',
+          type: 'input',
+          label: this.translationService.translate('departments.add.fields.name'),
+          placeholder: this.translationService.translate('departments.add.fields.namePlaceholder'),
+          required: true,
+          section: sectionTitle,
+          order: 0,
+          colSpan: 2,
+        },
+        {
+          key: 'code',
+          type: 'input',
+          label: this.translationService.translate('departments.add.fields.code'),
+          placeholder: this.translationService.translate('departments.add.fields.codePlaceholder'),
+          required: true,
+          section: sectionTitle,
+          order: 1,
+          colSpan: 1,
+        },
+        {
+          key: 'level',
+          type: 'number',
+          label: this.translationService.translate('departments.add.fields.level'),
+          placeholder: this.translationService.translate('departments.add.fields.levelPlaceholder'),
+          required: true,
+          section: sectionTitle,
+          order: 2,
+          colSpan: 1,
+          min: 1,
+        },
+        {
+          key: 'parentDepartmentId',
+          type: 'select',
+          label: this.translationService.translate('departments.add.fields.parentDepartment'),
+          placeholder: this.translationService.translate('departments.add.fields.parentDepartmentPlaceholder'),
+          section: sectionTitle,
+          order: 3,
+          colSpan: 2,
+          searchable: true,
+          options: [] as SelectOption[],
+        },
+        {
+          key: 'description',
+          type: 'textarea',
+          label: this.translationService.translate('departments.add.fields.description'),
+          placeholder: this.translationService.translate('departments.add.fields.descriptionPlaceholder'),
+          section: sectionTitle,
+          order: 4,
+          colSpan: 2,
+          rows: 4,
+        },
+      ],
+      submitButtonText: this.translationService.translate('departments.add.submitButton'),
+      cancelButtonText: this.translationService.translate('departments.add.cancelButton'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
   ngOnInit(): void {
-    this.loadParentDepartmentOptions();
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+      this.loadParentDepartmentOptions();
+    });
 
     this.departmentFacade.operationInProgress$.pipe(
       takeUntil(this.destroy$)
@@ -173,10 +206,10 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
     const departmentName = (data['name'] as string)?.trim() || '';
 
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Create',
-      message: `Are you sure you want to create department ${departmentName}?`,
-      confirmText: 'Create',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('departments.add.confirmTitle'),
+      message: this.translationService.translate('departments.add.confirmMessage', { name: departmentName }),
+      confirmText: this.translationService.translate('departments.add.confirmButton'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'primary',
       icon: 'add',
     });

@@ -1,6 +1,6 @@
 <app-base-private-page-container
-  title="Notifications"
-  [subtitle]="unreadCount() > 0 ? unreadCount() + ' unread notifications' : 'All caught up!'"
+  [title]="'notifications.title' | translate"
+  [subtitle]="unreadCount() > 0 ? ('notifications.unreadCount' | translate: {count: unreadCount()}) : ('notifications.allCaughtUp' | translate)"
   icon="notifications"
   [showTabs]="false"
   [showSearch]="false"
@@ -9,7 +9,7 @@
   <div slot="actions" class="header-actions">
     @if (filteredNotifications().length > 0 && unreadCount() > 0) {
       <app-base-button
-        text="Mark All Read"
+        [text]="'notifications.markAllRead' | translate"
         icon="done_all"
         variant="outline"
         size="small"
@@ -17,9 +17,9 @@
         (buttonClick)="markAllAsRead()"
       ></app-base-button>
     }
-    <app-base-button
-      [text]="loading$.value ? 'Refreshing...' : 'Refresh'"
-      icon="refresh"
+      <app-base-button
+        [text]="loading$.value ? ('common.loading' | translate) : ('common.refresh' | translate)"
+        icon="refresh"
       variant="ghost"
       size="small"
       [loading]="loading$.value"
@@ -37,8 +37,8 @@
             <span class="material-icons">notifications</span>
           </div>
           <div class="stat-content">
-            <div class="stat-value">{{ stats()!.total }}</div>
-            <div class="stat-label">Total Notifications</div>
+                  <div class="stat-value">{{ stats()!.total }}</div>
+                  <div class="stat-label">{{ 'notifications.totalNotifications' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -49,8 +49,8 @@
             <span class="material-icons">mark_email_unread</span>
           </div>
           <div class="stat-content">
-            <div class="stat-value">{{ stats()!.unread }}</div>
-            <div class="stat-label">Unread</div>
+                  <div class="stat-value">{{ stats()!.unread }}</div>
+                  <div class="stat-label">{{ 'notifications.unread' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -61,10 +61,10 @@
             <span class="material-icons">priority_high</span>
           </div>
           <div class="stat-content">
-            <div class="stat-value">
-              {{ (stats()!.byPriority.urgent || 0) + (stats()!.byPriority.high || 0) }}
-            </div>
-            <div class="stat-label">Urgent & High</div>
+                  <div class="stat-value">
+                    {{ (stats()!.byPriority.urgent || 0) + (stats()!.byPriority.high || 0) }}
+                  </div>
+                  <div class="stat-label">{{ 'notifications.urgentHigh' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -75,12 +75,12 @@
   <div class="filters-card">
     <div class="filters-header">
       <span class="material-icons">filter_list</span>
-      <h3>Filters</h3>
+      <h3>{{ 'notifications.filters.title' | translate }}</h3>
     </div>
     <div class="filters-content">
       <div class="filter-groups">
         <div class="filter-group">
-          <label for="type-filter">Type</label>
+          <label for="type-filter">{{ 'notifications.filters.type' | translate }}</label>
           <app-base-select
             selectId="type-filter"
             [options]="typeFilterOptions"
@@ -91,7 +91,7 @@
         </div>
 
         <div class="filter-group">
-          <label for="status-filter">Status</label>
+          <label for="status-filter">{{ 'notifications.filters.status' | translate }}</label>
           <app-base-select
             selectId="status-filter"
             [options]="statusFilterOptions"
@@ -102,7 +102,7 @@
         </div>
 
         <div class="filter-group">
-          <label for="priority-filter">Priority</label>
+          <label for="priority-filter">{{ 'notifications.filters.priority' | translate }}</label>
           <app-base-select
             selectId="priority-filter"
             [options]="priorityFilterOptions"
@@ -114,7 +114,7 @@
 
         @if (hasActiveFilters()) {
           <app-base-button
-            text="Clear Filters"
+            [text]="'notifications.filters.clearFilters' | translate"
             icon="clear"
             variant="ghost"
             size="small"
@@ -132,7 +132,7 @@
         [config]="{
           size: 'md',
           type: 'spinner',
-          message: 'Loading notifications...',
+                message: ('notifications.loading' | translate),
           centered: true,
           fullHeight: false
         }"
@@ -145,17 +145,9 @@
       ></app-base-error>
     } @else if (filteredNotifications().length === 0) {
       <app-base-empty
-        [title]="hasActiveFilters() ? 'No notifications match your filters' : 'No notifications'"
-        [description]="hasActiveFilters() ? 'Try adjusting your filters to see more notifications' : 'You\'re all caught up! No new notifications.'"
-        [config]="{
-          type: hasActiveFilters() ? 'data' : 'data',
-          size: 'md',
-          showIcon: true,
-          showActionButton: hasActiveFilters(),
-          actionButtonText: 'Clear Filters',
-          centered: true,
-          fullHeight: false
-        }"
+        [title]="hasActiveFilters() ? ('notifications.noMatchFilters' | translate) : ('notifications.noNotifications' | translate)"
+        [description]="hasActiveFilters() ? ('notifications.noMatchFiltersDescription' | translate) : ('notifications.noNotificationsDescription' | translate)"
+        [config]="getEmptyStateConfig()"
         (actionClick)="clearFilters()"
       ></app-base-empty>
     } @else {
@@ -198,7 +190,7 @@
                     <div class="notification-badges">
                       @if (notification.status === 'unread') {
                         <app-base-badge
-                          text="New"
+                          [text]="'notifications.new' | translate"
                           variant="danger"
                           size="small"
                           shape="pill"
@@ -236,13 +228,13 @@
                     tabindex="-1"
                   >
                     <app-base-button
-                      [text]="notification.status === 'read' ? 'Unread' : 'Read'"
+                      [text]="notification.status === 'read' ? ('notifications.unread' | translate) : ('notifications.read' | translate)"
                       [icon]="notification.status === 'read' ? 'mark_email_unread' : 'done'"
                       [variant]="notification.status === 'read' ? 'outline' : 'outline'"
                       size="small"
                       [customClass]="notification.status === 'read' ? 'toggle-status-btn unread-state' : 'toggle-status-btn read-state'"
                       (buttonClick)="toggleReadStatus(notification)"
-                      [attr.title]="notification.status === 'read' ? 'Mark as unread' : 'Mark as read'"
+                      [attr.title]="notification.status === 'read' ? ('notifications.unread' | translate) : ('notifications.read' | translate)"
                     ></app-base-button>
                     @if (notification.actionUrl && notification.actionLabel) {
                       <app-base-button
@@ -260,7 +252,7 @@
                       size="small"
                       customClass="action-btn delete-btn"
                       (buttonClick)="deleteNotification(notification)"
-                      [attr.title]="'Delete notification'"
+                      [attr.title]="'notifications.deleteNotification' | translate"
                     ></app-base-button>
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/services/utility.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { LocaleService } from '@core/services/locale.service';
 
 /**
  * UtilityService - Common utility functions service
@@ -37,6 +38,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class UtilityService {
+  private localeService = inject(LocaleService);
   /**
    * Format date to string
    */
@@ -52,7 +54,9 @@ export class UtilityService {
       return '';
     }
 
-    const locale = 'en-US';
+    // Use LocaleService for dynamic locale and timezone
+    const locale = this.localeService.getLocaleCode();
+    const timezone = this.localeService.getCurrentTimezone();
     const formatMap: Record<string, Intl.DateTimeFormatOptions> = {
       short: { dateStyle: 'short' },
       medium: { dateStyle: 'medium' },
@@ -66,7 +70,10 @@ export class UtilityService {
       return this.formatCustomDate(dateObj, format);
     }
 
-    return new Intl.DateTimeFormat(locale, formatOptions).format(dateObj);
+    return new Intl.DateTimeFormat(locale, {
+      ...formatOptions,
+      timeZone: timezone,
+    }).format(dateObj);
   }
 
   /**

@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/user-list/user-list.component.ts
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, of } from 'rxjs';
-import { first, catchError, filter, map } from 'rxjs/operators';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { first, catchError, filter, map, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
   BaseAsyncStateComponent,
@@ -15,6 +15,8 @@ import {
   TableAction,
   BadgeVariant,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { NotificationService, DialogService } from '../../../Shared/services';
 import { User } from '../../../users/user.model';
 import { UserDetailComponent } from '../user-detail/user-detail.component';
@@ -34,14 +36,17 @@ import { UserService, UserWithEmployee } from '../../../core/services/user.servi
     BaseSearchComponent,
     UserDetailComponent,
     AddUserComponent,
+    TranslatePipe,
   ],
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
   private userService = inject(UserService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   users = signal<User[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -53,11 +58,8 @@ export class UserListComponent implements OnInit {
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
 
-  tabs: TabItem[] = [
-    { id: 'list', label: 'User List', icon: 'list' },
-    { id: 'add', label: 'Add User', icon: 'add' },
-  ];
-
+  tabs: TabItem[] = [];
+  
   // Computed statistics
   activeCount = computed(() => this.users().filter(u => u.isActive).length);
   inactiveCount = computed(() => this.users().filter(u => !u.isActive).length);
@@ -65,24 +67,57 @@ export class UserListComponent implements OnInit {
 
   private allUsers: User[] = [];
 
-  tableColumns: TableColumn[] = [
-    { key: 'userName', label: 'Username', sortable: true, width: '150px' },
-    { key: 'email', label: 'Email', sortable: true, width: '200px' },
-    { key: 'firstName', label: 'First Name', sortable: true, width: '120px' },
-    { key: 'lastName', label: 'Last Name', sortable: true, width: '120px' },
-    { key: 'roles', label: 'Roles', sortable: false, width: '150px' },
-    { key: 'isActive', label: 'Status', sortable: true, width: '100px' },
-    { key: 'lastLoginAt', label: 'Last Login', sortable: true, type: 'date', width: '150px' },
-  ];
-
-  tableActions: TableAction[] = [
-    { label: 'View', icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as User) },
-    { label: 'Edit', icon: 'edit', variant: 'ghost', showLabel: false, onClick: (item) => this.onEdit(item as User) },
-    { label: 'Delete', icon: 'delete', variant: 'danger', showLabel: false, onClick: (item) => this.onDelete(item as User) },
-  ];
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing tabs and table
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTable();
+    });
+
     this.loadUsers();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Initialize tabs with translations
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('users.tabs.list'), icon: 'list' },
+      { id: 'add', label: this.translationService.translate('users.tabs.add'), icon: 'add' },
+    ];
+  }
+
+  /**
+   * Initialize table columns and actions with translations
+   */
+  private initializeTable(): void {
+    this.tableColumns = [
+      { key: 'userName', label: this.translationService.translate('auth.username'), sortable: true, width: '150px' },
+      { key: 'email', label: this.translationService.translate('auth.email'), sortable: true, width: '200px' },
+      { key: 'firstName', label: this.translationService.translate('employees.columns.firstName'), sortable: true, width: '120px' },
+      { key: 'lastName', label: this.translationService.translate('employees.columns.lastName'), sortable: true, width: '120px' },
+      { key: 'roles', label: this.translationService.translate('roles.columns.name'), sortable: false, width: '150px' },
+      { key: 'isActive', label: this.translationService.translate('common.status'), sortable: true, width: '100px' },
+      { key: 'lastLoginAt', label: 'Last Login', sortable: true, type: 'date', width: '150px' },
+    ];
+
+    this.tableActions = [
+      { label: this.translationService.translate('table.actions.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as User) },
+      { label: this.translationService.translate('table.actions.edit'), icon: 'edit', variant: 'ghost', showLabel: false, onClick: (item) => this.onEdit(item as User) },
+      { label: this.translationService.translate('table.actions.delete'), icon: 'delete', variant: 'danger', showLabel: false, onClick: (item) => this.onDelete(item as User) },
+    ];
   }
 
   loadUsers(): void {

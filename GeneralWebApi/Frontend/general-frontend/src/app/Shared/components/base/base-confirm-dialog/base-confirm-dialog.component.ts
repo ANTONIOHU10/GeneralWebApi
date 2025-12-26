@@ -12,6 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { BaseModalComponent, ModalConfig } from '../base-modal/base-modal.component';
 import { BaseButtonComponent } from '../base-button/base-button.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 export interface ConfirmDialogConfig {
   title?: string;
@@ -29,7 +30,7 @@ export interface ConfirmDialogConfig {
 @Component({
   selector: 'app-base-confirm-dialog',
   standalone: true,
-  imports: [CommonModule, BaseModalComponent, BaseButtonComponent],
+  imports: [CommonModule, BaseModalComponent, BaseButtonComponent, TranslatePipe],
   templateUrl: './base-confirm-dialog.component.html',
   styleUrls: ['./base-confirm-dialog.component.scss'],
 })
@@ -37,8 +38,8 @@ export class BaseConfirmDialogComponent implements OnInit, OnDestroy, OnChanges 
   @Input() isOpen = false;
   @Input() config: ConfirmDialogConfig = {
     message: '',
-    confirmText: 'Confirm',
-    cancelText: 'Cancel',
+    confirmText: '',
+    cancelText: '',
     confirmVariant: 'primary',
     cancelVariant: 'outline',
     showCancel: true,

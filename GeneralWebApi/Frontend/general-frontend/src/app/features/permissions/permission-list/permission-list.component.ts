@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/permissions/permission-list/permission-list.component.ts
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, of } from 'rxjs';
-import { first, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { first, catchError, takeUntil, distinctUntilChanged, filter } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
   BaseAsyncStateComponent,
@@ -16,6 +16,8 @@ import {
   TabItem,
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Permission, PERMISSION_MODULES } from '../../../permissions/permission.model';
 import { PermissionService, PermissionList as BackendPermissionList } from '../../../core/services/permission.service';
 import { AddPermissionComponent } from '../add-permission/add-permission.component';
@@ -32,13 +34,16 @@ import { AddPermissionComponent } from '../add-permission/add-permission.compone
     BaseBadgeComponent,
     BaseSearchComponent,
     AddPermissionComponent,
+    TranslatePipe,
   ],
   templateUrl: './permission-list.component.html',
   styleUrls: ['./permission-list.component.scss'],
 })
-export class PermissionListComponent implements OnInit {
+export class PermissionListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private permissionService = inject(PermissionService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   permissions = signal<Permission[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -47,10 +52,7 @@ export class PermissionListComponent implements OnInit {
   activeFilter = signal<string>('all');
   activeTab = signal<'list' | 'add'>('list');
 
-  tabs: TabItem[] = [
-    { id: 'list', label: 'Permission List', icon: 'list' },
-    { id: 'add', label: 'Add Permission', icon: 'add' },
-  ];
+  tabs: TabItem[] = [];
 
   // Computed statistics
   totalCount = computed(() => this.permissions().length);
@@ -62,22 +64,48 @@ export class PermissionListComponent implements OnInit {
     return counts;
   });
 
-  tableColumns: TableColumn[] = [
-    { key: 'name', label: 'Permission Name', sortable: true, width: '200px' },
-    { key: 'description', label: 'Description', sortable: true, width: '200px' },
-    { key: 'category', label: 'Category', sortable: true, width: '120px' },
-    { key: 'module', label: 'Module', sortable: true, width: '120px' },
-    { key: 'roleCount', label: 'Roles', sortable: true, type: 'number', width: '100px' },
-    { key: 'isSystemPermission', label: 'Type', sortable: true, width: '100px' },
-  ];
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
 
-  tableActions: TableAction[] = [
-    { label: 'View', icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as Permission) },
-  ];
+  /**
+   * Initialize tabs and table config with translations
+   */
+  private initializeTableConfig(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('permissions.tabs.list'), icon: 'list' },
+      { id: 'add', label: this.translationService.translate('permissions.tabs.add'), icon: 'add' },
+    ];
+
+    this.tableColumns = [
+      { key: 'name', label: this.translationService.translate('permissions.columns.name'), sortable: true, width: '200px' },
+      { key: 'description', label: this.translationService.translate('permissions.columns.description'), sortable: true, width: '200px' },
+      { key: 'category', label: this.translationService.translate('permissions.columns.category'), sortable: true, width: '120px' },
+      { key: 'module', label: this.translationService.translate('permissions.columns.module'), sortable: true, width: '120px' },
+      { key: 'roleCount', label: this.translationService.translate('permissions.columns.roles'), sortable: true, type: 'number', width: '100px' },
+      { key: 'isSystemPermission', label: this.translationService.translate('permissions.columns.type'), sortable: true, width: '100px' },
+    ];
+
+    this.tableActions = [
+      { label: this.translationService.translate('common.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as Permission) },
+    ];
+  }
 
   ngOnInit(): void {
-    this.loadPermissions();
-      }
+    // Wait for translations to load before initializing table config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTableConfig();
+      this.loadPermissions();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   loadPermissions(): void {
     this.loading$.next(true);
@@ -97,7 +125,11 @@ export class PermissionListComponent implements OnInit {
       first(),
       catchError(err => {
         this.loading$.next(false);
-        this.notificationService.error('Load Failed', err.message || 'Failed to load permissions', { duration: 5000 });
+        this.notificationService.error(
+          this.translationService.translate('common.error'),
+          err.message || this.translationService.translate('permissions.loadingFailed'),
+          { duration: 5000 }
+        );
         return of([]);
       })
     ).subscribe((backendPermissions: BackendPermissionList[]) => {
@@ -162,7 +194,11 @@ export class PermissionListComponent implements OnInit {
 
   onView(permission: Permission): void {
     // Could open a detail modal if needed
-    this.notificationService.info('Permission Details', `${permission.name}: ${permission.description}`, { duration: 3000 });
+    this.notificationService.info(
+      this.translationService.translate('permissions.details.title'),
+      `${permission.name}: ${permission.description}`,
+      { duration: 3000 }
+    );
   }
 
   onRowClick = (item: unknown) => this.onView(item as Permission);

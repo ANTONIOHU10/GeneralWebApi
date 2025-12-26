@@ -1,8 +1,12 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/sidebar/sidebar.component.ts
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export interface NavItem {
   label: string;
@@ -22,26 +26,29 @@ export interface NavSection {
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, TranslatePipe],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   @Input() isOpen = false;
   searchQuery = '';
   filteredSections: NavSection[] = [];
+  
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   @Input() navSections: NavSection[] = [
     {
-      title: 'Workspace',
+      title: 'sidebar.workspace',
       items: [
-        { label: 'Dashboard', icon: 'dashboard', route: '/private/dashboard' },
-        { label: 'Tasks', icon: 'task_alt', route: '/private/tasks' },
+        { label: 'sidebar.dashboard', icon: 'dashboard', route: '/private/dashboard' },
+        { label: 'sidebar.tasks', icon: 'task_alt', route: '/private/tasks' },
         {
-          label: 'My Approvals',
+          label: 'sidebar.myApprovals',
           icon: 'approval',
           route: '/private/approvals',
         },
         {
-          label: 'Notifications',
+          label: 'sidebar.notifications',
           icon: 'notifications',
           route: '/private/notifications',
         },
@@ -50,39 +57,39 @@ export class SidebarComponent implements OnInit {
       expanded: false,
     },
     {
-      title: 'HR Management',
+      title: 'sidebar.hrManagement',
       items: [
-        { label: 'Employee List', icon: 'people', route: '/private/employees' },
+        { label: 'sidebar.employees', icon: 'people', route: '/private/employees' },
         {
-          label: 'Departments',
+          label: 'sidebar.departments',
           icon: 'business',
           route: '/private/departments',
         },
-        { label: 'Positions', icon: 'work', route: '/private/positions' },
+        { label: 'sidebar.positions', icon: 'work', route: '/private/positions' },
       ],
       expandable: true,
       expanded: false,
     },
     {
-      title: 'Contract Management',
+      title: 'sidebar.contractManagement',
       items: [
         {
-          label: 'Contracts',
+          label: 'sidebar.contracts',
           icon: 'description',
           route: '/private/contracts',
         },
         {
-          label: 'Contract Approvals',
+          label: 'sidebar.contractApprovals',
           icon: 'check_circle',
           route: '/private/contract-approvals',
         },
         {
-          label: 'Contract Templates',
+          label: 'sidebar.contractTemplates',
           icon: 'content_copy',
           route: '/private/contract-templates',
         },
         {
-          label: 'Expiry Reminders',
+          label: 'sidebar.contractReminders',
           icon: 'schedule',
           route: '/private/contract-reminders',
         },
@@ -91,12 +98,12 @@ export class SidebarComponent implements OnInit {
       expanded: false,
     },
     {
-      title: 'System Management',
+      title: 'sidebar.systemManagement',
       items: [
-        { label: 'Users', icon: 'person', route: '/private/users' },
-        { label: 'Roles', icon: 'key', route: '/private/roles' },
+        { label: 'sidebar.users', icon: 'person', route: '/private/users' },
+        { label: 'sidebar.roles', icon: 'key', route: '/private/roles' },
         {
-          label: 'Permissions',
+          label: 'sidebar.permissions',
           icon: 'security',
           route: '/private/permissions',
         },
@@ -105,40 +112,13 @@ export class SidebarComponent implements OnInit {
       expanded: false,
     },
     {
-      title: 'Monitoring & Audit',
+      title: 'sidebar.monitoringAudit',
       items: [
-        { label: 'Audit Logs', icon: 'history', route: '/private/audit-logs' },
+        { label: 'sidebar.auditLogs', icon: 'history', route: '/private/audit-logs' },
         {
-          label: 'System Monitor',
+          label: 'sidebar.systemMonitor',
           icon: 'monitor',
           route: '/private/system-monitor',
-        },
-      ],
-      expandable: true,
-      expanded: false,
-    },
-    {
-      title: 'Development & Testing',
-      items: [
-        {
-          label: 'Notification Demo',
-          icon: 'notifications',
-          route: '/private/notification-demo',
-        },
-        {
-          label: 'Base Components Demo',
-          icon: 'widgets',
-          route: '/private/base-components-demo',
-        },
-        {
-          label: 'Private Page Container Demo',
-          icon: 'view_quilt',
-          route: '/private/private-page-container-demo',
-        },
-        {
-          label: 'Base Form Demo',
-          icon: 'description',
-          route: '/private/base-form-demo',
         },
       ],
       expandable: true,
@@ -153,7 +133,51 @@ export class SidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.filteredSections = [...this.navSections];
+    this.applyTranslations();
+    
+    // Listen to language changes
+    this.translationService.getTranslationsLoaded$()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.applyTranslations();
+      });
+  }
+
+  /**
+   * Apply translations to navigation sections
+   */
+  private applyTranslations(): void {
+    if (!this.translationService.isLoaded()) {
+      // Wait a bit for translations to load
+      setTimeout(() => this.applyTranslations(), 100);
+      return;
+    }
+
+    this.filteredSections = this.navSections.map(section => ({
+      ...section,
+      title: this.translationService.translate(section.title),
+      items: section.items.map(item => ({
+        ...item,
+        label: this.translationService.translate(item.label),
+      })),
+    }));
+
+    // Update search if there's a query
+    if (this.searchQuery.trim()) {
+      this.onSearchChange();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Get search placeholder text
+   */
+  getSearchPlaceholder(): string {
+    return this.translationService.translate('common.search') + '...';
   }
 
   /**
@@ -177,15 +201,26 @@ export class SidebarComponent implements OnInit {
    */
   onSearchChange(): void {
     if (!this.searchQuery.trim()) {
-      this.filteredSections = [...this.navSections];
+      this.applyTranslations();
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
-    this.filteredSections = this.navSections
+    // Apply translations first, then filter
+    const translatedSections = this.navSections.map(section => ({
+      ...section,
+      title: this.translationService.translate(section.title),
+      items: section.items.map(item => ({
+        ...item,
+        label: this.translationService.translate(item.label),
+      })),
+    }));
+    
+    this.filteredSections = translatedSections
       .map(section => {
         const filteredItems = section.items.filter(item =>
-          item.label.toLowerCase().includes(query)
+          item.label.toLowerCase().includes(query) ||
+          section.title.toLowerCase().includes(query)
         );
 
         if (filteredItems.length > 0) {

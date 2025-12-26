@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/audit-logs/audit-log-list/audit-log-list.component.ts
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject, of } from 'rxjs';
-import { first, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { first, catchError, filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import {
   BasePrivatePageContainerComponent,
   BaseAsyncStateComponent,
@@ -15,6 +15,8 @@ import {
   TableAction,
   BadgeVariant,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { NotificationService } from '../../../Shared/services';
 import { AuditLog } from '../../../audit-logs/audit-log.model';
 import { SearchAuditLogComponent } from '../search-audit-log/search-audit-log.component';
@@ -34,13 +36,16 @@ import { AuditLogService, BackendAuditLog } from '../../../core/services/audit-l
     BaseSearchComponent,
     SearchAuditLogComponent,
     AuditLogDetailComponent,
+    TranslatePipe,
   ],
   templateUrl: './audit-log-list.component.html',
   styleUrls: ['./audit-log-list.component.scss'],
 })
-export class AuditLogListComponent implements OnInit {
+export class AuditLogListComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private auditLogService = inject(AuditLogService);
+  private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   logs = signal<AuditLog[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -51,11 +56,8 @@ export class AuditLogListComponent implements OnInit {
   selectedLog: AuditLog | null = null;
   isDetailModalOpen = false;
 
-  tabs: TabItem[] = [
-    { id: 'list', label: 'Audit Logs', icon: 'list' },
-    { id: 'search', label: 'Search Logs', icon: 'search' },
-  ];
-
+  tabs: TabItem[] = [];
+  
   // Computed statistics
   totalCount = computed(() => this.allLogs.length);
   infoCount = computed(() => this.allLogs.filter(l => l.severity === 'Info').length);
@@ -65,23 +67,56 @@ export class AuditLogListComponent implements OnInit {
 
   private allLogs: AuditLog[] = [];
 
-  tableColumns: TableColumn[] = [
-    { key: 'timestamp', label: 'Time', sortable: true, type: 'date', width: '150px' },
-    { key: 'module', label: 'Module', sortable: true, width: '120px' },
-    { key: 'action', label: 'Action', sortable: true, width: '100px' },
-    { key: 'entityType', label: 'Entity', sortable: true, width: '100px' },
-    { key: 'userName', label: 'User', sortable: true, width: '150px' },
-    { key: 'description', label: 'Description', sortable: true, width: '200px' },
-    { key: 'severity', label: 'Severity', sortable: true, width: '100px' },
-    { key: 'ipAddress', label: 'IP Address', sortable: true, width: '120px' },
-  ];
-
-  tableActions: TableAction[] = [
-    { label: 'View', icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as AuditLog) },
-  ];
+  tableColumns: TableColumn[] = [];
+  tableActions: TableAction[] = [];
 
   ngOnInit(): void {
+    // Wait for translations to load before initializing tabs and table
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTable();
+    });
+
     this.loadLogs();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Initialize tabs with translations
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('auditLogs.tabs.list'), icon: 'list' },
+      { id: 'search', label: this.translationService.translate('auditLogs.tabs.search'), icon: 'search' },
+    ];
+  }
+
+  /**
+   * Initialize table columns and actions with translations
+   */
+  private initializeTable(): void {
+    this.tableColumns = [
+      { key: 'timestamp', label: this.translationService.translate('common.time'), sortable: true, type: 'date', width: '150px' },
+      { key: 'module', label: 'Module', sortable: true, width: '120px' },
+      { key: 'action', label: this.translationService.translate('common.actions'), sortable: true, width: '100px' },
+      { key: 'entityType', label: 'Entity', sortable: true, width: '100px' },
+      { key: 'userName', label: this.translationService.translate('auth.username'), sortable: true, width: '150px' },
+      { key: 'description', label: this.translationService.translate('common.description'), sortable: true, width: '200px' },
+      { key: 'severity', label: 'Severity', sortable: true, width: '100px' },
+      { key: 'ipAddress', label: 'IP Address', sortable: true, width: '120px' },
+    ];
+
+    this.tableActions = [
+      { label: this.translationService.translate('table.actions.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as AuditLog) },
+    ];
   }
 
   loadLogs(): void {

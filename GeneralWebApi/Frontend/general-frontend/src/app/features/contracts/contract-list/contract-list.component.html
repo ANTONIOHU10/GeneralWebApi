@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-list/contract-list.component.html -->
 <app-base-private-page-container
-  title="Contract Management"
-  subtitle="Manage and view all contracts in the system"
+  [title]="'contracts.title' | translate"
+  [subtitle]="'contracts.subtitle' | translate"
   icon="description"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -13,7 +13,7 @@
   <div *ngIf="activeTab() === 'list'" slot="search" class="header-actions">
     <app-base-search
       [config]="{
-        placeholder: 'Search contracts...',
+        placeholder: ('contracts.searchPlaceholder' | translate),
         debounceTime: 300,
         minLength: 1,
         showClearButton: true,
@@ -31,7 +31,7 @@
       variant="outline"
       size="small"
       (buttonClick)="toggleViewMode()"
-      [title]="'Switch to ' + (viewMode() === 'table' ? 'card' : 'table') + ' view'"
+      [title]="(viewMode() === 'table' ? ('view.switchToCard' | translate) : ('view.switchToTable' | translate))"
       customClass="view-toggle-btn"
     ></app-base-button>
   </div>
@@ -42,10 +42,10 @@
       [loading$]="loading$"
       [error$]="error$"
       [data$]="contracts$"
-      loadingMessage="Loading contracts..."
-      emptyTitle="No contracts found"
-      emptyDescription="There are no contracts to display at the moment"
-      emptyActionText="Add First Contract"
+      [loadingMessage]="'contracts.loading' | translate"
+      [emptyTitle]="'contracts.emptyTitle' | translate"
+      [emptyDescription]="'contracts.emptyDescription' | translate"
+      [emptyActionText]="'contracts.emptyActionText' | translate"
       [onRetry]="onRetryLoad"
       [onEmptyAction]="onEmptyActionClick"
     >

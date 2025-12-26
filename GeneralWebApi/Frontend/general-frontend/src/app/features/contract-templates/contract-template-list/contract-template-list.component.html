@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-templates/contract-template-list/contract-template-list.component.html -->
 <app-base-private-page-container
-  title="Contract Templates"
-  subtitle="Manage contract templates for quick contract creation"
+  [title]="'contractTemplates.title' | translate"
+  [subtitle]="'contractTemplates.subtitle' | translate"
   icon="description"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -14,7 +14,7 @@
     *ngIf="activeTab() === 'list'"
     slot="search"
     [config]="{
-      placeholder: 'Search templates...',
+      placeholder: ('contractTemplates.searchPlaceholder' | translate),
       debounceTime: 300,
       minLength: 1,
       showClearButton: true,
@@ -27,7 +27,7 @@
   <!-- Template List Tab -->
   <div *ngIf="activeTab() === 'list'">
     <!-- Filter -->
-    <app-base-card [title]="'Filter'" [icon]="'filter_list'" [variant]="'elevated'">
+    <app-base-card [title]="'common.filter' | translate" [icon]="'filter_list'" [variant]="'elevated'">
       <div class="filter-buttons">
         <button
           *ngFor="let filter of filterOptions"
@@ -35,7 +35,7 @@
           (click)="onFilterChange(filter)"
           class="filter-button"
         >
-          {{ filter | titlecase }}
+          {{ getFilterLabel(filter) }}
           <span>({{ getFilterCount(filter) }})</span>
         </button>
       </div>
@@ -50,7 +50,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ activeCount() }}</div>
-            <div class="stat-label">Active</div>
+            <div class="stat-label">{{ 'contractTemplates.stats.active' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -61,7 +61,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ inactiveCount() }}</div>
-            <div class="stat-label">Inactive</div>
+            <div class="stat-label">{{ 'contractTemplates.stats.inactive' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -72,7 +72,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ defaultCount() }}</div>
-            <div class="stat-label">Default</div>
+            <div class="stat-label">{{ 'contractTemplates.stats.default' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -82,9 +82,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="templatesData$"
-      loadingMessage="Loading templates..."
-      emptyTitle="No Templates"
-      emptyDescription="No contract templates match the selected filter"
+      [loadingMessage]="'contractTemplates.loading' | translate"
+      [emptyTitle]="'contractTemplates.emptyTitle' | translate"
+      [emptyDescription]="'contractTemplates.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <app-base-table
@@ -97,10 +97,10 @@
       >
         <ng-template #cellTemplate let-row="row" let-column="column">
           <ng-container *ngIf="column.key === 'isActive'">
-            <app-base-badge [text]="row.isActive ? 'Active' : 'Inactive'" [variant]="getStatusVariant(row.isActive)" size="small"></app-base-badge>
+            <app-base-badge [text]="row.isActive ? ('contractTemplates.status.active' | translate) : ('contractTemplates.status.inactive' | translate)" [variant]="getStatusVariant(row.isActive)" size="small"></app-base-badge>
           </ng-container>
           <ng-container *ngIf="column.key === 'isDefault'">
-            <app-base-badge [text]="row.isDefault ? 'Default' : '-'" [variant]="getDefaultVariant(row.isDefault)" size="small"></app-base-badge>
+            <app-base-badge [text]="row.isDefault ? ('contractTemplates.status.default' | translate) : '-'" [variant]="getDefaultVariant(row.isDefault)" size="small"></app-base-badge>
           </ng-container>
         </ng-template>
       </app-base-table>

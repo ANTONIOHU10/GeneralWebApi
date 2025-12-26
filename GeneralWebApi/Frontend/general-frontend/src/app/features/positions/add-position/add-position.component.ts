@@ -2,7 +2,7 @@
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, filter, take, pairwise, debounceTime, startWith } from 'rxjs/operators';
+import { takeUntil, filter, take, pairwise, debounceTime, startWith, distinctUntilChanged } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
@@ -11,6 +11,7 @@ import {
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { PositionFacade } from '@store/position/position.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
+import { TranslationService } from '@core/services/translation.service';
 import { Position } from 'app/contracts/positions/position.model';
 
 @Component({
@@ -28,6 +29,7 @@ export class AddPositionComponent implements OnInit, OnDestroy {
   private positionFacade = inject(PositionFacade);
   private departmentFacade = inject(DepartmentFacade);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   @Output() positionCreated = new EventEmitter<void>();
@@ -47,130 +49,57 @@ export class AddPositionComponent implements OnInit, OnDestroy {
   };
 
   formConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Position Information',
-        description: 'Enter position details',
-        order: 0,
-      },
-      {
-        title: 'Salary Information',
-        description: 'Optional salary range details',
-        order: 1,
-        collapsible: true,
-        collapsed: true,
-      },
-    ],
-    layout: {
-      columns: 2,
-      gap: '1.5rem',
-      sectionGap: '2rem',
-      labelPosition: 'top',
-      showSectionDividers: true,
-    },
-    fields: [
-      {
-        key: 'title',
-        type: 'input',
-        label: 'Position Title',
-        placeholder: 'Enter position title',
-        required: true,
-        section: 'Position Information',
-        order: 0,
-        colSpan: 2,
-      },
-      {
-        key: 'code',
-        type: 'input',
-        label: 'Position Code',
-        placeholder: 'Enter position code',
-        required: true,
-        section: 'Position Information',
-        order: 1,
-        colSpan: 1,
-      },
-      {
-        key: 'level',
-        type: 'number',
-        label: 'Level',
-        placeholder: 'Enter level',
-        required: true,
-        section: 'Position Information',
-        order: 2,
-        colSpan: 1,
-        min: 1,
-      },
-      {
-        key: 'departmentId',
-        type: 'select',
-        label: 'Department',
-        placeholder: 'Select department',
-        required: true,
-        section: 'Position Information',
-        order: 3,
-        colSpan: 1,
-        searchable: true,
-        options: [] as SelectOption[],
-      },
-      {
-        key: 'parentPositionId',
-        type: 'select',
-        label: 'Parent Position',
-        placeholder: 'Select parent position (optional)',
-        section: 'Position Information',
-        order: 4,
-        colSpan: 1,
-        searchable: true,
-        options: [] as SelectOption[],
-      },
-      {
-        key: 'isManagement',
-        type: 'checkbox',
-        label: 'Is Management Position',
-        section: 'Position Information',
-        order: 5,
-        colSpan: 2,
-      },
-      {
-        key: 'description',
-        type: 'textarea',
-        label: 'Description',
-        placeholder: 'Enter position description',
-        section: 'Position Information',
-        order: 6,
-        colSpan: 2,
-        rows: 4,
-      },
-      {
-        key: 'minSalary',
-        type: 'number',
-        label: 'Minimum Salary',
-        placeholder: 'Enter minimum salary',
-        section: 'Salary Information',
-        order: 0,
-        colSpan: 1,
-        min: 0,
-      },
-      {
-        key: 'maxSalary',
-        type: 'number',
-        label: 'Maximum Salary',
-        placeholder: 'Enter maximum salary',
-        section: 'Salary Information',
-        order: 1,
-        colSpan: 1,
-        min: 0,
-      },
-    ],
-    submitButtonText: 'Create Position',
-    cancelButtonText: 'Cancel',
+    sections: [],
+    layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
     submitButtonVariant: 'primary',
     cancelButtonVariant: 'secondary',
   };
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const posInfoSection = this.translationService.translate('positions.add.sections.positionInfo');
+    const salarySection = this.translationService.translate('positions.add.sections.salaryInfo');
+
+    this.formConfig = {
+      sections: [
+        { title: posInfoSection, description: this.translationService.translate('positions.add.sections.positionInfoDescription'), order: 0 },
+        { title: salarySection, description: this.translationService.translate('positions.add.sections.salaryInfoDescription'), order: 1, collapsible: true, collapsed: true },
+      ],
+      layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+      fields: [
+        { key: 'title', type: 'input', label: this.translationService.translate('positions.add.fields.title'), placeholder: this.translationService.translate('positions.add.fields.titlePlaceholder'), required: true, section: posInfoSection, order: 0, colSpan: 2 },
+        { key: 'code', type: 'input', label: this.translationService.translate('positions.add.fields.code'), placeholder: this.translationService.translate('positions.add.fields.codePlaceholder'), required: true, section: posInfoSection, order: 1, colSpan: 1 },
+        { key: 'level', type: 'number', label: this.translationService.translate('positions.add.fields.level'), placeholder: this.translationService.translate('positions.add.fields.levelPlaceholder'), required: true, section: posInfoSection, order: 2, colSpan: 1, min: 1 },
+        { key: 'departmentId', type: 'select', label: this.translationService.translate('positions.add.fields.department'), placeholder: this.translationService.translate('positions.add.fields.departmentPlaceholder'), required: true, section: posInfoSection, order: 3, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'parentPositionId', type: 'select', label: this.translationService.translate('positions.add.fields.parentPosition'), placeholder: this.translationService.translate('positions.add.fields.parentPositionPlaceholder'), section: posInfoSection, order: 4, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'isManagement', type: 'checkbox', label: this.translationService.translate('positions.add.fields.isManagement'), section: posInfoSection, order: 5, colSpan: 2 },
+        { key: 'description', type: 'textarea', label: this.translationService.translate('positions.add.fields.description'), placeholder: this.translationService.translate('positions.add.fields.descriptionPlaceholder'), section: posInfoSection, order: 6, colSpan: 2, rows: 4 },
+        { key: 'minSalary', type: 'number', label: this.translationService.translate('positions.add.fields.minSalary'), placeholder: this.translationService.translate('positions.add.fields.minSalaryPlaceholder'), section: salarySection, order: 0, colSpan: 1, min: 0 },
+        { key: 'maxSalary', type: 'number', label: this.translationService.translate('positions.add.fields.maxSalary'), placeholder: this.translationService.translate('positions.add.fields.maxSalaryPlaceholder'), section: salarySection, order: 1, colSpan: 1, min: 0 },
+      ],
+      submitButtonText: this.translationService.translate('positions.add.submitButton'),
+      cancelButtonText: this.translationService.translate('common.cancel'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
   ngOnInit(): void {
-    this.loadDepartmentOptions();
-    this.loadParentPositionOptions();
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+      this.loadDepartmentOptions();
+      this.loadParentPositionOptions();
+    });
 
     this.positionFacade.operationInProgress$.pipe(
       takeUntil(this.destroy$)
@@ -244,10 +173,10 @@ export class AddPositionComponent implements OnInit, OnDestroy {
     const positionTitle = (data['title'] as string)?.trim() || '';
 
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Create',
-      message: `Are you sure you want to create position ${positionTitle}?`,
-      confirmText: 'Create',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('positions.add.confirmTitle'),
+      message: this.translationService.translate('positions.add.confirmMessage', { name: positionTitle }),
+      confirmText: this.translationService.translate('common.create'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'primary',
       icon: 'add',
     });

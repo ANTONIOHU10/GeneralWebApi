@@ -1,0 +1,1104 @@
+{
+  "common": {
+    "appName": "GeneralWebApi",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpiar",
+    "refresh": "Actualizar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "reset": "Restablecer",
+    "actions": "Acciones",
+    "status": "Estado",
+    "type": "Tipo",
+    "priority": "Prioridad",
+    "date": "Fecha",
+    "time": "Hora",
+    "name": "Nombre",
+    "description": "Descripción",
+    "createdAt": "Creado en",
+    "updatedAt": "Actualizado en",
+    "noData": "No hay datos disponibles",
+    "noResults": "No se encontraron resultados",
+    "retry": "Reintentar",
+    "dismiss": "Descartar",
+    "view": "Ver",
+    "notAvailable": "N/A",
+    "create": "Crear"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "email": "Correo electrónico",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "rememberMe": "Recordarme",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "loginFailed": "Error al iniciar sesión",
+    "invalidCredentials": "Nombre de usuario o contraseña inválidos",
+    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+  },
+  "settings": {
+    "title": "Configuración",
+    "appearance": "Apariencia",
+    "darkMode": "Modo oscuro",
+    "darkModeDescription": "Alternar entre tema claro y oscuro",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "notifications": "Notificaciones",
+    "emailNotifications": "Notificaciones por correo",
+    "emailNotificationsDescription": "Recibir notificaciones por correo electrónico",
+    "pushNotifications": "Notificaciones push",
+    "pushNotificationsDescription": "Recibir notificaciones push en el navegador",
+    "languageRegion": "Idioma y región",
+    "language": "Idioma",
+    "languageDescription": "Selecciona tu idioma preferido",
+    "timeZone": "Zona horaria",
+    "timeZoneDescription": "Establece tu zona horaria",
+    "security": "Seguridad",
+    "twoFactorAuth": "Autenticación de dos factores",
+    "twoFactorAuthDescription": "Agregar una capa adicional de seguridad",
+    "enable2FA": "Habilitar 2FA",
+    "changePassword": "Cambiar contraseña",
+    "changePasswordDescription": "Actualizar la contraseña de tu cuenta"
+  },
+  "header": {
+    "notifications": "Notificaciones",
+    "viewAll": "Ver todas las notificaciones",
+    "newNotifications": "{{count}} nuevas",
+    "noNotifications": "¡Todo al día!",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "userProfileMenu": "Menú de perfil de usuario",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo oscuro",
+    "switchToLightMode": "Cambiar a modo claro",
+    "switchToDarkMode": "Cambiar a modo oscuro"
+  },
+  "sidebar": {
+    "workspace": "Espacio de trabajo",
+    "dashboard": "Panel de control",
+    "tasks": "Tareas",
+    "myApprovals": "Mis aprobaciones",
+    "notifications": "Notificaciones",
+    "approvals": "Aprobaciones",
+    "hrManagement": "Gestión de RRHH",
+    "employees": "Empleados",
+    "departments": "Departamentos",
+    "positions": "Posiciones",
+    "onboarding": "Incorporación",
+    "contractManagement": "Gestión de contratos",
+    "contracts": "Contratos",
+    "contractApprovals": "Aprobaciones de contratos",
+    "contractTemplates": "Plantillas de contratos",
+    "contractReminders": "Recordatorios de contratos",
+    "documentCenter": "Centro de documentos",
+    "identityDocuments": "Documentos de identidad",
+    "education": "Educación",
+    "certifications": "Certificaciones",
+    "companyDocuments": "Documentos de la empresa",
+    "systemManagement": "Gestión del sistema",
+    "users": "Usuarios",
+    "roles": "Roles",
+    "permissions": "Permisos",
+    "monitoringAudit": "Monitoreo y auditoría",
+    "auditLogs": "Registros de auditoría",
+    "systemMonitor": "Monitor del sistema"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "unreadCount": "{{count}} notificaciones no leídas",
+    "allCaughtUp": "¡Todo al día!",
+    "markAllRead": "Marcar todo como leído",
+    "totalNotifications": "Total de notificaciones",
+    "unread": "No leído",
+    "urgentHigh": "Urgente y alta",
+    "filters": "Filtros",
+    "allTypes": "Todos los tipos",
+    "allStatus": "Todos los estados",
+    "allPriorities": "Todas las prioridades",
+    "clearFilters": "Limpiar filtros",
+    "noNotifications": "No hay notificaciones",
+    "noNotificationsDescription": "¡Estás al día! No hay nuevas notificaciones.",
+    "noMatchFilters": "No hay notificaciones que coincidan con tus filtros",
+    "noMatchFiltersDescription": "Intenta ajustar tus filtros para ver más notificaciones",
+    "loading": "Cargando notificaciones...",
+    "read": "Leído",
+    "unread": "No leído",
+    "new": "Nuevo",
+    "viewDetails": "Ver detalles",
+    "deleteNotification": "Eliminar notificación"
+  },
+  "errors": {
+    "generic": "Ocurrió un error",
+    "networkError": "Error de red. Por favor, verifica tu conexión.",
+    "serverError": "Error del servidor. Por favor, inténtalo de nuevo más tarde.",
+    "notFound": "Recurso no encontrado",
+    "unauthorized": "No estás autorizado para realizar esta acción",
+    "forbidden": "Acceso prohibido",
+    "validationError": "Error de validación",
+    "timeout": "Tiempo de espera agotado. Por favor, inténtalo de nuevo."
+  },
+  "empty": {
+    "noData": "No hay datos disponibles",
+    "noResults": "No se encontraron resultados",
+    "tryAgain": "Intentar de nuevo",
+    "refresh": "Actualizar"
+  },
+  "pagination": {
+    "page": "Página",
+    "of": "de",
+    "itemsPerPage": "Elementos por página",
+    "showing": "Mostrando",
+    "to": "a",
+    "ofTotal": "de {{total}}",
+    "goTo": "Ir a",
+    "go": "Ir",
+    "entries": "entradas"
+  },
+  "time": {
+    "justNow": "Ahora mismo",
+    "minutesAgo": "Hace {{count}} minuto",
+    "minutesAgo_plural": "Hace {{count}} minutos",
+    "hoursAgo": "Hace {{count}} hora",
+    "hoursAgo_plural": "Hace {{count}} horas",
+    "daysAgo": "Hace {{count}} día",
+    "daysAgo_plural": "Hace {{count}} días",
+    "weeksAgo": "Hace {{count}} semana",
+    "weeksAgo_plural": "Hace {{count}} semanas",
+    "monthsAgo": "Hace {{count}} mes",
+    "monthsAgo_plural": "Hace {{count}} meses",
+    "yearsAgo": "Hace {{count}} año",
+    "yearsAgo_plural": "Hace {{count}} años"
+  },
+  "login": {
+    "welcomeBack": "Bienvenido de nuevo",
+    "signInToContinue": "Inicia sesión para continuar a tu cuenta",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "rememberMe": "Recordarme",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "signIn": "Iniciar sesión",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "contactAdministrator": "Contactar al administrador",
+    "enterpriseManagementSystem": "Sistema de gestión empresarial",
+    "employeeManagement": "Gestión de empleados",
+    "analyticsDashboard": "Panel de análisis",
+    "secureAccess": "Acceso seguro",
+    "switchToLightMode": "Cambiar a modo claro",
+    "switchToDarkMode": "Cambiar a modo oscuro"
+  },
+  "workspace": {
+    "title": "Espacio de trabajo",
+    "dashboard": "Panel de control",
+    "tasks": "Tareas",
+    "myApprovals": "Mis aprobaciones"
+  },
+  "contractManagement": {
+    "title": "Gestión de contratos",
+    "contracts": "Contratos",
+    "contractApprovals": "Aprobaciones de contratos",
+    "contractTemplates": "Plantillas de contratos",
+    "expiryReminders": "Recordatorios de vencimiento"
+  },
+  "systemManagement": {
+    "title": "Gestión del sistema"
+  },
+  "footer": {
+    "allRightsReserved": "Todos los derechos reservados",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "help": "Ayuda",
+    "allSystemsOperational": "Todos los sistemas operativos"
+  },
+  "profile": {
+    "title": "Perfil de Usuario",
+    "sections": {
+      "userInformation": "Información del Usuario",
+      "basicInformation": "Información Básica",
+      "contactInformation": "Información de Contacto",
+      "compensation": "Compensación",
+      "emergencyContact": "Contacto de Emergencia",
+      "additionalInformation": "Información Adicional"
+    },
+    "fields": {
+      "username": "Nombre de Usuario",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "role": "Rol",
+      "defaultRole": "Usuario",
+      "accountCreated": "Cuenta Creada",
+      "lastLogin": "Último Acceso",
+      "fullName": "Nombre Completo",
+      "employeeNumber": "Número de Empleado",
+      "position": "Posición",
+      "department": "Departamento",
+      "manager": "Gerente",
+      "hireDate": "Fecha de Contratación",
+      "employmentType": "Tipo de Empleo",
+      "status": "Estado",
+      "workingHours": "Horas de Trabajo/Semana",
+      "hours": "horas",
+      "workEmail": "Correo de Trabajo",
+      "address": "Dirección",
+      "salary": "Salario",
+      "name": "Nombre",
+      "relation": "Relación",
+      "taxCode": "Código Fiscal"
+    },
+    "logout": {
+      "confirmTitle": "Confirmar Cierre de Sesión",
+      "confirmMessage": "¿Está seguro de que desea cerrar sesión?",
+      "successTitle": "Cierre de Sesión Exitoso",
+      "successMessage": "Ha cerrado sesión correctamente"
+    }
+  },
+  "employees": {
+    "title": "Gestión de Empleados",
+    "subtitle": "Gestionar y ver todos los empleados del sistema",
+    "searchPlaceholder": "Buscar empleados...",
+    "loading": "Cargando empleados...",
+    "emptyTitle": "No se encontraron empleados",
+    "emptyDescription": "No hay empleados para mostrar en este momento",
+    "emptyActionText": "Agregar Primer Empleado",
+    "columns": {
+      "name": "Nombre",
+      "position": "Posición",
+      "department": "Departamento",
+      "status": "Estado",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "employeeNumber": "Número de Empleado",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "hireDate": "Fecha de Contratación"
+    },
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "tabs": {
+      "list": "Lista de Empleados",
+      "add": "Agregar Empleado",
+      "search": "Buscar",
+      "reports": "Informes",
+      "settings": "Configuración"
+    },
+    "add": {
+      "title": "Agregar Nuevo Empleado",
+      "subtitle": "Crear un nuevo registro de empleado en el sistema",
+      "sections": {
+        "personalInformation": "Información Personal",
+        "personalInformationDescription": "Ingrese los detalles personales del empleado",
+        "workInformation": "Información Laboral",
+        "workInformationDescription": "Ingrese los detalles de empleo",
+        "addressInformation": "Información de Dirección",
+        "addressInformationDescription": "Detalles de dirección opcionales",
+        "emergencyContact": "Contacto de Emergencia",
+        "emergencyContactDescription": "Información de contacto de emergencia opcional"
+      },
+      "fields": {
+        "firstName": "Nombre",
+        "firstNamePlaceholder": "Ingrese el nombre",
+        "lastName": "Apellido",
+        "lastNamePlaceholder": "Ingrese el apellido",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "Ingrese la dirección de correo electrónico",
+        "phoneNumber": "Número de Teléfono",
+        "phoneNumberPlaceholder": "Ingrese el número de teléfono",
+        "employeeNumber": "Número de Empleado",
+        "employeeNumberPlaceholder": "Se generará automáticamente si está vacío",
+        "hireDate": "Fecha de Contratación",
+        "employmentStatus": "Estado de Empleo",
+        "employmentType": "Tipo de Empleo",
+        "department": "Departamento",
+        "position": "Posición",
+        "manager": "Gerente",
+        "currentSalary": "Salario Actual",
+        "salaryCurrency": "Moneda del Salario",
+        "address": "Dirección",
+        "addressPlaceholder": "Ingrese la dirección",
+        "city": "Ciudad",
+        "cityPlaceholder": "Ingrese la ciudad",
+        "postalCode": "Código Postal",
+        "postalCodePlaceholder": "Ingrese el código postal",
+        "country": "País",
+        "countryPlaceholder": "Ingrese el país",
+        "emergencyContactName": "Nombre del Contacto de Emergencia",
+        "emergencyContactNamePlaceholder": "Ingrese el nombre del contacto de emergencia",
+        "emergencyContactPhone": "Teléfono del Contacto de Emergencia",
+        "emergencyContactPhonePlaceholder": "Ingrese el teléfono del contacto de emergencia",
+        "emergencyContactRelation": "Relación",
+        "emergencyContactRelationPlaceholder": "Ingrese la relación",
+        "taxCode": "Código Fiscal",
+        "taxCodePlaceholder": "Ingrese el código fiscal"
+      }
+    },
+    "detail": {
+      "sections": {
+        "userInformation": "Información de Usuario",
+        "userInformationDescription": "Detalles de la cuenta de usuario",
+        "personalInformation": "Información Personal",
+        "personalInformationDescription": "Detalles personales del empleado",
+        "workInformation": "Información Laboral",
+        "workInformationDescription": "Detalles de empleo y trabajo",
+        "addressInformation": "Información de Dirección",
+        "addressInformationDescription": "Detalles de dirección"
+      },
+      "id": "ID"
+    },
+    "search": {
+      "title": "Buscar Empleado",
+      "subtitle": "Buscar y filtrar empleados por varios criterios",
+      "cardTitle": "Buscar y Filtrar Empleados",
+      "showing": "Mostrando {{count}} de {{total}} empleados",
+      "noResults": "Sin Resultados",
+      "noResultsDescription": "Use el formulario de arriba para buscar empleados",
+      "loadingMessage": "Cargando empleados...",
+      "emptyTitle": "No se encontraron empleados",
+      "emptyDescription": "No hay empleados que coincidan con su criterio de búsqueda",
+      "loadEmployees": "Cargar Empleados",
+      "fields": {
+        "departmentPlaceholder": "Seleccione un departamento (requerido)",
+        "firstNamePlaceholder": "Buscar por nombre",
+        "lastNamePlaceholder": "Buscar por apellido",
+        "emailPlaceholder": "Buscar por correo",
+        "employeeNumberPlaceholder": "Buscar por número de empleado",
+        "phonePlaceholder": "Buscar por teléfono",
+        "positionPlaceholder": "Filtrar por posición",
+        "statusPlaceholder": "Filtrar por estado",
+        "allStatuses": "Todos los Estados",
+        "hireDateFrom": "Fecha de Contratación Desde",
+        "hireDateTo": "Fecha de Contratación Hasta",
+        "selectStartDate": "Seleccione fecha de inicio",
+        "selectEndDate": "Seleccione fecha de fin"
+      }
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "terminated": "Terminado"
+    },
+    "reports": {
+      "title": "Estadísticas y Reportes de Empleados",
+      "subtitle": "Análisis e información completa sobre su fuerza laboral",
+      "departmentDistribution": "Distribución por Departamento",
+      "statusDistribution": "Distribución por Estado de Empleo",
+      "positionDistribution": "Distribución por Posición",
+      "salaryRangeDistribution": "Distribución por Rango Salarial",
+      "hiringTrends": "Tendencias de Contratación (Últimos 12 Meses)",
+      "employmentTypeDistribution": "Distribución por Tipo de Empleo",
+      "cityDistribution": "Distribución por Ciudad",
+      "countryDistribution": "Distribución por País",
+      "contractTypeDistribution": "Distribución por Tipo de Contrato",
+      "workingHoursDistribution": "Distribución por Horas de Trabajo",
+      "departmentSalaryComparison": "Comparación Salarial por Departamento",
+      "recentHires": "Contrataciones Recientes (Últimos 90 Días)"
+    },
+    "settings": {
+      "title": "Configuración de Empleados",
+      "subtitle": "Configurar preferencias de gestión de empleados y configuración del sistema",
+      "generalSettings": "Configuración General",
+      "autoGenerateId": "Generar ID de empleado automáticamente",
+      "autoGenerateIdDescription": "Generar automáticamente IDs únicos para nuevos empleados",
+      "sendWelcomeEmail": "Enviar correo de bienvenida",
+      "sendWelcomeEmailDescription": "Enviar correo de bienvenida a nuevos empleados al crearlos",
+      "requireManagerApproval": "Requerir aprobación del gerente",
+      "requireManagerApprovalDescription": "Requerir aprobación del gerente para agregar nuevos empleados",
+      "notificationSettings": "Configuración de Notificaciones",
+      "enableNotifications": "Habilitar notificaciones",
+      "enableNotificationsDescription": "Recibir notificaciones para eventos importantes de empleados",
+      "emailNotifications": "Notificaciones por correo",
+      "emailNotificationsDescription": "Enviar notificaciones por correo electrónico",
+      "smsNotifications": "Notificaciones por SMS",
+      "smsNotificationsDescription": "Enviar notificaciones por SMS",
+      "dataManagement": "Gestión de Datos",
+      "autoBackup": "Respaldo automático de datos de empleados",
+      "autoBackupDescription": "Respaldar automáticamente datos de empleados diariamente",
+      "archiveInactive": "Archivar empleados inactivos",
+      "archiveInactiveDescription": "Mover empleados inactivos al archivo después de 1 año",
+      "accessControl": "Control de Acceso",
+      "restrictPersonalData": "Restringir acceso a datos personales",
+      "restrictPersonalDataDescription": "Solo RRHH y gerentes pueden ver datos personales de empleados",
+      "requireTwoFactor": "Requerir autenticación de dos factores",
+      "requireTwoFactorDescription": "Requerir 2FA para acceder a datos de empleados",
+      "resetToDefault": "Restablecer a Valores Predeterminados",
+      "saveSettings": "Guardar Configuración"
+    }
+  },
+  "contracts": {
+    "title": "Gestión de Contratos",
+    "subtitle": "Gestionar y ver todos los contratos del sistema",
+    "searchPlaceholder": "Buscar contratos...",
+    "loading": "Cargando contratos...",
+    "emptyTitle": "No se encontraron contratos",
+    "emptyDescription": "No hay contratos para mostrar en este momento",
+    "emptyActionText": "Agregar Primer Contrato",
+    "columns": {
+      "employee": "Empleado",
+      "contractType": "Tipo de Contrato",
+      "startDate": "Fecha de Inicio",
+      "endDate": "Fecha de Fin",
+      "status": "Estado",
+      "salary": "Salario"
+    },
+    "types": {
+      "indefinite": "Indefinido",
+      "fixed": "Término Fijo",
+      "partTime": "Tiempo Parcial",
+      "temporary": "Temporal",
+      "internship": "Prácticas"
+    },
+    "status": {
+      "active": "Activo",
+      "expired": "Expirado",
+      "terminated": "Terminado",
+      "pending": "Pendiente"
+    },
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "tabs": {
+      "list": "Lista de Contratos",
+      "add": "Agregar Contrato",
+      "search": "Buscar Contratos",
+      "submitApproval": "Enviar para Aprobación"
+    },
+    "search": {
+      "title": "Buscar Contratos",
+      "subtitle": "Buscar y filtrar contratos por varios criterios",
+      "cardTitle": "Buscar y Filtrar Contratos",
+      "showing": "Mostrando {{count}} contrato(s)",
+      "loadingMessage": "Cargando contratos...",
+      "emptyTitle": "No se encontraron contratos",
+      "emptyDescription": "No hay contratos que coincidan con su criterio de búsqueda"
+    },
+    "add": {
+      "sections": {
+        "contractInfo": "Información del Contrato",
+        "contractInfoDescription": "Ingrese los detalles del contrato",
+        "approvalSettings": "Configuración de Aprobación",
+        "approvalSettingsDescription": "Configure el flujo de aprobación del contrato (opcional)"
+      },
+      "fields": {
+        "employee": "Empleado",
+        "employeePlaceholder": "Seleccione un empleado",
+        "contractType": "Tipo de Contrato",
+        "contractTypePlaceholder": "Seleccione el tipo de contrato",
+        "status": "Estado",
+        "statusPlaceholder": "Seleccione el estado",
+        "startDate": "Fecha de Inicio",
+        "startDatePlaceholder": "Seleccione la fecha de inicio",
+        "endDate": "Fecha de Fin",
+        "endDatePlaceholder": "Seleccione la fecha de fin (opcional)",
+        "salary": "Salario",
+        "salaryPlaceholder": "Ingrese el salario (opcional)",
+        "renewalReminder": "Fecha de Recordatorio de Renovación",
+        "renewalReminderPlaceholder": "Seleccione la fecha de recordatorio (opcional)",
+        "notes": "Notas",
+        "notesPlaceholder": "Ingrese notas adicionales (opcional)",
+        "submitForApproval": "Enviar para Aprobación",
+        "submitForApprovalPlaceholder": "Enviar automáticamente el contrato para aprobación después de crear",
+        "approvers": "Aprobadores",
+        "approversPlaceholder": "Seleccione usuarios como aprobadores (dejar vacío para usar el flujo predeterminado)",
+        "approversHint": "Seleccione usuarios específicos que aprobarán este contrato. Si no se seleccionan usuarios, el sistema usará el flujo de aprobación predeterminado basado en roles.",
+        "approvalComments": "Comentarios de Aprobación",
+        "approvalCommentsPlaceholder": "Ingrese comentarios para la solicitud de aprobación (opcional)"
+      },
+      "submitButton": "Crear Contrato"
+    },
+    "submitApproval": {
+      "sections": {
+        "contractSelection": "Selección de Contrato",
+        "approvalSettings": "Configuración de Aprobación"
+      },
+      "fields": {
+        "contract": "Contrato",
+        "contractPlaceholder": "Seleccione un contrato",
+        "approvers": "Aprobadores",
+        "approversPlaceholder": "Seleccione aprobadores (múltiples)",
+        "comments": "Comentarios de Aprobación",
+        "commentsPlaceholder": "Ingrese comentarios para la solicitud de aprobación (opcional)"
+      },
+      "submitButton": "Enviar para Aprobación"
+    }
+  },
+  "contractApprovals": {
+    "title": "Aprobaciones de Contratos",
+    "subtitle": "Gestionar y revisar solicitudes de aprobación de contratos",
+    "loading": "Cargando aprobaciones...",
+    "emptyTitle": "Sin Aprobaciones",
+    "emptyDescription": "No hay aprobaciones de contratos que coincidan con el filtro seleccionado",
+    "stats": {
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado"
+    },
+    "columns": {
+      "employee": "Empleado",
+      "contractType": "Tipo de Contrato",
+      "status": "Estado",
+      "progress": "Progreso",
+      "requestedBy": "Solicitado Por",
+      "requestedAt": "Solicitado En"
+    },
+    "actions": {
+      "view": "Ver",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    },
+    "filterOptions": {
+      "all": "Todos",
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado"
+    },
+    "dialog": {
+      "approveTitle": "Aprobar Contrato",
+      "approveMessage": "¿Aprobar el contrato para {{name}}?",
+      "rejectTitle": "Rechazar Contrato",
+      "rejectMessage": "¿Rechazar el contrato para {{name}}?"
+    }
+  },
+  "contractTemplates": {
+    "title": "Plantillas de Contrato",
+    "subtitle": "Gestione plantillas de contrato para creación rápida",
+    "searchPlaceholder": "Buscar plantillas...",
+    "loading": "Cargando plantillas...",
+    "emptyTitle": "Sin Plantillas",
+    "emptyDescription": "No hay plantillas que coincidan con el filtro seleccionado",
+    "tabs": {
+      "list": "Lista de Plantillas",
+      "add": "Agregar Plantilla"
+    },
+    "columns": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "contractType": "Tipo",
+      "category": "Categoría",
+      "usageCount": "Uso",
+      "status": "Estado",
+      "default": "Predeterminado"
+    },
+    "stats": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "default": "Predeterminado"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "default": "Predeterminado"
+    },
+    "filterOptions": {
+      "all": "Todos",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "default": "Predeterminado"
+    },
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "duplicate": "Duplicar"
+    }
+  },
+  "contractReminders": {
+    "title": "Recordatorios de Vencimiento de Contrato",
+    "subtitle": "Monitorear contratos que vencen pronto",
+    "loading": "Cargando recordatorios...",
+    "emptyTitle": "Sin Recordatorios",
+    "emptyDescription": "No hay contratos que venzan en el período seleccionado",
+    "filterLabel": "Mostrar contratos que vencen en:",
+    "filterOptions": {
+      "7days": "7 días",
+      "30days": "30 días",
+      "60days": "60 días",
+      "90days": "90 días"
+    },
+    "stats": {
+      "expired": "Vencido",
+      "urgent": "Urgente (≤7 días)",
+      "warning": "Advertencia (8-30 días)",
+      "info": "Info (>30 días)"
+    },
+    "columns": {
+      "employee": "Empleado",
+      "type": "Tipo",
+      "endDate": "Fecha de Fin",
+      "daysLeft": "Días Restantes",
+      "status": "Estado"
+    },
+    "actions": {
+      "view": "Ver",
+      "renew": "Renovar"
+    }
+  },
+  "roles": {
+    "title": "Gestión de Roles",
+    "subtitle": "Gestionar roles de usuario y sus permisos",
+    "list": "Lista de Roles",
+    "add": "Agregar Rol",
+    "edit": "Editar Rol",
+    "details": "Detalles del Rol",
+    "searchPlaceholder": "Buscar roles...",
+    "loading": "Cargando roles...",
+    "emptyTitle": "No hay Roles",
+    "emptyDescription": "No se encontraron roles",
+    "stats": {
+      "totalRoles": "Total de Roles",
+      "systemRoles": "Roles del Sistema",
+      "customRoles": "Roles Personalizados"
+    },
+    "columns": {
+      "name": "Nombre del Rol",
+      "description": "Descripción",
+      "permissions": "Permisos",
+      "users": "Usuarios",
+      "type": "Tipo",
+      "createdAt": "Creado en"
+    },
+    "form": {
+      "roleInformation": "Información del Rol",
+      "roleInformationDescription": "Ingrese la información básica del rol",
+      "permissions": "Permisos",
+      "permissionsDescription": "Seleccione los permisos para este rol",
+      "name": "Nombre del Rol",
+      "namePlaceholder": "Ingrese el nombre del rol",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Ingrese la descripción del rol",
+      "permissionsPlaceholder": "Seleccione permisos",
+      "submitButton": "Crear Rol",
+      "confirmTitle": "Confirmar Creación",
+      "confirmMessage": "¿Está seguro de que desea crear el rol {{name}}?"
+    },
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "update": "Actualizar Rol",
+    "tabs": {
+      "list": "Lista de Roles",
+      "add": "Agregar Rol"
+    },
+    "type": {
+      "system": "Sistema",
+      "custom": "Personalizado"
+    },
+    "morePermissions": "+{{count}} más"
+  },
+  "permissions": {
+    "title": "Gestión de Permisos",
+    "subtitle": "Ver y gestionar permisos del sistema",
+    "searchPlaceholder": "Buscar permisos...",
+    "loading": "Cargando permisos...",
+    "emptyTitle": "Sin Permisos",
+    "emptyDescription": "No se encontraron permisos",
+    "filterByModule": "Filtrar por Módulo",
+    "filterAll": "Todos",
+    "tabs": {
+      "list": "Lista de Permisos",
+      "add": "Agregar Permiso"
+    },
+    "stats": {
+      "totalPermissions": "Total de Permisos"
+    },
+    "columns": {
+      "name": "Nombre del Permiso",
+      "description": "Descripción",
+      "category": "Categoría",
+      "module": "Módulo",
+      "roles": "Roles",
+      "type": "Tipo"
+    },
+    "form": {
+      "resource": "Recurso",
+      "action": "Acción",
+      "category": "Categoría"
+    },
+    "actions": {
+      "create": "Crear",
+      "read": "Leer",
+      "update": "Actualizar",
+      "delete": "Eliminar",
+      "assign": "Asignar",
+      "approve": "Aprobar",
+      "export": "Exportar",
+      "admin": "Administrador",
+      "config": "Configuración",
+      "audit": "Auditoría",
+      "manage": "Gestionar"
+    },
+    "categories": {
+      "employeeManagement": "Gestión de Empleados",
+      "roleManagement": "Gestión de Roles",
+      "permissionManagement": "Gestión de Permisos",
+      "departmentManagement": "Gestión de Departamentos",
+      "positionManagement": "Gestión de Posiciones",
+      "contractManagement": "Gestión de Contratos",
+      "systemAdministration": "Administración del Sistema",
+      "userManagement": "Gestión de Usuarios"
+    }
+  },
+  "departments": {
+    "title": "Gestión de Departamentos",
+    "subtitle": "Gestionar y ver todos los departamentos del sistema",
+    "searchPlaceholder": "Buscar departamentos...",
+    "loading": "Cargando departamentos...",
+    "emptyTitle": "No se encontraron departamentos",
+    "emptyDescription": "No hay departamentos para mostrar en este momento",
+    "emptyActionText": "Agregar Primer Departamento",
+    "columns": {
+      "code": "Código",
+      "name": "Nombre",
+      "description": "Descripción",
+      "parentDepartment": "Departamento Padre",
+      "level": "Nivel"
+    },
+    "tabs": {
+      "list": "Lista de Departamentos",
+      "add": "Agregar Departamento",
+      "search": "Buscar Departamento"
+    },
+    "search": {
+      "title": "Buscar Departamento",
+      "subtitle": "Buscar y filtrar departamentos por varios criterios",
+      "cardTitle": "Buscar y Filtrar Departamentos",
+      "showing": "Mostrando {{count}} departamento(s)",
+      "loadingMessage": "Cargando departamentos...",
+      "emptyTitle": "No se encontraron departamentos",
+      "emptyDescription": "No hay departamentos que coincidan con su criterio de búsqueda"
+    },
+    "add": {
+      "sectionTitle": "Información del Departamento",
+      "sectionDescription": "Ingrese los detalles del departamento",
+      "fields": {
+        "name": "Nombre del Departamento",
+        "namePlaceholder": "Ingrese el nombre del departamento",
+        "code": "Código del Departamento",
+        "codePlaceholder": "Ingrese el código del departamento",
+        "level": "Nivel",
+        "levelPlaceholder": "Ingrese el nivel",
+        "parentDepartment": "Departamento Padre",
+        "parentDepartmentPlaceholder": "Seleccione departamento padre (opcional)",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese la descripción del departamento"
+      },
+      "submitButton": "Crear Departamento",
+      "cancelButton": "Cancelar",
+      "confirmTitle": "Confirmar Creación",
+      "confirmMessage": "¿Está seguro de que desea crear el departamento {{name}}?",
+      "confirmButton": "Crear"
+    }
+  },
+  "positions": {
+    "title": "Gestión de Posiciones",
+    "subtitle": "Gestionar y ver todas las posiciones del sistema",
+    "searchPlaceholder": "Buscar posiciones...",
+    "loading": "Cargando posiciones...",
+    "emptyTitle": "No se encontraron posiciones",
+    "emptyDescription": "No hay posiciones para mostrar en este momento",
+    "emptyActionText": "Agregar Primera Posición",
+    "columns": {
+      "code": "Código",
+      "name": "Nombre",
+      "description": "Descripción",
+      "department": "Departamento",
+      "isManagement": "Gerencial",
+      "level": "Nivel",
+      "minSalary": "Salario Mínimo",
+      "maxSalary": "Salario Máximo"
+    },
+    "tabs": {
+      "list": "Lista de Posiciones",
+      "add": "Agregar Posición",
+      "search": "Buscar Posición"
+    },
+    "delete": {
+      "confirmTitle": "Confirmar Eliminación",
+      "confirmMessage": "¿Está seguro de que desea eliminar la posición {{name}}? Esta acción no se puede deshacer."
+    },
+    "yes": "Sí",
+    "no": "No",
+    "search": {
+      "title": "Buscar Posición",
+      "subtitle": "Buscar y filtrar posiciones por varios criterios",
+      "cardTitle": "Buscar y Filtrar Posiciones",
+      "showing": "Mostrando {{count}} posición(es)",
+      "loadingMessage": "Cargando posiciones...",
+      "emptyTitle": "No se encontraron posiciones",
+      "emptyDescription": "No hay posiciones que coincidan con su criterio de búsqueda"
+    }
+  },
+  "users": {
+    "title": "Gestión de Usuarios",
+    "subtitle": "Gestionar usuarios del sistema y su acceso",
+    "searchPlaceholder": "Buscar usuarios...",
+    "loading": "Cargando usuarios...",
+    "emptyTitle": "No hay Usuarios",
+    "emptyDescription": "No se encontraron usuarios",
+    "stats": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "locked": "Bloqueado"
+    },
+    "tabs": {
+      "list": "Lista de Usuarios",
+      "add": "Agregar Usuario"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "add": {
+      "sections": {
+        "userInfo": "Información del Usuario",
+        "userInfoDescription": "Ingrese la información básica del usuario",
+        "accountSettings": "Configuración de Cuenta",
+        "accountSettingsDescription": "Configure los ajustes de la cuenta"
+      },
+      "fields": {
+        "username": "Nombre de Usuario",
+        "usernamePlaceholder": "Ingrese el nombre de usuario",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "Ingrese el correo electrónico",
+        "firstName": "Nombre",
+        "firstNamePlaceholder": "Ingrese el nombre",
+        "lastName": "Apellido",
+        "lastNamePlaceholder": "Ingrese el apellido",
+        "phone": "Número de Teléfono",
+        "phonePlaceholder": "Ingrese el número de teléfono",
+        "password": "Contraseña",
+        "passwordPlaceholder": "Ingrese la contraseña",
+        "confirmPassword": "Confirmar Contraseña",
+        "confirmPasswordPlaceholder": "Confirme la contraseña",
+        "roles": "Roles",
+        "rolesPlaceholder": "Seleccione los roles",
+        "isActive": "Activo"
+      },
+      "submitButton": "Crear Usuario",
+      "confirmTitle": "Confirmar Creación",
+      "confirmMessage": "¿Está seguro de que desea crear el usuario {{name}}?"
+    }
+  },
+  "auditLogs": {
+    "title": "Registros de Auditoría",
+    "subtitle": "Rastrear y revisar todas las actividades y cambios del sistema",
+    "searchPlaceholder": "Buscar registros de auditoría...",
+    "loading": "Cargando registros de auditoría...",
+    "emptyTitle": "No hay Registros de Auditoría",
+    "emptyDescription": "No se encontraron registros de auditoría",
+    "stats": {
+      "totalLogs": "Total de Registros",
+      "info": "Información",
+      "warning": "Advertencia",
+      "error": "Error",
+      "critical": "Crítico"
+    },
+    "tabs": {
+      "list": "Lista de Registros de Auditoría",
+      "search": "Buscar Registro de Auditoría"
+    },
+    "search": {
+      "title": "Búsqueda Avanzada",
+      "loading": "Buscando registros de auditoría...",
+      "emptyTitle": "Sin Resultados",
+      "emptyDescription": "No hay registros que coincidan con los criterios de búsqueda",
+      "filtersSection": "Filtros de Búsqueda",
+      "filtersDescription": "Filtrar registros de auditoría por varios criterios"
+    }
+  },
+  "systemMonitor": {
+    "title": "Monitor del Sistema",
+    "subtitle": "Monitoreo de salud de infraestructura en tiempo real",
+    "autoRefresh": "Actualización automática: {{seconds}}s",
+    "loading": "Cargando datos de salud del sistema...",
+    "connectionError": "Error de Conexión",
+    "tryAgain": "Intentar de Nuevo",
+    "info": "Los datos de salud se actualizan automáticamente cada 30 segundos. Actualización manual disponible a través de los botones arriba."
+  },
+  "view": {
+    "switchToCard": "Cambiar a vista de tarjetas",
+    "switchToTable": "Cambiar a vista de tabla",
+    "cardView": "Vista de Tarjetas",
+    "tableView": "Vista de Tabla"
+  },
+  "table": {
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "emptyMessage": "No hay datos disponibles",
+    "loading": "Cargando..."
+  },
+  "tabs": {
+    "list": "Lista",
+    "add": "Agregar",
+    "search": "Buscar",
+    "edit": "Editar",
+    "details": "Detalles",
+    "reports": "Informes",
+    "settings": "Configuración",
+    "submitApproval": "Enviar para Aprobación"
+  },
+  "dashboard": {
+    "title": "Resumen del Panel",
+    "subtitle": "Bienvenido a su panel de gestión",
+    "refresh": "Actualizar",
+    "loading": "Cargando datos del panel...",
+    "stats": {
+      "totalEmployees": "Total de Empleados",
+      "activeContracts": "Contratos Activos",
+      "departments": "Departamentos",
+      "pendingApprovals": "Aprobaciones Pendientes"
+    },
+    "actions": {
+      "viewDetails": "Ver Detalles",
+      "manage": "Gestionar",
+      "viewAll": "Ver Todo",
+      "review": "Revisar"
+    },
+    "recentActivities": {
+      "title": "Actividades Recientes",
+      "subtitle": "Últimas actualizaciones y notificaciones",
+      "noActivities": "No hay actividades recientes",
+      "viewAll": "Ver Todas las Actividades"
+    }
+  },
+  "tasks": {
+    "title": "Mis Tareas",
+    "subtitle": "Gestiona tu lista personal de tareas",
+    "loading": "Cargando tareas...",
+    "emptyTitle": "No se encontraron tareas",
+    "emptyDescription": "Aún no tienes tareas. ¡Crea tu primera tarea para comenzar!",
+    "emptyActionText": "Crear Primera Tarea",
+    "newTask": "Nueva Tarea",
+    "editTask": "Editar Tarea",
+    "createNewTask": "Crear Nueva Tarea",
+    "updateTask": "Actualizar Tarea",
+    "createTask": "Crear Tarea",
+    "deleteTask": "Eliminar tarea",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Ingrese el título de la tarea",
+    "descriptionLabel": "Descripción",
+    "descriptionPlaceholder": "Ingrese la descripción de la tarea (opcional)",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "statusAll": "Todas",
+    "statusPending": "Pendiente",
+    "statusInProgress": "En Progreso",
+    "statusCompleted": "Completada",
+    "statusCancelled": "Cancelada",
+    "priorityLow": "Baja",
+    "priorityMedium": "Media",
+    "priorityHigh": "Alta",
+    "priorityUrgent": "Urgente"
+  },
+  "approvals": {
+    "title": "Gestión de Aprobaciones",
+    "subtitle": "Gestionar y revisar aprobaciones pendientes",
+    "loading": "Cargando aprobaciones...",
+    "emptyTitle": "No hay Aprobaciones",
+    "emptyDescription": "No hay aprobaciones que coincidan con el filtro seleccionado",
+    "filter": "Filtro",
+    "stats": {
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado"
+    },
+    "columns": {
+      "type": "Tipo",
+      "title": "Título",
+      "requester": "Solicitante",
+      "status": "Estado",
+      "priority": "Prioridad",
+      "progress": "Progreso",
+      "approver": "Aprobador",
+      "dueDate": "Fecha de Vencimiento"
+    },
+    "actions": {
+      "view": "Ver",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    },
+    "filterOptions": {
+      "all": "Todas",
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado"
+    },
+    "dialog": {
+      "approveTitle": "Aprobar Solicitud",
+      "approveMessage": "Por favor proporcione un comentario para esta aprobación:",
+      "approvePlaceholder": "Ingrese comentario de aprobación (opcional)",
+      "rejectTitle": "Rechazar Solicitud",
+      "rejectMessage": "Por favor proporcione una razón para el rechazo:",
+      "rejectPlaceholder": "Ingrese razón de rechazo (requerido)"
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "subtitle": "Ver y gestionar tus notificaciones",
+    "loading": "Cargando notificaciones...",
+    "emptyTitle": "No hay Notificaciones",
+    "emptyDescription": "No tienes notificaciones en este momento",
+    "noMatchFilters": "No hay notificaciones que coincidan con los filtros",
+    "noMatchFiltersDescription": "Intenta ajustar tus filtros para ver más notificaciones",
+    "totalNotifications": "Total de Notificaciones",
+    "unread": "No Leídas",
+    "unreadCount": "{{count}} notificación(es) no leída(s)",
+    "allCaughtUp": "¡Todo al día!",
+    "markAllRead": "Marcar Todas como Leídas",
+    "new": "Nuevo",
+    "urgentHigh": "Urgente y Alta Prioridad",
+    "read": "Leído",
+    "archived": "Archivado",
+    "deleteNotification": "Eliminar Notificación",
+    "filters": {
+      "title": "Filtros",
+      "type": "Tipo",
+      "status": "Estado",
+      "priority": "Prioridad",
+      "clearFilters": "Limpiar Filtros",
+      "allTypes": "Todos los Tipos",
+      "allStatus": "Todos los Estados",
+      "allPriorities": "Todas las Prioridades"
+    },
+    "types": {
+      "approval": "Aprobación",
+      "task": "Tarea",
+      "contract": "Contrato",
+      "system": "Sistema",
+      "audit": "Auditoría",
+      "employee": "Empleado"
+    },
+    "priorities": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "noNotifications": "No hay notificaciones",
+    "noNotificationsDescription": "¡Estás al día! No hay nuevas notificaciones.",
+    "viewDetails": "Ver Detalles"
+  }
+}
+

@@ -8,14 +8,14 @@
           <span class="material-icons">dashboard</span>
         </div>
         <div class="title-text">
-          <h1>System Monitor</h1>
-          <p>Real-time infrastructure health monitoring</p>
+          <h1>{{ 'systemMonitor.title' | translate }}</h1>
+          <p>{{ 'systemMonitor.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="header-meta">
         <div class="auto-refresh-badge">
           <span class="material-icons pulse">sync</span>
-          <span>Auto-refresh: 30s</span>
+          <span>{{ 'systemMonitor.autoRefresh' | translate: {seconds: 30} }}</span>
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@
         <app-base-loading
           [overlay]="true"
           [centered]="true"
-          [message]="'Loading system health data...'"
+          [message]="'systemMonitor.loading' | translate"
           [size]="'lg'"
           [type]="'spinner'"
         ></app-base-loading>
@@ -40,13 +40,13 @@
     @if (error) {
       <div class="error-overlay">
         <app-base-error
-          [message]="'Connection Error'"
+          [message]="'systemMonitor.connectionError' | translate"
           [details]="error"
           [type]="'error'"
           [size]="'lg'"
           [showIcon]="true"
           [showRetryButton]="true"
-          [retryButtonText]="'Try Again'"
+          [retryButtonText]="'systemMonitor.tryAgain' | translate"
           [centered]="true"
           (retry)="loadHealthStatus()"
         ></app-base-error>
@@ -91,7 +91,7 @@
     <section class="info-footer">
       <div class="info-item">
         <span class="material-icons">info</span>
-        <span>Health data is automatically refreshed every 30 seconds. Manual refresh available via the buttons above.</span>
+        <span>{{ 'systemMonitor.info' | translate }}</span>
       </div>
     </section>
   </main>

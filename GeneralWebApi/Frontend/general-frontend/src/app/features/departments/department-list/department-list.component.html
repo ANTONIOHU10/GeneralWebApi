@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/departments/department-list/department-list.component.html -->
 <app-base-private-page-container
-  title="Department Management"
-  subtitle="Manage and view all departments in the system"
+  [title]="'departments.title' | translate"
+  [subtitle]="'departments.subtitle' | translate"
   icon="business"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -13,7 +13,7 @@
   <div *ngIf="activeTab() === 'list'" slot="search" class="header-actions">
     <app-base-search
       [config]="{
-        placeholder: 'Search departments...',
+        placeholder: ('departments.searchPlaceholder' | translate),
         debounceTime: 300,
         minLength: 1,
         showClearButton: true,
@@ -31,7 +31,7 @@
       variant="outline"
       size="small"
       (buttonClick)="toggleViewMode()"
-      [title]="'Switch to ' + (viewMode() === 'table' ? 'card' : 'table') + ' view'"
+      [title]="(viewMode() === 'table' ? ('view.switchToCard' | translate) : ('view.switchToTable' | translate))"
       customClass="view-toggle-btn"
     ></app-base-button>
   </div>
@@ -42,10 +42,10 @@
       [loading$]="loading$"
       [error$]="error$"
       [data$]="departments$"
-      loadingMessage="Loading departments..."
-      emptyTitle="No departments found"
-      emptyDescription="There are no departments to display at the moment"
-      emptyActionText="Add First Department"
+      [loadingMessage]="'departments.loading' | translate"
+      [emptyTitle]="'departments.emptyTitle' | translate"
+      [emptyDescription]="'departments.emptyDescription' | translate"
+      [emptyActionText]="'departments.emptyActionText' | translate"
       [onRetry]="onRetryLoad"
       [onEmptyAction]="onEmptyActionClick"
     >

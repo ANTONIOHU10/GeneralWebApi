@@ -17,6 +17,7 @@ import { BaseSearchComponent } from '../base-search/base-search.component';
 import { BaseLoadingComponent } from '../base-loading/base-loading.component';
 import { BaseEmptyComponent } from '../base-empty/base-empty.component';
 import { BasePaginationComponent } from '../base-pagination/base-pagination.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 export interface TableColumn {
   key: string;
@@ -70,6 +71,7 @@ export interface TableConfig {
     BaseLoadingComponent,
     BaseEmptyComponent,
     BasePaginationComponent,
+    TranslatePipe,
   ],
   templateUrl: './base-table.component.html',
   styleUrls: ['./base-table.component.scss'],

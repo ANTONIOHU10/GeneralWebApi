@@ -18,6 +18,8 @@ import { AuthService } from '@core/services/auth.service';
 import { TokenService } from '@core/services/token.service';
 import { NotificationService } from '../../services/notification.service';
 import { DialogService } from '../../services/dialog.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { catchError, of, take } from 'rxjs';
 
 /**
@@ -34,6 +36,7 @@ import { catchError, of, take } from 'rxjs';
     BaseAvatarComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
+    TranslatePipe,
   ],
   templateUrl: './user-profile-modal.component.html',
   styleUrls: ['./user-profile-modal.component.scss'],
@@ -45,6 +48,7 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
+  private translationService = inject(TranslationService);
 
   @Input() employee: Employee | null = null;
   @Input() user: User | null = null;
@@ -106,23 +110,25 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
    */
   private updateSections(): void {
     const sections: DetailSection[] = [];
+    const t = (key: string) => this.translationService.translate(key);
+    const na = t('common.notAvailable');
 
     // User Information section (only if user data is available)
     if (this.user) {
       sections.push({
-        title: 'User Information',
+        title: t('profile.sections.userInformation'),
         fields: [
-          { label: 'Username', value: this.user.userName || 'N/A', type: 'text' },
-          { label: 'Email', value: this.user.email || 'N/A', type: 'text' },
-          { label: 'Phone', value: this.user.phoneNumber || 'N/A', type: 'text' },
+          { label: t('profile.fields.username'), value: this.user.userName || na, type: 'text' },
+          { label: t('profile.fields.email'), value: this.user.email || na, type: 'text' },
+          { label: t('profile.fields.phone'), value: this.user.phoneNumber || na, type: 'text' },
           { 
-            label: 'Role', 
-            value: this.user.roles && this.user.roles.length > 0 ? this.user.roles[0] : 'User', 
+            label: t('profile.fields.role'), 
+            value: this.user.roles && this.user.roles.length > 0 ? this.user.roles[0] : t('profile.fields.defaultRole'), 
             type: 'badge', 
             badgeVariant: this.getRoleVariant() 
           },
-          { label: 'Account Created', value: this.user.createdAt || null, type: 'date' },
-          { label: 'Last Login', value: this.user.lastLoginAt || null, type: 'date' },
+          { label: t('profile.fields.accountCreated'), value: this.user.createdAt || null, type: 'date' },
+          { label: t('profile.fields.lastLogin'), value: this.user.lastLoginAt || null, type: 'date' },
         ],
       });
     }
@@ -130,44 +136,44 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
     // Employee Information sections (only if employee data is available)
     if (this.employee) {
       sections.push({
-        title: 'Basic Information',
+        title: t('profile.sections.basicInformation'),
         fields: [
-          { label: 'Full Name', value: this.getFullName(), type: 'text' },
-          { label: 'Employee Number', value: this.employee.employeeNumber || 'N/A', type: 'text' },
-          { label: 'Position', value: this.employee.position || 'N/A', type: 'text' },
-          { label: 'Department', value: this.employee.department || 'N/A', type: 'text' },
-          { label: 'Manager', value: this.employee.managerName || 'N/A', type: 'text' },
-          { label: 'Hire Date', value: this.employee.hireDate || null, type: 'date' },
-          { label: 'Employment Type', value: this.employee.employmentType || 'N/A', type: 'text' },
+          { label: t('profile.fields.fullName'), value: this.getFullName(), type: 'text' },
+          { label: t('profile.fields.employeeNumber'), value: this.employee.employeeNumber || na, type: 'text' },
+          { label: t('profile.fields.position'), value: this.employee.position || na, type: 'text' },
+          { label: t('profile.fields.department'), value: this.employee.department || na, type: 'text' },
+          { label: t('profile.fields.manager'), value: this.employee.managerName || na, type: 'text' },
+          { label: t('profile.fields.hireDate'), value: this.employee.hireDate || null, type: 'date' },
+          { label: t('profile.fields.employmentType'), value: this.employee.employmentType || na, type: 'text' },
           { 
-            label: 'Status', 
-            value: this.employee.status || 'N/A', 
+            label: t('profile.fields.status'), 
+            value: this.employee.status || na, 
             type: 'badge', 
             badgeVariant: this.getStatusVariant() 
           },
           { 
-            label: 'Working Hours/Week', 
-            value: this.employee.workingHoursPerWeek ? `${this.employee.workingHoursPerWeek} hours` : 'N/A', 
+            label: t('profile.fields.workingHours'), 
+            value: this.employee.workingHoursPerWeek ? `${this.employee.workingHoursPerWeek} ${t('profile.fields.hours')}` : na, 
             type: 'text' 
           },
         ],
       });
 
       sections.push({
-        title: 'Contact Information',
+        title: t('profile.sections.contactInformation'),
         fields: [
-          { label: 'Work Email', value: this.employee.email || 'N/A', type: 'text' },
-          { label: 'Phone', value: this.employee.phone || 'N/A', type: 'text' },
-          { label: 'Address', value: this.getFormattedAddress(), type: 'text' },
+          { label: t('profile.fields.workEmail'), value: this.employee.email || na, type: 'text' },
+          { label: t('profile.fields.phone'), value: this.employee.phone || na, type: 'text' },
+          { label: t('profile.fields.address'), value: this.getFormattedAddress(), type: 'text' },
         ],
       });
 
       if (this.employee.salary) {
         sections.push({
-          title: 'Compensation',
+          title: t('profile.sections.compensation'),
           fields: [
             { 
-              label: 'Salary', 
+              label: t('profile.fields.salary'), 
               value: this.formatCurrency(this.employee.salary || 0, this.employee.salaryCurrency || 'USD'), 
               type: 'text' 
             },
@@ -177,20 +183,20 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
 
       if (this.employee.emergencyContact?.name) {
         sections.push({
-          title: 'Emergency Contact',
+          title: t('profile.sections.emergencyContact'),
           fields: [
-            { label: 'Name', value: this.employee.emergencyContact.name, type: 'text' },
-            { label: 'Phone', value: this.employee.emergencyContact.phone || 'N/A', type: 'text' },
-            { label: 'Relation', value: this.employee.emergencyContact.relation || 'N/A', type: 'text' },
+            { label: t('profile.fields.name'), value: this.employee.emergencyContact.name, type: 'text' },
+            { label: t('profile.fields.phone'), value: this.employee.emergencyContact.phone || na, type: 'text' },
+            { label: t('profile.fields.relation'), value: this.employee.emergencyContact.relation || na, type: 'text' },
           ],
         });
       }
 
       if (this.employee.taxCode) {
         sections.push({
-          title: 'Additional Information',
+          title: t('profile.sections.additionalInformation'),
           fields: [
-            { label: 'Tax Code', value: this.employee.taxCode, type: 'text' },
+            { label: t('profile.fields.taxCode'), value: this.employee.taxCode, type: 'text' },
           ],
         });
       }
@@ -398,10 +404,10 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
 
     // Show confirmation dialog using DialogService
     this.dialogService.confirm({
-      title: 'Confirm Logout',
-      message: 'Are you sure you want to logout?',
-      confirmText: 'Logout',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('profile.logout.confirmTitle'),
+      message: this.translationService.translate('profile.logout.confirmMessage'),
+      confirmText: this.translationService.translate('auth.logout'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       cancelVariant: 'outline',
       icon: 'logout',
@@ -475,8 +481,8 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
 
     // Show success notification
     this.notificationService.success(
-      'Logout Successful',
-      'You have been logged out successfully'
+      this.translationService.translate('profile.logout.successTitle'),
+      this.translationService.translate('profile.logout.successMessage')
     );
 
     // Close modal

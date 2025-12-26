@@ -2,7 +2,7 @@
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
-import { takeUntil, filter, take, catchError, map } from 'rxjs/operators';
+import { takeUntil, filter, take, catchError, map, distinctUntilChanged } from 'rxjs/operators';
 import { ContractCardComponent } from '../contract-card/contract-card.component';
 import { AddContractComponent } from '../add-contract/add-contract.component';
 import { ContractDetailComponent } from '../contract-detail/contract-detail.component';
@@ -28,6 +28,8 @@ import {
 } from '../../../Shared/services';
 import { ContractService } from '../../../core/services/contract.service';
 import { of } from 'rxjs';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 
 @Component({
   selector: 'app-contract-list',
@@ -45,6 +47,7 @@ import { of } from 'rxjs';
     BaseTableComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
+    TranslatePipe,
   ],
   templateUrl: './contract-list.component.html',
   styleUrls: ['./contract-list.component.scss'],
@@ -53,6 +56,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private contractService = inject(ContractService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   // Local state
@@ -92,17 +96,33 @@ export class ContractListComponent implements OnInit, OnDestroy {
     map(contracts => contracts || [])
   );
 
-  // Tab configuration
-  tabs: TabItem[] = [
-    { id: 'list', label: 'Contract List', icon: 'list' },
-    { id: 'add', label: 'Add Contract', icon: 'add' },
-    { id: 'submit-approval', label: 'Submit for Approval', icon: 'check_circle' },
-    { id: 'search', label: 'Search Contract', icon: 'search' },
-  ];
+  // Tab configuration - will be initialized in ngOnInit
+  tabs: TabItem[] = [];
 
   ngOnInit() {
+    // Wait for translations to load before initializing tabs and table
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeTabs();
+      this.initializeTable();
+    });
+
     this.loadContracts();
-    this.initializeTable();
+  }
+
+  /**
+   * Initialize tabs with translations
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      { id: 'list', label: this.translationService.translate('contracts.tabs.list'), icon: 'list' },
+      { id: 'add', label: this.translationService.translate('contracts.tabs.add'), icon: 'add' },
+      { id: 'submit-approval', label: this.translationService.translate('contracts.tabs.submitApproval'), icon: 'check_circle' },
+      { id: 'search', label: this.translationService.translate('contracts.tabs.search'), icon: 'search' },
+    ];
   }
 
   // Removed ngAfterViewInit - templates are now accessed via ContentChild in base-table component
@@ -114,7 +134,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
     this.tableColumns = [
       {
         key: 'employeeName',
-        label: 'Employee',
+        label: this.translationService.translate('contracts.columns.employee'),
         width: '180px',
         align: 'left',
         type: 'text',
@@ -122,7 +142,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'contractType',
-        label: 'Contract Type',
+        label: this.translationService.translate('contracts.columns.contractType'),
         width: '140px',
         align: 'left',
         type: 'text',
@@ -130,7 +150,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'startDate',
-        label: 'Start Date',
+        label: this.translationService.translate('contracts.columns.startDate'),
         width: '120px',
         align: 'left',
         type: 'date',
@@ -138,7 +158,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'endDate',
-        label: 'End Date',
+        label: this.translationService.translate('contracts.columns.endDate'),
         width: '120px',
         align: 'left',
         type: 'date',
@@ -146,7 +166,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'status',
-        label: 'Status',
+        label: this.translationService.translate('contracts.columns.status'),
         width: '120px',
         align: 'center',
         type: 'custom',
@@ -155,7 +175,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
       },
       {
         key: 'salary',
-        label: 'Salary',
+        label: this.translationService.translate('contracts.columns.salary'),
         width: '120px',
         align: 'right',
         type: 'number',
@@ -165,7 +185,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
 
     this.tableActions = [
       {
-        label: 'View',
+        label: this.translationService.translate('table.actions.view'),
         icon: 'visibility',
         variant: 'primary',
         showLabel: false,
@@ -174,7 +194,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Edit',
+        label: this.translationService.translate('table.actions.edit'),
         icon: 'edit',
         variant: 'warning',
         showLabel: false,
@@ -183,7 +203,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Delete',
+        label: this.translationService.translate('table.actions.delete'),
         icon: 'delete',
         variant: 'danger',
         showLabel: false,

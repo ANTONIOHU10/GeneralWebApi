@@ -1,7 +1,7 @@
 <!-- src/app/features/employees/employee-list/employee-list.component.html -->
 <app-base-private-page-container
-  title="Employee Management"
-  subtitle="Manage and view all employees in the system"
+  [title]="'employees.title' | translate"
+  [subtitle]="'employees.subtitle' | translate"
   icon="people"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -13,7 +13,7 @@
   <div *ngIf="activeTab() === 'list'" slot="search" class="header-actions">
     <app-base-search
       [config]="{
-        placeholder: 'Search employees...',
+        placeholder: ('employees.searchPlaceholder' | translate),
         debounceTime: 300,
         minLength: 1,
         showClearButton: true,
@@ -31,7 +31,7 @@
       variant="outline"
       size="small"
       (buttonClick)="toggleViewMode()"
-      [title]="'Switch to ' + (viewMode() === 'table' ? 'card' : 'table') + ' view'"
+      [title]="(viewMode() === 'table' ? ('view.switchToCard' | translate) : ('view.switchToTable' | translate))"
       customClass="view-toggle-btn"
     ></app-base-button>
   </div>
@@ -42,10 +42,10 @@
       [loading$]="loading$"
       [error$]="error$"
       [data$]="employees$"
-      loadingMessage="Loading employees..."
-      emptyTitle="No employees found"
-      emptyDescription="There are no employees to display at the moment"
-      emptyActionText="Add First Employee"
+      [loadingMessage]="'employees.loading' | translate"
+      [emptyTitle]="'employees.emptyTitle' | translate"
+      [emptyDescription]="'employees.emptyDescription' | translate"
+      [emptyActionText]="'employees.emptyActionText' | translate"
       [onRetry]="onRetryLoad"
       [onEmptyAction]="onEmptyActionClick"
     >

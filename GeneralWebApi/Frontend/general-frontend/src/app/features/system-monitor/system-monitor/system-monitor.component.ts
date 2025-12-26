@@ -6,6 +6,7 @@ import { takeUntil, catchError } from 'rxjs/operators';
 import { HealthCheckService, CacheHealth, DatabaseHealth, SystemHealth } from '../../../core/services/health-check.service';
 import { NotificationService } from '../../../Shared/services';
 import { BaseLoadingComponent, BaseErrorComponent } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import {
   DatabaseHealthCardComponent,
   CacheHealthCardComponent,
@@ -22,6 +23,7 @@ import {
     DatabaseHealthCardComponent,
     CacheHealthCardComponent,
     SystemOverviewCardComponent,
+    TranslatePipe,
   ],
   templateUrl: './system-monitor.component.html',
   styleUrls: ['./system-monitor.component.scss'],

@@ -2,8 +2,8 @@
 <button
   class="user-profile"
   (click)="onProfileClick()"
-  aria-label="User profile menu"
-  title="Profile"
+  [attr.aria-label]="'header.userProfileMenu' | translate"
+  [title]="'header.profile' | translate"
 >
   <div class="user-avatar">
     <span class="material-icons">person</span>

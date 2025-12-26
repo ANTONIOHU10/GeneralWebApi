@@ -4,8 +4,8 @@
   <button
     class="theme-toggle-button"
     (click)="toggleTheme()"
-    [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
-    [title]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+    [attr.aria-label]="isDarkMode ? ('login.switchToLightMode' | translate) : ('login.switchToDarkMode' | translate)"
+    [title]="isDarkMode ? ('login.switchToLightMode' | translate) : ('login.switchToDarkMode' | translate)"
   >
     <span class="material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
   </button>
@@ -16,22 +16,22 @@
     <div class="brand-section">
       <div class="brand-logo">
         <div class="logo-icon">GW</div>
-        <h1 class="brand-title">GeneralWebApi</h1>
-        <p class="brand-subtitle">Enterprise Management System</p>
+        <h1 class="brand-title">{{ 'common.appName' | translate }}</h1>
+        <p class="brand-subtitle">{{ 'login.enterpriseManagementSystem' | translate }}</p>
       </div>
 
       <div class="features-list">
         <div class="feature-item">
           <div class="feature-icon material-icons">people</div>
-          <span>Employee Management</span>
+          <span>{{ 'login.employeeManagement' | translate }}</span>
         </div>
         <div class="feature-item">
           <div class="feature-icon material-icons">dashboard</div>
-          <span>Analytics Dashboard</span>
+          <span>{{ 'login.analyticsDashboard' | translate }}</span>
         </div>
         <div class="feature-item">
           <div class="feature-icon material-icons">security</div>
-          <span>Secure Access</span>
+          <span>{{ 'login.secureAccess' | translate }}</span>
         </div>
       </div>
     </div>
@@ -40,8 +40,8 @@
     <div class="login-form-section">
       <div class="form-container">
         <div class="form-header">
-          <h2>Welcome Back</h2>
-          <p>Sign in to continue to your account</p>
+          <h2>{{ 'login.welcomeBack' | translate }}</h2>
+          <p>{{ 'login.signInToContinue' | translate }}</p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
@@ -50,7 +50,7 @@
             <app-base-input
               formControlName="username"
               type="text"
-              placeholder="Username"
+              [placeholder]="'login.username' | translate"
               [required]="true"
               [error]="getFieldError('username')"
               prefixIcon="person"
@@ -64,7 +64,7 @@
             <app-base-input
               formControlName="password"
               type="password"
-              placeholder="Password"
+              [placeholder]="'login.password' | translate"
               [required]="true"
               [error]="getFieldError('password')"
               prefixIcon="lock"
@@ -77,7 +77,7 @@
           <div class="form-options">
             <app-base-checkbox
               formControlName="rememberMe"
-              label="Remember me"
+              [label]="'login.rememberMe' | translate"
               inputId="login-remember-me"
               [size]="'sm'"
             ></app-base-checkbox>
@@ -88,14 +88,14 @@
               tabindex="0"
               (click)="onForgotPassword(); $event.preventDefault()"
             >
-              Forgot password?
+              {{ 'login.forgotPassword' | translate }}
             </a>
           </div>
 
           <!-- Submit Button -->
           <app-base-button
             type="submit"
-            text="Sign In"
+            [text]="'login.signIn' | translate"
             variant="primary"
             size="large"
             [disabled]="loading() || loginForm.invalid"
@@ -107,7 +107,7 @@
         <!-- Footer Information -->
         <div class="form-footer">
           <p>
-            Don't have an account?
+            {{ 'login.dontHaveAccount' | translate }}
             <a
               href="#"
               class="signup-link"
@@ -115,7 +115,7 @@
               tabindex="0"
               (click)="onContactAdmin(); $event.preventDefault()"
             >
-              Contact Administrator
+              {{ 'login.contactAdministrator' | translate }}
             </a>
           </p>
         </div>

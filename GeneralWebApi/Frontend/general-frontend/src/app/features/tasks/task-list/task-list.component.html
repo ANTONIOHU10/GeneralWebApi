@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/tasks/task-list/task-list.component.html -->
 <app-base-private-page-container
-  title="My Tasks"
-  subtitle="Manage your personal todo list"
+  [title]="'tasks.title' | translate"
+  [subtitle]="'tasks.subtitle' | translate"
   icon="task_alt"
   [showTabs]="false"
   [showSearch]="false"
@@ -10,7 +10,7 @@
   <div slot="actions" class="header-actions">
     <app-base-button
       [icon]="showCreateForm() ? 'close' : 'add'"
-      [text]="showCreateForm() ? 'Cancel' : 'New Task'"
+      [text]="showCreateForm() ? ('common.cancel' | translate) : ('tasks.newTask' | translate)"
       variant="primary"
       size="small"
       (buttonClick)="showCreateForm() ? onCancelEdit() : showCreateForm.set(true)"
@@ -20,13 +20,13 @@
   <!-- Filters - Simplified: Only Status -->
   <div class="filters">
     <div class="filter-group">
-      <label for="task-status-filter">Status:</label>
+      <label for="task-status-filter">{{ 'tasks.status' | translate }}:</label>
       <select id="task-status-filter" [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event); loadTasks()">
-        <option value="all">All</option>
-        <option value="Pending">Pending</option>
-        <option value="InProgress">In Progress</option>
-        <option value="Completed">Completed</option>
-        <option value="Cancelled">Cancelled</option>
+        <option value="all">{{ 'tasks.statusAll' | translate }}</option>
+        <option value="Pending">{{ 'tasks.statusPending' | translate }}</option>
+        <option value="InProgress">{{ 'tasks.statusInProgress' | translate }}</option>
+        <option value="Completed">{{ 'tasks.statusCompleted' | translate }}</option>
+        <option value="Cancelled">{{ 'tasks.statusCancelled' | translate }}</option>
       </select>
     </div>
   </div>
@@ -34,16 +34,16 @@
   <!-- Create/Edit Form - Simplified -->
   <app-base-card
     *ngIf="showCreateForm()"
-    [title]="editingTask ? 'Edit Task' : 'Create New Task'"
+    [title]="editingTask ? ('tasks.editTask' | translate) : ('tasks.createNewTask' | translate)"
     variant="elevated"
     class="task-form-card"
   >
     <div class="task-form">
       <div class="form-row">
         <app-base-input
-          label="Title"
+          [label]="'tasks.titleLabel' | translate"
           [(ngModel)]="taskForm.title"
-          placeholder="Enter task title"
+          [placeholder]="'tasks.titlePlaceholder' | translate"
           [required]="true"
           inputId="task-title"
         ></app-base-input>
@@ -51,11 +51,11 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="task-description">Description</label>
+          <label for="task-description">{{ 'tasks.descriptionLabel' | translate }}</label>
           <textarea
             id="task-description"
             [(ngModel)]="taskForm.description"
-            placeholder="Enter task description (optional)"
+            [placeholder]="'tasks.descriptionPlaceholder' | translate"
             class="form-control textarea"
             rows="3"
           ></textarea>
@@ -64,36 +64,36 @@
 
       <div class="form-row form-row-2">
         <div class="form-group">
-          <label for="task-status">Status</label>
+          <label for="task-status">{{ 'tasks.status' | translate }}</label>
           <select id="task-status" [(ngModel)]="taskForm.status">
-            <option value="Pending">Pending</option>
-            <option value="InProgress">In Progress</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="Pending">{{ 'tasks.statusPending' | translate }}</option>
+            <option value="InProgress">{{ 'tasks.statusInProgress' | translate }}</option>
+            <option value="Completed">{{ 'tasks.statusCompleted' | translate }}</option>
+            <option value="Cancelled">{{ 'tasks.statusCancelled' | translate }}</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="task-priority">Priority</label>
+          <label for="task-priority">{{ 'tasks.priority' | translate }}</label>
           <select id="task-priority" [(ngModel)]="taskForm.priority">
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Urgent">Urgent</option>
+            <option value="Low">{{ 'tasks.priorityLow' | translate }}</option>
+            <option value="Medium">{{ 'tasks.priorityMedium' | translate }}</option>
+            <option value="High">{{ 'tasks.priorityHigh' | translate }}</option>
+            <option value="Urgent">{{ 'tasks.priorityUrgent' | translate }}</option>
           </select>
         </div>
       </div>
 
       <div class="form-actions">
         <app-base-button
-          [text]="editingTask ? 'Update Task' : 'Create Task'"
+          [text]="editingTask ? ('tasks.updateTask' | translate) : ('tasks.createTask' | translate)"
           [icon]="editingTask ? 'save' : 'add'"
           variant="primary"
           (buttonClick)="editingTask ? onSaveTask() : onCreateTask()"
           [disabled]="(loading$ | async) ?? false"
         ></app-base-button>
         <app-base-button
-          text="Cancel"
+          [text]="'common.cancel' | translate"
           icon="close"
           variant="outline"
           (buttonClick)="onCancelEdit()"
@@ -107,10 +107,10 @@
     [loading$]="loading$"
     [error$]="error$"
     [data$]="filteredTasks$"
-    loadingMessage="Loading tasks..."
-    emptyTitle="No tasks found"
-    emptyDescription="You don't have any tasks yet. Create your first task to get started!"
-    emptyActionText="Create First Task"
+    [loadingMessage]="'tasks.loading' | translate"
+    [emptyTitle]="'tasks.emptyTitle' | translate"
+    [emptyDescription]="'tasks.emptyDescription' | translate"
+    [emptyActionText]="'tasks.emptyActionText' | translate"
     [onRetry]="onRetryLoad"
     [onEmptyAction]="onEmptyAction"
   >
@@ -138,12 +138,12 @@
             </div>
             <div class="task-badges">
               <app-base-badge
-                [text]="task.status"
+                [text]="getStatusText(task.status)"
                 [variant]="getStatusVariant(task.status)"
                 size="small"
               ></app-base-badge>
               <app-base-badge
-                [text]="task.priority"
+                [text]="getPriorityText(task.priority)"
                 [variant]="getPriorityVariant(task.priority)"
                 size="small"
               ></app-base-badge>
@@ -161,14 +161,14 @@
             variant="outline"
             size="small"
             (buttonClick)="onEditTask(task)"
-            title="Edit task"
+            [title]="'common.edit' | translate"
           ></app-base-button>
           <app-base-button
             icon="delete"
             variant="danger"
             size="small"
             (buttonClick)="onDeleteTask(task)"
-            title="Delete task"
+            [title]="'tasks.deleteTask' | translate"
           ></app-base-button>
         </div>
       </div>

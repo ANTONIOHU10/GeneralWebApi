@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/permissions/permission-list/permission-list.component.html -->
 <app-base-private-page-container
-  title="Permission Management"
-  subtitle="View and manage system permissions"
+  [title]="'permissions.title' | translate"
+  [subtitle]="'permissions.subtitle' | translate"
   icon="security"
   [showTabs]="true"
   [showSearch]="activeTab() === 'list'"
@@ -14,7 +14,7 @@
     *ngIf="activeTab() === 'list'"
     slot="search"
     [config]="{
-      placeholder: 'Search permissions...',
+      placeholder: ('permissions.searchPlaceholder' | translate),
       debounceTime: 300,
       minLength: 1,
       showClearButton: true,
@@ -27,14 +27,14 @@
   <!-- Permission List Tab -->
   <div *ngIf="activeTab() === 'list'">
     <!-- Filter -->
-    <app-base-card [title]="'Filter by Module'" [icon]="'filter_list'" [variant]="'elevated'">
+    <app-base-card [title]="'permissions.filterByModule' | translate" [icon]="'filter_list'" [variant]="'elevated'">
       <div class="filter-buttons">
         <button
           [class.active]="activeFilter() === 'all'"
           (click)="onFilterChange('all')"
           class="filter-button"
         >
-          All ({{ totalCount() }})
+          {{ 'permissions.filterAll' | translate }} ({{ totalCount() }})
         </button>
         <button
           *ngFor="let module of ['Employees', 'Departments', 'Contracts', 'Users', 'Roles']"
@@ -56,7 +56,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ totalCount() }}</div>
-            <div class="stat-label">Total Permissions</div>
+            <div class="stat-label">{{ 'permissions.stats.totalPermissions' | translate }}</div>
           </div>
         </div>
       </app-base-card>
@@ -66,9 +66,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="permissionsData$"
-      loadingMessage="Loading permissions..."
-      emptyTitle="No Permissions"
-      emptyDescription="No permissions found"
+      [loadingMessage]="'permissions.loading' | translate"
+      [emptyTitle]="'permissions.emptyTitle' | translate"
+      [emptyDescription]="'permissions.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <app-base-table

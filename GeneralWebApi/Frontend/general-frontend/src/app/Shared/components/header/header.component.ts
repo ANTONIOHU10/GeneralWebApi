@@ -12,6 +12,7 @@ import { HeaderBrandComponent } from './components/header-brand/header-brand.com
 import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
 import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   standalone: true,
@@ -25,6 +26,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
     NotificationDropdownComponent,
     QuickActionsComponent,
     UserProfileComponent,
+    TranslatePipe,
   ],
 })
 export class HeaderComponent implements OnInit, OnDestroy {

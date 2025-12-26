@@ -9,16 +9,16 @@
         </div>
         <span class="brand-text">{{ copyrightText }}</span>
       </div>
-      <span class="copyright">© {{ year }} All rights reserved.</span>
+      <span class="copyright">© {{ year }} {{ 'footer.allRightsReserved' | translate }}.</span>
     </div>
 
     <!-- Center Section: Links (optional) -->
     <div class="footer-center">
-      <a href="#" class="footer-link">Privacy</a>
+      <a href="#" class="footer-link">{{ 'footer.privacy' | translate }}</a>
       <span class="footer-dot">·</span>
-      <a href="#" class="footer-link">Terms</a>
+      <a href="#" class="footer-link">{{ 'footer.terms' | translate }}</a>
       <span class="footer-dot">·</span>
-      <a href="#" class="footer-link">Help</a>
+      <a href="#" class="footer-link">{{ 'footer.help' | translate }}</a>
     </div>
 
     <!-- Right Section: Version & Status -->
@@ -26,7 +26,7 @@
       <div class="footer-right">
         <div class="status-indicator">
           <span class="status-dot"></span>
-          <span class="status-text">All systems operational</span>
+          <span class="status-text">{{ 'footer.allSystemsOperational' | translate }}</span>
         </div>
         <span class="version-badge">v{{ version }}</span>
       </div>

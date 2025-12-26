@@ -2,13 +2,14 @@
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { takeUntil, filter, take } from 'rxjs/operators';
+import { takeUntil, filter, take, distinctUntilChanged } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
+import { TranslationService } from '@core/services/translation.service';
 import { CreateRoleRequest } from '../../../roles/role.model';
 import { RoleService } from '../../../core/services/role.service';
 import { PermissionService, PermissionList } from '../../../core/services/permission.service';
@@ -28,6 +29,7 @@ export class AddRoleComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private roleService = inject(RoleService);
   private permissionService = inject(PermissionService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   @Output() roleCreated = new EventEmitter<void>();
@@ -47,65 +49,49 @@ export class AddRoleComponent implements OnInit, OnDestroy {
   permissionOptions: SelectOption[] = []; // Will be loaded from backend
 
   formConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Role Information',
-        description: 'Enter role basic information',
-        order: 0,
-      },
-      {
-        title: 'Permissions',
-        description: 'Select permissions for this role',
-        order: 1,
-      },
-    ],
-    layout: {
-      columns: 2,
-      gap: '1.5rem',
-      sectionGap: '2rem',
-      labelPosition: 'top',
-      showSectionDividers: true,
-    },
-    fields: [
-      {
-        key: 'name',
-        type: 'input',
-        label: 'Role Name',
-        placeholder: 'Enter role name',
-        required: true,
-        section: 'Role Information',
-        order: 0,
-        colSpan: 2,
-      },
-      {
-        key: 'description',
-        type: 'textarea',
-        label: 'Description',
-        placeholder: 'Enter role description',
-        required: false,
-        section: 'Role Information',
-        order: 1,
-        colSpan: 2,
-        rows: 3,
-      },
-      {
-        key: 'permissions',
-        type: 'select',
-        label: 'Permissions',
-        placeholder: 'Select permissions',
-        required: false,
-        section: 'Permissions',
-        order: 0,
-        colSpan: 2,
-        multiple: true,
-        searchable: true,
-        options: this.permissionOptions,
-      },
-    ],
+    sections: [],
+    layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
+    submitButtonVariant: 'primary',
+    cancelButtonVariant: 'secondary',
   };
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const roleInfoSection = this.translationService.translate('roles.form.roleInformation');
+    const permissionsSection = this.translationService.translate('roles.form.permissions');
+
+    this.formConfig = {
+      sections: [
+        { title: roleInfoSection, description: this.translationService.translate('roles.form.roleInformationDescription'), order: 0 },
+        { title: permissionsSection, description: this.translationService.translate('roles.form.permissionsDescription'), order: 1 },
+      ],
+      layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+      fields: [
+        { key: 'name', type: 'input', label: this.translationService.translate('roles.form.name'), placeholder: this.translationService.translate('roles.form.namePlaceholder'), required: true, section: roleInfoSection, order: 0, colSpan: 2 },
+        { key: 'description', type: 'textarea', label: this.translationService.translate('roles.form.description'), placeholder: this.translationService.translate('roles.form.descriptionPlaceholder'), required: false, section: roleInfoSection, order: 1, colSpan: 2, rows: 3 },
+        { key: 'permissions', type: 'select', label: this.translationService.translate('roles.form.permissions'), placeholder: this.translationService.translate('roles.form.permissionsPlaceholder'), required: false, section: permissionsSection, order: 0, colSpan: 2, multiple: true, searchable: true, options: this.permissionOptions },
+      ],
+      submitButtonText: this.translationService.translate('roles.form.submitButton'),
+      cancelButtonText: this.translationService.translate('common.cancel'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
   ngOnInit(): void {
-    // Don't load permissions on init, wait for user to click the dropdown
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+    });
   }
 
   ngOnDestroy(): void {

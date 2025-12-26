@@ -2,7 +2,7 @@
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { takeUntil, filter, take } from 'rxjs/operators';
+import { takeUntil, filter, take, distinctUntilChanged } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
@@ -10,6 +10,8 @@ import {
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { PermissionService } from '../../../core/services/permission.service';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-add-permission',
@@ -17,6 +19,7 @@ import { PermissionService } from '../../../core/services/permission.service';
   imports: [
     CommonModule,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './add-permission.component.html',
   styleUrls: ['./add-permission.component.scss'],
@@ -25,6 +28,7 @@ export class AddPermissionComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private permissionService = inject(PermissionService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   @Output() permissionCreated = new EventEmitter<void>();
@@ -77,81 +81,48 @@ export class AddPermissionComponent implements OnInit, OnDestroy {
   ];
 
   formConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Permission Information',
-        description: 'Enter permission basic information',
-        order: 0,
-      },
-    ],
-    layout: {
-      columns: 2,
-      gap: '1.5rem',
-      sectionGap: '2rem',
-      labelPosition: 'top',
-      showSectionDividers: true,
-    },
-    fields: [
-      {
-        key: 'name',
-        type: 'input',
-        label: 'Permission Name',
-        placeholder: 'Auto-generated from Resource and Action',
-        required: false, // Not required in form validation since it's auto-generated
-        section: 'Permission Information',
-        order: 0,
-        colSpan: 2,
-        hint: 'Auto-generated as Resource.Action (e.g., Employees.View)',
-        readonly: true,
-      },
-      {
-        key: 'description',
-        type: 'textarea',
-        label: 'Description',
-        placeholder: 'Enter permission description',
-        required: false,
-        section: 'Permission Information',
-        order: 1,
-        colSpan: 2,
-        rows: 3,
-      },
-      {
-        key: 'resource',
-        type: 'select',
-        label: 'Resource',
-        placeholder: 'Select resource',
-        required: true,
-        section: 'Permission Information',
-        order: 2,
-        colSpan: 1,
-        options: this.resourceOptions,
-      },
-      {
-        key: 'action',
-        type: 'select',
-        label: 'Action',
-        placeholder: 'Select action',
-        required: true,
-        section: 'Permission Information',
-        order: 3,
-        colSpan: 1,
-        options: this.actionOptions,
-      },
-      {
-        key: 'category',
-        type: 'select',
-        label: 'Category',
-        placeholder: 'Select category',
-        required: true,
-        section: 'Permission Information',
-        order: 4,
-        colSpan: 1,
-        options: this.categoryOptions,
-      },
-    ],
+    sections: [],
+    layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
+    submitButtonVariant: 'primary',
+    cancelButtonVariant: 'secondary',
   };
 
-  ngOnInit(): void {}
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const sectionTitle = this.translationService.translate('permissions.add.sections.permissionInfo');
+
+    this.formConfig = {
+      sections: [{ title: sectionTitle, description: this.translationService.translate('permissions.add.sections.permissionInfoDescription'), order: 0 }],
+      layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+      fields: [
+        { key: 'name', type: 'input', label: this.translationService.translate('permissions.add.fields.name'), placeholder: this.translationService.translate('permissions.add.fields.namePlaceholder'), required: false, section: sectionTitle, order: 0, colSpan: 2, hint: this.translationService.translate('permissions.add.fields.nameHint'), readonly: true },
+        { key: 'description', type: 'textarea', label: this.translationService.translate('permissions.add.fields.description'), placeholder: this.translationService.translate('permissions.add.fields.descriptionPlaceholder'), required: false, section: sectionTitle, order: 1, colSpan: 2, rows: 3 },
+        { key: 'resource', type: 'select', label: this.translationService.translate('permissions.add.fields.resource'), placeholder: this.translationService.translate('permissions.add.fields.resourcePlaceholder'), required: true, section: sectionTitle, order: 2, colSpan: 1, options: this.resourceOptions },
+        { key: 'action', type: 'select', label: this.translationService.translate('permissions.add.fields.action'), placeholder: this.translationService.translate('permissions.add.fields.actionPlaceholder'), required: true, section: sectionTitle, order: 3, colSpan: 1, options: this.actionOptions },
+        { key: 'category', type: 'select', label: this.translationService.translate('permissions.add.fields.category'), placeholder: this.translationService.translate('permissions.add.fields.categoryPlaceholder'), required: true, section: sectionTitle, order: 4, colSpan: 1, options: this.categoryOptions },
+      ],
+      submitButtonText: this.translationService.translate('common.add'),
+      cancelButtonText: this.translationService.translate('common.cancel'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
+  ngOnInit(): void {
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -165,15 +136,19 @@ export class AddPermissionComponent implements OnInit, OnDestroy {
     const name = (data['name'] as string) || (resource && action ? `${resource}.${action}` : '');
 
     if (!name) {
-      this.notificationService.error('Validation Error', 'Please select Resource and Action to generate permission name', { duration: 5000 });
+      this.notificationService.error(
+        this.translationService.translate('common.validationError'),
+        this.translationService.translate('permissions.add.messages.selectResourceAction'),
+        { duration: 5000 }
+      );
       return;
     }
 
     const confirm$ = this.dialogService.confirm({
-      title: 'Confirm Add Permission',
-      message: `Add permission "${name}"?`,
-      confirmText: 'Add',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('permissions.add.confirmTitle'),
+      message: this.translationService.translate('permissions.add.confirmMessage', { name }),
+      confirmText: this.translationService.translate('common.add'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'primary',
       icon: 'add',
     });

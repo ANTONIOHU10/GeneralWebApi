@@ -2,7 +2,7 @@
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, delay, of } from 'rxjs';
-import { takeUntil, filter, take } from 'rxjs/operators';
+import { takeUntil, filter, take, distinctUntilChanged } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
@@ -11,6 +11,8 @@ import {
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { CONTRACT_TEMPLATE_CATEGORIES } from 'app/contracts/contract-templates/contract-template.model';
 import { CONTRACT_TYPES as CONTRACT_TYPE_OPTIONS } from 'app/contracts/contracts/contract.model';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-add-contract-template',
@@ -18,6 +20,7 @@ import { CONTRACT_TYPES as CONTRACT_TYPE_OPTIONS } from 'app/contracts/contracts
   imports: [
     CommonModule,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './add-contract-template.component.html',
   styleUrls: ['./add-contract-template.component.scss'],
@@ -25,6 +28,7 @@ import { CONTRACT_TYPES as CONTRACT_TYPE_OPTIONS } from 'app/contracts/contracts
 export class AddContractTemplateComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   @Output() templateCreated = new EventEmitter<void>();
@@ -46,145 +50,59 @@ export class AddContractTemplateComponent implements OnInit, OnDestroy {
   };
 
   formConfig: FormConfig = {
-    sections: [
-      {
-        title: 'Template Information',
-        description: 'Enter template basic information',
-        order: 0,
-      },
-      {
-        title: 'Template Content',
-        description: 'Enter template content and variables',
-        order: 1,
-      },
-      {
-        title: 'Settings',
-        description: 'Configure template settings',
-        order: 2,
-      },
-    ],
-    layout: {
-      columns: 2,
-      gap: '1.5rem',
-      sectionGap: '2rem',
-      labelPosition: 'top',
-      showSectionDividers: true,
-    },
-    fields: [
-      {
-        key: 'name',
-        type: 'input',
-        label: 'Template Name',
-        placeholder: 'Enter template name',
-        required: true,
-        section: 'Template Information',
-        order: 0,
-        colSpan: 2,
-      },
-      {
-        key: 'description',
-        type: 'textarea',
-        label: 'Description',
-        placeholder: 'Enter template description',
-        required: false,
-        section: 'Template Information',
-        order: 1,
-        colSpan: 2,
-        rows: 3,
-      },
-      {
-        key: 'contractType',
-        type: 'select',
-        label: 'Contract Type',
-        placeholder: 'Select contract type',
-        required: true,
-        section: 'Template Information',
-        order: 2,
-        colSpan: 1,
-        options: CONTRACT_TYPE_OPTIONS.map(type => ({
-          value: type.value,
-          label: type.label,
-        })) as SelectOption[],
-      },
-      {
-        key: 'category',
-        type: 'select',
-        label: 'Category',
-        placeholder: 'Select category',
-        required: false,
-        section: 'Template Information',
-        order: 3,
-        colSpan: 1,
-        options: CONTRACT_TEMPLATE_CATEGORIES.map(cat => ({
-          value: cat,
-          label: cat,
-        })) as SelectOption[],
-      },
-      {
-        key: 'templateContent',
-        type: 'textarea',
-        label: 'Template Content',
-        placeholder: 'Enter template content (supports variables like {{employeeName}})',
-        required: true,
-        section: 'Template Content',
-        order: 0,
-        colSpan: 2,
-        rows: 10,
-      },
-      {
-        key: 'variables',
-        type: 'textarea',
-        label: 'Variables (JSON)',
-        placeholder: '{"employeeName":"string","position":"string"}',
-        required: false,
-        section: 'Template Content',
-        order: 1,
-        colSpan: 2,
-        rows: 4,
-      },
-      {
-        key: 'legalRequirements',
-        type: 'textarea',
-        label: 'Legal Requirements',
-        placeholder: 'Enter legal requirements or compliance notes',
-        required: false,
-        section: 'Template Content',
-        order: 2,
-        colSpan: 2,
-        rows: 3,
-      },
-      {
-        key: 'tags',
-        type: 'input',
-        label: 'Tags (JSON array)',
-        placeholder: '["tag1","tag2"]',
-        required: false,
-        section: 'Settings',
-        order: 0,
-        colSpan: 1,
-      },
-      {
-        key: 'isActive',
-        type: 'checkbox',
-        label: 'Active',
-        required: false,
-        section: 'Settings',
-        order: 1,
-        colSpan: 1,
-      },
-      {
-        key: 'isDefault',
-        type: 'checkbox',
-        label: 'Set as Default',
-        required: false,
-        section: 'Settings',
-        order: 2,
-        colSpan: 1,
-      },
-    ],
+    sections: [],
+    layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+    fields: [],
+    submitButtonText: '',
+    cancelButtonText: '',
+    submitButtonVariant: 'primary',
+    cancelButtonVariant: 'secondary',
   };
 
-  ngOnInit(): void {}
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const sectionInfo = this.translationService.translate('contractTemplates.add.sections.templateInfo');
+    const sectionContent = this.translationService.translate('contractTemplates.add.sections.templateContent');
+    const sectionSettings = this.translationService.translate('contractTemplates.add.sections.settings');
+
+    this.formConfig = {
+      sections: [
+        { title: sectionInfo, description: this.translationService.translate('contractTemplates.add.sections.templateInfoDescription'), order: 0 },
+        { title: sectionContent, description: this.translationService.translate('contractTemplates.add.sections.templateContentDescription'), order: 1 },
+        { title: sectionSettings, description: this.translationService.translate('contractTemplates.add.sections.settingsDescription'), order: 2 },
+      ],
+      layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
+      fields: [
+        { key: 'name', type: 'input', label: this.translationService.translate('contractTemplates.add.fields.name'), placeholder: this.translationService.translate('contractTemplates.add.fields.namePlaceholder'), required: true, section: sectionInfo, order: 0, colSpan: 2 },
+        { key: 'description', type: 'textarea', label: this.translationService.translate('contractTemplates.add.fields.description'), placeholder: this.translationService.translate('contractTemplates.add.fields.descriptionPlaceholder'), required: false, section: sectionInfo, order: 1, colSpan: 2, rows: 3 },
+        { key: 'contractType', type: 'select', label: this.translationService.translate('contractTemplates.add.fields.contractType'), placeholder: this.translationService.translate('contractTemplates.add.fields.contractTypePlaceholder'), required: true, section: sectionInfo, order: 2, colSpan: 1, options: CONTRACT_TYPE_OPTIONS.map(type => ({ value: type.value, label: type.label })) as SelectOption[] },
+        { key: 'category', type: 'select', label: this.translationService.translate('contractTemplates.add.fields.category'), placeholder: this.translationService.translate('contractTemplates.add.fields.categoryPlaceholder'), required: false, section: sectionInfo, order: 3, colSpan: 1, options: CONTRACT_TEMPLATE_CATEGORIES.map(cat => ({ value: cat, label: cat })) as SelectOption[] },
+        { key: 'templateContent', type: 'textarea', label: this.translationService.translate('contractTemplates.add.fields.templateContent'), placeholder: this.translationService.translate('contractTemplates.add.fields.templateContentPlaceholder'), required: true, section: sectionContent, order: 0, colSpan: 2, rows: 10 },
+        { key: 'variables', type: 'textarea', label: this.translationService.translate('contractTemplates.add.fields.variables'), placeholder: '{"employeeName":"string","position":"string"}', required: false, section: sectionContent, order: 1, colSpan: 2, rows: 4 },
+        { key: 'legalRequirements', type: 'textarea', label: this.translationService.translate('contractTemplates.add.fields.legalRequirements'), placeholder: this.translationService.translate('contractTemplates.add.fields.legalRequirementsPlaceholder'), required: false, section: sectionContent, order: 2, colSpan: 2, rows: 3 },
+        { key: 'tags', type: 'input', label: this.translationService.translate('contractTemplates.add.fields.tags'), placeholder: '["tag1","tag2"]', required: false, section: sectionSettings, order: 0, colSpan: 1 },
+        { key: 'isActive', type: 'checkbox', label: this.translationService.translate('contractTemplates.add.fields.isActive'), required: false, section: sectionSettings, order: 1, colSpan: 1 },
+        { key: 'isDefault', type: 'checkbox', label: this.translationService.translate('contractTemplates.add.fields.isDefault'), required: false, section: sectionSettings, order: 2, colSpan: 1 },
+      ],
+      submitButtonText: this.translationService.translate('contractTemplates.add.submitButton'),
+      cancelButtonText: this.translationService.translate('common.cancel'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+  }
+
+  ngOnInit(): void {
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -192,11 +110,12 @@ export class AddContractTemplateComponent implements OnInit, OnDestroy {
   }
 
   onFormSubmit(data: Record<string, unknown>): void {
+    const templateName = data['name'] as string || '';
     const confirm$ = this.dialogService.confirm({
-      title: 'Confirm Add Template',
-      message: `Are you sure you want to add template "${data['name']}"?`,
-      confirmText: 'Add',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('contractTemplates.add.confirmTitle'),
+      message: this.translationService.translate('contractTemplates.add.confirmMessage', { name: templateName }),
+      confirmText: this.translationService.translate('common.add'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'primary',
       icon: 'add',
     });

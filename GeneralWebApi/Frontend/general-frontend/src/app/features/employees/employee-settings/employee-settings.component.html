@@ -3,16 +3,16 @@
   <div class="page-header">
     <h2>
       <span class="material-icons">settings</span>
-      Employee Settings
+      {{ 'employees.settings.title' | translate }}
     </h2>
-    <p>Configure employee management preferences and system settings</p>
+    <p>{{ 'employees.settings.subtitle' | translate }}</p>
   </div>
 
   <div class="page-content">
     <div class="settings-sections">
-      <!-- 通用设置 -->
+      <!-- General Settings -->
       <div class="settings-section">
-        <h3>General Settings</h3>
+        <h3>{{ 'employees.settings.generalSettings' | translate }}</h3>
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
@@ -22,10 +22,10 @@
                 name="autoGenerateId"
               />
               <span class="checkmark"></span>
-              Auto-generate employee ID
+              {{ 'employees.settings.autoGenerateId' | translate }}
             </label>
             <p class="setting-description">
-              Automatically generate unique employee IDs for new employees
+              {{ 'employees.settings.autoGenerateIdDescription' | translate }}
             </p>
           </div>
 
@@ -37,10 +37,10 @@
                 name="sendWelcomeEmail"
               />
               <span class="checkmark"></span>
-              Send welcome email
+              {{ 'employees.settings.sendWelcomeEmail' | translate }}
             </label>
             <p class="setting-description">
-              Send welcome email to new employees upon creation
+              {{ 'employees.settings.sendWelcomeEmailDescription' | translate }}
             </p>
           </div>
 
@@ -52,18 +52,18 @@
                 name="requireManagerApproval"
               />
               <span class="checkmark"></span>
-              Require manager approval
+              {{ 'employees.settings.requireManagerApproval' | translate }}
             </label>
             <p class="setting-description">
-              Require manager approval for new employee additions
+              {{ 'employees.settings.requireManagerApprovalDescription' | translate }}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- 通知设置 -->
+      <!-- Notification Settings -->
       <div class="settings-section">
-        <h3>Notification Settings</h3>
+        <h3>{{ 'employees.settings.notificationSettings' | translate }}</h3>
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
@@ -73,10 +73,10 @@
                 name="enableNotifications"
               />
               <span class="checkmark"></span>
-              Enable notifications
+              {{ 'employees.settings.enableNotifications' | translate }}
             </label>
             <p class="setting-description">
-              Receive notifications for important employee events
+              {{ 'employees.settings.enableNotificationsDescription' | translate }}
             </p>
           </div>
 
@@ -88,9 +88,9 @@
                 name="emailNotifications"
               />
               <span class="checkmark"></span>
-              Email notifications
+              {{ 'employees.settings.emailNotifications' | translate }}
             </label>
-            <p class="setting-description">Send notifications via email</p>
+            <p class="setting-description">{{ 'employees.settings.emailNotificationsDescription' | translate }}</p>
           </div>
 
           <div class="setting-item">
@@ -101,16 +101,16 @@
                 name="smsNotifications"
               />
               <span class="checkmark"></span>
-              SMS notifications
+              {{ 'employees.settings.smsNotifications' | translate }}
             </label>
-            <p class="setting-description">Send notifications via SMS</p>
+            <p class="setting-description">{{ 'employees.settings.smsNotificationsDescription' | translate }}</p>
           </div>
         </div>
       </div>
 
-      <!-- 数据管理 -->
+      <!-- Data Management -->
       <div class="settings-section">
-        <h3>Data Management</h3>
+        <h3>{{ 'employees.settings.dataManagement' | translate }}</h3>
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
@@ -120,10 +120,10 @@
                 name="autoBackup"
               />
               <span class="checkmark"></span>
-              Auto-backup employee data
+              {{ 'employees.settings.autoBackup' | translate }}
             </label>
             <p class="setting-description">
-              Automatically backup employee data daily
+              {{ 'employees.settings.autoBackupDescription' | translate }}
             </p>
           </div>
 
@@ -135,18 +135,18 @@
                 name="archiveInactive"
               />
               <span class="checkmark"></span>
-              Archive inactive employees
+              {{ 'employees.settings.archiveInactive' | translate }}
             </label>
             <p class="setting-description">
-              Move inactive employees to archive after 1 year
+              {{ 'employees.settings.archiveInactiveDescription' | translate }}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- 访问控制 -->
+      <!-- Access Control -->
       <div class="settings-section">
-        <h3>Access Control</h3>
+        <h3>{{ 'employees.settings.accessControl' | translate }}</h3>
         <div class="settings-group">
           <div class="setting-item">
             <label class="setting-label">
@@ -156,10 +156,10 @@
                 name="restrictPersonalData"
               />
               <span class="checkmark"></span>
-              Restrict personal data access
+              {{ 'employees.settings.restrictPersonalData' | translate }}
             </label>
             <p class="setting-description">
-              Only HR and managers can view personal employee data
+              {{ 'employees.settings.restrictPersonalDataDescription' | translate }}
             </p>
           </div>
 
@@ -171,28 +171,28 @@
                 name="requireTwoFactor"
               />
               <span class="checkmark"></span>
-              Require two-factor authentication
+              {{ 'employees.settings.requireTwoFactor' | translate }}
             </label>
             <p class="setting-description">
-              Require 2FA for accessing employee data
+              {{ 'employees.settings.requireTwoFactorDescription' | translate }}
             </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 操作按钮 -->
+    <!-- Action Buttons -->
     <div class="settings-actions">
       <app-base-button
         [variant]="'secondary'"
-        [text]="'Reset to Default'"
+        [text]="'employees.settings.resetToDefault' | translate"
         (click)="resetToDefault()"
       >
       </app-base-button>
 
       <app-base-button
         [variant]="'primary'"
-        [text]="'Save Settings'"
+        [text]="'employees.settings.saveSettings' | translate"
         (click)="saveSettings()"
       >
       </app-base-button>

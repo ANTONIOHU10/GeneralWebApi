@@ -3,21 +3,21 @@
   <div class="page-header">
     <h2>
       <span class="material-icons">search</span>
-      Search Contracts
+      {{ 'contracts.search.title' | translate }}
     </h2>
-    <p>Search and filter contracts by various criteria</p>
+    <p>{{ 'contracts.search.subtitle' | translate }}</p>
   </div>
 
   <!-- Search Form Section -->
   <div class="search-section">
     <app-base-card
-      [title]="'Search & Filter Contracts'"
+      [title]="'contracts.search.cardTitle' | translate"
       [icon]="'search'"
       [variant]="'elevated'"
     >
       <div class="search-stats" *ngIf="allContracts().length > 0">
         <span class="stat-text">
-          Showing {{ allContracts().length }} contract(s)
+          {{ 'contracts.search.showing' | translate: {count: allContracts().length} }}
         </span>
       </div>
 
@@ -38,9 +38,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="contractsData$"
-      loadingMessage="Loading contracts..."
-      emptyTitle="No contracts found"
-      emptyDescription="No contracts match your search criteria"
+      [loadingMessage]="'contracts.search.loadingMessage' | translate"
+      [emptyTitle]="'contracts.search.emptyTitle' | translate"
+      [emptyDescription]="'contracts.search.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <!-- Success content: Contract table -->
@@ -59,7 +59,7 @@
           bordered: false,
           size: 'medium',
           loading: false,
-          emptyMessage: 'No contracts match your search criteria'
+          emptyMessage: ''
         }"
         [pageSize]="10"
         (rowClick)="onRowClick($event)"

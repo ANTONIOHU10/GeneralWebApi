@@ -3,21 +3,21 @@
   <div class="page-header">
     <h2>
       <span class="material-icons">search</span>
-      Search Position
+      {{ 'positions.search.title' | translate }}
     </h2>
-    <p>Search and filter positions by various criteria</p>
+    <p>{{ 'positions.search.subtitle' | translate }}</p>
   </div>
 
   <!-- Search Form Section -->
   <div class="search-section">
     <app-base-card
-      [title]="'Search & Filter Positions'"
+      [title]="'positions.search.cardTitle' | translate"
       [icon]="'search'"
       [variant]="'elevated'"
     >
       <div class="search-stats" *ngIf="allPositions().length > 0">
         <span class="stat-text">
-          Showing {{ allPositions().length }} position(s)
+          {{ 'positions.search.showing' | translate: {count: allPositions().length} }}
         </span>
       </div>
 
@@ -40,9 +40,9 @@
     <app-base-async-state
       [loading$]="loading$"
       [data$]="positionsData$"
-      loadingMessage="Loading positions..."
-      emptyTitle="No positions found"
-      emptyDescription="No positions match your search criteria"
+      [loadingMessage]="'positions.search.loadingMessage' | translate"
+      [emptyTitle]="'positions.search.emptyTitle' | translate"
+      [emptyDescription]="'positions.search.emptyDescription' | translate"
       [onRetry]="onRetryLoad"
     >
       <!-- Success content: Position table -->
@@ -61,7 +61,7 @@
           bordered: false,
           size: 'medium',
           loading: false,
-          emptyMessage: 'No positions match your search criteria'
+          emptyMessage: ''
         }"
         [pageSize]="10"
         (rowClick)="onRowClick($event)"

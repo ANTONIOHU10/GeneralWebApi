@@ -3,7 +3,7 @@
   <button
     class="action-button notification-btn"
     (click)="toggleDropdown($event)"
-    [attr.aria-label]="'Notifications (' + notificationCount + ')'"
+    [attr.aria-label]="('header.notifications' | translate) + ' (' + notificationCount + ')'"
     [attr.aria-expanded]="isOpen"
     [class.has-notifications]="notificationCount > 0"
   >
@@ -20,14 +20,14 @@
 
   <!-- Notification Dropdown -->
   @if (isOpen) {
-    <div class="notification-dropdown" role="dialog" aria-label="Notifications">
+    <div class="notification-dropdown" role="dialog" [attr.aria-label]="'header.notifications' | translate">
       <div class="dropdown-header">
         <div class="dropdown-title">
           <span class="material-icons">notifications</span>
-          <h3>Notifications</h3>
+          <h3>{{ 'header.notifications' | translate }}</h3>
         </div>
         @if (notificationCount > 0) {
-          <span class="unread-count">{{ notificationCount }} new</span>
+          <span class="unread-count">{{ 'header.newNotifications' | translate: {count: notificationCount} }}</span>
         }
       </div>
 
@@ -37,7 +37,7 @@
             [config]="{
               size: 'sm',
               type: 'spinner',
-              message: 'Loading notifications...',
+              message: ('notifications.loading' | translate),
               overlay: false,
               centered: true,
               fullHeight: false
@@ -45,8 +45,8 @@
           ></app-base-loading>
         } @else if (recentNotifications.length === 0) {
           <app-base-empty
-            [title]="'All caught up!'"
-            [description]="'No new notifications'"
+            [title]="'header.noNotifications' | translate"
+            [description]="'notifications.noNotificationsDescription' | translate"
             [config]="{
               type: 'data',
               size: 'sm',
@@ -70,7 +70,7 @@
 
       <div class="dropdown-footer">
         <button class="view-all-btn" (click)="onViewAllClick()">
-          <span>View All Notifications</span>
+          <span>{{ 'header.viewAll' | translate }}</span>
           <span class="material-icons">east</span>
         </button>
       </div>
