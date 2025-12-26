@@ -2,135 +2,82 @@
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
 
-.notification-center {
-  padding: $spacing-4;
-  max-width: 1200px;
-  margin: 0 auto;
-
-  @include mobile-only {
-    padding: $spacing-3;
-  }
-}
-
-// Header Section
-.header-section {
+// Header Actions
+.header-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: $spacing-6;
-  flex-wrap: wrap;
-  gap: $spacing-4;
-
-  @include mobile-only {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .header-title {
-    display: flex;
-    align-items: center;
-    gap: $spacing-3;
-
-    .material-icons {
-      font-size: 2rem;
-      color: var(--color-primary);
-    }
-
-    h2 {
-      margin: 0;
-      font-size: $font-size-2xl;
-      font-weight: $font-weight-bold;
-      color: var(--text-primary);
-    }
-
-    .unread-badge {
-      margin-left: $spacing-2;
-    }
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: $spacing-3;
-  }
+  gap: $spacing-3;
 }
 
-// Statistics Section
+// Statistics Section - Following audit-logs design pattern
 .statistics-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: $spacing-4;
-  margin-bottom: $spacing-6;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
 
   @include mobile-only {
     grid-template-columns: 1fr;
+    gap: $spacing-3;
+  }
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .material-icons {
+    color: white;
+    font-size: 1.5rem;
   }
 
-  .stat-card {
-    .stat-content {
-      display: flex;
-      align-items: center;
-      gap: $spacing-4;
-      padding: $spacing-3;
+  &.primary {
+    background: $primary-500;
+  }
 
-      .stat-icon {
-        width: 3.5rem;
-        height: 3.5rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        box-shadow: var(--shadow-sm);
+  &.warning {
+    background: $warning-500;
+  }
 
-        .material-icons {
-          font-size: 1.75rem;
-          color: white;
-        }
+  &.error {
+    background: $error-500;
+  }
+}
 
-        &.primary {
-          background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-        }
+.stat-content {
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
 
-        &.warning {
-          background: linear-gradient(135deg, var(--color-warning), var(--color-warning-dark));
-        }
-
-        &.error {
-          background: linear-gradient(135deg, var(--color-danger), var(--color-danger-dark));
-        }
-      }
-
-      .stat-info {
-        flex: 1;
-        min-width: 0;
-
-        .stat-value {
-          font-size: $font-size-2xl;
-          font-weight: $font-weight-bold;
-          color: var(--text-primary);
-          line-height: 1.2;
-          margin: 0;
-        }
-
-        .stat-label {
-          font-size: $font-size-sm;
-          color: var(--text-secondary);
-          margin-top: $spacing-1;
-        }
-      }
-    }
+  .stat-label {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
   }
 }
 
 // Filters Section
 .filters-card {
-  margin-bottom: $spacing-6;
+  margin-bottom: $spacing-5;
 
   .filters-section {
     display: flex;
     flex-direction: column;
     gap: $spacing-4;
+    padding-top: $spacing-2;
   }
 
   .filter-groups {
@@ -155,9 +102,10 @@
 
     label {
       font-size: $font-size-sm;
-      font-weight: $font-weight-medium;
-      color: var(--text-secondary);
+      font-weight: $font-weight-semibold;
+      color: var(--text-primary);
       white-space: nowrap;
+      margin-bottom: $spacing-1;
     }
   }
 }
@@ -546,20 +494,6 @@
 
 // Mobile responsive
 @include mobile-only {
-  .notification-center {
-    padding: $spacing-2;
-  }
-
-  .header-section {
-    margin-bottom: $spacing-4;
-
-    .header-title {
-      h2 {
-        font-size: $font-size-xl;
-      }
-    }
-  }
-
   .statistics-section {
     margin-bottom: $spacing-4;
   }

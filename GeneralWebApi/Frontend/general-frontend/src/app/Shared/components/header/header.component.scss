@@ -21,7 +21,7 @@
   &.scrolled {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     border-bottom-color: transparent;
-  }
+    }
 
   // Brand Section - moved to HeaderBrandComponent
 
@@ -96,10 +96,10 @@
         &:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba($primary-500, 0.4);
+        }
       }
     }
   }
-}
 
 // Animations moved to child components
 
@@ -114,7 +114,7 @@
 
       .header-divider {
         display: none;
-      }
+}
 
       .action-button.mobile-menu-toggle {
         display: flex;

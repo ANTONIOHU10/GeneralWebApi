@@ -1,75 +1,66 @@
-<div class="notification-center">
-  <!-- Header Section -->
-  <div class="header-section">
-    <div class="header-title">
-      <span class="material-icons">notifications</span>
-      <h2>Notifications</h2>
-      @if (unreadCount() > 0) {
-        <app-base-badge
-          [text]="unreadCount().toString()"
-          variant="danger"
-          size="small"
-          shape="pill"
-          customClass="unread-badge"
-        ></app-base-badge>
-      }
-    </div>
-    <div class="header-actions">
-      @if (filteredNotifications().length > 0) {
-        <app-base-button
-          text="Mark All Read"
-          icon="done_all"
-          variant="outline"
-          size="small"
-          [disabled]="loading$.value || unreadCount() === 0"
-          (buttonClick)="markAllAsRead()"
-        ></app-base-button>
-      }
+<app-base-private-page-container
+  title="Notifications"
+  [subtitle]="unreadCount() > 0 ? unreadCount() + ' unread notifications' : 'All caught up!'"
+  icon="notifications"
+  [showTabs]="false"
+  [showSearch]="false"
+>
+  <!-- Header Actions -->
+  <div slot="actions" class="header-actions">
+    @if (filteredNotifications().length > 0 && unreadCount() > 0) {
       <app-base-button
-        [text]="loading$.value ? 'Refreshing...' : 'Refresh'"
-        icon="refresh"
-        variant="ghost"
+        text="Mark All Read"
+        icon="done_all"
+        variant="outline"
         size="small"
-        [loading]="loading$.value"
-        [disabled]="loading$.value"
-        (buttonClick)="loadNotifications()"
+        [disabled]="loading$.value || unreadCount() === 0"
+        (buttonClick)="markAllAsRead()"
       ></app-base-button>
-    </div>
+    }
+    <app-base-button
+      [text]="loading$.value ? 'Refreshing...' : 'Refresh'"
+      icon="refresh"
+      variant="ghost"
+      size="small"
+      [loading]="loading$.value"
+      [disabled]="loading$.value"
+      (buttonClick)="loadNotifications()"
+    ></app-base-button>
   </div>
 
   <!-- Statistics Cards -->
   @if (stats()) {
     <div class="statistics-section">
-      <app-base-card variant="elevated" customClass="stat-card">
-        <div class="stat-content">
+      <app-base-card variant="elevated">
+        <div class="stat-card">
           <div class="stat-icon primary">
             <span class="material-icons">notifications</span>
           </div>
-          <div class="stat-info">
+          <div class="stat-content">
             <div class="stat-value">{{ stats()!.total }}</div>
             <div class="stat-label">Total Notifications</div>
           </div>
         </div>
       </app-base-card>
 
-      <app-base-card variant="elevated" customClass="stat-card">
-        <div class="stat-content">
+      <app-base-card variant="elevated">
+        <div class="stat-card">
           <div class="stat-icon warning">
             <span class="material-icons">mark_email_unread</span>
           </div>
-          <div class="stat-info">
+          <div class="stat-content">
             <div class="stat-value">{{ stats()!.unread }}</div>
             <div class="stat-label">Unread</div>
           </div>
         </div>
       </app-base-card>
 
-      <app-base-card variant="elevated" customClass="stat-card">
-        <div class="stat-content">
+      <app-base-card variant="elevated">
+        <div class="stat-card">
           <div class="stat-icon error">
             <span class="material-icons">priority_high</span>
           </div>
-          <div class="stat-info">
+          <div class="stat-content">
             <div class="stat-value">
               {{ (stats()!.byPriority.urgent || 0) + (stats()!.byPriority.high || 0) }}
             </div>
@@ -81,7 +72,12 @@
   }
 
   <!-- Filters Section -->
-  <app-base-card variant="outlined" customClass="filters-card">
+  <app-base-card 
+    title="Filters" 
+    icon="filter_list" 
+    variant="elevated" 
+    customClass="filters-card"
+  >
     <div class="filters-section">
       <!-- Filters -->
       <div class="filter-groups">
@@ -277,4 +273,4 @@
       </div>
     }
   </div>
-</div>
+</app-base-private-page-container>

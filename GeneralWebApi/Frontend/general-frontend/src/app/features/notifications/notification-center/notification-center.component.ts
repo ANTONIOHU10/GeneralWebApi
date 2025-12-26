@@ -14,6 +14,7 @@ import {
   BaseEmptyComponent,
   BaseLoadingComponent,
   BaseErrorComponent,
+  BasePrivatePageContainerComponent,
   SelectOption,
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
@@ -36,6 +37,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    BasePrivatePageContainerComponent,
     BaseCardComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
