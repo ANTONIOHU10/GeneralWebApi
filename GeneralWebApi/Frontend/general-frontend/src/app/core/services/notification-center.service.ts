@@ -1,6 +1,6 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/core/services/notification-center.service.ts
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, combineLatest, from, of, EMPTY, forkJoin } from 'rxjs';
+import { BehaviorSubject, Subject, Observable, combineLatest, from, of, EMPTY, forkJoin } from 'rxjs';
 import { 
   map, 
   catchError, 
@@ -44,6 +44,10 @@ export class NotificationCenterService {
   private readonly notificationsSubject = new BehaviorSubject<Notification[]>([]);
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   private readonly errorSubject = new BehaviorSubject<string | null>(null);
+  
+  // Notification count refresh trigger - emits when notification status changes
+  private readonly notificationCountRefreshSubject = new Subject<void>();
+  public readonly notificationCountRefresh$ = this.notificationCountRefreshSubject.asObservable();
 
   // Public readonly observables
   public readonly notifications$ = this.notificationsSubject.asObservable().pipe(
@@ -114,6 +118,8 @@ export class NotificationCenterService {
         
         this.notificationsSubject.next(sorted);
         this.loadingSubject.next(false);
+        // Trigger notification count refresh when notifications are loaded
+        this.notificationCountRefreshSubject.next();
         return sorted;
       }),
       catchError(error => {
@@ -246,6 +252,8 @@ export class NotificationCenterService {
       // Update local state only
       const newStatus = notification.status === 'read' ? 'unread' : 'read';
       this.updateNotificationStatus(notification.id, newStatus);
+      // Trigger notification count refresh
+      this.notificationCountRefreshSubject.next();
       return of(void 0);
     }
 
@@ -254,16 +262,24 @@ export class NotificationCenterService {
     
     // Optimistic update: update local state immediately
     this.updateNotificationStatus(notification.id, newStatus);
+    // Trigger notification count refresh
+    this.notificationCountRefreshSubject.next();
 
     // Call backend API
     return this.notificationService.toggleReadStatus(notificationId).pipe(
       catchError(error => {
         // Revert on error
         this.updateNotificationStatus(notification.id, notification.status);
+        // Trigger refresh again to revert the count
+        this.notificationCountRefreshSubject.next();
         console.error(`Failed to toggle notification ${notification.id} read status:`, error);
         return EMPTY;
       }),
-      map(() => void 0)
+      map(() => {
+        // Trigger refresh after successful API call
+        this.notificationCountRefreshSubject.next();
+        return void 0;
+      })
     );
   }
 
@@ -285,16 +301,24 @@ export class NotificationCenterService {
         : n
     );
     this.notificationsSubject.next(updated);
+    // Trigger notification count refresh
+    this.notificationCountRefreshSubject.next();
 
     // Call backend API
     return this.notificationService.markAllAsRead().pipe(
       catchError(error => {
         // Revert on error
         this.notificationsSubject.next(notifications);
+        // Trigger refresh again to revert the count
+        this.notificationCountRefreshSubject.next();
         console.error('Failed to mark all notifications as read:', error);
         return EMPTY;
       }),
-      map(() => void 0)
+      map(() => {
+        // Trigger refresh after successful API call
+        this.notificationCountRefreshSubject.next();
+        return void 0;
+      })
     );
   }
 
@@ -327,6 +351,8 @@ export class NotificationCenterService {
       const notifications = this.notificationsSubject.value;
       const updated = notifications.filter(n => n.id !== notification.id);
       this.notificationsSubject.next(updated);
+      // Trigger notification count refresh
+      this.notificationCountRefreshSubject.next();
       return of(void 0);
     }
 
@@ -334,16 +360,24 @@ export class NotificationCenterService {
     const notifications = this.notificationsSubject.value;
     const updated = notifications.filter(n => n.id !== notification.id);
     this.notificationsSubject.next(updated);
+    // Trigger notification count refresh
+    this.notificationCountRefreshSubject.next();
 
     // Call backend API
     return this.notificationService.deleteNotification(notificationId).pipe(
       catchError(error => {
         // Revert on error
         this.notificationsSubject.next(notifications);
+        // Trigger refresh again to revert the count
+        this.notificationCountRefreshSubject.next();
         console.error(`Failed to delete notification ${notification.id}:`, error);
         return EMPTY;
       }),
-      map(() => void 0)
+      map(() => {
+        // Trigger refresh after successful API call
+        this.notificationCountRefreshSubject.next();
+        return void 0;
+      })
     );
   }
 

@@ -5,6 +5,7 @@ import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { TokenService } from '@core/services/token.service';
 import { NotificationService } from '@core/services/notification.service';
+import { NotificationCenterService } from '@core/services/notification-center.service';
 import { Notification } from 'app/contracts/notifications/notification.model';
 import { catchError, of, interval, Subject } from 'rxjs';
 import { takeUntil, startWith, switchMap } from 'rxjs/operators';
@@ -31,6 +32,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
   private notificationService = inject(NotificationService);
+  private notificationCenterService = inject(NotificationCenterService);
   private router = inject(Router);
   private elementRef = inject(ElementRef);
   private destroy$ = new Subject<void>();
@@ -147,6 +149,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.loadUserProfile();
     this.loadNotificationCount();
     this.startNotificationCountPolling();
+    this.subscribeToNotificationRefresh();
   }
 
   /**
@@ -194,6 +197,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (count) => {
         this.notificationCount = count;
+      }
+    });
+  }
+
+  /**
+   * Subscribe to notification refresh events from NotificationCenterService
+   * This ensures the header count updates immediately when notifications are modified
+   */
+  private subscribeToNotificationRefresh(): void {
+    this.notificationCenterService.notificationCountRefresh$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: () => {
+        // Immediately refresh notification count when notification status changes
+        this.loadNotificationCount();
       }
     });
   }
