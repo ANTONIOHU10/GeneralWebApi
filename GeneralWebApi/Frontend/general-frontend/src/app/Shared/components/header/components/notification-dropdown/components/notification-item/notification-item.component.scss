@@ -1,0 +1,109 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/notification-dropdown/components/notification-item/notification-item.component.scss
+@use '../../../../../../../../styles/core/variable' as *;
+@use '../../../../../../../../styles/core/mixin' as *;
+
+.notification-item {
+  display: flex;
+  gap: $spacing-3;
+  padding: $spacing-3 $spacing-4;
+  border-radius: $border-radius-xl;
+  cursor: pointer;
+  transition: all $duration-200 $ease-out;
+  background: var(--background-secondary);
+  border: 1px solid transparent;
+
+  &:hover {
+    background: var(--background-tertiary);
+    transform: translateX(4px);
+    border-color: var(--border-primary);
+  }
+
+  &.unread {
+    background: var(--color-primary-50);
+    border-left: 3px solid $primary-500;
+  }
+
+  .notification-icon-wrapper {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-tertiary);
+    border-radius: $border-radius-lg;
+
+    .material-icons {
+      font-size: 1.25rem;
+      color: $primary-500;
+    }
+
+    &[data-type="approval"] { 
+      background: var(--color-success-50); 
+      .material-icons { color: $success-500; } 
+    }
+    &[data-type="task"] { 
+      background: var(--color-info-50); 
+      .material-icons { color: $info-500; } 
+    }
+    &[data-type="system"] { 
+      background: var(--color-warning-50); 
+      .material-icons { color: $warning-500; } 
+    }
+  }
+
+  .notification-content {
+    flex: 1;
+    min-width: 0;
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+      margin-bottom: 4px;
+
+      .notification-title {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        color: var(--text-primary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .unread-indicator {
+        width: 8px;
+        height: 8px;
+        background: $primary-500;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+    }
+
+    .notification-message {
+      font-size: $font-size-xs;
+      color: var(--text-secondary);
+      margin: 0 0 $spacing-2 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 1.5;
+    }
+
+    .notification-time {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: $font-size-xs;
+      color: var(--text-tertiary);
+
+      .material-icons {
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,23 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/quick-actions/quick-actions.component.html -->
+<div class="quick-actions">
+  <!-- Settings Button -->
+  <button
+    class="action-button"
+    (click)="onSettingsClick()"
+    aria-label="Settings"
+    title="Settings"
+  >
+    <span class="action-icon material-icons">settings</span>
+  </button>
+
+  <!-- Theme Toggle Button -->
+  <button 
+    class="action-button theme-toggle" 
+    (click)="onThemeToggle()"
+    [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+    [title]="isDarkMode ? 'Light Mode' : 'Dark Mode'"
+  >
+    <span class="action-icon material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+  </button>
+</div>
+

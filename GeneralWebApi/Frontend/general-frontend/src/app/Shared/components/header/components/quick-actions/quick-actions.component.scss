@@ -1,0 +1,73 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/quick-actions/quick-actions.component.scss
+@use '../../../../../../styles/core/variable' as *;
+@use '../../../../../../styles/core/mixin' as *;
+
+.quick-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  padding: $spacing-1;
+  background: var(--background-secondary);
+  border-radius: $border-radius-xl;
+}
+
+.action-button {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+  transition: all $duration-200 $ease-out;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: var(--background-tertiary);
+    color: $primary-500;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .action-icon {
+    font-size: 1.375rem;
+    transition: all $duration-200 $ease-out;
+  }
+
+  // Theme toggle special effect
+  &.theme-toggle:hover .action-icon {
+    transform: rotate(30deg);
+  }
+}
+
+// Mobile Responsive
+@media (max-width: 768px) {
+  .quick-actions {
+    padding: $spacing-1;
+    gap: 0;
+  }
+
+  .action-button {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+// Extra small screens
+@media (max-width: 480px) {
+  .action-button {
+    width: 36px;
+    height: 36px;
+
+    .action-icon {
+      font-size: 1.25rem;
+    }
+  }
+}
+

@@ -1,0 +1,46 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/header-brand/header-brand.component.scss
+@use '../../../../../../styles/core/variable' as *;
+@use '../../../../../../styles/core/mixin' as *;
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
+    border-radius: $border-radius-xl;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $duration-200 $ease-out;
+    box-shadow: 0 4px 12px rgba($primary-500, 0.3);
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05) rotate(-3deg);
+      box-shadow: 0 6px 16px rgba($primary-500, 0.4);
+    }
+
+    .logo-text {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-bold;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  .brand-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+

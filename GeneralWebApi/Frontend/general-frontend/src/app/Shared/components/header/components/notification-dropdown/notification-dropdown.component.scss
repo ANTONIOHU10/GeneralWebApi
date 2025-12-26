@@ -1,0 +1,232 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/notification-dropdown/notification-dropdown.component.scss
+@use '../../../../../../styles/core/variable' as *;
+@use '../../../../../../styles/core/mixin' as *;
+
+.notification-wrapper {
+  position: relative;
+
+  &.open .notification-btn {
+    background: rgba($primary-500, 0.1);
+    color: $primary-500;
+  }
+
+  // Notification Dropdown
+  .notification-dropdown {
+    position: absolute;
+    top: calc(100% + $spacing-3);
+    right: -$spacing-4;
+    width: 420px;
+    max-width: calc(100vw - $spacing-8);
+    background: var(--background-primary);
+    border: 1px solid var(--border-secondary);
+    border-radius: $border-radius-2xl;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: $z-index-dropdown;
+    display: flex;
+    flex-direction: column;
+    max-height: 540px;
+    overflow: hidden;
+    animation: dropdown-enter 0.25s $ease-out;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+
+    .dropdown-header {
+      padding: $spacing-4 $spacing-5;
+      border-bottom: 1px solid var(--border-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--background-secondary);
+
+      .dropdown-title {
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+
+        .material-icons {
+          font-size: 1.25rem;
+          color: $primary-500;
+        }
+
+        h3 {
+          margin: 0;
+          font-size: $font-size-lg;
+          font-weight: $font-weight-bold;
+          color: var(--text-primary);
+        }
+      }
+
+      .unread-count {
+        font-size: $font-size-xs;
+        font-weight: $font-weight-bold;
+        color: white;
+        background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
+        padding: $spacing-1 $spacing-3;
+        border-radius: $border-radius-full;
+        box-shadow: 0 2px 8px rgba($primary-500, 0.3);
+      }
+    }
+
+    .dropdown-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: $spacing-3;
+      background: var(--background-primary);
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: var(--background-secondary);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--border-secondary);
+        border-radius: 3px;
+      }
+
+      // Loading and empty states are handled by base components
+
+      .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-2;
+      }
+    }
+
+    .dropdown-footer {
+      padding: $spacing-3 $spacing-4;
+      border-top: 1px solid var(--border-secondary);
+      background: var(--background-secondary);
+
+      .view-all-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-2;
+        padding: $spacing-3;
+        background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
+        color: white;
+        border: none;
+        border-radius: $border-radius-lg;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        cursor: pointer;
+        transition: all $duration-200 $ease-out;
+        box-shadow: 0 4px 12px rgba($primary-500, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba($primary-500, 0.4);
+
+          .material-icons {
+            transform: translateX(4px);
+          }
+        }
+
+        .material-icons {
+          font-size: 1.125rem;
+          transition: transform $duration-200 $ease-out;
+        }
+      }
+    }
+  }
+}
+
+// Action button styles (shared with quick-actions)
+.action-button {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+  transition: all $duration-200 $ease-out;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: var(--background-tertiary);
+    color: $primary-500;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .action-icon {
+    font-size: 1.375rem;
+    transition: all $duration-200 $ease-out;
+  }
+
+  &.notification-btn {
+    &.has-notifications {
+      .action-icon {
+        animation: bell-shake 0.5s ease-in-out;
+      }
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      background: linear-gradient(135deg, $error-500 0%, $error-600 100%);
+      color: white;
+      font-size: 0.625rem;
+      font-weight: $font-weight-bold;
+      border-radius: $border-radius-full;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba($error-500, 0.5);
+      border: 2px solid var(--background-primary);
+      animation: pulse-scale 2s infinite;
+    }
+  }
+}
+
+// Animations
+@keyframes dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes bell-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(10deg); }
+}
+
+// Spin animation moved to base-loading component
+
+// Mobile Responsive
+@media (max-width: 768px) {
+  .notification-wrapper {
+    .notification-dropdown {
+      width: calc(100vw - $spacing-6);
+      right: -$spacing-8;
+    }
+  }
+}
+

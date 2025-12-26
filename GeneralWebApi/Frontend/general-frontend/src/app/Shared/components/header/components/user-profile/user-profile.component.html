@@ -1,0 +1,17 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/user-profile/user-profile.component.html -->
+<button
+  class="user-profile"
+  (click)="onProfileClick()"
+  aria-label="User profile menu"
+  title="Profile"
+>
+  <div class="user-avatar">
+    <span class="material-icons">person</span>
+  </div>
+  <div class="user-info">
+    <span class="user-name">{{ userName }}</span>
+    <span class="user-role">{{ userRole }}</span>
+  </div>
+  <span class="profile-arrow material-icons">expand_more</span>
+</button>
+

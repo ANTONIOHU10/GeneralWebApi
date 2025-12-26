@@ -1,21 +1,31 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject, HostListener, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
-import { TokenService } from '@core/services/token.service';
 import { NotificationService } from '@core/services/notification.service';
 import { NotificationCenterService } from '@core/services/notification-center.service';
 import { Notification } from 'app/contracts/notifications/notification.model';
 import { catchError, of, interval, Subject } from 'rxjs';
 import { takeUntil, startWith, switchMap } from 'rxjs/operators';
+import { HeaderBrandComponent } from './components/header-brand/header-brand.component';
+import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
+import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 @Component({
   standalone: true,
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  imports: [CommonModule, RouterLink],
+  imports: [
+    CommonModule,
+    RouterLink,
+    HeaderBrandComponent,
+    NotificationDropdownComponent,
+    QuickActionsComponent,
+    UserProfileComponent,
+  ],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   @Input() isDarkMode = false;
@@ -30,17 +40,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Output() settingsClick = new EventEmitter<void>();
 
   private authService = inject(AuthService);
-  private tokenService = inject(TokenService);
   private notificationService = inject(NotificationService);
   private notificationCenterService = inject(NotificationCenterService);
-  private router = inject(Router);
-  private elementRef = inject(ElementRef);
   private destroy$ = new Subject<void>();
 
   notificationCount = 0;
-  isNotificationDropdownOpen = false;
-  recentNotifications: Notification[] = [];
-  isLoadingNotifications = false;
   userProfile = {
     name: 'Guest',
     role: 'User',
@@ -61,71 +65,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle notification button click - toggle dropdown
-   */
-  onNotificationClick(event: Event): void {
-    event.stopPropagation();
-    this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
-    
-    if (this.isNotificationDropdownOpen) {
-      this.loadRecentNotifications();
-    }
-  }
-
-  /**
-   * Close notification dropdown when clicking outside
-   */
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (this.isNotificationDropdownOpen && !this.elementRef.nativeElement.contains(event.target)) {
-      this.isNotificationDropdownOpen = false;
-    }
-  }
-
-  /**
-   * Load recent notifications (last 5 unread or recent)
-   */
-  private loadRecentNotifications(): void {
-    if (this.isLoadingNotifications) return;
-    
-    this.isLoadingNotifications = true;
-    this.notificationService.getNotifications({
-      pageNumber: 1,
-      pageSize: 5,
-      includeExpired: false,
-    }).pipe(
-      takeUntil(this.destroy$),
-      catchError((error) => {
-        console.error('Failed to load recent notifications:', error);
-        this.isLoadingNotifications = false;
-        return of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 5 });
-      })
-    ).subscribe({
-      next: (response) => {
-        this.recentNotifications = response.items.map(item => 
-          this.notificationService.transformToNotification(item)
-        );
-        this.isLoadingNotifications = false;
-      }
-    });
-  }
-
-  /**
-   * Navigate to full notification center page
+   * Handle view all notifications click
    */
   onViewAllNotifications(): void {
-    this.isNotificationDropdownOpen = false;
-    this.router.navigate(['/private/notifications']);
+    this.notificationClick.emit();
   }
 
   /**
    * Handle notification item click
    */
   onNotificationItemClick(notification: Notification): void {
-    this.isNotificationDropdownOpen = false;
-    if (notification.actionUrl) {
-      this.router.navigate([notification.actionUrl]);
-    }
+    // Handle notification item click if needed
   }
 
   /**
@@ -174,10 +124,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (count) => {
         this.notificationCount = count;
-        // Reload recent notifications if dropdown is open
-        if (this.isNotificationDropdownOpen) {
-          this.loadRecentNotifications();
-        }
       }
     });
   }
@@ -277,40 +223,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
   }
 
-  /**
-   * Get notification icon based on type
-   */
-  getNotificationIcon(type: string): string {
-    const iconMap: Record<string, string> = {
-      approval: 'check_circle',
-      task: 'assignment',
-      contract: 'description',
-      system: 'settings',
-      audit: 'history',
-      employee: 'people',
-    };
-    return iconMap[type] || 'notifications';
-  }
-
-  /**
-   * Get time ago string
-   */
-  getTimeAgo(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (diffInSeconds < 60) {
-      return 'Just now';
-    } else if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes}m ago`;
-    } else if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours}h ago`;
-    } else {
-      const days = Math.floor(diffInSeconds / 86400);
-      return `${days}d ago`;
-    }
-  }
 }

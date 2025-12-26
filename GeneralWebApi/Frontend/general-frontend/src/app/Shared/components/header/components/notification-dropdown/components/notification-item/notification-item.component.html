@@ -1,0 +1,26 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/notification-dropdown/components/notification-item/notification-item.component.html -->
+<div 
+  class="notification-item"
+  [class.unread]="notification.status === 'unread'"
+  (click)="onItemClick()"
+  role="button"
+  tabindex="0"
+>
+  <div class="notification-icon-wrapper" [attr.data-type]="notification.type">
+    <span class="material-icons">{{ getNotificationIcon(notification.type) }}</span>
+  </div>
+  <div class="notification-content">
+    <div class="notification-header">
+      <span class="notification-title">{{ notification.title }}</span>
+      @if (notification.status === 'unread') {
+        <span class="unread-indicator"></span>
+      }
+    </div>
+    <p class="notification-message">{{ notification.message }}</p>
+    <span class="notification-time">
+      <span class="material-icons">schedule</span>
+      {{ getTimeAgo(notification.createdAt) }}
+    </span>
+  </div>
+</div>
+

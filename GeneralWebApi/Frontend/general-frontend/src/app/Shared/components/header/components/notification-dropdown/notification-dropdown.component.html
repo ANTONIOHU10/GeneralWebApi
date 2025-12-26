@@ -1,0 +1,80 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/header/components/notification-dropdown/notification-dropdown.component.html -->
+<div class="notification-wrapper" [class.open]="isOpen">
+  <button
+    class="action-button notification-btn"
+    (click)="toggleDropdown($event)"
+    [attr.aria-label]="'Notifications (' + notificationCount + ')'"
+    [attr.aria-expanded]="isOpen"
+    [class.has-notifications]="notificationCount > 0"
+  >
+    <span class="action-icon material-icons">notifications</span>
+    @if (notificationCount > 0) {
+      <span 
+        class="notification-badge" 
+        [attr.data-count]="notificationCount > 99 ? '99+' : notificationCount"
+      >
+        {{ notificationCount > 99 ? '99+' : notificationCount }}
+      </span>
+    }
+  </button>
+
+  <!-- Notification Dropdown -->
+  @if (isOpen) {
+    <div class="notification-dropdown" role="dialog" aria-label="Notifications">
+      <div class="dropdown-header">
+        <div class="dropdown-title">
+          <span class="material-icons">notifications</span>
+          <h3>Notifications</h3>
+        </div>
+        @if (notificationCount > 0) {
+          <span class="unread-count">{{ notificationCount }} new</span>
+        }
+      </div>
+
+      <div class="dropdown-content">
+        @if (isLoadingNotifications) {
+          <app-base-loading
+            [config]="{
+              size: 'sm',
+              type: 'spinner',
+              message: 'Loading notifications...',
+              overlay: false,
+              centered: true,
+              fullHeight: false
+            }"
+          ></app-base-loading>
+        } @else if (recentNotifications.length === 0) {
+          <app-base-empty
+            [title]="'All caught up!'"
+            [description]="'No new notifications'"
+            [config]="{
+              type: 'data',
+              size: 'sm',
+              showIcon: true,
+              showActionButton: false,
+              centered: true,
+              fullHeight: false
+            }"
+          ></app-base-empty>
+        } @else {
+          <div class="notification-list">
+            @for (notification of recentNotifications; track notification.id) {
+              <app-notification-item
+                [notification]="notification"
+                (itemClick)="onNotificationItemClick($event)"
+              ></app-notification-item>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="dropdown-footer">
+        <button class="view-all-btn" (click)="onViewAllClick()">
+          <span>View All Notifications</span>
+          <span class="material-icons">east</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
