@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-detail/employee-detail.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { User } from 'app/users/user.model';
@@ -18,8 +18,8 @@ import { EmployeeFacade } from '@store/employee/employee.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
-import { Observable, combineLatest, of } from 'rxjs';
-import { filter, first, pairwise, debounceTime, startWith, catchError } from 'rxjs/operators';
+import { Observable, combineLatest, of, Subject } from 'rxjs';
+import { filter, first, pairwise, debounceTime, startWith, catchError, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Department } from 'app/contracts/departments/department.model';
 import { Position } from 'app/contracts/positions/position.model';
 
@@ -46,7 +46,7 @@ import { Position } from 'app/contracts/positions/position.model';
   templateUrl: './employee-detail.component.html',
   styleUrls: ['./employee-detail.component.scss'],
 })
-export class EmployeeDetailComponent implements OnInit, OnChanges {
+export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   private employeeFacade = inject(EmployeeFacade);
   private departmentFacade = inject(DepartmentFacade);
   private positionFacade = inject(PositionFacade);
@@ -77,7 +77,10 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
   // Form data
   formData: Record<string, unknown> = {};
 
-  // Form configuration - will be updated based on mode
+  // Destroy subject for cleanup
+  private destroy$ = new Subject<void>();
+
+  // Form configuration - will be initialized with translations
   formConfig: FormConfig = {
     sections: [
       {
@@ -426,8 +429,16 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
   };
 
   ngOnInit(): void {
-    // Initialize form config for current mode (edit/view)
-    this.updateFormConfigForMode();
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+      // Initialize form config for current mode (edit/view)
+      this.updateFormConfigForMode();
+    });
 
     // Subscribe to operation progress to update loading state
     // Simplified: Direct subscription without effect wrapper
@@ -539,14 +550,390 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const t = (key: string) => this.translationService.translate(key);
+    
+    // Get section titles
+    const userInfoSection = t('employees.detail.sections.userInformation');
+    const personalInfoSection = t('employees.detail.sections.personalInformation');
+    const workInfoSection = t('employees.detail.sections.workInformation');
+    const addressInfoSection = t('employees.detail.sections.addressInformation');
+    const emergencyContactSection = t('employees.detail.sections.emergencyContact');
+
+    // Get role options
+    const roleOptions: SelectOption[] = [
+      { value: 'Admin', label: t('employees.detail.options.role.admin') },
+      { value: 'Manager', label: t('employees.detail.options.role.manager') },
+      { value: 'User', label: t('employees.detail.options.role.user') },
+    ];
+
+    // Get account status options
+    const accountStatusOptions: SelectOption[] = [
+      { value: true, label: t('employees.detail.options.accountStatus.active') },
+      { value: false, label: t('employees.detail.options.accountStatus.inactive') },
+    ];
+
+    // Get employment status options
+    const employmentStatusOptions: SelectOption[] = [
+      { value: 'Active', label: t('employees.detail.options.employmentStatus.active') },
+      { value: 'Inactive', label: t('employees.detail.options.employmentStatus.inactive') },
+      { value: 'Terminated', label: t('employees.detail.options.employmentStatus.terminated') },
+      { value: 'OnLeave', label: t('employees.detail.options.employmentStatus.onLeave') },
+    ];
+
+    // Get employment type options
+    const employmentTypeOptions: SelectOption[] = [
+      { value: 'FullTime', label: t('employees.detail.options.employmentType.fullTime') },
+      { value: 'PartTime', label: t('employees.detail.options.employmentType.partTime') },
+      { value: 'Contract', label: t('employees.detail.options.employmentType.contract') },
+      { value: 'Intern', label: t('employees.detail.options.employmentType.intern') },
+    ];
+
+    this.formConfig = {
+      sections: [
+        {
+          title: userInfoSection,
+          description: t('employees.detail.sections.userInformationDescription'),
+          order: -1,
+          collapsible: true,
+          collapsed: false,
+        },
+        {
+          title: personalInfoSection,
+          description: t('employees.detail.sections.personalInformationDescription'),
+          order: 0,
+        },
+        {
+          title: workInfoSection,
+          description: t('employees.detail.sections.workInformationDescription'),
+          order: 1,
+        },
+        {
+          title: addressInfoSection,
+          description: t('employees.detail.sections.addressInformationDescription'),
+          order: 2,
+          collapsible: true,
+          collapsed: false,
+        },
+        {
+          title: emergencyContactSection,
+          description: t('employees.detail.sections.emergencyContactDescription'),
+          order: 3,
+          collapsible: true,
+          collapsed: false,
+        },
+      ],
+      layout: {
+        columns: 2,
+        gap: '1.5rem',
+        sectionGap: '2rem',
+        labelPosition: 'top',
+        showSectionDividers: true,
+      },
+      fields: [
+        // User Information Section
+        {
+          key: 'username',
+          type: 'input',
+          label: t('employees.detail.fields.username'),
+          placeholder: t('employees.detail.fields.usernamePlaceholder'),
+          section: userInfoSection,
+          order: 0,
+          colSpan: 1,
+          readonly: true,
+        },
+        {
+          key: 'userEmail',
+          type: 'input',
+          label: t('employees.detail.fields.userEmail'),
+          placeholder: t('employees.detail.fields.userEmailPlaceholder'),
+          inputType: 'email',
+          section: userInfoSection,
+          order: 1,
+          colSpan: 1,
+          readonly: true,
+        },
+        {
+          key: 'userRole',
+          type: 'select',
+          label: t('employees.detail.fields.role'),
+          placeholder: t('employees.detail.fields.rolePlaceholder'),
+          section: userInfoSection,
+          order: 2,
+          colSpan: 1,
+          readonly: true,
+          options: roleOptions,
+        },
+        {
+          key: 'accountCreated',
+          type: 'datepicker',
+          label: t('employees.detail.fields.accountCreated'),
+          placeholder: t('employees.detail.fields.accountCreatedPlaceholder'),
+          section: userInfoSection,
+          order: 3,
+          colSpan: 1,
+          readonly: true,
+        },
+        {
+          key: 'lastLogin',
+          type: 'datepicker',
+          label: t('employees.detail.fields.lastLogin'),
+          placeholder: t('employees.detail.fields.lastLoginPlaceholder'),
+          section: userInfoSection,
+          order: 4,
+          colSpan: 1,
+          readonly: true,
+        },
+        {
+          key: 'isActive',
+          type: 'select',
+          label: t('employees.detail.fields.accountStatus'),
+          placeholder: t('employees.detail.fields.accountStatusPlaceholder'),
+          section: userInfoSection,
+          order: 5,
+          colSpan: 1,
+          readonly: true,
+          options: accountStatusOptions,
+        },
+        // Personal Information Section
+        {
+          key: 'firstName',
+          type: 'input',
+          label: t('employees.detail.fields.firstName'),
+          placeholder: t('employees.detail.fields.firstNamePlaceholder'),
+          required: true,
+          section: personalInfoSection,
+          order: 0,
+          colSpan: 1,
+        },
+        {
+          key: 'lastName',
+          type: 'input',
+          label: t('employees.detail.fields.lastName'),
+          placeholder: t('employees.detail.fields.lastNamePlaceholder'),
+          required: true,
+          section: personalInfoSection,
+          order: 1,
+          colSpan: 1,
+        },
+        {
+          key: 'email',
+          type: 'input',
+          label: t('employees.detail.fields.email'),
+          placeholder: t('employees.detail.fields.emailPlaceholder'),
+          required: true,
+          inputType: 'email',
+          section: personalInfoSection,
+          order: 2,
+          colSpan: 1,
+          validator: (value) => {
+            if (!value) return null;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(value as string) ? null : 'Invalid email format';
+          },
+        },
+        {
+          key: 'phoneNumber',
+          type: 'input',
+          label: t('employees.detail.fields.phoneNumber'),
+          placeholder: t('employees.detail.fields.phoneNumberPlaceholder'),
+          inputType: 'tel',
+          section: personalInfoSection,
+          order: 3,
+          colSpan: 1,
+        },
+        {
+          key: 'employeeNumber',
+          type: 'input',
+          label: t('employees.detail.fields.employeeNumber'),
+          placeholder: t('employees.detail.fields.employeeNumberPlaceholder'),
+          section: personalInfoSection,
+          order: 4,
+          colSpan: 1,
+          readonly: true,
+        },
+        // Work Information Section
+        {
+          key: 'employmentStatus',
+          type: 'select',
+          label: t('employees.detail.fields.employmentStatus'),
+          placeholder: t('employees.detail.fields.employmentStatusPlaceholder'),
+          required: true,
+          section: workInfoSection,
+          order: 0,
+          colSpan: 1,
+          options: employmentStatusOptions,
+        },
+        {
+          key: 'employmentType',
+          type: 'select',
+          label: t('employees.detail.fields.employmentType'),
+          placeholder: t('employees.detail.fields.employmentTypePlaceholder'),
+          required: true,
+          section: workInfoSection,
+          order: 1,
+          colSpan: 1,
+          options: employmentTypeOptions,
+        },
+        {
+          key: 'hireDate',
+          type: 'datepicker',
+          label: t('employees.detail.fields.hireDate'),
+          placeholder: t('employees.detail.fields.hireDatePlaceholder'),
+          required: true,
+          section: workInfoSection,
+          order: 2,
+          colSpan: 1,
+        },
+        {
+          key: 'terminationDate',
+          type: 'datepicker',
+          label: t('employees.detail.fields.terminationDate'),
+          placeholder: t('employees.detail.fields.terminationDatePlaceholder'),
+          section: workInfoSection,
+          order: 3,
+          colSpan: 1,
+        },
+        {
+          key: 'departmentId',
+          type: 'select',
+          label: t('employees.detail.fields.department'),
+          placeholder: t('employees.detail.fields.departmentPlaceholder'),
+          section: workInfoSection,
+          order: 4,
+          colSpan: 1,
+          searchable: true,
+          options: [] as SelectOption[], // Will be populated dynamically from backend
+        },
+        {
+          key: 'positionId',
+          type: 'select',
+          label: t('employees.detail.fields.position'),
+          placeholder: t('employees.detail.fields.positionPlaceholder'),
+          section: workInfoSection,
+          order: 5,
+          colSpan: 1,
+          searchable: true,
+          options: [] as SelectOption[], // Will be populated dynamically from backend
+        },
+        {
+          key: 'managerId',
+          type: 'select',
+          label: t('employees.detail.fields.manager'),
+          placeholder: t('employees.detail.fields.managerPlaceholder'),
+          section: workInfoSection,
+          order: 6,
+          colSpan: 1,
+          searchable: true,
+          options: [] as SelectOption[], // Will be populated dynamically
+        },
+        {
+          key: 'currentSalary',
+          type: 'number',
+          label: t('employees.detail.fields.currentSalary'),
+          placeholder: t('employees.detail.fields.currentSalaryPlaceholder'),
+          section: workInfoSection,
+          order: 7,
+          colSpan: 1,
+          min: 0,
+        },
+        {
+          key: 'salaryCurrency',
+          type: 'input',
+          label: t('employees.detail.fields.salaryCurrency'),
+          placeholder: t('employees.detail.fields.salaryCurrencyPlaceholder'),
+          section: workInfoSection,
+          order: 8,
+          colSpan: 1,
+        },
+        // Address Information Section
+        {
+          key: 'address',
+          type: 'input',
+          label: t('employees.detail.fields.streetAddress'),
+          placeholder: t('employees.detail.fields.streetAddressPlaceholder'),
+          section: addressInfoSection,
+          order: 0,
+          colSpan: 1,
+        },
+        {
+          key: 'city',
+          type: 'input',
+          label: t('employees.detail.fields.city'),
+          placeholder: t('employees.detail.fields.cityPlaceholder'),
+          section: addressInfoSection,
+          order: 1,
+          colSpan: 1,
+        },
+        {
+          key: 'postalCode',
+          type: 'input',
+          label: t('employees.detail.fields.postalCode'),
+          placeholder: t('employees.detail.fields.postalCodePlaceholder'),
+          section: addressInfoSection,
+          order: 2,
+          colSpan: 1,
+        },
+        {
+          key: 'country',
+          type: 'input',
+          label: t('employees.detail.fields.country'),
+          placeholder: t('employees.detail.fields.countryPlaceholder'),
+          section: addressInfoSection,
+          order: 3,
+          colSpan: 1,
+        },
+        // Emergency Contact Section
+        {
+          key: 'emergencyContactName',
+          type: 'input',
+          label: t('employees.detail.fields.contactName'),
+          placeholder: t('employees.detail.fields.contactNamePlaceholder'),
+          section: emergencyContactSection,
+          order: 0,
+          colSpan: 1,
+        },
+        {
+          key: 'emergencyContactPhone',
+          type: 'input',
+          label: t('employees.detail.fields.contactPhone'),
+          placeholder: t('employees.detail.fields.contactPhonePlaceholder'),
+          inputType: 'tel',
+          section: emergencyContactSection,
+          order: 1,
+          colSpan: 1,
+        },
+        {
+          key: 'emergencyContactRelation',
+          type: 'input',
+          label: t('employees.detail.fields.contactRelation'),
+          placeholder: t('employees.detail.fields.contactRelationPlaceholder'),
+          section: emergencyContactSection,
+          order: 2,
+          colSpan: 1,
+        },
+      ],
+      submitButtonText: t('employees.detail.buttons.saveChanges'),
+      cancelButtonText: t('employees.detail.buttons.cancel'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+    this.cdr.markForCheck();
+  }
+
+  /**
    * Get modal title based on mode and whether user information is present
    */
   getModalTitle(): string {
     if (this.mode === 'edit') {
-      return 'Edit Employee';
+      return this.translationService.translate('employees.detail.title.edit');
     }
     // If user information is present, show "User Profile", otherwise "Employee Details"
-    return this.user ? 'User Profile' : 'Employee Details';
+    return this.user 
+      ? this.translationService.translate('employees.detail.title.userProfile')
+      : this.translationService.translate('employees.detail.title.view');
   }
 
   onClose(): void {
@@ -613,8 +1000,9 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
     const hasUser = this.user !== null;
     
     // Update sections - hide User Information section if no user provided
+    const userInfoSectionTitle = this.translationService.translate('employees.detail.sections.userInformation');
     const updatedSections = (this.formConfig.sections || []).filter(section => {
-      if (section.title === 'User Information') {
+      if (section.title === userInfoSectionTitle) {
         return hasUser; // Only show if user is provided
       }
       return true;
@@ -645,7 +1033,8 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
       };
     }).filter(field => {
       // Hide user information fields if no user provided
-      if (!hasUser && field.section === 'User Information') {
+      const userInfoSectionTitle = this.translationService.translate('employees.detail.sections.userInformation');
+      if (!hasUser && field.section === userInfoSectionTitle) {
         return false;
       }
       return true;
@@ -660,7 +1049,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
       showButtons: isReadOnly ? false : true,
       buttons: isReadOnly ? [
         {
-          label: 'Close',
+          label: this.translationService.translate('employees.detail.buttons.close'),
           type: 'reset', // Use 'reset' type to trigger onCancel() in base-form
           variant: 'secondary',
           icon: 'close',
@@ -877,10 +1266,10 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
 
     // Show confirmation dialog
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Update',
-      message: `Are you sure you want to update employee ${employeeName}?`,
-      confirmText: 'Update',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('employees.detail.confirm.title'),
+      message: this.translationService.translate('employees.detail.confirm.message', { name: employeeName }),
+      confirmText: this.translationService.translate('employees.detail.confirm.confirmText'),
+      cancelText: this.translationService.translate('employees.detail.confirm.cancelText'),
       confirmVariant: 'primary',
       icon: 'save',
     });
@@ -937,6 +1326,11 @@ export class EmployeeDetailComponent implements OnInit, OnChanges {
    */
   onFormCancel(): void {
     this.onClose();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

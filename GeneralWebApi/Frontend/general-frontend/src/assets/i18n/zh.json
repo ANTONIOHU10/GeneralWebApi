@@ -37,7 +37,11 @@
     "view": "查看",
     "notAvailable": "不适用",
     "create": "创建",
-    "validationError": "验证错误"
+    "validationError": "验证错误",
+    "deleteConfirm": {
+      "title": "确认删除",
+      "message": "您确定要删除此项吗？此操作无法撤销。"
+    }
   },
   "auth": {
     "login": "登录",
@@ -350,6 +354,11 @@
       }
     },
     "detail": {
+      "title": {
+        "edit": "编辑员工",
+        "view": "员工详情",
+        "userProfile": "用户资料"
+      },
       "sections": {
         "userInformation": "用户信息",
         "userInformationDescription": "用户账户详情",
@@ -358,9 +367,106 @@
         "workInformation": "工作信息",
         "workInformationDescription": "雇佣和工作详情",
         "addressInformation": "地址信息",
-        "addressInformationDescription": "地址详情"
+        "addressInformationDescription": "地址详情",
+        "emergencyContact": "紧急联系人",
+        "emergencyContactDescription": "紧急联系人信息"
+      },
+      "fields": {
+        "username": "用户名",
+        "usernamePlaceholder": "用户名",
+        "userEmail": "用户邮箱",
+        "userEmailPlaceholder": "用户邮箱",
+        "role": "角色",
+        "rolePlaceholder": "用户角色",
+        "accountCreated": "账户创建时间",
+        "accountCreatedPlaceholder": "账户创建日期",
+        "lastLogin": "最后登录",
+        "lastLoginPlaceholder": "最后登录日期",
+        "accountStatus": "账户状态",
+        "accountStatusPlaceholder": "账户状态",
+        "firstName": "名",
+        "firstNamePlaceholder": "输入名",
+        "lastName": "姓",
+        "lastNamePlaceholder": "输入姓",
+        "email": "邮箱",
+        "emailPlaceholder": "输入邮箱地址",
+        "phoneNumber": "电话号码",
+        "phoneNumberPlaceholder": "输入电话号码",
+        "employeeNumber": "员工编号",
+        "employeeNumberPlaceholder": "员工编号",
+        "employmentStatus": "雇佣状态",
+        "employmentStatusPlaceholder": "选择雇佣状态",
+        "employmentType": "雇佣类型",
+        "employmentTypePlaceholder": "选择雇佣类型",
+        "hireDate": "入职日期",
+        "hireDatePlaceholder": "选择入职日期",
+        "terminationDate": "离职日期",
+        "terminationDatePlaceholder": "选择离职日期（可选）",
+        "department": "部门",
+        "departmentPlaceholder": "选择部门",
+        "position": "职位",
+        "positionPlaceholder": "选择职位",
+        "manager": "经理",
+        "managerPlaceholder": "选择经理",
+        "currentSalary": "当前薪资",
+        "currentSalaryPlaceholder": "输入薪资金额",
+        "salaryCurrency": "薪资货币",
+        "salaryCurrencyPlaceholder": "例如：USD, EUR",
+        "streetAddress": "街道地址",
+        "streetAddressPlaceholder": "输入街道地址",
+        "city": "城市",
+        "cityPlaceholder": "输入城市",
+        "postalCode": "邮政编码",
+        "postalCodePlaceholder": "输入邮政编码",
+        "country": "国家",
+        "countryPlaceholder": "输入国家",
+        "contactName": "联系人姓名",
+        "contactNamePlaceholder": "输入紧急联系人姓名",
+        "contactPhone": "联系人电话",
+        "contactPhonePlaceholder": "输入紧急联系人电话",
+        "contactRelation": "联系人关系",
+        "contactRelationPlaceholder": "例如：配偶、父母"
+      },
+      "options": {
+        "role": {
+          "admin": "管理员",
+          "manager": "经理",
+          "user": "用户"
+        },
+        "accountStatus": {
+          "active": "活跃",
+          "inactive": "非活跃"
+        },
+        "employmentStatus": {
+          "active": "在职",
+          "inactive": "离职",
+          "terminated": "终止",
+          "onLeave": "请假"
+        },
+        "employmentType": {
+          "fullTime": "全职",
+          "partTime": "兼职",
+          "contract": "合同",
+          "intern": "实习生"
+        }
+      },
+      "buttons": {
+        "saveChanges": "保存更改",
+        "cancel": "取消",
+        "close": "关闭"
+      },
+      "confirm": {
+        "title": "确认更新",
+        "message": "您确定要更新员工 {{name}} 吗？",
+        "confirmText": "更新",
+        "cancelText": "取消"
       },
       "id": "编号"
+    },
+    "delete": {
+      "confirmMessage": "您确定要删除 {{name}} 吗？此操作无法撤销。",
+      "bulkConfirmMessage": "您确定要删除 {{count}} 个员工吗？\n\n{{names}}\n\n此操作无法撤销。",
+      "deleteAll": "全部删除"
     },
     "search": {
       "title": "搜索员工",
@@ -553,6 +659,70 @@
         "commentsPlaceholder": "输入审批请求意见（可选）"
       },
       "submitButton": "提交审批"
+    },
+    "detail": {
+      "title": {
+        "edit": "编辑合同",
+        "view": "合同详情"
+      },
+      "sections": {
+        "contractInformation": "合同信息",
+        "contractInformationDescription": "合同详情"
+      },
+      "fields": {
+        "employee": "员工",
+        "employeePlaceholder": "选择员工",
+        "employeeName": "员工姓名",
+        "contractType": "合同类型",
+        "contractTypePlaceholder": "选择合同类型",
+        "status": "状态",
+        "statusPlaceholder": "选择状态",
+        "startDate": "开始日期",
+        "startDatePlaceholder": "选择开始日期",
+        "endDate": "结束日期",
+        "endDatePlaceholder": "选择结束日期（可选）",
+        "salary": "薪资",
+        "salaryPlaceholder": "输入薪资（可选）",
+        "renewalReminderDate": "续约提醒日期",
+        "renewalReminderDatePlaceholder": "选择续约提醒日期（可选）",
+        "notes": "备注",
+        "notesPlaceholder": "输入附加备注（可选）"
+      },
+      "buttons": {
+        "saveChanges": "保存更改",
+        "cancel": "取消",
+        "close": "关闭"
+      },
+      "confirm": {
+        "title": "确认更新",
+        "message": "您确定要更新 {{name}} 的合同吗？",
+        "confirmText": "更新",
+        "cancelText": "取消"
+      },
+      "notifications": {
+        "updateSuccess": "合同已更新",
+        "updateSuccessMessage": "{{name}} 的合同已成功更新",
+        "updateFailed": "更新失败",
+        "updateFailedMessage": "更新合同失败",
+        "loadFailed": "加载失败",
+        "loadFailedMessage": "加载审批信息失败"
+      },
+      "approval": {
+        "title": "审批信息",
+        "loading": "加载审批信息中...",
+        "empty": "此合同没有可用的审批信息。",
+        "approver": "审批人",
+        "approverRole": "审批人角色",
+        "approverNotAssigned": "未分配审批人",
+        "processedBy": "处理人",
+        "processedAt": "处理时间",
+        "comments": "意见",
+        "notes": "备注",
+        "dueDate": "到期日期"
+      }
+    },
+    "delete": {
+      "confirmMessage": "您确定要删除 {{name}} 的合同吗？此操作无法撤销。"
     }
   },
   "contractApprovals": {
@@ -717,6 +887,9 @@
     "add": {
       "title": "添加新用户",
       "subtitle": "在系统中创建新用户账户"
+    },
+    "delete": {
+      "confirmMessage": "删除用户 \"{{name}}\" 吗？此操作无法撤销。"
     }
   },
   "roles": {
@@ -774,7 +947,54 @@
       "system": "系统",
       "custom": "自定义"
     },
-    "morePermissions": "+{{count}} 更多"
+    "morePermissions": "+{{count}} 更多",
+    "delete": {
+      "confirmMessage": "删除角色 \"{{name}}\" 吗？此操作无法撤销。"
+    },
+    "detail": {
+      "title": {
+        "edit": "编辑角色",
+        "view": "角色详情"
+      },
+      "sections": {
+        "roleInformation": "角色信息",
+        "permissions": "权限"
+      },
+      "fields": {
+        "name": "角色名称",
+        "namePlaceholder": "输入角色名称",
+        "description": "描述",
+        "descriptionPlaceholder": "输入角色描述",
+        "permissions": "权限",
+        "permissionsPlaceholder": "选择权限"
+      },
+      "viewFields": {
+        "roleName": "角色名称",
+        "type": "类型",
+        "users": "用户",
+        "createdAt": "创建时间",
+        "updatedAt": "更新时间",
+        "permissions": "权限"
+      },
+      "buttons": {
+        "updateRole": "更新角色",
+        "cancel": "取消"
+      },
+      "confirm": {
+        "title": "确认更新",
+        "message": "更新角色 \"{{name}}\" 吗？",
+        "confirmText": "更新",
+        "cancelText": "取消"
+      },
+      "notifications": {
+        "updateSuccess": "角色已更新",
+        "updateSuccessMessage": "角色 \"{{name}}\" 已成功更新！",
+        "updateFailed": "更新角色失败",
+        "updateFailedMessage": "更新角色失败。",
+        "loadFailed": "加载失败",
+        "loadFailedMessage": "加载角色详情失败"
+      }
+    }
   },
   "permissions": {
     "title": "权限管理",
@@ -883,6 +1103,9 @@
       "add": "添加部门",
       "search": "搜索部门"
     },
+    "delete": {
+      "confirmMessage": "您确定要删除 {{name}} 吗？此操作无法撤销。"
+    },
     "search": {
       "title": "搜索部门",
       "subtitle": "按各种条件搜索和筛选部门",
@@ -927,6 +1150,39 @@
       "confirmTitle": "确认创建",
       "confirmMessage": "您确定要创建部门 {{name}} 吗？",
       "confirmButton": "创建"
+    },
+    "detail": {
+      "title": {
+        "edit": "编辑部门",
+        "view": "部门详情"
+      },
+      "sections": {
+        "departmentInformation": "部门信息",
+        "departmentInformationDescription": "部门详情"
+      },
+      "fields": {
+        "name": "部门名称",
+        "namePlaceholder": "输入部门名称",
+        "code": "部门代码",
+        "codePlaceholder": "输入部门代码",
+        "level": "层级",
+        "levelPlaceholder": "输入层级",
+        "parentDepartment": "上级部门",
+        "parentDepartmentPlaceholder": "选择上级部门（可选）",
+        "description": "描述",
+        "descriptionPlaceholder": "输入部门描述"
+      },
+      "buttons": {
+        "saveChanges": "保存更改",
+        "cancel": "取消",
+        "close": "关闭"
+      },
+      "confirm": {
+        "title": "确认更新",
+        "message": "您确定要更新部门 {{name}} 吗？",
+        "confirmText": "更新",
+        "cancelText": "取消"
+      }
     }
   },
   "positions": {
@@ -1016,6 +1272,48 @@
       "submitButton": "创建职位",
       "confirmTitle": "确认创建",
       "confirmMessage": "您确定要创建职位 {{name}} 吗？"
+    },
+    "detail": {
+      "title": {
+        "edit": "编辑职位",
+        "view": "职位详情"
+      },
+      "sections": {
+        "positionInformation": "职位信息",
+        "positionInformationDescription": "职位详情",
+        "salaryInformation": "薪资信息",
+        "salaryInformationDescription": "薪资范围详情"
+      },
+      "fields": {
+        "title": "职位名称",
+        "titlePlaceholder": "输入职位名称",
+        "code": "职位代码",
+        "codePlaceholder": "输入职位代码",
+        "level": "级别",
+        "levelPlaceholder": "输入级别",
+        "department": "部门",
+        "departmentPlaceholder": "选择部门",
+        "parentPosition": "上级职位",
+        "parentPositionPlaceholder": "选择上级职位（可选）",
+        "isManagement": "是否管理职位",
+        "description": "描述",
+        "descriptionPlaceholder": "输入职位描述",
+        "minSalary": "最低薪资",
+        "minSalaryPlaceholder": "输入最低薪资",
+        "maxSalary": "最高薪资",
+        "maxSalaryPlaceholder": "输入最高薪资"
+      },
+      "buttons": {
+        "saveChanges": "保存更改",
+        "cancel": "取消",
+        "close": "关闭"
+      },
+      "confirm": {
+        "title": "确认更新",
+        "message": "您确定要更新职位 {{name}} 吗？",
+        "confirmText": "更新",
+        "cancelText": "取消"
+      }
     }
   },
   "users": {
@@ -1067,6 +1365,67 @@
       "submitButton": "创建用户",
       "confirmTitle": "确认创建",
       "confirmMessage": "您确定要创建用户 {{name}} 吗？"
+    },
+    "detail": {
+      "title": {
+        "edit": "编辑用户",
+        "view": "用户详情"
+      },
+      "sections": {
+        "userInformation": "用户信息",
+        "accountSettings": "账户设置"
+      },
+      "fields": {
+        "username": "用户名",
+        "usernamePlaceholder": "输入用户名",
+        "email": "邮箱",
+        "emailPlaceholder": "输入邮箱",
+        "firstName": "名",
+        "firstNamePlaceholder": "输入名",
+        "lastName": "姓",
+        "lastNamePlaceholder": "输入姓",
+        "phoneNumber": "电话号码",
+        "phoneNumberPlaceholder": "输入电话号码",
+        "roles": "角色",
+        "rolesPlaceholder": "选择角色",
+        "active": "活跃"
+      },
+      "viewFields": {
+        "username": "用户名",
+        "email": "邮箱",
+        "firstName": "名",
+        "lastName": "姓",
+        "phoneNumber": "电话号码",
+        "status": "状态",
+        "emailConfirmed": "邮箱已确认",
+        "roles": "角色",
+        "createdAt": "创建时间",
+        "updatedAt": "更新时间",
+        "lastLogin": "最后登录",
+        "lockoutEnd": "锁定结束"
+      },
+      "options": {
+        "yes": "是",
+        "no": "否",
+        "active": "活跃",
+        "inactive": "非活跃"
+      },
+      "buttons": {
+        "updateUser": "更新用户",
+        "cancel": "取消"
+      },
+      "confirm": {
+        "title": "确认更新",
+        "message": "更新用户 \"{{name}}\" 吗？",
+        "confirmText": "更新",
+        "cancelText": "取消"
+      },
+      "notifications": {
+        "updateSuccess": "用户已更新",
+        "updateSuccessMessage": "用户 \"{{name}}\" 已成功更新！",
+        "updateFailed": "更新用户失败",
+        "updateFailedMessage": "更新用户失败。"
+      }
     }
   },
   "auditLogs": {

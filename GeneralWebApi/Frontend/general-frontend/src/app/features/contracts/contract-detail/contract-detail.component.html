@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-detail/contract-detail.component.html -->
 <app-base-modal
   [isOpen]="isOpen && contract !== null"
-  [title]="mode === 'edit' ? 'Edit Contract' : 'Contract Details'"
+  [title]="getModalTitle()"
   [icon]="mode === 'edit' ? 'edit' : 'description'"
   [config]="{
     size: 'large',
@@ -29,17 +29,17 @@
     <!-- Approval Information Section (only in view mode) -->
     <div class="approval-section" *ngIf="mode === 'view'">
       <div class="approval-header">
-        <h3>Approval Information</h3>
+        <h3>{{ 'contracts.detail.approval.title' | translate }}</h3>
       </div>
 
       <!-- Loading state -->
       <div *ngIf="loadingApproval()" class="approval-loading">
-        Loading approval information...
+        {{ 'contracts.detail.approval.loading' | translate }}
       </div>
 
       <!-- No approval -->
       <div *ngIf="!loadingApproval() && approvalSteps().length === 0" class="approval-empty">
-        <p>No approval information available for this contract.</p>
+        <p>{{ 'contracts.detail.approval.empty' | translate }}</p>
       </div>
 
       <!-- Approval steps -->
@@ -69,37 +69,37 @@
               <!-- Approver Information -->
               <div class="step-info">
                 <div class="step-info-item" *ngIf="step.approverUserName">
-                  <strong>Approver:</strong> {{ step.approverUserName }}
+                  <strong>{{ 'contracts.detail.approval.approver' | translate }}:</strong> {{ step.approverUserName }}
                   <span *ngIf="step.approverRole && !step.approverUserId" class="role-badge">({{ step.approverRole }})</span>
                 </div>
                 <div class="step-info-item" *ngIf="!step.approverUserName && step.approverRole">
-                  <strong>Approver Role:</strong> {{ step.approverRole }}
+                  <strong>{{ 'contracts.detail.approval.approverRole' | translate }}:</strong> {{ step.approverRole }}
                 </div>
                 <div class="step-info-item" *ngIf="step.status === 'Pending' && !step.approverUserName && !step.approverRole">
-                  <em>Approver not assigned</em>
+                  <em>{{ 'contracts.detail.approval.approverNotAssigned' | translate }}</em>
                 </div>
               </div>
 
               <!-- Processed Information -->
               <div class="step-processed" *ngIf="step.status !== 'Pending'">
                 <div class="step-info-item" *ngIf="step.processedBy">
-                  <strong>Processed by:</strong> {{ step.processedBy }}
+                  <strong>{{ 'contracts.detail.approval.processedBy' | translate }}:</strong> {{ step.processedBy }}
                 </div>
                 <div class="step-info-item" *ngIf="step.processedAt">
-                  <strong>Processed at:</strong> {{ formatDate(step.processedAt) }}
+                  <strong>{{ 'contracts.detail.approval.processedAt' | translate }}:</strong> {{ formatDate(step.processedAt) }}
                 </div>
                 <div class="step-info-item" *ngIf="step.comments">
-                  <strong>Comments:</strong> {{ step.comments }}
+                  <strong>{{ 'contracts.detail.approval.comments' | translate }}:</strong> {{ step.comments }}
                 </div>
               </div>
 
               <!-- Pending Information -->
               <div class="step-pending" *ngIf="step.status === 'Pending'">
                 <div class="step-info-item" *ngIf="step.dueDate">
-                  <strong>Due Date:</strong> {{ formatDate(step.dueDate) }}
+                  <strong>{{ 'contracts.detail.approval.dueDate' | translate }}:</strong> {{ formatDate(step.dueDate) }}
                 </div>
                 <div class="step-info-item" *ngIf="step.comments">
-                  <strong>Notes:</strong> {{ step.comments }}
+                  <strong>{{ 'contracts.detail.approval.notes' | translate }}:</strong> {{ step.comments }}
                 </div>
               </div>
             </div>

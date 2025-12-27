@@ -37,7 +37,11 @@
     "view": "View",
     "notAvailable": "N/A",
     "create": "Create",
-    "validationError": "Validation Error"
+    "validationError": "Validation Error",
+    "deleteConfirm": {
+      "title": "Confirm Delete",
+      "message": "Are you sure you want to delete this item? This action cannot be undone."
+    }
   },
   "auth": {
     "login": "Login",
@@ -372,6 +376,11 @@
       }
     },
     "detail": {
+      "title": {
+        "edit": "Edit Employee",
+        "view": "Employee Details",
+        "userProfile": "User Profile"
+      },
       "sections": {
         "userInformation": "User Information",
         "userInformationDescription": "User account details",
@@ -380,9 +389,106 @@
         "workInformation": "Work Information",
         "workInformationDescription": "Employment and work details",
         "addressInformation": "Address Information",
-        "addressInformationDescription": "Address details"
+        "addressInformationDescription": "Address details",
+        "emergencyContact": "Emergency Contact",
+        "emergencyContactDescription": "Emergency contact information"
+      },
+      "fields": {
+        "username": "Username",
+        "usernamePlaceholder": "Username",
+        "userEmail": "User Email",
+        "userEmailPlaceholder": "User email",
+        "role": "Role",
+        "rolePlaceholder": "User role",
+        "accountCreated": "Account Created",
+        "accountCreatedPlaceholder": "Account creation date",
+        "lastLogin": "Last Login",
+        "lastLoginPlaceholder": "Last login date",
+        "accountStatus": "Account Status",
+        "accountStatusPlaceholder": "Account status",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "Enter first name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Enter last name",
+        "email": "Email",
+        "emailPlaceholder": "Enter email address",
+        "phoneNumber": "Phone Number",
+        "phoneNumberPlaceholder": "Enter phone number",
+        "employeeNumber": "Employee Number",
+        "employeeNumberPlaceholder": "Employee number",
+        "employmentStatus": "Employment Status",
+        "employmentStatusPlaceholder": "Select employment status",
+        "employmentType": "Employment Type",
+        "employmentTypePlaceholder": "Select employment type",
+        "hireDate": "Hire Date",
+        "hireDatePlaceholder": "Select hire date",
+        "terminationDate": "Termination Date",
+        "terminationDatePlaceholder": "Select termination date (optional)",
+        "department": "Department",
+        "departmentPlaceholder": "Select department",
+        "position": "Position",
+        "positionPlaceholder": "Select position",
+        "manager": "Manager",
+        "managerPlaceholder": "Select manager",
+        "currentSalary": "Current Salary",
+        "currentSalaryPlaceholder": "Enter salary amount",
+        "salaryCurrency": "Salary Currency",
+        "salaryCurrencyPlaceholder": "e.g., USD, EUR",
+        "streetAddress": "Street Address",
+        "streetAddressPlaceholder": "Enter street address",
+        "city": "City",
+        "cityPlaceholder": "Enter city",
+        "postalCode": "Postal Code",
+        "postalCodePlaceholder": "Enter postal code",
+        "country": "Country",
+        "countryPlaceholder": "Enter country",
+        "contactName": "Contact Name",
+        "contactNamePlaceholder": "Enter emergency contact name",
+        "contactPhone": "Contact Phone",
+        "contactPhonePlaceholder": "Enter emergency contact phone",
+        "contactRelation": "Contact Relation",
+        "contactRelationPlaceholder": "e.g., Spouse, Parent"
+      },
+      "options": {
+        "role": {
+          "admin": "Admin",
+          "manager": "Manager",
+          "user": "User"
+        },
+        "accountStatus": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "employmentStatus": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "terminated": "Terminated",
+          "onLeave": "On Leave"
+        },
+        "employmentType": {
+          "fullTime": "Full Time",
+          "partTime": "Part Time",
+          "contract": "Contract",
+          "intern": "Intern"
+        }
+      },
+      "buttons": {
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "confirm": {
+        "title": "Confirm Update",
+        "message": "Are you sure you want to update employee {{name}}?",
+        "confirmText": "Update",
+        "cancelText": "Cancel"
       },
       "id": "ID"
+    },
+    "delete": {
+      "confirmMessage": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "bulkConfirmMessage": "Are you sure you want to delete {{count}} employee(s)?\n\n{{names}}\n\nThis action cannot be undone.",
+      "deleteAll": "Delete All"
     },
     "search": {
       "title": "Search Employee",
@@ -575,6 +681,70 @@
         "commentsPlaceholder": "Enter comments for approval request (optional)"
       },
       "submitButton": "Submit for Approval"
+    },
+    "detail": {
+      "title": {
+        "edit": "Edit Contract",
+        "view": "Contract Details"
+      },
+      "sections": {
+        "contractInformation": "Contract Information",
+        "contractInformationDescription": "Contract details"
+      },
+      "fields": {
+        "employee": "Employee",
+        "employeePlaceholder": "Select employee",
+        "employeeName": "Employee name",
+        "contractType": "Contract Type",
+        "contractTypePlaceholder": "Select contract type",
+        "status": "Status",
+        "statusPlaceholder": "Select status",
+        "startDate": "Start Date",
+        "startDatePlaceholder": "Select start date",
+        "endDate": "End Date",
+        "endDatePlaceholder": "Select end date (optional)",
+        "salary": "Salary",
+        "salaryPlaceholder": "Enter salary (optional)",
+        "renewalReminderDate": "Renewal Reminder Date",
+        "renewalReminderDatePlaceholder": "Select renewal reminder date (optional)",
+        "notes": "Notes",
+        "notesPlaceholder": "Enter additional notes (optional)"
+      },
+      "buttons": {
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "confirm": {
+        "title": "Confirm Update",
+        "message": "Are you sure you want to update contract for {{name}}?",
+        "confirmText": "Update",
+        "cancelText": "Cancel"
+      },
+      "notifications": {
+        "updateSuccess": "Contract Updated",
+        "updateSuccessMessage": "Contract for {{name}} has been updated successfully",
+        "updateFailed": "Update Failed",
+        "updateFailedMessage": "Failed to update contract",
+        "loadFailed": "Load Failed",
+        "loadFailedMessage": "Failed to load approval information"
+      },
+      "approval": {
+        "title": "Approval Information",
+        "loading": "Loading approval information...",
+        "empty": "No approval information available for this contract.",
+        "approver": "Approver",
+        "approverRole": "Approver Role",
+        "approverNotAssigned": "Approver not assigned",
+        "processedBy": "Processed by",
+        "processedAt": "Processed at",
+        "comments": "Comments",
+        "notes": "Notes",
+        "dueDate": "Due Date"
+      }
+    },
+    "delete": {
+      "confirmMessage": "Are you sure you want to delete the contract for {{name}}? This action cannot be undone."
     }
   },
   "contractApprovals": {
@@ -739,6 +909,9 @@
     "add": {
       "title": "Add New User",
       "subtitle": "Create a new user account in the system"
+    },
+    "delete": {
+      "confirmMessage": "Delete user \"{{name}}\"? This action cannot be undone."
     }
   },
   "roles": {
@@ -796,7 +969,54 @@
       "system": "System",
       "custom": "Custom"
     },
-    "morePermissions": "+{{count}} more"
+    "morePermissions": "+{{count}} more",
+    "delete": {
+      "confirmMessage": "Delete role \"{{name}}\"? This action cannot be undone."
+    },
+    "detail": {
+      "title": {
+        "edit": "Edit Role",
+        "view": "Role Details"
+      },
+      "sections": {
+        "roleInformation": "Role Information",
+        "permissions": "Permissions"
+      },
+      "fields": {
+        "name": "Role Name",
+        "namePlaceholder": "Enter role name",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter role description",
+        "permissions": "Permissions",
+        "permissionsPlaceholder": "Select permissions"
+      },
+      "viewFields": {
+        "roleName": "Role Name",
+        "type": "Type",
+        "users": "Users",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "permissions": "Permissions"
+      },
+      "buttons": {
+        "updateRole": "Update Role",
+        "cancel": "Cancel"
+      },
+      "confirm": {
+        "title": "Confirm Update",
+        "message": "Update role \"{{name}}\"?",
+        "confirmText": "Update",
+        "cancelText": "Cancel"
+      },
+      "notifications": {
+        "updateSuccess": "Role Updated",
+        "updateSuccessMessage": "Role \"{{name}}\" updated successfully!",
+        "updateFailed": "Update Role Failed",
+        "updateFailedMessage": "Failed to update role.",
+        "loadFailed": "Load Failed",
+        "loadFailedMessage": "Failed to load role details"
+      }
+    }
   },
   "permissions": {
     "title": "Permission Management",
@@ -905,6 +1125,9 @@
       "add": "Add Department",
       "search": "Search Department"
     },
+    "delete": {
+      "confirmMessage": "Are you sure you want to delete {{name}}? This action cannot be undone."
+    },
     "search": {
       "title": "Search Department",
       "subtitle": "Search and filter departments by various criteria",
@@ -949,6 +1172,39 @@
       "confirmTitle": "Confirm Create",
       "confirmMessage": "Are you sure you want to create department {{name}}?",
       "confirmButton": "Create"
+    },
+    "detail": {
+      "title": {
+        "edit": "Edit Department",
+        "view": "Department Details"
+      },
+      "sections": {
+        "departmentInformation": "Department Information",
+        "departmentInformationDescription": "Department details"
+      },
+      "fields": {
+        "name": "Department Name",
+        "namePlaceholder": "Enter department name",
+        "code": "Department Code",
+        "codePlaceholder": "Enter department code",
+        "level": "Level",
+        "levelPlaceholder": "Enter level",
+        "parentDepartment": "Parent Department",
+        "parentDepartmentPlaceholder": "Select parent department (optional)",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter department description"
+      },
+      "buttons": {
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "confirm": {
+        "title": "Confirm Update",
+        "message": "Are you sure you want to update department {{name}}?",
+        "confirmText": "Update",
+        "cancelText": "Cancel"
+      }
     }
   },
   "positions": {
@@ -1038,6 +1294,48 @@
       "submitButton": "Create Position",
       "confirmTitle": "Confirm Create",
       "confirmMessage": "Are you sure you want to create position {{name}}?"
+    },
+    "detail": {
+      "title": {
+        "edit": "Edit Position",
+        "view": "Position Details"
+      },
+      "sections": {
+        "positionInformation": "Position Information",
+        "positionInformationDescription": "Position details",
+        "salaryInformation": "Salary Information",
+        "salaryInformationDescription": "Salary range details"
+      },
+      "fields": {
+        "title": "Position Title",
+        "titlePlaceholder": "Enter position title",
+        "code": "Position Code",
+        "codePlaceholder": "Enter position code",
+        "level": "Level",
+        "levelPlaceholder": "Enter level",
+        "department": "Department",
+        "departmentPlaceholder": "Select department",
+        "parentPosition": "Parent Position",
+        "parentPositionPlaceholder": "Select parent position (optional)",
+        "isManagement": "Is Management Position",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter position description",
+        "minSalary": "Minimum Salary",
+        "minSalaryPlaceholder": "Enter minimum salary",
+        "maxSalary": "Maximum Salary",
+        "maxSalaryPlaceholder": "Enter maximum salary"
+      },
+      "buttons": {
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "confirm": {
+        "title": "Confirm Update",
+        "message": "Are you sure you want to update position {{name}}?",
+        "confirmText": "Update",
+        "cancelText": "Cancel"
+      }
     }
   },
   "users": {
@@ -1089,6 +1387,67 @@
       "submitButton": "Create User",
       "confirmTitle": "Confirm Create",
       "confirmMessage": "Are you sure you want to create user {{name}}?"
+    },
+    "detail": {
+      "title": {
+        "edit": "Edit User",
+        "view": "User Details"
+      },
+      "sections": {
+        "userInformation": "User Information",
+        "accountSettings": "Account Settings"
+      },
+      "fields": {
+        "username": "Username",
+        "usernamePlaceholder": "Enter username",
+        "email": "Email",
+        "emailPlaceholder": "Enter email",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "Enter first name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Enter last name",
+        "phoneNumber": "Phone Number",
+        "phoneNumberPlaceholder": "Enter phone number",
+        "roles": "Roles",
+        "rolesPlaceholder": "Select roles",
+        "active": "Active"
+      },
+      "viewFields": {
+        "username": "Username",
+        "email": "Email",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "phoneNumber": "Phone Number",
+        "status": "Status",
+        "emailConfirmed": "Email Confirmed",
+        "roles": "Roles",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "lastLogin": "Last Login",
+        "lockoutEnd": "Lockout End"
+      },
+      "options": {
+        "yes": "Yes",
+        "no": "No",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "buttons": {
+        "updateUser": "Update User",
+        "cancel": "Cancel"
+      },
+      "confirm": {
+        "title": "Confirm Update",
+        "message": "Update user \"{{name}}\"?",
+        "confirmText": "Update",
+        "cancelText": "Cancel"
+      },
+      "notifications": {
+        "updateSuccess": "User Updated",
+        "updateSuccessMessage": "User \"{{name}}\" updated successfully!",
+        "updateFailed": "Update User Failed",
+        "updateFailedMessage": "Failed to update user."
+      }
     }
   },
   "auditLogs": {

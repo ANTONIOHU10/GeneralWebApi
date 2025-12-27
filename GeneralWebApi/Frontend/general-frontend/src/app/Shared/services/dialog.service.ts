@@ -1,8 +1,9 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/services/dialog.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, finalize } from 'rxjs/operators';
 import { ConfirmDialogConfig } from '../components/base/base-confirm-dialog/base-confirm-dialog.component';
+import { TranslationService } from '@core/services/translation.service';
 
 export interface DialogData extends ConfirmDialogConfig {
   id: string;
@@ -61,6 +62,7 @@ export interface DialogData extends ConfirmDialogConfig {
 export class DialogService {
   private readonly dialogsSubject = new BehaviorSubject<DialogData[]>([]);
   public readonly dialogs$: Observable<DialogData[]> = this.dialogsSubject.asObservable();
+  private translationService = inject(TranslationService);
 
   private dialogId = 0;
 
@@ -222,15 +224,17 @@ export class DialogService {
   
   /**
    * Show delete confirmation dialog
-   * @param message Optional custom message
+   * @param message Optional custom message (can be a translation key or plain text)
+   * @param params Optional parameters for translation
    * @returns Observable<boolean> that emits true if confirmed, false if cancelled
    */
-  confirmDelete(message?: string): Observable<boolean> {
+  confirmDelete(message?: string, params?: Record<string, string | number>): Observable<boolean> {
+    const t = (key: string) => this.translationService.translate(key, params);
     return this.confirm({
-      title: 'Confirm Delete',
-      message: message || 'Are you sure you want to delete this item? This action cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: t('common.deleteConfirm.title'),
+      message: message || t('common.deleteConfirm.message'),
+      confirmText: t('common.delete'),
+      cancelText: t('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     });

@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-detail/position-detail.component.html -->
 <app-base-modal
   [isOpen]="isOpen && position !== null"
-  [title]="mode === 'edit' ? 'Edit Position' : 'Position Details'"
+  [title]="getModalTitle()"
   [icon]="mode === 'edit' ? 'edit' : 'work'"
   [config]="{
     size: 'large',

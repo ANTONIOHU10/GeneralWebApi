@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/role-detail/role-detail.component.html -->
 <app-base-detail
   [isOpen]="isOpen"
-  [title]="mode === 'edit' ? 'Edit Role' : 'Role Details'"
+  [title]="getModalTitle()"
   [mode]="mode"
   [sections]="sections()"
   [editFormTemplate]="editFormTemplate"
@@ -37,7 +37,7 @@
       </div>
     </div>
     <div *ngIf="role && role.description" class="section-divider">
-      <div class="info-label">Description</div>
+      <div class="info-label">{{ 'roles.detail.fields.description' | translate }}</div>
       <div>{{ role.description }}</div>
     </div>
   </ng-template>
@@ -48,8 +48,6 @@
       [config]="formConfig"
       [formData]="formData"
       [loading]="loading()"
-      submitText="Update Role"
-      cancelText="Cancel"
       (formSubmit)="onFormSubmit($event)"
       (formCancel)="onClose()"
     ></app-base-form>

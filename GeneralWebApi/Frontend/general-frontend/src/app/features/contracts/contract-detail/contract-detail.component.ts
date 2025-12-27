@@ -1,8 +1,8 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-detail/contract-detail.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, delay, of } from 'rxjs';
-import { filter, first, takeUntil } from 'rxjs/operators';
+import { Observable, delay, of, Subject } from 'rxjs';
+import { filter, first, takeUntil, catchError, distinctUntilChanged } from 'rxjs/operators';
 import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES } from 'app/contracts/contracts/contract.model';
 import {
   BaseModalComponent,
@@ -11,11 +11,11 @@ import {
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 import { ContractApprovalStep } from 'app/contracts/contract-approvals/contract-approval.model';
-import { Subject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 
 /**
  * ContractDetailComponent - Modal component for displaying detailed contract information
@@ -28,6 +28,7 @@ import { catchError } from 'rxjs/operators';
     BaseModalComponent,
     BaseFormComponent,
     BaseBadgeComponent,
+    TranslatePipe,
   ],
   templateUrl: './contract-detail.component.html',
   styleUrls: ['./contract-detail.component.scss'],
@@ -36,6 +37,8 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private contractApprovalService = inject(ContractApprovalService);
+  private translationService = inject(TranslationService);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   @Input() contract: Contract | null = null;
@@ -64,7 +67,7 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
     { value: 5, label: 'Charlie Brown (ID: 5)' },
   ];
 
-  // Form configuration
+  // Form configuration - will be initialized with translations
   formConfig: FormConfig = {
     sections: [
       {
@@ -181,7 +184,16 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
   };
 
   ngOnInit(): void {
-    this.updateFormConfigForMode();
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+      // Initialize form config for current mode (edit/view)
+      this.updateFormConfigForMode();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -208,6 +220,142 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   onBackdropClick(): void {
     this.onClose();
+  }
+
+  /**
+   * Get modal title based on mode
+   */
+  getModalTitle(): string {
+    if (this.mode === 'edit') {
+      return this.translationService.translate('contracts.detail.title.edit');
+    }
+    return this.translationService.translate('contracts.detail.title.view');
+  }
+
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const t = (key: string) => this.translationService.translate(key);
+    
+    // Get section title
+    const contractInfoSection = t('contracts.detail.sections.contractInformation');
+
+    this.formConfig = {
+      sections: [
+        {
+          title: contractInfoSection,
+          description: t('contracts.detail.sections.contractInformationDescription'),
+          order: 0,
+        },
+      ],
+      layout: {
+        columns: 2,
+        gap: '1.5rem',
+        sectionGap: '2rem',
+        labelPosition: 'top',
+        showSectionDividers: true,
+      },
+      fields: [
+        {
+          key: 'employeeId',
+          type: 'select',
+          label: t('contracts.detail.fields.employee'),
+          placeholder: t('contracts.detail.fields.employeePlaceholder'),
+          required: true,
+          section: contractInfoSection,
+          order: 0,
+          colSpan: 2,
+          searchable: true,
+          options: this.employeeOptions,
+        },
+        {
+          key: 'contractType',
+          type: 'select',
+          label: t('contracts.detail.fields.contractType'),
+          placeholder: t('contracts.detail.fields.contractTypePlaceholder'),
+          required: true,
+          section: contractInfoSection,
+          order: 1,
+          colSpan: 1,
+          options: CONTRACT_TYPES.map(type => ({
+            value: type.value,
+            label: type.label,
+          })) as SelectOption[],
+        },
+        {
+          key: 'status',
+          type: 'select',
+          label: t('contracts.detail.fields.status'),
+          placeholder: t('contracts.detail.fields.statusPlaceholder'),
+          required: true,
+          section: contractInfoSection,
+          order: 2,
+          colSpan: 1,
+          options: CONTRACT_STATUSES.map(status => ({
+            value: status.value,
+            label: status.label,
+          })) as SelectOption[],
+        },
+        {
+          key: 'startDate',
+          type: 'datepicker',
+          label: t('contracts.detail.fields.startDate'),
+          placeholder: t('contracts.detail.fields.startDatePlaceholder'),
+          required: true,
+          section: contractInfoSection,
+          order: 3,
+          colSpan: 1,
+        },
+        {
+          key: 'endDate',
+          type: 'datepicker',
+          label: t('contracts.detail.fields.endDate'),
+          placeholder: t('contracts.detail.fields.endDatePlaceholder'),
+          required: false,
+          section: contractInfoSection,
+          order: 4,
+          colSpan: 1,
+        },
+        {
+          key: 'salary',
+          type: 'number',
+          label: t('contracts.detail.fields.salary'),
+          placeholder: t('contracts.detail.fields.salaryPlaceholder'),
+          required: false,
+          section: contractInfoSection,
+          order: 5,
+          colSpan: 1,
+          min: 0,
+        },
+        {
+          key: 'renewalReminderDate',
+          type: 'datepicker',
+          label: t('contracts.detail.fields.renewalReminderDate'),
+          placeholder: t('contracts.detail.fields.renewalReminderDatePlaceholder'),
+          required: false,
+          section: contractInfoSection,
+          order: 6,
+          colSpan: 1,
+        },
+        {
+          key: 'notes',
+          type: 'textarea',
+          label: t('contracts.detail.fields.notes'),
+          placeholder: t('contracts.detail.fields.notesPlaceholder'),
+          required: false,
+          section: contractInfoSection,
+          order: 7,
+          colSpan: 2,
+          rows: 4,
+        },
+      ],
+      submitButtonText: t('contracts.detail.buttons.saveChanges'),
+      cancelButtonText: t('contracts.detail.buttons.cancel'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+    this.cdr.markForCheck();
   }
 
   private initializeFormData(): void {
@@ -245,7 +393,7 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
           type: 'input' as const,
           readonly: true,
           disabled: true,
-          placeholder: 'Employee name',
+          placeholder: this.translationService.translate('contracts.detail.fields.employeeName'),
         };
       }
 
@@ -262,7 +410,7 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
       showButtons: isReadOnly ? false : true,
       buttons: isReadOnly ? [
         {
-          label: 'Close',
+          label: this.translationService.translate('contracts.detail.buttons.close'),
           type: 'reset',
           variant: 'secondary',
           icon: 'close',
@@ -277,10 +425,10 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
     const employeeName = this.employeeOptions.find(e => e.value === data['employeeId'])?.label?.split(' (')[0] || 'Unknown';
 
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Update',
-      message: `Are you sure you want to update contract for ${employeeName}?`,
-      confirmText: 'Update',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('contracts.detail.confirm.title'),
+      message: this.translationService.translate('contracts.detail.confirm.message', { name: employeeName }),
+      confirmText: this.translationService.translate('contracts.detail.confirm.confirmText'),
+      cancelText: this.translationService.translate('contracts.detail.confirm.cancelText'),
       confirmVariant: 'primary',
       icon: 'save',
     });
@@ -315,9 +463,10 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
       ).subscribe({
         next: (contract: Contract) => {
           this.loading.set(false);
+          const employeeName = contract.employeeName || 'Unknown';
           this.notificationService.success(
-            'Contract Updated',
-            `Contract for ${contract.employeeName} has been updated successfully`,
+            this.translationService.translate('contracts.detail.notifications.updateSuccess'),
+            this.translationService.translate('contracts.detail.notifications.updateSuccessMessage', { name: employeeName }),
             { duration: 3000, autoClose: true }
           );
           this.contractUpdated.emit(contract);
@@ -326,8 +475,8 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
         error: (error) => {
           this.loading.set(false);
           this.notificationService.error(
-            'Update Failed',
-            error.message || 'Failed to update contract',
+            this.translationService.translate('contracts.detail.notifications.updateFailed'),
+            error.message || this.translationService.translate('contracts.detail.notifications.updateFailedMessage'),
             { duration: 5000, persistent: false, autoClose: true }
           );
         }
@@ -359,8 +508,8 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
         // Don't show error notification for missing approval (contract might not have approval yet)
         if (error.message && !error.message.includes('not found')) {
           this.notificationService.error(
-            'Load Failed',
-            'Failed to load approval information',
+            this.translationService.translate('contracts.detail.notifications.loadFailed'),
+            this.translationService.translate('contracts.detail.notifications.loadFailedMessage'),
             { duration: 3000, persistent: false, autoClose: true }
           );
         }

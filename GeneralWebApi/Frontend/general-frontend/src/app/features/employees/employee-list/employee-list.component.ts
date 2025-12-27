@@ -318,10 +318,10 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     
     // Show confirmation dialog first
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Delete',
-      message: `Are you sure you want to delete ${employeeName}? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('employees.delete.confirmMessage', { name: employeeName }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     });
@@ -389,10 +389,13 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       .join(', ');
 
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Bulk Delete',
-      message: `Are you sure you want to delete ${selectedEmployees.length} employee(s)?\n\n${employeeNames}\n\nThis action cannot be undone.`,
-      confirmText: 'Delete All',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('employees.delete.bulkConfirmMessage', { 
+        count: selectedEmployees.length,
+        names: employeeNames 
+      }),
+      confirmText: this.translationService.translate('employees.delete.deleteAll'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     });

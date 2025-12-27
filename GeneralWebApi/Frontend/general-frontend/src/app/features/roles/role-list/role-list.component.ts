@@ -173,10 +173,10 @@ export class RoleListComponent implements OnInit, OnDestroy {
 
   onDelete(role: Role): void {
     this.dialogService.confirm({
-      title: 'Delete Role',
-      message: `Delete role "${role.name}"? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('roles.delete.confirmMessage', { name: role.name }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     }).pipe(first(), filter(c => c)).subscribe(() => {

@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/positions/position-detail/position-detail.component.ts
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Position } from 'app/contracts/positions/position.model';
 import {
@@ -8,11 +8,12 @@ import {
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
+import { TranslationService } from '@core/services/translation.service';
 import { PositionFacade } from '@store/position/position.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
-import { Observable, combineLatest } from 'rxjs';
-import { filter, first, pairwise, debounceTime, startWith } from 'rxjs/operators';
+import { Observable, combineLatest, Subject } from 'rxjs';
+import { filter, first, pairwise, debounceTime, startWith, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 /**
  * PositionDetailComponent - Modal component for displaying detailed position information
@@ -28,11 +29,13 @@ import { filter, first, pairwise, debounceTime, startWith } from 'rxjs/operators
   templateUrl: './position-detail.component.html',
   styleUrls: ['./position-detail.component.scss'],
 })
-export class PositionDetailComponent implements OnInit, OnChanges {
+export class PositionDetailComponent implements OnInit, OnChanges, OnDestroy {
   private positionFacade = inject(PositionFacade);
   private departmentFacade = inject(DepartmentFacade);
   private dialogService = inject(DialogService);
   private operationNotification = inject(OperationNotificationService);
+  private translationService = inject(TranslationService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() position: Position | null = null;
   @Input() isOpen = false;
@@ -44,6 +47,10 @@ export class PositionDetailComponent implements OnInit, OnChanges {
   loading = signal(false);
   formData: Record<string, unknown> = {};
 
+  // Destroy subject for cleanup
+  private destroy$ = new Subject<void>();
+
+  // Form configuration - will be initialized with translations
   formConfig: FormConfig = {
     sections: [
       {
@@ -167,9 +174,18 @@ export class PositionDetailComponent implements OnInit, OnChanges {
   };
 
   ngOnInit(): void {
-    this.updateFormConfigForMode();
-    this.loadDepartmentOptions();
-    this.loadParentPositionOptions();
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+      // Initialize form config for current mode (edit/view)
+      this.updateFormConfigForMode();
+      this.loadDepartmentOptions();
+      this.loadParentPositionOptions();
+    });
 
     // Subscribe to operation progress to update loading state
     // Simplified: Direct subscription without effect wrapper
@@ -223,6 +239,150 @@ export class PositionDetailComponent implements OnInit, OnChanges {
     this.onClose();
   }
 
+  /**
+   * Get modal title based on mode
+   */
+  getModalTitle(): string {
+    if (this.mode === 'edit') {
+      return this.translationService.translate('positions.detail.title.edit');
+    }
+    return this.translationService.translate('positions.detail.title.view');
+  }
+
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const t = (key: string) => this.translationService.translate(key);
+    
+    // Get section titles
+    const positionInfoSection = t('positions.detail.sections.positionInformation');
+    const salaryInfoSection = t('positions.detail.sections.salaryInformation');
+
+    this.formConfig = {
+      sections: [
+        {
+          title: positionInfoSection,
+          description: t('positions.detail.sections.positionInformationDescription'),
+          order: 0,
+        },
+        {
+          title: salaryInfoSection,
+          description: t('positions.detail.sections.salaryInformationDescription'),
+          order: 1,
+          collapsible: true,
+          collapsed: false,
+        },
+      ],
+      layout: {
+        columns: 2,
+        gap: '1.5rem',
+        sectionGap: '2rem',
+        labelPosition: 'top',
+        showSectionDividers: true,
+      },
+      fields: [
+        {
+          key: 'title',
+          type: 'input',
+          label: t('positions.detail.fields.title'),
+          placeholder: t('positions.detail.fields.titlePlaceholder'),
+          required: true,
+          section: positionInfoSection,
+          order: 0,
+          colSpan: 2,
+        },
+        {
+          key: 'code',
+          type: 'input',
+          label: t('positions.detail.fields.code'),
+          placeholder: t('positions.detail.fields.codePlaceholder'),
+          required: true,
+          section: positionInfoSection,
+          order: 1,
+          colSpan: 1,
+        },
+        {
+          key: 'level',
+          type: 'number',
+          label: t('positions.detail.fields.level'),
+          placeholder: t('positions.detail.fields.levelPlaceholder'),
+          required: true,
+          section: positionInfoSection,
+          order: 2,
+          colSpan: 1,
+          min: 1,
+        },
+        {
+          key: 'departmentId',
+          type: 'select',
+          label: t('positions.detail.fields.department'),
+          placeholder: t('positions.detail.fields.departmentPlaceholder'),
+          required: true,
+          section: positionInfoSection,
+          order: 3,
+          colSpan: 1,
+          searchable: true,
+          options: [] as SelectOption[],
+        },
+        {
+          key: 'parentPositionId',
+          type: 'select',
+          label: t('positions.detail.fields.parentPosition'),
+          placeholder: t('positions.detail.fields.parentPositionPlaceholder'),
+          section: positionInfoSection,
+          order: 4,
+          colSpan: 1,
+          searchable: true,
+          options: [] as SelectOption[],
+        },
+        {
+          key: 'isManagement',
+          type: 'checkbox',
+          label: t('positions.detail.fields.isManagement'),
+          section: positionInfoSection,
+          order: 5,
+          colSpan: 2,
+        },
+        {
+          key: 'description',
+          type: 'textarea',
+          label: t('positions.detail.fields.description'),
+          placeholder: t('positions.detail.fields.descriptionPlaceholder'),
+          section: positionInfoSection,
+          order: 6,
+          colSpan: 2,
+          rows: 4,
+        },
+        {
+          key: 'minSalary',
+          type: 'number',
+          label: t('positions.detail.fields.minSalary'),
+          placeholder: t('positions.detail.fields.minSalaryPlaceholder'),
+          section: salaryInfoSection,
+          order: 0,
+          colSpan: 1,
+          min: 0,
+        },
+        {
+          key: 'maxSalary',
+          type: 'number',
+          label: t('positions.detail.fields.maxSalary'),
+          placeholder: t('positions.detail.fields.maxSalaryPlaceholder'),
+          section: salaryInfoSection,
+          order: 1,
+          colSpan: 1,
+          min: 0,
+        },
+      ],
+      submitButtonText: t('positions.detail.buttons.saveChanges'),
+      cancelButtonText: t('positions.detail.buttons.cancel'),
+      submitButtonVariant: 'primary',
+      cancelButtonVariant: 'secondary',
+    };
+    this.cdr.markForCheck();
+  }
+
   private initializeFormData(): void {
     if (!this.position) return;
 
@@ -258,7 +418,7 @@ export class PositionDetailComponent implements OnInit, OnChanges {
       showButtons: isReadOnly ? false : true,
       buttons: isReadOnly ? [
         {
-          label: 'Close',
+          label: this.translationService.translate('positions.detail.buttons.close'),
           type: 'reset',
           variant: 'secondary',
           icon: 'close',
@@ -307,10 +467,10 @@ export class PositionDetailComponent implements OnInit, OnChanges {
     const positionTitle = (data['title'] as string)?.trim() || '';
 
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Update',
-      message: `Are you sure you want to update position ${positionTitle}?`,
-      confirmText: 'Update',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('positions.detail.confirm.title'),
+      message: this.translationService.translate('positions.detail.confirm.message', { name: positionTitle }),
+      confirmText: this.translationService.translate('positions.detail.confirm.confirmText'),
+      cancelText: this.translationService.translate('positions.detail.confirm.cancelText'),
       confirmVariant: 'primary',
       icon: 'save',
     });
@@ -344,6 +504,11 @@ export class PositionDetailComponent implements OnInit, OnChanges {
 
   onFormCancel(): void {
     this.onClose();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
 

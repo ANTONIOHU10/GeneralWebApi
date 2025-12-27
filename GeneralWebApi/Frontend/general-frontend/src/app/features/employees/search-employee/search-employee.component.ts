@@ -100,6 +100,13 @@ export class SearchEmployeeComponent implements OnInit {
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
 
+  // Effect to sync filteredEmployees signal with employees$ BehaviorSubject
+  // Note: effect() must be used in field initializer or constructor, not in ngOnInit
+  private employeesEffect = effect(() => {
+    const filtered = this.filteredEmployees();
+    this.employees$.next(filtered);
+  });
+
   // Search form configuration - will be initialized with translations
   searchFormConfig: FormConfig = {
     sections: [],
@@ -196,12 +203,6 @@ export class SearchEmployeeComponent implements OnInit {
 
     // Update form options when data changes (using effect)
     this.updateFormOptions();
-
-    // Effect to update employees$ when filteredEmployees changes
-    effect(() => {
-      const filtered = this.filteredEmployees();
-      this.employees$.next(filtered);
-    });
   }
 
 
@@ -485,10 +486,10 @@ export class SearchEmployeeComponent implements OnInit {
     
     // Show confirmation dialog first
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Delete',
-      message: `Are you sure you want to delete ${employeeName}? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('employees.delete.confirmMessage', { name: employeeName }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     });

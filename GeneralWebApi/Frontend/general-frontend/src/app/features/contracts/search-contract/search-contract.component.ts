@@ -376,10 +376,10 @@ export class SearchContractComponent implements OnInit, OnDestroy {
     const employeeName = contract.employeeName || 'Unknown';
 
     this.dialogService.confirm({
-      title: 'Confirm Delete',
-      message: `Are you sure you want to delete the contract for ${employeeName}? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('contracts.delete.confirmMessage', { name: employeeName }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     }).pipe(

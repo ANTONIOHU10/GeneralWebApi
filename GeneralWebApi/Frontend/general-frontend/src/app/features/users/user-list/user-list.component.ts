@@ -209,10 +209,10 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   onDelete(user: User): void {
     this.dialogService.confirm({
-      title: 'Delete User',
-      message: `Delete user "${user.userName}"? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('users.delete.confirmMessage', { name: user.userName }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     }).pipe(first(), filter(c => c)).subscribe(() => {

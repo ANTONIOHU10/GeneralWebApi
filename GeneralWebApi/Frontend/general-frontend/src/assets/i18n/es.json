@@ -440,6 +440,98 @@
       "saveSettings": "Guardar Configuración"
     }
   },
+  "departments": {
+    "title": "Gestión de Departamentos",
+    "subtitle": "Gestionar estructura de departamentos",
+    "search": "Buscar departamentos",
+    "searchPlaceholder": "Buscar departamentos...",
+    "newDepartment": "Nuevo Departamento",
+    "editDepartment": "Editar Departamento",
+    "departmentDetails": "Detalles del Departamento",
+    "deleteDepartment": "Eliminar Departamento",
+    "loading": "Cargando departamentos...",
+    "emptyTitle": "No hay Departamentos",
+    "emptyDescription": "No se encontraron departamentos. ¡Cree su primer departamento!",
+    "emptyActionText": "Agregar Departamento",
+    "confirmDelete": "¿Está seguro de que desea eliminar \"{{name}}\"?",
+    "confirmUpdate": "¿Está seguro de que desea actualizar el departamento {{name}}?",
+    "confirmUpdateTitle": "Confirmar Actualización",
+    "tabs": {
+      "list": "Lista de Departamentos",
+      "add": "Agregar Departamento",
+      "search": "Buscar"
+    },
+    "columns": {
+      "code": "Código",
+      "name": "Nombre",
+      "description": "Descripción",
+      "parentDepartment": "Departamento Padre",
+      "level": "Nivel",
+      "path": "Ruta",
+      "createdAt": "Fecha de Creación"
+    },
+    "add": {
+      "sectionTitle": "Información del Departamento",
+      "sectionDescription": "Ingrese los detalles del nuevo departamento",
+      "fields": {
+        "name": "Nombre del Departamento",
+        "namePlaceholder": "Ingrese nombre del departamento",
+        "code": "Código del Departamento",
+        "codePlaceholder": "Ingrese código (ej. DEPT-001)",
+        "level": "Nivel",
+        "levelPlaceholder": "Ingrese nivel jerárquico",
+        "parentDepartment": "Departamento Padre",
+        "parentDepartmentPlaceholder": "Seleccione departamento padre (opcional)",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese descripción del departamento"
+      },
+      "submitButton": "Crear Departamento",
+      "cancelButton": "Cancelar",
+      "confirmTitle": "Confirmar Crear Departamento",
+      "confirmMessage": "¿Está seguro de que desea crear el departamento \"{{name}}\"?",
+      "confirmButton": "Crear"
+    },
+    "sections": {
+      "information": "Información del Departamento",
+      "informationDesc": "Detalles del departamento"
+    },
+    "buttons": {
+      "saveChanges": "Guardar Cambios",
+      "update": "Actualizar"
+    },
+    "fields": {
+      "level": "Nivel",
+      "name": "Nombre",
+      "code": "Código",
+      "description": "Descripción",
+      "manager": "Gerente",
+      "parentDepartment": "Departamento Padre",
+      "location": "Ubicación",
+      "budget": "Presupuesto",
+      "employeeCount": "Cantidad de Empleados"
+    },
+    "placeholders": {
+      "name": "Ingrese nombre del departamento",
+      "code": "Ingrese código del departamento",
+      "description": "Ingrese descripción",
+      "manager": "Seleccione gerente",
+      "parentDepartment": "Seleccione departamento padre (opcional)",
+      "location": "Ingrese ubicación",
+      "budget": "Ingrese presupuesto",
+      "level": "Ingrese nivel"
+    },
+    "errors": {
+      "loadFailed": "Error al cargar departamentos",
+      "createFailed": "Error al crear departamento",
+      "updateFailed": "Error al actualizar departamento",
+      "deleteFailed": "Error al eliminar departamento"
+    },
+    "success": {
+      "created": "Departamento creado exitosamente",
+      "updated": "Departamento actualizado exitosamente",
+      "deleted": "Departamento eliminado exitosamente"
+    }
+  },
   "contracts": {
     "title": "Gestión de Contratos",
     "subtitle": "Gestionar y ver todos los contratos del sistema",

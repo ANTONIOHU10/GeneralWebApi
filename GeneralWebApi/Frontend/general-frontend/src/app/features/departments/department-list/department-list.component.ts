@@ -309,10 +309,10 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
     const departmentName = department.name;
 
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Delete',
-      message: `Are you sure you want to delete ${departmentName}? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('departments.delete.confirmMessage', { name: departmentName }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     });

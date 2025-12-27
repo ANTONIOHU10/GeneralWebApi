@@ -1,13 +1,13 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/roles/role-detail/role-detail.component.ts
 import { 
   Component, Input, Output, EventEmitter, 
-  OnInit, OnChanges, AfterViewInit, 
-  inject, signal, TemplateRef, ViewChild 
+  OnInit, OnChanges, AfterViewInit, OnDestroy,
+  inject, signal, TemplateRef, ViewChild, ChangeDetectorRef
 } from '@angular/core';
 import type { SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { of } from 'rxjs';
-import { filter, first, catchError } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { filter, first, catchError, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Role } from '../../../roles/role.model';
 import {
   BaseDetailComponent,
@@ -18,6 +18,8 @@ import {
   SelectOption,
   BadgeVariant,
 } from '../../../Shared/components/base';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
+import { TranslationService } from '@core/services/translation.service';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { RoleService, Role as BackendRole } from '../../../core/services/role.service';
 
@@ -29,14 +31,18 @@ import { RoleService, Role as BackendRole } from '../../../core/services/role.se
     BaseDetailComponent,
     BaseFormComponent,
     BaseBadgeComponent,
+    TranslatePipe,
   ],
   templateUrl: './role-detail.component.html',
   styleUrls: ['./role-detail.component.scss'],
 })
-export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
+export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private roleService = inject(RoleService);
+  private translationService = inject(TranslationService);
+  private cdr = inject(ChangeDetectorRef);
+  private destroy$ = new Subject<void>();
 
   @Input() role: Role | null = null;
   @Input() isOpen = false;
@@ -78,6 +84,7 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
     { value: 'Roles.Delete', label: 'Roles - Delete' },
   ];
 
+  // Form configuration - will be initialized with translations
   formConfig: FormConfig = {
     sections: [
       {
@@ -138,38 +145,137 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
 
   sections = signal<DetailSection[]>([]);
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const t = (key: string) => this.translationService.translate(key);
+    
+    // Get section titles
+    const roleInfoSection = t('roles.detail.sections.roleInformation');
+    const permissionsSection = t('roles.detail.sections.permissions');
+
+    this.formConfig = {
+      sections: [
+        {
+          title: roleInfoSection,
+          description: t('roles.form.roleInformationDescription'),
+          order: 0,
+        },
+        {
+          title: permissionsSection,
+          description: t('roles.form.permissionsDescription'),
+          order: 1,
+        },
+      ],
+      layout: {
+        columns: 2,
+        gap: '1.5rem',
+        sectionGap: '2rem',
+        labelPosition: 'top',
+        showSectionDividers: true,
+      },
+      fields: [
+        {
+          key: 'name',
+          type: 'input',
+          label: t('roles.detail.fields.name'),
+          placeholder: t('roles.detail.fields.namePlaceholder'),
+          required: true,
+          section: roleInfoSection,
+          order: 0,
+          colSpan: 2,
+        },
+        {
+          key: 'description',
+          type: 'textarea',
+          label: t('roles.detail.fields.description'),
+          placeholder: t('roles.detail.fields.descriptionPlaceholder'),
+          required: false,
+          section: roleInfoSection,
+          order: 1,
+          colSpan: 2,
+          rows: 3,
+        },
+        {
+          key: 'permissions',
+          type: 'select',
+          label: t('roles.detail.fields.permissions'),
+          placeholder: t('roles.detail.fields.permissionsPlaceholder'),
+          required: false,
+          section: permissionsSection,
+          order: 0,
+          colSpan: 2,
+          multiple: true,
+          searchable: true,
+          options: this.permissionOptions,
+        },
+      ],
+      submitButtonText: t('roles.detail.buttons.updateRole'),
+      cancelButtonText: t('roles.detail.buttons.cancel'),
+    };
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Get modal title based on mode
+   */
+  getModalTitle(): string {
+    if (this.mode === 'edit') {
+      return this.translationService.translate('roles.detail.title.edit');
+    }
+    return this.translationService.translate('roles.detail.title.view');
+  }
+
   private updateSections(): void {
     if (!this.role || !this.permissionsTemplate) {
       this.sections.set([]);
       return;
     }
+    const t = (key: string) => this.translationService.translate(key);
+    
     this.sections.set([
       {
-        title: 'Role Information',
+        title: t('roles.detail.sections.roleInformation'),
         fields: [
-          { label: 'Role Name', value: this.role.name, type: 'text' },
-          { label: 'Type', value: this.role.isSystemRole ? 'System' : 'Custom', type: 'badge', badgeVariant: this.getTypeVariant(this.role.isSystemRole) },
-          { label: 'Users', value: this.role.userCount, type: 'text' },
-          { label: 'Created At', value: this.role.createdAt, type: 'date' },
-          ...(this.role.updatedAt ? [{ label: 'Updated At', value: this.role.updatedAt, type: 'date' as const }] : []),
+          { label: t('roles.detail.viewFields.roleName'), value: this.role.name, type: 'text' },
+          { label: t('roles.detail.viewFields.type'), value: this.role.isSystemRole ? t('roles.type.system') : t('roles.type.custom'), type: 'badge', badgeVariant: this.getTypeVariant(this.role.isSystemRole) },
+          { label: t('roles.detail.viewFields.users'), value: this.role.userCount, type: 'text' },
+          { label: t('roles.detail.viewFields.createdAt'), value: this.role.createdAt, type: 'date' },
+          ...(this.role.updatedAt ? [{ label: t('roles.detail.viewFields.updatedAt'), value: this.role.updatedAt, type: 'date' as const }] : []),
         ],
         customContent: this.role.description ? this.descriptionContent : undefined,
       },
       {
-        title: 'Permissions',
+        title: t('roles.detail.sections.permissions'),
         fields: [
-          { label: 'Permissions', value: null, type: 'custom' as const, customTemplate: this.permissionsTemplate },
+          { label: t('roles.detail.viewFields.permissions'), value: null, type: 'custom' as const, customTemplate: this.permissionsTemplate },
         ],
       },
     ]);
   }
 
   ngOnInit(): void {
-    this.updateFormData();
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+      this.updateFormData();
+    });
   }
 
   ngAfterViewInit(): void {
-    this.updateSections();
+    // Wait for translations to load before updating sections
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.updateSections();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -181,7 +287,14 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
       }
     }
     if (changes['role'] && this.permissionsTemplate) {
-      this.updateSections();
+      // Wait for translations to load before updating sections
+      this.translationService.getTranslationsLoaded$().pipe(
+        distinctUntilChanged(),
+        filter(loaded => loaded),
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
+        this.updateSections();
+      });
     }
   }
 
@@ -191,7 +304,11 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
     this.roleService.getRole(roleId).pipe(
       first(),
       catchError(err => {
-        this.notificationService.error('Load Failed', err.message || 'Failed to load role details', { duration: 5000 });
+        this.notificationService.error(
+          this.translationService.translate('roles.detail.notifications.loadFailed'),
+          err.message || this.translationService.translate('roles.detail.notifications.loadFailedMessage'),
+          { duration: 5000 }
+        );
         return of(null);
       })
     ).subscribe(backendRole => {
@@ -223,11 +340,12 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
   onFormSubmit(data: Record<string, unknown>): void {
     if (!this.role) return;
 
+    const roleName = (data['name'] as string) || 'Unknown';
     const confirm$ = this.dialogService.confirm({
-      title: 'Confirm Update',
-      message: `Update role "${data['name']}"?`,
-      confirmText: 'Update',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('roles.detail.confirm.title'),
+      message: this.translationService.translate('roles.detail.confirm.message', { name: roleName }),
+      confirmText: this.translationService.translate('roles.detail.confirm.confirmText'),
+      cancelText: this.translationService.translate('roles.detail.confirm.cancelText'),
       confirmVariant: 'primary',
       icon: 'save',
     });
@@ -248,19 +366,28 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
 
       this.roleService.updateRole(roleId, updateRoleData).pipe(
         first(),
-        catchError(err => {
-          this.loading.set(false);
-          this.notificationService.error('Update Role Failed', err.message || 'Failed to update role.', { duration: 5000 });
-          return of(null);
-        })
-      ).subscribe(updatedRole => {
-        if (updatedRole) {
-          this.loading.set(false);
-          this.notificationService.success('Role Updated', `Role "${data['name']}" updated successfully!`, { duration: 3000 });
-          this.roleUpdated.emit();
-          this.onClose();
-        }
-      });
+      catchError(err => {
+        this.loading.set(false);
+        this.notificationService.error(
+          this.translationService.translate('roles.detail.notifications.updateFailed'),
+          err.message || this.translationService.translate('roles.detail.notifications.updateFailedMessage'),
+          { duration: 5000 }
+        );
+        return of(null);
+      })
+    ).subscribe(updatedRole => {
+      if (updatedRole) {
+        this.loading.set(false);
+        const roleName = (data['name'] as string) || 'Unknown';
+        this.notificationService.success(
+          this.translationService.translate('roles.detail.notifications.updateSuccess'),
+          this.translationService.translate('roles.detail.notifications.updateSuccessMessage', { name: roleName }),
+          { duration: 3000 }
+        );
+        this.roleUpdated.emit();
+        this.onClose();
+      }
+    });
     });
   }
 
@@ -277,5 +404,10 @@ export class RoleDetailComponent implements OnInit, OnChanges, AfterViewInit {
       hour: '2-digit',
       minute: '2-digit',
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

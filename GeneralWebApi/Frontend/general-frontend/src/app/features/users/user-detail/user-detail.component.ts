@@ -1,13 +1,13 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/users/user-detail/user-detail.component.ts
 import { 
   Component, Input, Output, EventEmitter, 
-  OnInit, OnChanges, AfterViewInit, 
-  inject, signal, TemplateRef, ViewChild 
+  OnInit, OnChanges, AfterViewInit, OnDestroy,
+  inject, signal, TemplateRef, ViewChild, ChangeDetectorRef
 } from '@angular/core';
 import type { SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { of } from 'rxjs';
-import { filter, first, catchError } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { filter, first, catchError, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { User } from '../../../users/user.model';
 import {
   BaseDetailComponent,
@@ -18,6 +18,7 @@ import {
   SelectOption,
   BadgeVariant,
 } from '../../../Shared/components/base';
+import { TranslationService } from '@core/services/translation.service';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { UserService } from '../../../core/services/user.service';
 
@@ -33,10 +34,13 @@ import { UserService } from '../../../core/services/user.service';
   templateUrl: './user-detail.component.html',
   styleUrls: ['./user-detail.component.scss'],
 })
-export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
+export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private userService = inject(UserService);
+  private translationService = inject(TranslationService);
+  private cdr = inject(ChangeDetectorRef);
+  private destroy$ = new Subject<void>();
 
   @Input() user: User | null = null;
   @Input() isOpen = false;
@@ -57,6 +61,7 @@ export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
     { value: 'User', label: 'User' },
   ];
 
+  // Form configuration - will be initialized with translations
   formConfig: FormConfig = {
     sections: [
       {
@@ -156,38 +161,183 @@ export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
 
   sections = signal<DetailSection[]>([]);
 
+  /**
+   * Initialize form config with translations
+   */
+  private initializeFormConfig(): void {
+    const t = (key: string) => this.translationService.translate(key);
+    
+    // Get section titles
+    const userInfoSection = t('users.detail.sections.userInformation');
+    const accountSettingsSection = t('users.detail.sections.accountSettings');
+
+    // Get role options with translations
+    const roleOptions: SelectOption[] = [
+      { value: 'Admin', label: t('employees.detail.options.role.admin') },
+      { value: 'Manager', label: t('employees.detail.options.role.manager') },
+      { value: 'User', label: t('employees.detail.options.role.user') },
+    ];
+
+    this.formConfig = {
+      sections: [
+        {
+          title: userInfoSection,
+          description: t('users.add.sections.userInfoDescription'),
+          order: 0,
+        },
+        {
+          title: accountSettingsSection,
+          description: t('users.add.sections.accountSettingsDescription'),
+          order: 1,
+        },
+      ],
+      layout: {
+        columns: 2,
+        gap: '1.5rem',
+        sectionGap: '2rem',
+        labelPosition: 'top',
+        showSectionDividers: true,
+      },
+      fields: [
+        {
+          key: 'userName',
+          type: 'input',
+          label: t('users.detail.fields.username'),
+          placeholder: t('users.detail.fields.usernamePlaceholder'),
+          required: true,
+          section: userInfoSection,
+          order: 0,
+          colSpan: 1,
+        },
+        {
+          key: 'email',
+          type: 'input',
+          label: t('users.detail.fields.email'),
+          placeholder: t('users.detail.fields.emailPlaceholder'),
+          required: true,
+          section: userInfoSection,
+          order: 1,
+          colSpan: 1,
+          inputType: 'email',
+        },
+        {
+          key: 'firstName',
+          type: 'input',
+          label: t('users.detail.fields.firstName'),
+          placeholder: t('users.detail.fields.firstNamePlaceholder'),
+          required: true,
+          section: userInfoSection,
+          order: 2,
+          colSpan: 1,
+        },
+        {
+          key: 'lastName',
+          type: 'input',
+          label: t('users.detail.fields.lastName'),
+          placeholder: t('users.detail.fields.lastNamePlaceholder'),
+          required: true,
+          section: userInfoSection,
+          order: 3,
+          colSpan: 1,
+        },
+        {
+          key: 'phoneNumber',
+          type: 'input',
+          label: t('users.detail.fields.phoneNumber'),
+          placeholder: t('users.detail.fields.phoneNumberPlaceholder'),
+          required: false,
+          section: userInfoSection,
+          order: 4,
+          colSpan: 1,
+          inputType: 'tel',
+        },
+        {
+          key: 'roles',
+          type: 'select',
+          label: t('users.detail.fields.roles'),
+          placeholder: t('users.detail.fields.rolesPlaceholder'),
+          required: false,
+          section: accountSettingsSection,
+          order: 0,
+          colSpan: 2,
+          multiple: true,
+          options: roleOptions,
+        },
+        {
+          key: 'isActive',
+          type: 'checkbox',
+          label: t('users.detail.fields.active'),
+          required: false,
+          section: accountSettingsSection,
+          order: 1,
+          colSpan: 1,
+        },
+      ],
+      submitButtonText: t('users.detail.buttons.updateUser'),
+      cancelButtonText: t('users.detail.buttons.cancel'),
+    };
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Get modal title based on mode
+   */
+  getModalTitle(): string {
+    if (this.mode === 'edit') {
+      return this.translationService.translate('users.detail.title.edit');
+    }
+    return this.translationService.translate('users.detail.title.view');
+  }
+
   private updateSections(): void {
     if (!this.user || !this.rolesTemplate) {
       this.sections.set([]);
       return;
     }
+    const t = (key: string) => this.translationService.translate(key);
+    
     this.sections.set([
       {
-        title: 'User Information',
+        title: t('users.detail.sections.userInformation'),
         fields: [
-          { label: 'Username', value: this.user.userName, type: 'text' },
-          { label: 'Email', value: this.user.email, type: 'text' },
-          { label: 'First Name', value: this.user.firstName, type: 'text' },
-          { label: 'Last Name', value: this.user.lastName, type: 'text' },
-          { label: 'Phone Number', value: this.user.phoneNumber || 'N/A', type: 'text' },
-          { label: 'Status', value: this.user.isActive ? 'Active' : 'Inactive', type: 'badge', badgeVariant: this.getStatusVariant(this.user.isActive) },
-          { label: 'Email Confirmed', value: this.user.emailConfirmed ? 'Yes' : 'No', type: 'badge', badgeVariant: this.user.emailConfirmed ? 'success' : 'secondary' },
-          { label: 'Roles', value: null, type: 'custom' as const, customTemplate: this.rolesTemplate },
-          { label: 'Created At', value: this.user.createdAt, type: 'date' },
-          ...(this.user.updatedAt ? [{ label: 'Updated At', value: this.user.updatedAt, type: 'date' as const }] : []),
-          ...(this.user.lastLoginAt ? [{ label: 'Last Login', value: this.user.lastLoginAt, type: 'date' as const }] : []),
-          ...(this.user.lockoutEnd ? [{ label: 'Lockout End', value: this.user.lockoutEnd, type: 'date' as const }] : []),
+          { label: t('users.detail.viewFields.username'), value: this.user.userName, type: 'text' },
+          { label: t('users.detail.viewFields.email'), value: this.user.email, type: 'text' },
+          { label: t('users.detail.viewFields.firstName'), value: this.user.firstName, type: 'text' },
+          { label: t('users.detail.viewFields.lastName'), value: this.user.lastName, type: 'text' },
+          { label: t('users.detail.viewFields.phoneNumber'), value: this.user.phoneNumber || 'N/A', type: 'text' },
+          { label: t('users.detail.viewFields.status'), value: this.user.isActive ? t('users.detail.options.active') : t('users.detail.options.inactive'), type: 'badge', badgeVariant: this.getStatusVariant(this.user.isActive) },
+          { label: t('users.detail.viewFields.emailConfirmed'), value: this.user.emailConfirmed ? t('users.detail.options.yes') : t('users.detail.options.no'), type: 'badge', badgeVariant: this.user.emailConfirmed ? 'success' : 'secondary' },
+          { label: t('users.detail.viewFields.roles'), value: null, type: 'custom' as const, customTemplate: this.rolesTemplate },
+          { label: t('users.detail.viewFields.createdAt'), value: this.user.createdAt, type: 'date' },
+          ...(this.user.updatedAt ? [{ label: t('users.detail.viewFields.updatedAt'), value: this.user.updatedAt, type: 'date' as const }] : []),
+          ...(this.user.lastLoginAt ? [{ label: t('users.detail.viewFields.lastLogin'), value: this.user.lastLoginAt, type: 'date' as const }] : []),
+          ...(this.user.lockoutEnd ? [{ label: t('users.detail.viewFields.lockoutEnd'), value: this.user.lockoutEnd, type: 'date' as const }] : []),
         ],
       },
     ]);
   }
 
   ngOnInit(): void {
-    this.updateFormData();
+    // Wait for translations to load before initializing form config
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.initializeFormConfig();
+      this.updateFormData();
+    });
   }
 
   ngAfterViewInit(): void {
-    this.updateSections();
+    // Wait for translations to load before updating sections
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.updateSections();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -195,7 +345,14 @@ export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
       this.updateFormData();
     }
     if (changes['user'] && this.rolesTemplate) {
-      this.updateSections();
+      // Wait for translations to load before updating sections
+      this.translationService.getTranslationsLoaded$().pipe(
+        distinctUntilChanged(),
+        filter(loaded => loaded),
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
+        this.updateSections();
+      });
     }
   }
 
@@ -220,11 +377,12 @@ export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
   onFormSubmit(data: Record<string, unknown>): void {
     if (!this.user) return;
 
+    const userName = (data['userName'] as string) || 'Unknown';
     const confirm$ = this.dialogService.confirm({
-      title: 'Confirm Update',
-      message: `Update user "${data['userName']}"?`,
-      confirmText: 'Update',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('users.detail.confirm.title'),
+      message: this.translationService.translate('users.detail.confirm.message', { name: userName }),
+      confirmText: this.translationService.translate('users.detail.confirm.confirmText'),
+      cancelText: this.translationService.translate('users.detail.confirm.cancelText'),
       confirmVariant: 'primary',
       icon: 'save',
     });
@@ -254,13 +412,22 @@ export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
         first(),
         catchError(err => {
           this.loading.set(false);
-          this.notificationService.error('Update User Failed', err.message || 'Failed to update user.', { duration: 5000 });
+          this.notificationService.error(
+            this.translationService.translate('users.detail.notifications.updateFailed'),
+            err.message || this.translationService.translate('users.detail.notifications.updateFailedMessage'),
+            { duration: 5000 }
+          );
           return of(null);
         })
       ).subscribe(updatedUser => {
         if (updatedUser) {
           this.loading.set(false);
-          this.notificationService.success('User Updated', `User "${data['userName']}" updated successfully!`, { duration: 3000 });
+          const userName = (data['userName'] as string) || 'Unknown';
+          this.notificationService.success(
+            this.translationService.translate('users.detail.notifications.updateSuccess'),
+            this.translationService.translate('users.detail.notifications.updateSuccessMessage', { name: userName }),
+            { duration: 3000 }
+          );
           this.userUpdated.emit();
           this.onClose();
         }
@@ -281,5 +448,10 @@ export class UserDetailComponent implements OnInit, OnChanges, AfterViewInit {
       hour: '2-digit',
       minute: '2-digit',
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

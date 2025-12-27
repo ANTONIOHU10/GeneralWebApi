@@ -371,10 +371,10 @@ export class SearchPositionComponent implements OnInit, OnDestroy {
 
     // Show confirmation dialog first
     const confirm$: Observable<boolean> = this.dialogService.confirm({
-      title: 'Confirm Delete',
-      message: `Are you sure you want to delete position ${positionTitle}? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: this.translationService.translate('common.deleteConfirm.title'),
+      message: this.translationService.translate('positions.delete.confirmMessage', { name: positionTitle }),
+      confirmText: this.translationService.translate('common.delete'),
+      cancelText: this.translationService.translate('common.cancel'),
       confirmVariant: 'danger',
       icon: 'warning',
     });
