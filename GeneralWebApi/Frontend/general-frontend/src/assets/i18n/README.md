@@ -149,3 +149,4 @@ Then use it with parameters:
 - Language preference is saved to localStorage and persists across sessions
 - The `translate` pipe is impure to react to language changes automatically
 
+
