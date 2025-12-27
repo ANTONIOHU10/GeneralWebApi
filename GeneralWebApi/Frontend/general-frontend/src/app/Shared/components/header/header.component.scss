@@ -12,8 +12,9 @@
   align-items: center;
   position: sticky;
   top: 0;
-  z-index: $z-index-header;
-  backdrop-filter: blur(16px) saturate(180%);
+  z-index: 1; // Low z-index to ensure modals and overlays appear above
+  // Removed backdrop-filter to avoid creating stacking context
+  // backdrop-filter creates a new stacking context which can interfere with z-index
   transition: all $duration-300 $ease-out;
   min-height: 68px;
 
