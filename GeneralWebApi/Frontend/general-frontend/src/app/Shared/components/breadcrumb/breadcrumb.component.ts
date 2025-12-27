@@ -7,9 +7,10 @@ import {
   ActivatedRoute,
   RouterModule,
 } from '@angular/router';
-import { filter, map, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { filter, map, distinctUntilChanged, takeUntil, switchMap, catchError } from 'rxjs/operators';
+import { Subject, EMPTY } from 'rxjs';
 import { TranslationService } from '@core/services/translation.service';
+import { NotificationService } from '@core/services/notification.service';
 
 export interface BreadcrumbItem {
   label: string;
@@ -33,6 +34,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private translationService = inject(TranslationService);
+  private notificationService = inject(NotificationService);
   private destroy$ = new Subject<void>();
 
   // Route to breadcrumb mapping (using translation keys)
@@ -162,6 +164,69 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
 
     const url = this.router.url;
     const routeMap = this.getRouteMap();
+    
+    // Check if URL matches notification detail route pattern
+    const notificationDetailMatch = url.match(/^\/private\/notifications\/(\d+)$/);
+    if (notificationDetailMatch) {
+      // For notification detail page, show: Notifications > Notification Title
+      const notificationId = parseInt(notificationDetailMatch[1], 10);
+      
+      // Set initial breadcrumbs with loading state
+      this.breadcrumbs = [
+        {
+          label: this.translationService.translate('breadcrumb.notifications'),
+          icon: 'notifications',
+          route: '/private/notifications'
+        },
+        {
+          label: this.translationService.translate('notifications.loading') || 'Loading...',
+          icon: 'notifications',
+          route: undefined // Current page, not clickable
+        }
+      ];
+
+      // Load notification to get title
+      this.notificationService.getNotificationById(notificationId).pipe(
+        takeUntil(this.destroy$),
+        catchError(() => {
+          // On error, show notification ID
+          const notificationIdLabel = this.translationService.translate('breadcrumb.notificationId', { id: notificationId });
+          this.breadcrumbs = [
+            {
+              label: this.translationService.translate('breadcrumb.notifications'),
+              icon: 'notifications',
+              route: '/private/notifications'
+            },
+            {
+              label: notificationIdLabel || `Notification #${notificationId}`,
+              icon: 'notifications',
+              route: undefined
+            }
+          ];
+          return EMPTY;
+        })
+      ).subscribe({
+        next: (backendNotification) => {
+          const notification = this.notificationService.transformToNotification(backendNotification);
+          // Update breadcrumb: show "Notifications > Notification Detail #ID"
+          const detailLabel = this.translationService.translate('breadcrumb.notificationDetail') || 'Notification Details';
+          this.breadcrumbs = [
+            {
+              label: this.translationService.translate('breadcrumb.notifications'),
+              icon: 'notifications',
+              route: '/private/notifications'
+            },
+            {
+              label: `${detailLabel} #${notificationId}`,
+              icon: 'notifications',
+              route: undefined // Current page, not clickable
+            }
+          ];
+        }
+      });
+      return;
+    }
+
     const routeConfig = routeMap[url] || [
       { labelKey: 'breadcrumb.dashboard', icon: 'dashboard' },
     ];

@@ -128,6 +128,8 @@
     "tasks": "任务",
     "myApprovals": "我的审批",
     "notifications": "通知",
+    "notificationDetail": "通知详情",
+    "notificationId": "通知 #{{id}}",
     "hrManagement": "人力资源管理",
     "employeeList": "员工列表",
     "departments": "部门",
@@ -1722,7 +1724,23 @@
     },
     "noNotifications": "没有通知",
     "noNotificationsDescription": "您已全部读完！没有新通知。",
-    "viewDetails": "查看详情"
+    "viewDetails": "查看详情",
+    "readAt": "已读时间",
+    "detail": {
+      "title": "通知详情",
+      "notificationInfo": "通知信息",
+      "basicInfo": "基本信息",
+      "message": "消息",
+      "createdAt": "创建时间",
+      "timeAgo": "时间",
+      "metadata": "元数据",
+      "sourceType": "来源类型",
+      "sourceId": "来源ID",
+      "additionalData": "附加数据",
+      "error": {
+        "title": "加载通知错误",
+        "message": "加载通知详情失败，请重试。"
+      }
+    }
   }
 }
-

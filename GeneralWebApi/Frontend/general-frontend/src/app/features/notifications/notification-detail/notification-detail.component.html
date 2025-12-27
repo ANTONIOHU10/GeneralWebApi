@@ -1,0 +1,116 @@
+<app-base-private-page-container
+  [title]="'notifications.detail.title' | translate"
+  [icon]="'notifications'"
+>
+  <app-base-button
+    slot="actions"
+    [text]="'common.back' | translate"
+    icon="arrow_back"
+    variant="ghost"
+    (buttonClick)="goBack()"
+  ></app-base-button>
+
+  @if (loading()) {
+    <app-base-loading [config]="{ centered: true, message: ('notifications.loading' | translate) }"></app-base-loading>
+  }
+
+  @if (error() && !loading()) {
+    <app-base-error [message]="('notifications.detail.error.title' | translate)" (retry)="onRetryLoad()"></app-base-error>
+  }
+
+  @if (!loading() && !error() && notification()) {
+    <div class="detail-container">
+      
+      <app-base-card 
+        [title]="'notifications.detail.notificationInfo' | translate"
+        variant="elevated" 
+        [customClass]="'notification-header-card ' + (notification()!.status === 'unread' ? 'unread' : 'read')"
+      >
+        <div class="notification-header">
+          <div class="notification-header-info">
+            <h1 class="notification-title">{{ notification()!.title }}</h1>
+            <div class="notification-badges">
+              @if (notification()!.status === 'unread') {
+                <app-base-badge [text]="'notifications.new' | translate" variant="danger" shape="pill"></app-base-badge>
+              }
+              <app-base-badge [text]="('notifications.priorities.' + notification()!.priority) | translate" [variant]="getPriorityVariant(notification()!.priority)" shape="pill"></app-base-badge>
+              <app-base-badge [text]="('notifications.types.' + notification()!.type) | translate" variant="secondary" shape="pill"></app-base-badge>
+            </div>
+          </div>
+        </div>
+      </app-base-card>
+
+      <app-base-card [title]="'notifications.detail.message' | translate">
+        <div class="message-section">
+          <div class="message-box" [class]="'type-' + notification()!.type">
+            {{ notification()!.message }}
+          </div>
+        </div>
+      </app-base-card>
+
+      <app-base-card [title]="'notifications.detail.basicInfo' | translate">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">{{ 'notifications.detail.createdAt' | translate }}</div>
+            <div class="info-value">
+              {{ formatDate(notification()!.createdAt) }}
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">{{ 'notifications.detail.timeAgo' | translate }}</div>
+            <div class="info-value">
+              {{ getTimeAgo(notification()!.createdAt) }}
+            </div>
+          </div>
+
+          @if (notification()!.readAt) {
+            <div class="info-item">
+              <div class="info-label">{{ 'notifications.readAt' | translate }}</div>
+              <div class="info-value success-text">
+                {{ formatDate(notification()!.readAt) }}
+              </div>
+            </div>
+          }
+        </div>
+      </app-base-card>
+
+      @if (notification()!.sourceId || notification()!.metadata) {
+        <app-base-card [title]="'notifications.detail.metadata' | translate">
+          <div class="info-grid">
+             @if (notification()!.sourceType) {
+              <div class="info-item">
+                <div class="info-label">{{ 'notifications.detail.source' | translate }}</div>
+                <div class="info-value">{{ notification()!.sourceType }} ({{ notification()!.sourceId }})</div>
+              </div>
+             }
+          </div>
+          @if (notification()!.metadata) {
+            <div class="json-wrapper">
+              <pre class="json-content">{{ notification()!.metadata | json }}</pre>
+            </div>
+          }
+        </app-base-card>
+      }
+
+      <div class="detail-actions">
+        <app-base-button
+          [text]="'notifications.deleteNotification' | translate"
+          icon="delete"
+          variant="ghost"
+          (buttonClick)="deleteNotification()"
+        ></app-base-button>
+
+        <div class="action-group">
+          <app-base-button
+            [text]="notification()!.status === 'read' ? ('notifications.unread' | translate) : ('notifications.read' | translate)"
+            [icon]="notification()!.status === 'read' ? 'mark_email_unread' : 'check_circle'"
+            [variant]="notification()!.status === 'read' ? 'outline' : 'primary'"
+            (buttonClick)="toggleReadStatus()"
+          ></app-base-button>
+        </div>
+      </div>
+
+    </div>
+  }
+</app-base-private-page-container>

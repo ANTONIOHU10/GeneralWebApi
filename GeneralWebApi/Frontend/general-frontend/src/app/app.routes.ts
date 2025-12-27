@@ -8,6 +8,7 @@ import { PublicLayoutComponent } from '@layout/publicPage';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { TaskListComponent } from './features/tasks/task-list/task-list.component';
 import { NotificationCenterComponent } from './features/notifications/notification-center/notification-center.component';
+import { NotificationDetailComponent } from './features/notifications/notification-detail/notification-detail.component';
 import { ApprovalListComponent } from './features/approvals/approval-list/approval-list.component';
 import { EmployeeListComponent } from './features/employees/employee-list/employee-list.component';
 import { DepartmentListComponent } from './features/departments/department-list/department-list.component';
@@ -54,6 +55,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'tasks', component: TaskListComponent },
       { path: 'notifications', component: NotificationCenterComponent },
+      { path: 'notifications/:id', component: NotificationDetailComponent },
       { path: 'approvals', component: ApprovalListComponent },
 
       // 👥 HR Management

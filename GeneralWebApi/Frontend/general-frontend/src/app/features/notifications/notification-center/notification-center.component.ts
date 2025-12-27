@@ -240,11 +240,11 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
 
   /**
    * Handle notification click
-   * Removed navigation functionality - no longer navigates to routes
+   * Navigate to notification detail page
    */
   onNotificationClick(notification: Notification): void {
-    // Navigation functionality removed
-    // Clicking on notification card no longer navigates anywhere
+    // Navigate to notification detail page
+    this.router.navigate(['/private/notifications', notification.id]);
   }
 
   /**

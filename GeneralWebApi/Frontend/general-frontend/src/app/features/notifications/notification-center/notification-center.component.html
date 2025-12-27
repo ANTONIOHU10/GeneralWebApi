@@ -159,6 +159,11 @@
           >
             <div 
               class="notification-item"
+              (click)="onNotificationClick(notification)"
+              (keydown.enter)="onNotificationClick(notification)"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="'View notification: ' + notification.title"
             >
               <!-- Icon with read status indicator -->
               <div class="notification-icon-wrapper">

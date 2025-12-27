@@ -128,6 +128,8 @@
     "tasks": "Tasks",
     "myApprovals": "My Approvals",
     "notifications": "Notifications",
+    "notificationDetail": "Notification Details",
+    "notificationId": "Notification Id #{{id}}",
     "hrManagement": "HR Management",
     "employeeList": "Employee List",
     "departments": "Departments",
@@ -198,7 +200,24 @@
     },
     "noNotifications": "No notifications",
     "noNotificationsDescription": "You're all caught up! No new notifications.",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "readAt": "Read At",
+    "detail": {
+      "title": "Notification Details",
+      "notificationInfo": "Notification Information",
+      "basicInfo": "Basic Information",
+      "message": "Message",
+      "createdAt": "Created At",
+      "timeAgo": "Time Ago",
+      "metadata": "Metadata",
+      "sourceType": "Source Type",
+      "sourceId": "Source ID",
+      "additionalData": "Additional Data",
+      "error": {
+        "title": "Error Loading Notification",
+        "message": "Failed to load notification details. Please try again."
+      }
+    }
   },
   "errors": {
     "generic": "An error occurred",

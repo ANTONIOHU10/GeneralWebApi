@@ -1,0 +1,153 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/notifications/notification-detail/notification-detail.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 1000px; // 限制最大宽度，提升阅读体验
+  margin: 0 auto;
+}
+
+// 头部卡片增强
+.notification-header-card {
+  overflow: hidden;
+  transition: transform 0.2s ease;
+
+  &.unread {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--color-primary-50) 100%);
+  }
+
+  .notification-header {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1rem 0;
+
+    .notification-header-info {
+      flex: 1;
+      
+      .notification-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+      }
+
+      .notification-badges {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        
+        app-base-badge {
+          display: block;
+          margin: 0 !important;
+          margin-right: 0.75rem !important;
+          
+          &:last-child {
+            margin-right: 0 !important;
+          }
+          
+          ::ng-deep .base-badge {
+            display: inline-flex;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 核心内容区：通知消息
+.message-section {
+  .message-box {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border-left: 6px solid var(--color-primary-500);
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+
+    // 根据类型自动切换边框颜色（通过父级类名或TS逻辑注入）
+    &.type-approval { border-left-color: var(--color-success-500); }
+    &.type-task { border-left-color: var(--color-warning-500); }
+    &.type-audit { border-left-color: var(--color-danger-500); }
+    &.type-system { border-left-color: var(--color-secondary-500); }
+  }
+}
+
+// 信息网格布局
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .info-label {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-tertiary, #9e9e9e);
+    letter-spacing: 0.05em;
+  }
+
+  .info-value {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+// 元数据 JSON 区域
+.json-wrapper {
+  background: #2d2d2d; // 采用暗色背景显示代码，更直观
+  border-radius: 8px;
+  padding: 1rem;
+  
+  .json-content {
+    color: #e0e0e0;
+    font-size: 0.85rem;
+    background: transparent;
+    padding: 0;
+  }
+}
+
+// 操作栏
+.detail-actions {
+  display: flex;
+  justify-content: space-between; // 左右分开
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-light, #f0f0f0);
+
+  .action-group {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+// 响应式微调
+@media (max-width: 600px) {
+  .notification-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .detail-actions {
+    flex-direction: column-reverse;
+    gap: 1rem;
+    
+    app-base-button, .action-group { width: 100%; }
+  }
+}

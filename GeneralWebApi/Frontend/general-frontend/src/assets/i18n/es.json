@@ -128,6 +128,8 @@
     "tasks": "Tareas",
     "myApprovals": "Mis aprobaciones",
     "notifications": "Notificaciones",
+    "notificationDetail": "Detalles de Notificación",
+    "notificationId": "Notificación Id #{{id}}",
     "hrManagement": "Gestión de RRHH",
     "employeeList": "Lista de Empleados",
     "departments": "Departamentos",
@@ -175,7 +177,24 @@
     "unread": "No leído",
     "new": "Nuevo",
     "viewDetails": "Ver detalles",
-    "deleteNotification": "Eliminar notificación"
+    "deleteNotification": "Eliminar notificación",
+    "readAt": "Leído En",
+    "detail": {
+      "title": "Detalles de Notificación",
+      "notificationInfo": "Información de Notificación",
+      "basicInfo": "Información Básica",
+      "message": "Mensaje",
+      "createdAt": "Creado En",
+      "timeAgo": "Hace",
+      "metadata": "Metadatos",
+      "sourceType": "Tipo de Origen",
+      "sourceId": "ID de Origen",
+      "additionalData": "Datos Adicionales",
+      "error": {
+        "title": "Error al Cargar Notificación",
+        "message": "Error al cargar los detalles de la notificación. Por favor, inténtalo de nuevo."
+      }
+    }
   },
   "errors": {
     "generic": "Ocurrió un error",

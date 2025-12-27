@@ -128,6 +128,8 @@
     "tasks": "Attività",
     "myApprovals": "Le Mie Approvazioni",
     "notifications": "Notifiche",
+    "notificationDetail": "Dettagli Notifica",
+    "notificationId": "Notifica #{{id}}",
     "hrManagement": "Gestione Risorse Umane",
     "employeeList": "Elenco Dipendenti",
     "departments": "Dipartimenti",
@@ -198,7 +200,24 @@
     },
     "noNotifications": "Nessuna notifica",
     "noNotificationsDescription": "Tutto aggiornato! Nessuna nuova notifica.",
-    "viewDetails": "Visualizza Dettagli"
+    "viewDetails": "Visualizza Dettagli",
+    "readAt": "Letto Il",
+    "detail": {
+      "title": "Dettagli Notifica",
+      "notificationInfo": "Informazioni Notifica",
+      "basicInfo": "Informazioni Base",
+      "message": "Messaggio",
+      "createdAt": "Creato Il",
+      "timeAgo": "Tempo Fa",
+      "metadata": "Metadati",
+      "sourceType": "Tipo di Origine",
+      "sourceId": "ID di Origine",
+      "additionalData": "Dati Aggiuntivi",
+      "error": {
+        "title": "Errore nel Caricamento della Notifica",
+        "message": "Impossibile caricare i dettagli della notifica. Riprova."
+      }
+    }
   },
   "errors": {
     "generic": "Si è verificato un errore",
