@@ -2,6 +2,7 @@
 <div 
   class="notification-item"
   [class.unread]="notification.status === 'unread'"
+  (click)="onItemClick()"
 >
   <div class="notification-icon-wrapper" [attr.data-type]="notification.type">
     <span class="material-icons">{{ getNotificationIcon(notification.type) }}</span>

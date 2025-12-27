@@ -130,6 +130,8 @@
     "notifications": "通知",
     "notificationDetail": "通知详情",
     "notificationId": "通知 #{{id}}",
+    "approvalDetail": "审批详情",
+    "approvalId": "审批 #{{id}}",
     "hrManagement": "人力资源管理",
     "employeeList": "员工列表",
     "departments": "部门",
@@ -1679,6 +1681,10 @@
       "rejectMessage": "请提供拒绝原因：",
       "rejectPlaceholder": "输入拒绝原因（必填）"
     }
+  },
+  "table": {
+    "loading": "加载中...",
+    "emptyMessage": "暂无数据"
   },
   "notifications": {
     "title": "通知",

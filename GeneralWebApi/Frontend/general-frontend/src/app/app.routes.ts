@@ -10,6 +10,7 @@ import { TaskListComponent } from './features/tasks/task-list/task-list.componen
 import { NotificationCenterComponent } from './features/notifications/notification-center/notification-center.component';
 import { NotificationDetailComponent } from './features/notifications/notification-detail/notification-detail.component';
 import { ApprovalListComponent } from './features/approvals/approval-list/approval-list.component';
+import { ContractApprovalDetailComponent } from './features/contract-approvals/contract-approval-detail/contract-approval-detail.component';
 import { EmployeeListComponent } from './features/employees/employee-list/employee-list.component';
 import { DepartmentListComponent } from './features/departments/department-list/department-list.component';
 import { PositionListComponent } from './features/positions/position-list/position-list.component';
@@ -57,6 +58,7 @@ export const routes: Routes = [
       { path: 'notifications', component: NotificationCenterComponent },
       { path: 'notifications/:id', component: NotificationDetailComponent },
       { path: 'approvals', component: ApprovalListComponent },
+      { path: 'approvals/:id', component: ContractApprovalDetailComponent },
 
       // 👥 HR Management
       { path: 'employees', component: EmployeeListComponent },

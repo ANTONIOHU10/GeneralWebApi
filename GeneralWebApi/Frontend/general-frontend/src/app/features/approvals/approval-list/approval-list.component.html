@@ -113,11 +113,3 @@
   (cancelAction)="onRejectDialogClose()"
   (dialogClose)="onRejectDialogClose()"
 ></app-base-prompt-dialog>
-
-<!-- Approval Detail Modal -->
-<app-contract-approval-detail
-  [approval]="selectedApproval"
-  [isOpen]="isDetailModalOpen"
-  (closeEvent)="onCloseDetailModal()"
-  (approvalUpdated)="onApprovalUpdated()"
-></app-contract-approval-detail>

@@ -10,6 +10,7 @@ public interface IContractApprovalService
     Task<bool> RejectAsync(int approvalId, string approverId, string reason, CancellationToken cancellationToken = default);
     Task<PagedResult<ContractApprovalDto>> GetPendingApprovalsAsync(string approverUserId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<PagedResult<ContractApprovalDto>> GetPendingApprovalsAsync(string approverUserId, string[] approverRoles, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<ContractApprovalDto?> GetApprovalByIdAsync(int approvalId, CancellationToken cancellationToken = default);
     Task<List<ContractApprovalStepDto>> GetApprovalHistoryAsync(int contractId, CancellationToken cancellationToken = default);
 }
 

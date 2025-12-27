@@ -130,6 +130,8 @@
     "notifications": "Notificaciones",
     "notificationDetail": "Detalles de Notificación",
     "notificationId": "Notificación Id #{{id}}",
+    "approvalDetail": "Detalles de Aprobación",
+    "approvalId": "Aprobación #{{id}}",
     "hrManagement": "Gestión de RRHH",
     "employeeList": "Lista de Empleados",
     "departments": "Departamentos",
@@ -1535,5 +1537,9 @@
       "rejectMessage": "Por favor proporcione una razón para el rechazo:",
       "rejectPlaceholder": "Ingrese razón de rechazo (requerido)"
     }
+  },
+  "table": {
+    "loading": "Cargando...",
+    "emptyMessage": "No hay datos disponibles"
   }
 }

@@ -137,6 +137,25 @@ public class ContractApprovalsController : ControllerBase
         }
     }
 
+    [HttpGet("approvals/{approvalId}")]
+    public async Task<IActionResult> GetApprovalById(int approvalId)
+    {
+        try
+        {
+            var result = await _approvalService.GetApprovalByIdAsync(approvalId);
+            if (result == null)
+            {
+                return NotFound(ApiResponse<object>.NotFound($"Approval with ID {approvalId} not found"));
+            }
+            return Ok(ApiResponse<ContractApprovalDto>.SuccessResult(result, "Approval retrieved successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving approval {ApprovalId}", approvalId);
+            return StatusCode(500, ApiResponse<object>.InternalServerError("An error occurred while retrieving approval"));
+        }
+    }
+
     [HttpGet("{contractId}/approval-history")]
     public async Task<IActionResult> GetApprovalHistory(int contractId)
     {

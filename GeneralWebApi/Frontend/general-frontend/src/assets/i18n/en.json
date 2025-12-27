@@ -130,6 +130,8 @@
     "notifications": "Notifications",
     "notificationDetail": "Notification Details",
     "notificationId": "Notification Id #{{id}}",
+    "approvalDetail": "Approval Details",
+    "approvalId": "Approval #{{id}}",
     "hrManagement": "HR Management",
     "employeeList": "Employee List",
     "departments": "Departments",
@@ -1719,5 +1721,9 @@
       "rejectMessage": "Please provide a reason for rejection:",
       "rejectPlaceholder": "Enter rejection reason (required)"
     }
+  },
+  "table": {
+    "loading": "Loading...",
+    "emptyMessage": "No data available"
   }
 }

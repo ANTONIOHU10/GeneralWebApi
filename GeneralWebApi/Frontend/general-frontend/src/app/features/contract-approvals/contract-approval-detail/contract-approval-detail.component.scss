@@ -1,3 +1,115 @@
 /* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-detail/contract-approval-detail.component.scss */
-/* Styles are now in BaseDetailComponent */
+/* Styles for route mode - modal mode styles are in BaseDetailComponent */
+
+.detail-container {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding-left: var(--spacing-md);
+  border-left: 2px solid var(--color-border-light);
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  position: relative;
+
+  &.approved {
+    .step-number-circle {
+      background-color: var(--color-success);
+      border-color: var(--color-success);
+      color: var(--color-on-success);
+    }
+  }
+
+  &.rejected {
+    .step-number-circle {
+      background-color: var(--color-danger);
+      border-color: var(--color-danger);
+      color: var(--color-on-danger);
+    }
+  }
+}
+
+.step-number {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  border: 2px solid var(--color-primary);
+  flex-shrink: 0;
+}
+
+.step-connector {
+  position: absolute;
+  top: 28px;
+  bottom: -16px;
+  width: 2px;
+  background-color: var(--color-border-light);
+  z-index: 0;
+}
+
+.step-content {
+  flex-grow: 1;
+  padding-bottom: var(--spacing-md);
+}
+
+.step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.step-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.step-comments {
+  background-color: var(--color-background-alt);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+.step-processed {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-top: var(--spacing-xs);
+}
+
+.detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+  margin-top: var(--spacing-md);
+}
 

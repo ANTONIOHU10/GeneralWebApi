@@ -130,6 +130,8 @@
     "notifications": "Notifiche",
     "notificationDetail": "Dettagli Notifica",
     "notificationId": "Notifica #{{id}}",
+    "approvalDetail": "Dettagli Approvazione",
+    "approvalId": "Approvazione #{{id}}",
     "hrManagement": "Gestione Risorse Umane",
     "employeeList": "Elenco Dipendenti",
     "departments": "Dipartimenti",
@@ -1710,5 +1712,9 @@
       "rejectMessage": "Fornisci un motivo per il rifiuto:",
       "rejectPlaceholder": "Inserisci motivo rifiuto (obbligatorio)"
     }
+  },
+  "table": {
+    "loading": "Caricamento...",
+    "emptyMessage": "Nessun dato disponibile"
   }
 }

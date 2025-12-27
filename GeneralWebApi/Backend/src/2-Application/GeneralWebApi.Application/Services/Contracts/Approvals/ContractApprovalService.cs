@@ -571,6 +571,53 @@ public class ContractApprovalService : IContractApprovalService
         return mapped;
     }
 
+    public async Task<ContractApprovalDto?> GetApprovalByIdAsync(int approvalId, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting approval by ID {ApprovalId}", approvalId);
+
+        var approval = await _approvalRepository.GetByIdWithStepsAsync(approvalId, cancellationToken);
+        if (approval == null)
+        {
+            _logger.LogInformation("Approval with ID {ApprovalId} not found", approvalId);
+            return null;
+        }
+
+        var dto = new ContractApprovalDto
+        {
+            Id = approval.Id,
+            ContractId = approval.ContractId,
+            EmployeeId = approval.Contract?.EmployeeId ?? 0,
+            Status = approval.Status,
+            Comments = approval.Comments,
+            RequestedBy = approval.RequestedBy,
+            RequestedAt = approval.RequestedAt,
+            ApprovedBy = approval.ApprovedBy,
+            ApprovedAt = approval.ApprovedAt,
+            RejectedBy = approval.RejectedBy,
+            RejectedAt = approval.RejectedAt,
+            RejectionReason = approval.RejectionReason,
+            CurrentApprovalLevel = approval.CurrentApprovalLevel,
+            MaxApprovalLevel = approval.MaxApprovalLevel,
+            ApprovalSteps = approval.ApprovalSteps.OrderBy(s => s.StepOrder).Select(s => new ContractApprovalStepDto
+            {
+                Id = s.Id,
+                StepOrder = s.StepOrder,
+                StepName = s.StepName,
+                ApproverRole = s.ApproverRole,
+                ApproverUserId = s.ApproverUserId,
+                ApproverUserName = s.ApproverUserName,
+                Status = s.Status,
+                Comments = s.Comments,
+                ProcessedAt = s.ProcessedAt,
+                ProcessedBy = s.ProcessedBy,
+                DueDate = s.DueDate
+            }).ToList()
+        };
+
+        _logger.LogInformation("Successfully retrieved approval {ApprovalId}", approvalId);
+        return dto;
+    }
+
     public async Task<List<ContractApprovalStepDto>> GetApprovalHistoryAsync(int contractId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting approval history for contract {ContractId}", contractId);

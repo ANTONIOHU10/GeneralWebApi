@@ -1,74 +1,130 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-detail/contract-approval-detail.component.html -->
-<app-base-detail
-  [isOpen]="isOpen"
-  [title]="getModalTitle()"
-  [mode]="'view'"
-  [sections]="sections()"
-  [actionsTemplate]="actionsTemplate"
-  (closeEvent)="onClose()"
->
-  <!-- Comments Custom Content -->
-  <ng-template #commentsContent>
-    <div *ngIf="approval && approval.comments" class="section-divider">
-      <div class="info-label">{{ 'contractApprovals.detail.fields.comments' | translate }}</div>
-      <div>{{ approval.comments }}</div>
-    </div>
-  </ng-template>
 
-  <!-- Steps Template -->
-  <ng-template #stepsTemplate>
-    <div class="step-list" *ngIf="approval && approval.approvalSteps">
-      <div
-        *ngFor="let step of approval.approvalSteps; let i = index"
-        class="step-item"
-        [class.approved]="step.status === 'Approved'"
-        [class.rejected]="step.status === 'Rejected'"
-      >
-        <div class="step-number">
-          <div class="step-number-circle">{{ step.stepOrder }}</div>
-          <div *ngIf="approval && i < approval.approvalSteps.length - 1" class="step-connector"></div>
+<!-- Route Mode: Full Page View -->
+@if (isRouteMode) {
+  <app-base-private-page-container
+    [title]="getModalTitle()"
+    icon="approval"
+  >
+    <app-base-button
+      slot="actions"
+      [text]="'common.back' | translate"
+      icon="arrow_back"
+      variant="ghost"
+      (buttonClick)="goBack()"
+    ></app-base-button>
+
+    @if (loadingFromRoute()) {
+      <app-base-loading [config]="{ centered: true, message: ('approvals.loading' | translate) }"></app-base-loading>
+    }
+
+    @if (errorFromRoute() && !loadingFromRoute()) {
+      <app-base-error [message]="errorFromRoute() || ('common.error' | translate)" (retry)="onRetryLoad()"></app-base-error>
+    }
+
+    @if (!loadingFromRoute() && !errorFromRoute() && approvalFromRoute()) {
+      <div class="detail-container">
+        <app-base-card
+          *ngFor="let section of sections(); let last = last"
+          [title]="section.title"
+          [variant]="'elevated'"
+          [customClass]="last ? '' : 'mb-3'"
+        >
+          <div class="info-grid">
+            <div class="info-item" *ngFor="let field of section.fields">
+              <div class="info-label">{{ field.label }}</div>
+              <div class="info-value" *ngIf="field.type !== 'badge' && field.type !== 'custom'">
+                {{ field.type === 'date' ? formatDate(field.value) : (field.value || 'N/A') }}
+              </div>
+              <app-base-badge
+                *ngIf="field.type === 'badge'"
+                [text]="field.value?.toString() || 'N/A'"
+                [variant]="field.badgeVariant || 'secondary'"
+                size="small"
+              ></app-base-badge>
+              <ng-container *ngIf="field.type === 'custom' && field.customTemplate">
+                <ng-container *ngTemplateOutlet="field.customTemplate; context: { $implicit: field }"></ng-container>
+              </ng-container>
+            </div>
+          </div>
+          <div *ngIf="section.showDivider" class="section-divider"></div>
+        </app-base-card>
+
+        <!-- Actions -->
+        <div *ngIf="actionsTemplate" class="detail-actions">
+          <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
         </div>
-        <div class="step-content">
-          <div class="step-header">
-            <div style="font-weight: 500;">{{ step.stepName }}</div>
-            <app-base-badge [text]="step.status" [variant]="getStepStatusVariant(step.status)" size="small"></app-base-badge>
-          </div>
-          <div class="step-meta">
-            <div>{{ 'contractApprovals.detail.steps.role' | translate }}: {{ step.approverRole }}</div>
-            <div *ngIf="step.approverUserName">{{ 'contractApprovals.detail.steps.approver' | translate }}: {{ step.approverUserName }}</div>
-            <div *ngIf="step.dueDate">{{ 'contractApprovals.detail.steps.due' | translate }}: {{ formatDate(step.dueDate) }}</div>
-          </div>
-          <div *ngIf="step.comments" class="step-comments">
-            {{ step.comments }}
-          </div>
-          <div *ngIf="step.processedAt" class="step-processed">
-            {{ 'contractApprovals.detail.steps.processed' | translate }}: {{ formatDate(step.processedAt) }} by {{ step.processedBy }}
-          </div>
+      </div>
+    }
+  </app-base-private-page-container>
+}
+
+<!-- Modal Mode: Dialog View -->
+@if (!isRouteMode) {
+  <app-base-detail
+    [isOpen]="isOpen"
+    [title]="getModalTitle()"
+    [mode]="'view'"
+    [sections]="sections()"
+    [actionsTemplate]="actionsTemplate"
+    (closeEvent)="onClose()"
+  >
+  </app-base-detail>
+}
+
+<!-- Steps Template -->
+<ng-template #stepsTemplate>
+  <div class="step-list" *ngIf="currentApproval && currentApproval.approvalSteps">
+    <div
+      *ngFor="let step of currentApproval.approvalSteps; let i = index"
+      class="step-item"
+      [class.approved]="step.status === 'Approved'"
+      [class.rejected]="step.status === 'Rejected'"
+    >
+      <div class="step-number">
+        <div class="step-number-circle">{{ step.stepOrder }}</div>
+        <div *ngIf="currentApproval && i < currentApproval.approvalSteps.length - 1" class="step-connector"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div style="font-weight: 500;">{{ step.stepName }}</div>
+          <app-base-badge [text]="step.status" [variant]="getStepStatusVariant(step.status)" size="small"></app-base-badge>
+        </div>
+        <div class="step-meta">
+          <div>{{ 'contractApprovals.detail.steps.role' | translate }}: {{ step.approverRole }}</div>
+          <div *ngIf="step.approverUserName">{{ 'contractApprovals.detail.steps.approver' | translate }}: {{ step.approverUserName }}</div>
+          <div *ngIf="step.dueDate">{{ 'contractApprovals.detail.steps.due' | translate }}: {{ formatDate(step.dueDate) }}</div>
+        </div>
+        <div *ngIf="step.comments" class="step-comments">
+          {{ step.comments }}
+        </div>
+        <div *ngIf="step.processedAt" class="step-processed">
+          {{ 'contractApprovals.detail.steps.processed' | translate }}: {{ formatDate(step.processedAt) }} by {{ step.processedBy }}
         </div>
       </div>
     </div>
-  </ng-template>
+  </div>
+</ng-template>
 
-  <!-- Actions Template -->
-  <ng-template #actionsTemplate>
-    <div *ngIf="approval?.status === 'Pending'" class="detail-actions">
-      <app-base-button
-        [text]="'contractApprovals.detail.buttons.reject' | translate"
-        icon="close"
-        variant="danger"
-        [loading]="loading()"
-        (click)="onReject()"
-      ></app-base-button>
-      <app-base-button
-        [text]="'contractApprovals.detail.buttons.approve' | translate"
-        icon="check"
-        variant="primary"
-        [loading]="loading()"
-        (click)="onApprove()"
-      ></app-base-button>
-    </div>
-  </ng-template>
-</app-base-detail>
+<!-- Actions Template -->
+<ng-template #actionsTemplate>
+  <div *ngIf="currentApproval?.status === 'Pending'" class="detail-actions">
+    <app-base-button
+      [text]="'contractApprovals.detail.buttons.reject' | translate"
+      icon="close"
+      variant="danger"
+      [loading]="loading()"
+      (buttonClick)="onReject()"
+    ></app-base-button>
+    <app-base-button
+      [text]="'contractApprovals.detail.buttons.approve' | translate"
+      icon="check"
+      variant="primary"
+      [loading]="loading()"
+      (buttonClick)="onApprove()"
+    ></app-base-button>
+  </div>
+</ng-template>
 
 <!-- Approve Dialog -->
 <app-base-prompt-dialog

@@ -11,6 +11,7 @@ import { filter, map, distinctUntilChanged, takeUntil, switchMap, catchError } f
 import { Subject, EMPTY } from 'rxjs';
 import { TranslationService } from '@core/services/translation.service';
 import { NotificationService } from '@core/services/notification.service';
+import { ContractApprovalService } from '@core/services/contract-approval.service';
 
 export interface BreadcrumbItem {
   label: string;
@@ -35,6 +36,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private translationService = inject(TranslationService);
   private notificationService = inject(NotificationService);
+  private contractApprovalService = inject(ContractApprovalService);
   private destroy$ = new Subject<void>();
 
   // Route to breadcrumb mapping (using translation keys)
@@ -165,6 +167,67 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     const url = this.router.url;
     const routeMap = this.getRouteMap();
     
+    // Check if URL matches approval detail route pattern
+    const approvalDetailMatch = url.match(/^\/private\/approvals\/(\d+)$/);
+    if (approvalDetailMatch) {
+      // For approval detail page, show: Approvals > Approval Detail #ID
+      const approvalId = parseInt(approvalDetailMatch[1], 10);
+      
+      // Set initial breadcrumbs with loading state
+      this.breadcrumbs = [
+        {
+          label: this.translationService.translate('breadcrumb.myApprovals'),
+          icon: 'approval',
+          route: '/private/approvals'
+        },
+        {
+          label: this.translationService.translate('approvals.loading') || 'Loading...',
+          icon: 'approval',
+          route: undefined // Current page, not clickable
+        }
+      ];
+
+      // Load approval to get title
+      this.contractApprovalService.getApprovalById(approvalId).pipe(
+        takeUntil(this.destroy$),
+        catchError(() => {
+          // On error, show approval ID
+          const approvalIdLabel = this.translationService.translate('breadcrumb.approvalId', { id: approvalId });
+          this.breadcrumbs = [
+            {
+              label: this.translationService.translate('breadcrumb.myApprovals'),
+              icon: 'approval',
+              route: '/private/approvals'
+            },
+            {
+              label: approvalIdLabel || `Approval #${approvalId}`,
+              icon: 'approval',
+              route: undefined
+            }
+          ];
+          return EMPTY;
+        })
+      ).subscribe({
+        next: (contractApproval) => {
+          // Update breadcrumb: show "Approvals > Approval Detail #ID"
+          const detailLabel = this.translationService.translate('breadcrumb.approvalDetail') || 'Approval Details';
+          this.breadcrumbs = [
+            {
+              label: this.translationService.translate('breadcrumb.myApprovals'),
+              icon: 'approval',
+              route: '/private/approvals'
+            },
+            {
+              label: `${detailLabel} #${approvalId}`,
+              icon: 'approval',
+              route: undefined // Current page, not clickable
+            }
+          ];
+        }
+      });
+      return;
+    }
+
     // Check if URL matches notification detail route pattern
     const notificationDetailMatch = url.match(/^\/private\/notifications\/(\d+)$/);
     if (notificationDetailMatch) {

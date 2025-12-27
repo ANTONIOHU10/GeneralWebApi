@@ -146,5 +146,29 @@ export class ContractApprovalService extends BaseHttpService {
       `${this.endpoint}/${contractId}/approval-history`
     );
   }
+
+  // Get approval by ID with contract information
+  getApprovalById(approvalId: number): Observable<ContractApproval> {
+    return this.get<ApiResponse<BackendContractApproval>>(
+      `${this.endpoint}/approvals/${approvalId}`,
+      undefined,
+      { extractData: false }
+    ).pipe(
+      switchMap((response: ApiResponse<BackendContractApproval>) => {
+        if (!response.data) {
+          throw new Error(response.message || 'Response data is missing');
+        }
+        const backendApproval = response.data;
+        // Enrich with contract information
+        return this.contractService.getContractById(backendApproval.contractId.toString()).pipe(
+          map(contract => this.transformBackendApproval(backendApproval, {
+            employeeName: contract.employeeName,
+            contractType: contract.contractType
+          })),
+          catchError(() => of(this.transformBackendApproval(backendApproval))) // If contract fetch fails, use approval without enrichment
+        );
+      })
+    );
+  }
 }
 

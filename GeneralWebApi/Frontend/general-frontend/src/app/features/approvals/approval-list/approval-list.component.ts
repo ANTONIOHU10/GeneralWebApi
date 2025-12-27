@@ -19,7 +19,7 @@ import { TranslationService } from '@core/services/translation.service';
 import { NotificationService, DialogService } from '../../../Shared/services';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 import { ContractApproval, ApprovalActionRequest, RejectionActionRequest } from 'app/contracts/contract-approvals/contract-approval.model';
-import { ContractApprovalDetailComponent } from '../../contract-approvals/contract-approval-detail/contract-approval-detail.component';
+import { Router } from '@angular/router';
 
 interface Approval {
   id: string;
@@ -47,7 +47,6 @@ interface Approval {
     BaseCardComponent,
     BaseBadgeComponent,
     BasePromptDialogComponent,
-    ContractApprovalDetailComponent,
     TranslatePipe,
   ],
   templateUrl: './approval-list.component.html',
@@ -58,6 +57,7 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private contractApprovalService = inject(ContractApprovalService);
   private translationService = inject(TranslationService);
+  private router = inject(Router);
   private destroy$ = new Subject<void>();
 
   approvals = signal<Approval[]>([]);
@@ -68,13 +68,6 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
 
   // All approvals loaded from backend (for statistics and filtering)
   private allApprovals = signal<Approval[]>([]);
-  
-  // Store original ContractApproval data for detail view
-  private contractApprovalsMap = new Map<number, ContractApproval>();
-
-  // Detail modal state
-  selectedApproval: ContractApproval | null = null;
-  isDetailModalOpen = false;
 
   // Computed statistics
   pendingCount = computed(() => this.allApprovals().filter(a => a.status === 'Pending').length);
@@ -194,11 +187,6 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (response) => {
         if (response?.data) {
-          // Store original ContractApproval data for detail view
-          response.data.forEach(approval => {
-            this.contractApprovalsMap.set(approval.id, approval);
-          });
-
           // Transform ContractApproval to Approval format
           const transformedApprovals = response.data.map(approval => 
             this.transformContractApproval(approval)
@@ -217,7 +205,6 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
           this.approvalsData$.next(filtered);
           this.loading$.next(false);
         } else {
-          this.contractApprovalsMap.clear();
           this.allApprovals.set([]);
           this.approvals.set([]);
           this.approvalsData$.next([]);
@@ -270,31 +257,8 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
   }
 
   onView(approval: Approval): void {
-    // Find the approval ID from the approval object
-    const approvalId = parseInt(approval.id, 10);
-    if (isNaN(approvalId)) {
-      this.notificationService.error('Error', 'Invalid approval ID', { duration: 3000 });
-      return;
-    }
-
-    // Get ContractApproval from stored map
-    const contractApproval = this.contractApprovalsMap.get(approvalId);
-    if (contractApproval) {
-      this.selectedApproval = contractApproval;
-      this.isDetailModalOpen = true;
-    } else {
-      this.notificationService.error('Error', 'Approval details not found', { duration: 3000 });
-    }
-  }
-
-  onCloseDetailModal(): void {
-    this.isDetailModalOpen = false;
-    this.selectedApproval = null;
-  }
-
-  onApprovalUpdated(): void {
-    // Reload approvals after approval action
-    this.loadApprovals();
+    // Navigate to approval detail page with ID
+    this.router.navigate(['/private/approvals', approval.id]);
   }
 
   showApproveDialog = signal<{ approval: Approval | null }>({ approval: null });

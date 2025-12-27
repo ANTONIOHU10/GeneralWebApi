@@ -100,13 +100,89 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
 
   /**
    * Handle notification item click
-   * Removed navigation functionality - no longer navigates to routes
+   * Navigate to appropriate page based on notification type
    */
   onNotificationItemClick(notification: Notification): void {
     this.isOpen = false;
     this.notificationItemClick.emit(notification);
-    // Navigation functionality removed
-    // Clicking on notification item no longer navigates anywhere
+    
+    // Handle navigation based on notification type
+    if (notification.type === 'approval') {
+      // For approval notifications, navigate to approval detail page
+      const approvalId = this.getApprovalId(notification);
+      if (approvalId) {
+        this.router.navigate(['/private/approvals', approvalId]);
+      } else if (notification.actionUrl) {
+        // Fallback to actionUrl if approvalId is not available
+        const normalizedUrl = this.normalizeActionUrl(notification.actionUrl);
+        if (normalizedUrl) {
+          this.router.navigateByUrl(normalizedUrl);
+        }
+      }
+    } else if (notification.actionUrl) {
+      // For other notification types, normalize and use actionUrl if available
+      const normalizedUrl = this.normalizeActionUrl(notification.actionUrl);
+      if (normalizedUrl) {
+        this.router.navigateByUrl(normalizedUrl);
+      }
+    }
+  }
+
+  /**
+   * Normalize action URL to handle routes that don't exist
+   * Converts detail routes to list routes when detail route doesn't exist
+   */
+  private normalizeActionUrl(actionUrl: string): string {
+    if (!actionUrl) return actionUrl;
+    
+    // Handle contracts detail routes - frontend doesn't have /private/contracts/:id route
+    // Convert to list route
+    const contractsDetailMatch = actionUrl.match(/^\/private\/contracts\/(\d+)$/);
+    if (contractsDetailMatch) {
+      return '/private/contracts';
+    }
+    
+    // Handle other potential detail routes that don't exist
+    // Add more patterns here if needed
+    
+    return actionUrl;
+  }
+
+  /**
+   * Get approval ID from notification
+   * Checks sourceId, actionData.approvalId, or extracts from actionUrl
+   */
+  private getApprovalId(notification: Notification): string | null {
+    // First, try to get from sourceId
+    if (notification.sourceId) {
+      return notification.sourceId;
+    }
+    
+    // Second, try to get from actionData
+    if (notification.actionData && typeof notification.actionData === 'object') {
+      const approvalId = (notification.actionData as Record<string, unknown>)['approvalId'];
+      if (approvalId) {
+        return String(approvalId);
+      }
+    }
+    
+    // Third, try to extract from metadata
+    if (notification.metadata && typeof notification.metadata === 'object') {
+      const approvalId = (notification.metadata as Record<string, unknown>)['approvalId'];
+      if (approvalId) {
+        return String(approvalId);
+      }
+    }
+    
+    // Fourth, try to extract from actionUrl if it contains an ID
+    if (notification.actionUrl) {
+      const match = notification.actionUrl.match(/(?:approvalId=|approvals\/)(\d+)/);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    
+    return null;
   }
 
 
