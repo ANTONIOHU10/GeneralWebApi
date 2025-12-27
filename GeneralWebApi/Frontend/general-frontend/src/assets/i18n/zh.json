@@ -1734,6 +1734,7 @@
       "createdAt": "创建时间",
       "timeAgo": "时间",
       "metadata": "元数据",
+      "source": "来源",
       "sourceType": "来源类型",
       "sourceId": "来源ID",
       "additionalData": "附加数据",

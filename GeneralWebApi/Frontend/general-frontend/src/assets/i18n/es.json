@@ -187,6 +187,7 @@
       "createdAt": "Creado En",
       "timeAgo": "Hace",
       "metadata": "Metadatos",
+      "source": "Origen",
       "sourceType": "Tipo de Origen",
       "sourceId": "ID de Origen",
       "additionalData": "Datos Adicionales",

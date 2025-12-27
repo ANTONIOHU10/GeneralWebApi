@@ -10,9 +10,7 @@
   (backdropClick)="onCancel()"
 >
   <div class="confirm-dialog-body">
-    <div class="confirm-message" *ngIf="config.message">
-      {{ config.message }}
-    </div>
+    <div class="confirm-message" *ngIf="config.message" [innerHTML]="config.message"></div>
     <ng-content></ng-content>
   </div>
 

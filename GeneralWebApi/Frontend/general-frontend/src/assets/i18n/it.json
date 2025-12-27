@@ -210,6 +210,7 @@
       "createdAt": "Creato Il",
       "timeAgo": "Tempo Fa",
       "metadata": "Metadati",
+      "source": "Origine",
       "sourceType": "Tipo di Origine",
       "sourceId": "ID di Origine",
       "additionalData": "Dati Aggiuntivi",
