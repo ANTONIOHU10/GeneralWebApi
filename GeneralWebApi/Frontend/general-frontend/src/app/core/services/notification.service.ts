@@ -1,6 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/core/services/notification.service.ts
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { BaseHttpService } from './base-http.service';
 import { 
   Notification, 
@@ -180,7 +181,7 @@ export class NotificationService extends BaseHttpService {
         createdAt: listDto.createdAt,
         readAt: listDto.readAt || undefined,
         archivedAt: undefined, // Not available in list DTO
-        actionUrl: listDto.actionUrl || undefined,
+        actionUrl: this.normalizeActionUrl(listDto.actionUrl),
         actionLabel: listDto.actionLabel || undefined,
         actionData: undefined, // Not available in list DTO
         sourceType: undefined, // Not available in list DTO
@@ -200,7 +201,7 @@ export class NotificationService extends BaseHttpService {
         createdAt: detailDto.createdAt,
         readAt: detailDto.readAt || undefined,
         archivedAt: detailDto.archivedAt || undefined,
-        actionUrl: detailDto.actionUrl || undefined,
+        actionUrl: this.normalizeActionUrl(detailDto.actionUrl),
         actionLabel: detailDto.actionLabel || undefined,
         actionData: detailDto.metadata || undefined,
         sourceType: detailDto.sourceType || undefined,
@@ -208,6 +209,35 @@ export class NotificationService extends BaseHttpService {
         metadata: detailDto.metadata || undefined,
       };
     }
+  }
+
+  /**
+   * Normalize action URL to include /private prefix and handle detail routes
+   */
+  private normalizeActionUrl(actionUrl?: string | null): string | undefined {
+    if (!actionUrl) return undefined;
+    
+    // If already has /private prefix, return as is
+    if (actionUrl.startsWith('/private/')) {
+      return actionUrl;
+    }
+    
+    // Add /private prefix if missing
+    let normalized = actionUrl.startsWith('/') ? actionUrl : `/${actionUrl}`;
+    if (!normalized.startsWith('/private/')) {
+      normalized = `/private${normalized}`;
+    }
+    
+    // Handle contract-approvals detail routes
+    // Backend sends /contract-approvals/{id}, but frontend doesn't have detail route
+    // Convert to list route with query parameter
+    const contractApprovalMatch = normalized.match(/^\/private\/contract-approvals\/(\d+)$/);
+    if (contractApprovalMatch) {
+      const approvalId = contractApprovalMatch[1];
+      return `/private/contract-approvals?approvalId=${approvalId}`;
+    }
+    
+    return normalized;
   }
 
   /**

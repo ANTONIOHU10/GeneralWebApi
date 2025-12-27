@@ -240,23 +240,27 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
 
   /**
    * Handle notification click
+   * Removed navigation functionality - no longer navigates to routes
    */
   onNotificationClick(notification: Notification): void {
-    // Navigate to action URL if available
-    if (notification.actionUrl) {
-      this.router.navigate([notification.actionUrl]);
-    }
+    // Navigation functionality removed
+    // Clicking on notification card no longer navigates anywhere
   }
 
   /**
    * Toggle notification read status (read <-> unread)
    */
-  toggleReadStatus(notification: Notification): void {
-    // Optimistically update UI immediately for better UX
+  toggleReadStatus(notification: Notification, event?: Event): void {
+    // Prevent event bubbling to avoid triggering onNotificationClick
+    if (event) {
+      event.stopPropagation();
+    }
+    // Save current state for potential rollback
     const currentNotifications = this.notifications();
     const currentStats = this.stats();
     const newStatus: NotificationStatus = notification.status === 'read' ? 'unread' : 'read';
     
+    // Optimistically update UI immediately for better UX
     const updatedNotifications = currentNotifications.map(n => 
       n.id === notification.id 
         ? { 
@@ -279,7 +283,9 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       this.stats.set(updatedStats);
     }
     
-    // Call backend API and reload all notifications on success to ensure consistency
+    // Call backend API - service also performs optimistic update
+    // Keep the optimistic update in component, don't override it after success
+    // Only reload stats to ensure consistency with backend
     this.notificationCenterService.toggleReadStatus(notification).pipe(
       takeUntil(this.destroy$),
       catchError((error) => {
@@ -293,9 +299,9 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: () => {
-        // Reload all notifications from backend to ensure data consistency
-        // This ensures the UI reflects the exact state from the server
-        this.loadNotifications();
+        // API call successful - optimistic update is already applied
+        // Only reload stats to ensure consistency with backend
+        // Don't reload notifications to avoid overriding the optimistic update
         this.loadStats();
       }
     });
@@ -303,11 +309,15 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
 
   /**
    * Handle action button click
+   * Removed navigation functionality - no longer navigates to routes
    */
-  onActionClick(notification: Notification): void {
-    if (notification.actionUrl) {
-      this.router.navigate([notification.actionUrl]);
+  onActionClick(notification: Notification, event?: Event): void {
+    // Prevent event bubbling to avoid triggering onNotificationClick
+    if (event) {
+      event.stopPropagation();
     }
+    // Navigation functionality removed
+    // Action button no longer navigates anywhere
   }
 
   /**
@@ -332,7 +342,11 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   /**
    * Delete notification
    */
-  deleteNotification(notification: Notification): void {
+  deleteNotification(notification: Notification, event?: Event): void {
+    // Prevent event bubbling to avoid triggering onNotificationClick
+    if (event) {
+      event.stopPropagation();
+    }
     this.notificationCenterService.deleteNotification(notification).pipe(
       takeUntil(this.destroy$)
     ).subscribe({

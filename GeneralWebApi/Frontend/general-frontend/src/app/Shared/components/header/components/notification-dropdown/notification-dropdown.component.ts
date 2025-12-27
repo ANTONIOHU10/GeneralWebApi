@@ -100,13 +100,13 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
 
   /**
    * Handle notification item click
+   * Removed navigation functionality - no longer navigates to routes
    */
   onNotificationItemClick(notification: Notification): void {
     this.isOpen = false;
     this.notificationItemClick.emit(notification);
-    if (notification.actionUrl) {
-      this.router.navigate([notification.actionUrl]);
-    }
+    // Navigation functionality removed
+    // Clicking on notification item no longer navigates anywhere
   }
 
 

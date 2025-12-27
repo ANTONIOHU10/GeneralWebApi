@@ -158,12 +158,7 @@
             [customClass]="getNotificationCardClass(notification)"
           >
             <div 
-              class="notification-item" 
-              (click)="onNotificationClick(notification)"
-              (keydown.enter)="onNotificationClick(notification)"
-              tabindex="0"
-              role="button"
-              [attr.aria-label]="'View notification: ' + notification.title"
+              class="notification-item"
             >
               <!-- Icon with read status indicator -->
               <div class="notification-icon-wrapper">
@@ -226,6 +221,7 @@
                   <div 
                     class="notification-actions"
                     tabindex="-1"
+                    (click)="$event.stopPropagation()"
                   >
                     <app-base-button
                       [text]="notification.status === 'read' ? ('notifications.unread' | translate) : ('notifications.read' | translate)"
@@ -233,25 +229,15 @@
                       [variant]="notification.status === 'read' ? 'outline' : 'outline'"
                       size="small"
                       [customClass]="notification.status === 'read' ? 'toggle-status-btn unread-state' : 'toggle-status-btn read-state'"
-                      (buttonClick)="toggleReadStatus(notification)"
+                      (buttonClick)="toggleReadStatus(notification, $event)"
                       [attr.title]="notification.status === 'read' ? ('notifications.unread' | translate) : ('notifications.read' | translate)"
                     ></app-base-button>
-                    @if (notification.actionUrl && notification.actionLabel) {
-                      <app-base-button
-                        [text]="notification.actionLabel"
-                        icon="arrow_forward"
-                        [iconRight]="true"
-                        variant="primary"
-                        size="small"
-                        (buttonClick)="onActionClick(notification)"
-                      ></app-base-button>
-                    }
                     <app-base-button
                       icon="delete_outline"
                       variant="ghost"
                       size="small"
                       customClass="action-btn delete-btn"
-                      (buttonClick)="deleteNotification(notification)"
+                      (buttonClick)="deleteNotification(notification, $event)"
                       [attr.title]="'notifications.deleteNotification' | translate"
                     ></app-base-button>
                   </div>

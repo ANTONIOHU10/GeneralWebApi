@@ -76,7 +76,12 @@ export class BaseHttpService {
       if (!response.success) {
         throw new Error(response.message || response.error || 'Request failed');
       }
+      // For void type, data can be undefined - that's expected
       if (response.data === undefined || response.data === null) {
+        // If the message indicates success, return undefined for void type
+        if (response.message && response.message.toLowerCase().includes('successfully')) {
+          return undefined as T;
+        }
         throw new Error(response.message || 'Response data is missing');
       }
       return response.data;
