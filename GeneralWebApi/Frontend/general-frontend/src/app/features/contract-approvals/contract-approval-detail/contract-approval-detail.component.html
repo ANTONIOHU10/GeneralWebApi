@@ -1,7 +1,7 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-approvals/contract-approval-detail/contract-approval-detail.component.html -->
 <app-base-detail
   [isOpen]="isOpen"
-  [title]="'Contract Approval Details'"
+  [title]="getModalTitle()"
   [mode]="'view'"
   [sections]="sections()"
   [actionsTemplate]="actionsTemplate"
@@ -10,7 +10,7 @@
   <!-- Comments Custom Content -->
   <ng-template #commentsContent>
     <div *ngIf="approval && approval.comments" class="section-divider">
-      <div class="info-label">Comments</div>
+      <div class="info-label">{{ 'contractApprovals.detail.fields.comments' | translate }}</div>
       <div>{{ approval.comments }}</div>
     </div>
   </ng-template>
@@ -34,15 +34,15 @@
             <app-base-badge [text]="step.status" [variant]="getStepStatusVariant(step.status)" size="small"></app-base-badge>
           </div>
           <div class="step-meta">
-            <div>Role: {{ step.approverRole }}</div>
-            <div *ngIf="step.approverUserName">Approver: {{ step.approverUserName }}</div>
-            <div *ngIf="step.dueDate">Due: {{ formatDate(step.dueDate) }}</div>
+            <div>{{ 'contractApprovals.detail.steps.role' | translate }}: {{ step.approverRole }}</div>
+            <div *ngIf="step.approverUserName">{{ 'contractApprovals.detail.steps.approver' | translate }}: {{ step.approverUserName }}</div>
+            <div *ngIf="step.dueDate">{{ 'contractApprovals.detail.steps.due' | translate }}: {{ formatDate(step.dueDate) }}</div>
           </div>
           <div *ngIf="step.comments" class="step-comments">
             {{ step.comments }}
           </div>
           <div *ngIf="step.processedAt" class="step-processed">
-            Processed: {{ formatDate(step.processedAt) }} by {{ step.processedBy }}
+            {{ 'contractApprovals.detail.steps.processed' | translate }}: {{ formatDate(step.processedAt) }} by {{ step.processedBy }}
           </div>
         </div>
       </div>
@@ -53,14 +53,14 @@
   <ng-template #actionsTemplate>
     <div *ngIf="approval?.status === 'Pending'" class="detail-actions">
       <app-base-button
-        text="Reject"
+        [text]="'contractApprovals.detail.buttons.reject' | translate"
         icon="close"
         variant="danger"
         [loading]="loading()"
         (click)="onReject()"
       ></app-base-button>
       <app-base-button
-        text="Approve"
+        [text]="'contractApprovals.detail.buttons.approve' | translate"
         icon="check"
         variant="primary"
         [loading]="loading()"
@@ -73,19 +73,7 @@
 <!-- Approve Dialog -->
 <app-base-prompt-dialog
   [isOpen]="showApproveDialog()"
-  [config]="{
-    title: 'Approve Contract',
-    message: `Approve contract for ${approval?.contractEmployeeName || 'this contract'}?`,
-    label: 'Comments (Optional)',
-    placeholder: 'Enter approval comments...',
-    confirmText: 'Approve',
-    cancelText: 'Cancel',
-    confirmVariant: 'primary',
-    icon: 'check',
-    required: false,
-    maxLength: 500,
-    rows: 4
-  }"
+  [config]="getApproveDialogConfig()"
   (confirm)="onApproveConfirm($event)"
   (cancelAction)="onApproveDialogClose()"
   (dialogClose)="onApproveDialogClose()"
@@ -94,19 +82,7 @@
 <!-- Reject Dialog -->
 <app-base-prompt-dialog
   [isOpen]="showRejectDialog()"
-  [config]="{
-    title: 'Reject Contract',
-    message: `Reject contract for ${approval?.contractEmployeeName || 'this contract'}?`,
-    label: 'Rejection Reason',
-    placeholder: 'Please provide a reason for rejection...',
-    confirmText: 'Reject',
-    cancelText: 'Cancel',
-    confirmVariant: 'danger',
-    icon: 'close',
-    required: true,
-    maxLength: 500,
-    rows: 4
-  }"
+  [config]="getRejectDialogConfig()"
   (confirm)="onRejectConfirm($event)"
   (cancelAction)="onRejectDialogClose()"
   (dialogClose)="onRejectDialogClose()"

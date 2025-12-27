@@ -36,7 +36,12 @@
     "dismiss": "Descartar",
     "view": "Ver",
     "notAvailable": "N/A",
-    "create": "Crear"
+    "create": "Crear",
+    "validationError": "Error de Validación",
+    "deleteConfirm": {
+      "title": "Confirmar Eliminación",
+      "message": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer."
+    }
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -118,13 +123,43 @@
     "auditLogs": "Registros de auditoría",
     "systemMonitor": "Monitor del sistema"
   },
+  "breadcrumb": {
+    "dashboard": "Panel de control",
+    "tasks": "Tareas",
+    "myApprovals": "Mis aprobaciones",
+    "notifications": "Notificaciones",
+    "hrManagement": "Gestión de RRHH",
+    "employeeList": "Lista de Empleados",
+    "departments": "Departamentos",
+    "positions": "Posiciones",
+    "onboarding": "Incorporación",
+    "contractManagement": "Gestión de contratos",
+    "contracts": "Contratos",
+    "contractApprovals": "Aprobaciones de contratos",
+    "contractTemplates": "Plantillas de contratos",
+    "expiryReminders": "Recordatorios de vencimiento",
+    "documentCenter": "Centro de documentos",
+    "identityDocuments": "Documentos de identidad",
+    "education": "Educación",
+    "certifications": "Certificaciones",
+    "companyDocuments": "Documentos de la empresa",
+    "systemManagement": "Gestión del sistema",
+    "users": "Usuarios",
+    "roles": "Roles",
+    "permissions": "Permisos",
+    "settings": "Configuración",
+    "monitoringAudit": "Monitoreo y auditoría",
+    "auditLogs": "Registros de auditoría",
+    "systemMonitor": "Monitor del sistema",
+    "securityAudit": "Auditoría de seguridad",
+    "backupRecovery": "Respaldo y recuperación"
+  },
   "notifications": {
     "title": "Notificaciones",
     "unreadCount": "{{count}} notificaciones no leídas",
     "allCaughtUp": "¡Todo al día!",
     "markAllRead": "Marcar todo como leído",
     "totalNotifications": "Total de notificaciones",
-    "unread": "No leído",
     "urgentHigh": "Urgente y alta",
     "filters": "Filtros",
     "allTypes": "Todos los tipos",
@@ -349,6 +384,11 @@
       }
     },
     "detail": {
+      "title": {
+        "edit": "Editar Empleado",
+        "view": "Detalles del Empleado",
+        "userProfile": "Perfil de Usuario"
+      },
       "sections": {
         "userInformation": "Información de Usuario",
         "userInformationDescription": "Detalles de la cuenta de usuario",
@@ -357,9 +397,109 @@
         "workInformation": "Información Laboral",
         "workInformationDescription": "Detalles de empleo y trabajo",
         "addressInformation": "Información de Dirección",
-        "addressInformationDescription": "Detalles de dirección"
+        "addressInformationDescription": "Detalles de dirección",
+        "emergencyContact": "Contacto de Emergencia",
+        "emergencyContactDescription": "Información de contacto de emergencia"
       },
-      "id": "ID"
+      "fields": {
+        "username": "Nombre de Usuario",
+        "usernamePlaceholder": "Nombre de usuario",
+        "userEmail": "Correo del Usuario",
+        "userEmailPlaceholder": "Correo del usuario",
+        "role": "Rol",
+        "userRolePlaceholder": "Rol del usuario",
+        "accountCreated": "Cuenta Creada",
+        "accountCreatedPlaceholder": "Fecha de creación de cuenta",
+        "lastLogin": "Último Acceso",
+        "lastLoginPlaceholder": "Fecha de último acceso",
+        "accountStatus": "Estado de la Cuenta",
+        "accountStatusPlaceholder": "Estado de la cuenta",
+        "firstName": "Nombre",
+        "firstNamePlaceholder": "Ingrese el nombre",
+        "lastName": "Apellido",
+        "lastNamePlaceholder": "Ingrese el apellido",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "Ingrese la dirección de correo electrónico",
+        "phoneNumber": "Número de Teléfono",
+        "phoneNumberPlaceholder": "Ingrese el número de teléfono",
+        "employeeNumber": "Número de Empleado",
+        "employeeNumberPlaceholder": "Número de empleado",
+        "employmentStatus": "Estado de Empleo",
+        "employmentStatusPlaceholder": "Seleccione el estado de empleo",
+        "employmentType": "Tipo de Empleo",
+        "employmentTypePlaceholder": "Seleccione el tipo de empleo",
+        "hireDate": "Fecha de Contratación",
+        "hireDatePlaceholder": "Seleccione la fecha de contratación",
+        "terminationDate": "Fecha de Terminación",
+        "terminationDatePlaceholder": "Seleccione la fecha de terminación (opcional)",
+        "department": "Departamento",
+        "departmentPlaceholder": "Seleccione el departamento",
+        "position": "Posición",
+        "positionPlaceholder": "Seleccione la posición",
+        "manager": "Gerente",
+        "managerPlaceholder": "Seleccione el gerente",
+        "currentSalary": "Salario Actual",
+        "currentSalaryPlaceholder": "Ingrese el monto del salario",
+        "salaryCurrency": "Moneda del Salario",
+        "salaryCurrencyPlaceholder": "ej., USD, EUR",
+        "streetAddress": "Dirección",
+        "streetAddressPlaceholder": "Ingrese la dirección",
+        "city": "Ciudad",
+        "cityPlaceholder": "Ingrese la ciudad",
+        "postalCode": "Código Postal",
+        "postalCodePlaceholder": "Ingrese el código postal",
+        "country": "País",
+        "countryPlaceholder": "Ingrese el país",
+        "contactName": "Nombre del Contacto",
+        "contactNamePlaceholder": "Ingrese el nombre del contacto de emergencia",
+        "contactPhone": "Teléfono del Contacto",
+        "contactPhonePlaceholder": "Ingrese el teléfono del contacto de emergencia",
+        "contactRelation": "Relación del Contacto",
+        "contactRelationPlaceholder": "ej., Cónyuge, Padre"
+      },
+      "options": {
+        "role": {
+          "admin": "Administrador",
+          "manager": "Gerente",
+          "user": "Usuario"
+        },
+        "accountStatus": {
+          "active": "Activo",
+          "inactive": "Inactivo"
+        },
+        "employmentStatus": {
+          "active": "Activo",
+          "inactive": "Inactivo",
+          "terminated": "Terminado",
+          "onLeave": "En Licencia"
+        },
+        "employmentType": {
+          "fullTime": "Tiempo Completo",
+          "partTime": "Tiempo Parcial",
+          "contract": "Contrato",
+          "intern": "Prácticas"
+        }
+      },
+      "buttons": {
+        "saveChanges": "Guardar Cambios",
+        "cancel": "Cancelar",
+        "close": "Cerrar"
+      },
+      "confirm": {
+        "updateTitle": "Confirmar Actualización",
+        "updateMessage": "¿Está seguro de que desea actualizar el empleado {{employeeName}}?"
+      },
+      "notifications": {
+        "updateSuccess": "Empleado Actualizado",
+        "updateSuccessMessage": "El empleado \"{{name}}\" ha sido actualizado exitosamente",
+        "updateFailed": "Actualización Fallida",
+        "updateFailedMessage": "Error al actualizar el empleado"
+      }
+    },
+    "delete": {
+      "confirmMessage": "¿Está seguro de que desea eliminar {{name}}? Esta acción no se puede deshacer.",
+      "bulkConfirmMessage": "¿Está seguro de que desea eliminar {{count}} empleado(s)?\n\n{{names}}\n\nEsta acción no se puede deshacer.",
+      "deleteAll": "Eliminar Todos"
     },
     "search": {
       "title": "Buscar Empleado",
@@ -629,6 +769,70 @@
         "commentsPlaceholder": "Ingrese comentarios para la solicitud de aprobación (opcional)"
       },
       "submitButton": "Enviar para Aprobación"
+    },
+    "detail": {
+      "title": {
+        "edit": "Editar Contrato",
+        "view": "Detalles del Contrato"
+      },
+      "sections": {
+        "contractInformation": "Información del Contrato",
+        "contractInformationDescription": "Detalles del contrato"
+      },
+      "fields": {
+        "employee": "Empleado",
+        "employeePlaceholder": "Seleccione el empleado",
+        "employeeName": "Nombre del empleado",
+        "contractType": "Tipo de Contrato",
+        "contractTypePlaceholder": "Seleccione el tipo de contrato",
+        "status": "Estado",
+        "statusPlaceholder": "Seleccione el estado",
+        "startDate": "Fecha de Inicio",
+        "startDatePlaceholder": "Seleccione la fecha de inicio",
+        "endDate": "Fecha de Fin",
+        "endDatePlaceholder": "Seleccione la fecha de fin (opcional)",
+        "salary": "Salario",
+        "salaryPlaceholder": "Ingrese el salario (opcional)",
+        "renewalReminderDate": "Fecha de Recordatorio de Renovación",
+        "renewalReminderDatePlaceholder": "Seleccione la fecha de recordatorio (opcional)",
+        "notes": "Notas",
+        "notesPlaceholder": "Ingrese notas adicionales (opcional)"
+      },
+      "buttons": {
+        "saveChanges": "Guardar Cambios",
+        "cancel": "Cancelar",
+        "close": "Cerrar"
+      },
+      "confirm": {
+        "title": "Confirmar Actualización",
+        "message": "¿Está seguro de que desea actualizar el contrato para {{name}}?",
+        "confirmText": "Actualizar",
+        "cancelText": "Cancelar"
+      },
+      "notifications": {
+        "updateSuccess": "Contrato Actualizado",
+        "updateSuccessMessage": "El contrato para {{name}} ha sido actualizado exitosamente",
+        "updateFailed": "Actualización Fallida",
+        "updateFailedMessage": "Error al actualizar el contrato",
+        "loadFailed": "Error al Cargar",
+        "loadFailedMessage": "Error al cargar la información de aprobación"
+      },
+      "approval": {
+        "title": "Información de Aprobación",
+        "loading": "Cargando información de aprobación...",
+        "empty": "No hay información de aprobación disponible para este contrato.",
+        "approver": "Aprobador",
+        "approverRole": "Rol del Aprobador",
+        "approverNotAssigned": "Aprobador no asignado",
+        "processedBy": "Procesado por",
+        "processedAt": "Procesado en",
+        "comments": "Comentarios",
+        "notes": "Notas",
+        "dueDate": "Fecha de Vencimiento"
+      }
+    },
+    "delete": {
+      "confirmMessage": "¿Está seguro de que desea eliminar el contrato para {{name}}? Esta acción no se puede deshacer."
     }
   },
   "contractApprovals": {
@@ -666,6 +870,69 @@
       "approveMessage": "¿Aprobar el contrato para {{name}}?",
       "rejectTitle": "Rechazar Contrato",
       "rejectMessage": "¿Rechazar el contrato para {{name}}?"
+    },
+    "detail": {
+      "title": "Detalles de Aprobación de Contrato",
+      "sections": {
+        "approvalInformation": "Información de Aprobación",
+        "approvalSteps": "Pasos de Aprobación"
+      },
+      "fields": {
+        "approvalId": "ID de Aprobación",
+        "contractId": "ID de Contrato",
+        "employeeId": "ID de Empleado",
+        "employeeName": "Nombre del Empleado",
+        "contractType": "Tipo de Contrato",
+        "status": "Estado",
+        "progress": "Progreso",
+        "requestedBy": "Solicitado Por",
+        "requestedAt": "Solicitado En",
+        "approvedBy": "Aprobado Por",
+        "approvedAt": "Aprobado En",
+        "rejectedBy": "Rechazado Por",
+        "rejectedAt": "Rechazado En",
+        "rejectionReason": "Razón de Rechazo",
+        "comments": "Comentarios",
+        "steps": "Pasos"
+      },
+      "steps": {
+        "role": "Rol",
+        "approver": "Aprobador",
+        "due": "Fecha de Vencimiento",
+        "processed": "Procesado"
+      },
+      "buttons": {
+        "approve": "Aprobar",
+        "reject": "Rechazar"
+      },
+      "approveDialog": {
+        "title": "Aprobar Contrato",
+        "message": "¿Aprobar el contrato para {{name}}?",
+        "label": "Comentarios (Opcional)",
+        "placeholder": "Ingrese comentarios de aprobación...",
+        "confirmText": "Aprobar",
+        "cancelText": "Cancelar"
+      },
+      "rejectDialog": {
+        "title": "Rechazar Contrato",
+        "message": "¿Rechazar el contrato para {{name}}?",
+        "label": "Razón de Rechazo",
+        "placeholder": "Por favor proporcione una razón para el rechazo...",
+        "confirmText": "Rechazar",
+        "cancelText": "Cancelar"
+      },
+      "notifications": {
+        "approveSuccess": "Aprobado",
+        "approveSuccessMessage": "El contrato para {{name}} ha sido aprobado",
+        "approveFailed": "Error al Aprobar",
+        "approveFailedMessage": "Error al aprobar el contrato",
+        "rejectSuccess": "Rechazado",
+        "rejectSuccessMessage": "El contrato para {{name}} ha sido rechazado",
+        "rejectFailed": "Error al Rechazar",
+        "rejectFailedMessage": "Error al rechazar el contrato",
+        "rejectionReasonRequired": "Razón de Rechazo Requerida",
+        "rejectionReasonRequiredMessage": "Por favor proporcione una razón para el rechazo"
+      }
     }
   },
   "contractTemplates": {
@@ -794,7 +1061,52 @@
       "system": "Sistema",
       "custom": "Personalizado"
     },
-    "morePermissions": "+{{count}} más"
+    "morePermissions": "+{{count}} más",
+    "detail": {
+      "title": {
+        "edit": "Editar Rol",
+        "view": "Detalles del Rol"
+      },
+      "sections": {
+        "roleInformation": "Información del Rol",
+        "permissions": "Permisos"
+      },
+      "fields": {
+        "name": "Nombre del Rol",
+        "namePlaceholder": "Ingrese el nombre del rol",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese la descripción del rol",
+        "permissions": "Permisos",
+        "permissionsPlaceholder": "Seleccione los permisos"
+      },
+      "viewFields": {
+        "name": "Nombre del Rol",
+        "description": "Descripción",
+        "permissions": "Permisos",
+        "type": "Tipo",
+        "createdAt": "Creado En",
+        "updatedAt": "Actualizado En"
+      },
+      "buttons": {
+        "updateRole": "Actualizar Rol",
+        "cancel": "Cancelar"
+      },
+      "confirm": {
+        "title": "Confirmar Actualización",
+        "message": "¿Actualizar rol \"{{name}}\"?",
+        "confirmText": "Actualizar",
+        "cancelText": "Cancelar"
+      },
+      "notifications": {
+        "updateSuccess": "Rol Actualizado",
+        "updateSuccessMessage": "¡Rol \"{{name}}\" actualizado exitosamente!",
+        "updateFailed": "Error al Actualizar Rol",
+        "updateFailedMessage": "Error al actualizar el rol."
+      }
+    },
+    "delete": {
+      "confirmMessage": "¿Está seguro de que desea eliminar {{name}}? Esta acción no se puede deshacer."
+    }
   },
   "permissions": {
     "title": "Gestión de Permisos",
@@ -849,57 +1161,6 @@
       "userManagement": "Gestión de Usuarios"
     }
   },
-  "departments": {
-    "title": "Gestión de Departamentos",
-    "subtitle": "Gestionar y ver todos los departamentos del sistema",
-    "searchPlaceholder": "Buscar departamentos...",
-    "loading": "Cargando departamentos...",
-    "emptyTitle": "No se encontraron departamentos",
-    "emptyDescription": "No hay departamentos para mostrar en este momento",
-    "emptyActionText": "Agregar Primer Departamento",
-    "columns": {
-      "code": "Código",
-      "name": "Nombre",
-      "description": "Descripción",
-      "parentDepartment": "Departamento Padre",
-      "level": "Nivel"
-    },
-    "tabs": {
-      "list": "Lista de Departamentos",
-      "add": "Agregar Departamento",
-      "search": "Buscar Departamento"
-    },
-    "search": {
-      "title": "Buscar Departamento",
-      "subtitle": "Buscar y filtrar departamentos por varios criterios",
-      "cardTitle": "Buscar y Filtrar Departamentos",
-      "showing": "Mostrando {{count}} departamento(s)",
-      "loadingMessage": "Cargando departamentos...",
-      "emptyTitle": "No se encontraron departamentos",
-      "emptyDescription": "No hay departamentos que coincidan con su criterio de búsqueda"
-    },
-    "add": {
-      "sectionTitle": "Información del Departamento",
-      "sectionDescription": "Ingrese los detalles del departamento",
-      "fields": {
-        "name": "Nombre del Departamento",
-        "namePlaceholder": "Ingrese el nombre del departamento",
-        "code": "Código del Departamento",
-        "codePlaceholder": "Ingrese el código del departamento",
-        "level": "Nivel",
-        "levelPlaceholder": "Ingrese el nivel",
-        "parentDepartment": "Departamento Padre",
-        "parentDepartmentPlaceholder": "Seleccione departamento padre (opcional)",
-        "description": "Descripción",
-        "descriptionPlaceholder": "Ingrese la descripción del departamento"
-      },
-      "submitButton": "Crear Departamento",
-      "cancelButton": "Cancelar",
-      "confirmTitle": "Confirmar Creación",
-      "confirmMessage": "¿Está seguro de que desea crear el departamento {{name}}?",
-      "confirmButton": "Crear"
-    }
-  },
   "positions": {
     "title": "Gestión de Posiciones",
     "subtitle": "Gestionar y ver todas las posiciones del sistema",
@@ -924,8 +1185,53 @@
       "search": "Buscar Posición"
     },
     "delete": {
-      "confirmTitle": "Confirmar Eliminación",
-      "confirmMessage": "¿Está seguro de que desea eliminar la posición {{name}}? Esta acción no se puede deshacer."
+      "confirmMessage": "¿Está seguro de que desea eliminar {{name}}? Esta acción no se puede deshacer."
+    },
+    "detail": {
+      "title": {
+        "edit": "Editar Posición",
+        "view": "Detalles de la Posición"
+      },
+      "sections": {
+        "positionInformation": "Información de la Posición",
+        "positionInformationDescription": "Detalles de la posición",
+        "salaryInformation": "Información Salarial",
+        "salaryInformationDescription": "Detalles del rango salarial"
+      },
+      "fields": {
+        "title": "Título de la Posición",
+        "titlePlaceholder": "Ingrese el título de la posición",
+        "code": "Código de la Posición",
+        "codePlaceholder": "Ingrese el código de la posición",
+        "level": "Nivel",
+        "levelPlaceholder": "Ingrese el nivel",
+        "department": "Departamento",
+        "departmentPlaceholder": "Seleccione el departamento",
+        "parentPosition": "Posición Padre",
+        "parentPositionPlaceholder": "Seleccione la posición padre (opcional)",
+        "isManagement": "Es Posición Gerencial",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese la descripción de la posición",
+        "minSalary": "Salario Mínimo",
+        "minSalaryPlaceholder": "Ingrese el salario mínimo",
+        "maxSalary": "Salario Máximo",
+        "maxSalaryPlaceholder": "Ingrese el salario máximo"
+      },
+      "buttons": {
+        "saveChanges": "Guardar Cambios",
+        "cancel": "Cancelar",
+        "close": "Cerrar"
+      },
+      "confirm": {
+        "updateTitle": "Confirmar Actualización",
+        "updateMessage": "¿Está seguro de que desea actualizar la posición {{name}}?"
+      },
+      "notifications": {
+        "updateSuccess": "Posición Actualizada",
+        "updateSuccessMessage": "La posición \"{{name}}\" ha sido actualizada exitosamente",
+        "updateFailed": "Actualización Fallida",
+        "updateFailedMessage": "Error al actualizar la posición"
+      }
     },
     "yes": "Sí",
     "no": "No",
@@ -988,6 +1294,70 @@
       "submitButton": "Crear Usuario",
       "confirmTitle": "Confirmar Creación",
       "confirmMessage": "¿Está seguro de que desea crear el usuario {{name}}?"
+    },
+    "detail": {
+      "title": {
+        "edit": "Editar Usuario",
+        "view": "Detalles del Usuario"
+      },
+      "sections": {
+        "userInformation": "Información del Usuario",
+        "accountSettings": "Configuración de Cuenta"
+      },
+      "fields": {
+        "username": "Nombre de Usuario",
+        "usernamePlaceholder": "Ingrese el nombre de usuario",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "Ingrese el correo electrónico",
+        "firstName": "Nombre",
+        "firstNamePlaceholder": "Ingrese el nombre",
+        "lastName": "Apellido",
+        "lastNamePlaceholder": "Ingrese el apellido",
+        "phoneNumber": "Número de Teléfono",
+        "phoneNumberPlaceholder": "Ingrese el número de teléfono",
+        "roles": "Roles",
+        "rolesPlaceholder": "Seleccione los roles",
+        "active": "Activo"
+      },
+      "viewFields": {
+        "username": "Nombre de Usuario",
+        "email": "Correo Electrónico",
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "phoneNumber": "Número de Teléfono",
+        "status": "Estado",
+        "emailConfirmed": "Correo Confirmado",
+        "roles": "Roles",
+        "createdAt": "Creado En",
+        "updatedAt": "Actualizado En",
+        "lastLogin": "Último Acceso",
+        "lockoutEnd": "Fin de Bloqueo"
+      },
+      "options": {
+        "yes": "Sí",
+        "no": "No",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "buttons": {
+        "updateUser": "Actualizar Usuario",
+        "cancel": "Cancelar"
+      },
+      "confirm": {
+        "title": "Confirmar Actualización",
+        "message": "¿Actualizar usuario \"{{name}}\"?",
+        "confirmText": "Actualizar",
+        "cancelText": "Cancelar"
+      },
+      "notifications": {
+        "updateSuccess": "Usuario Actualizado",
+        "updateSuccessMessage": "¡Usuario \"{{name}}\" actualizado exitosamente!",
+        "updateFailed": "Error al Actualizar Usuario",
+        "updateFailedMessage": "Error al actualizar el usuario."
+      }
+    },
+    "delete": {
+      "confirmMessage": "¿Está seguro de que desea eliminar {{name}}? Esta acción no se puede deshacer."
     }
   },
   "auditLogs": {
@@ -1145,52 +1515,5 @@
       "rejectMessage": "Por favor proporcione una razón para el rechazo:",
       "rejectPlaceholder": "Ingrese razón de rechazo (requerido)"
     }
-  },
-  "notifications": {
-    "title": "Notificaciones",
-    "subtitle": "Ver y gestionar tus notificaciones",
-    "loading": "Cargando notificaciones...",
-    "emptyTitle": "No hay Notificaciones",
-    "emptyDescription": "No tienes notificaciones en este momento",
-    "noMatchFilters": "No hay notificaciones que coincidan con los filtros",
-    "noMatchFiltersDescription": "Intenta ajustar tus filtros para ver más notificaciones",
-    "totalNotifications": "Total de Notificaciones",
-    "unread": "No Leídas",
-    "unreadCount": "{{count}} notificación(es) no leída(s)",
-    "allCaughtUp": "¡Todo al día!",
-    "markAllRead": "Marcar Todas como Leídas",
-    "new": "Nuevo",
-    "urgentHigh": "Urgente y Alta Prioridad",
-    "read": "Leído",
-    "archived": "Archivado",
-    "deleteNotification": "Eliminar Notificación",
-    "filters": {
-      "title": "Filtros",
-      "type": "Tipo",
-      "status": "Estado",
-      "priority": "Prioridad",
-      "clearFilters": "Limpiar Filtros",
-      "allTypes": "Todos los Tipos",
-      "allStatus": "Todos los Estados",
-      "allPriorities": "Todas las Prioridades"
-    },
-    "types": {
-      "approval": "Aprobación",
-      "task": "Tarea",
-      "contract": "Contrato",
-      "system": "Sistema",
-      "audit": "Auditoría",
-      "employee": "Empleado"
-    },
-    "priorities": {
-      "urgent": "Urgente",
-      "high": "Alta",
-      "medium": "Media",
-      "low": "Baja"
-    },
-    "noNotifications": "No hay notificaciones",
-    "noNotificationsDescription": "¡Estás al día! No hay nuevas notificaciones.",
-    "viewDetails": "Ver Detalles"
   }
 }
-

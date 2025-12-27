@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import type { SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { first, filter, catchError, takeUntil } from 'rxjs/operators';
+import { first, filter, catchError, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import {
   BaseDetailComponent,
@@ -17,6 +17,8 @@ import {
 } from '../../../Shared/components/base';
 import { BasePromptDialogComponent, PromptDialogConfig } from '../../../Shared/components/base/base-prompt-dialog/base-prompt-dialog.component';
 import { NotificationService } from '../../../Shared/services';
+import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { ContractApproval, ApprovalActionRequest, RejectionActionRequest } from 'app/contracts/contract-approvals/contract-approval.model';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 
@@ -29,6 +31,7 @@ import { ContractApprovalService } from '../../../core/services/contract-approva
     BaseBadgeComponent,
     BaseButtonComponent,
     BasePromptDialogComponent,
+    TranslatePipe,
   ],
   templateUrl: './contract-approval-detail.component.html',
   styleUrls: ['./contract-approval-detail.component.scss'],
@@ -36,6 +39,7 @@ import { ContractApprovalService } from '../../../core/services/contract-approva
 export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges {
   private notificationService = inject(NotificationService);
   private contractApprovalService = inject(ContractApprovalService);
+  private translationService = inject(TranslationService);
   private destroy$ = new Subject<void>();
 
   @Input() approval: ContractApproval | null = null;
@@ -57,44 +61,106 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
       this.sections.set([]);
       return;
     }
+    const t = (key: string) => this.translationService.translate(key);
     this.sections.set([
       {
-        title: 'Approval Information',
+        title: t('contractApprovals.detail.sections.approvalInformation'),
         fields: [
-          { label: 'Approval ID', value: this.approval.id.toString(), type: 'text' },
-          { label: 'Contract ID', value: this.approval.contractId.toString(), type: 'text' },
-          { label: 'Employee ID', value: this.approval.employeeId.toString(), type: 'text' },
-          { label: 'Employee Name', value: this.approval.contractEmployeeName || 'N/A', type: 'text' },
-          { label: 'Contract Type', value: this.approval.contractType || 'N/A', type: 'text' },
-          { label: 'Status', value: this.approval.status, type: 'badge', badgeVariant: this.getStatusVariant(this.approval.status) },
-          { label: 'Progress', value: `${this.approval.currentApprovalLevel}/${this.approval.maxApprovalLevel}`, type: 'text' },
-          { label: 'Requested By', value: this.approval.requestedBy, type: 'text' },
-          { label: 'Requested At', value: this.approval.requestedAt, type: 'date' },
-          ...(this.approval.approvedBy ? [{ label: 'Approved By', value: this.approval.approvedBy, type: 'text' as const }] : []),
-          ...(this.approval.approvedAt ? [{ label: 'Approved At', value: this.approval.approvedAt, type: 'date' as const }] : []),
-          ...(this.approval.rejectedBy ? [{ label: 'Rejected By', value: this.approval.rejectedBy, type: 'text' as const }] : []),
-          ...(this.approval.rejectedAt ? [{ label: 'Rejected At', value: this.approval.rejectedAt, type: 'date' as const }] : []),
-          ...(this.approval.rejectionReason ? [{ label: 'Rejection Reason', value: this.approval.rejectionReason, type: 'text' as const }] : []),
+          { label: t('contractApprovals.detail.fields.approvalId'), value: this.approval.id.toString(), type: 'text' },
+          { label: t('contractApprovals.detail.fields.contractId'), value: this.approval.contractId.toString(), type: 'text' },
+          { label: t('contractApprovals.detail.fields.employeeId'), value: this.approval.employeeId.toString(), type: 'text' },
+          { label: t('contractApprovals.detail.fields.employeeName'), value: this.approval.contractEmployeeName || 'N/A', type: 'text' },
+          { label: t('contractApprovals.detail.fields.contractType'), value: this.approval.contractType || 'N/A', type: 'text' },
+          { label: t('contractApprovals.detail.fields.status'), value: this.approval.status, type: 'badge' as const, badgeVariant: this.getStatusVariant(this.approval.status) },
+          { label: t('contractApprovals.detail.fields.progress'), value: `${this.approval.currentApprovalLevel}/${this.approval.maxApprovalLevel}`, type: 'text' },
+          { label: t('contractApprovals.detail.fields.requestedBy'), value: this.approval.requestedBy, type: 'text' },
+          { label: t('contractApprovals.detail.fields.requestedAt'), value: this.approval.requestedAt, type: 'date' },
+          ...(this.approval.approvedBy ? [{ label: t('contractApprovals.detail.fields.approvedBy'), value: this.approval.approvedBy, type: 'text' as const }] : []),
+          ...(this.approval.approvedAt ? [{ label: t('contractApprovals.detail.fields.approvedAt'), value: this.approval.approvedAt, type: 'date' as const }] : []),
+          ...(this.approval.rejectedBy ? [{ label: t('contractApprovals.detail.fields.rejectedBy'), value: this.approval.rejectedBy, type: 'text' as const }] : []),
+          ...(this.approval.rejectedAt ? [{ label: t('contractApprovals.detail.fields.rejectedAt'), value: this.approval.rejectedAt, type: 'date' as const }] : []),
+          ...(this.approval.rejectionReason ? [{ label: t('contractApprovals.detail.fields.rejectionReason'), value: this.approval.rejectionReason, type: 'text' as const }] : []),
         ],
         showDivider: !!this.approval.comments,
       },
       {
-        title: 'Approval Steps',
+        title: t('contractApprovals.detail.sections.approvalSteps'),
         fields: [
-          { label: 'Steps', value: null, type: 'custom' as const, customTemplate: this.stepsTemplate },
+          { label: t('contractApprovals.detail.fields.steps'), value: null, type: 'custom' as const, customTemplate: this.stepsTemplate },
         ],
       },
     ]);
   }
 
   ngAfterViewInit(): void {
-    this.updateSections();
+    // Wait for translations to load before updating sections
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.updateSections();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['approval'] && this.stepsTemplate) {
-      this.updateSections();
+      // Wait for translations to load before updating sections
+      this.translationService.getTranslationsLoaded$().pipe(
+        distinctUntilChanged(),
+        filter(loaded => loaded),
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
+        this.updateSections();
+      });
     }
+  }
+
+  /**
+   * Get modal title
+   */
+  getModalTitle(): string {
+    return this.translationService.translate('contractApprovals.detail.title');
+  }
+
+  /**
+   * Get approve dialog config
+   */
+  getApproveDialogConfig(): PromptDialogConfig {
+    const employeeName = this.approval?.contractEmployeeName || 'this contract';
+    return {
+      title: this.translationService.translate('contractApprovals.detail.approveDialog.title'),
+      message: this.translationService.translate('contractApprovals.detail.approveDialog.message', { name: employeeName }),
+      label: this.translationService.translate('contractApprovals.detail.approveDialog.label'),
+      placeholder: this.translationService.translate('contractApprovals.detail.approveDialog.placeholder'),
+      confirmText: this.translationService.translate('contractApprovals.detail.approveDialog.confirmText'),
+      cancelText: this.translationService.translate('contractApprovals.detail.approveDialog.cancelText'),
+      confirmVariant: 'primary',
+      icon: 'check',
+      required: false,
+      maxLength: 500,
+      rows: 4,
+    };
+  }
+
+  /**
+   * Get reject dialog config
+   */
+  getRejectDialogConfig(): PromptDialogConfig {
+    const employeeName = this.approval?.contractEmployeeName || 'this contract';
+    return {
+      title: this.translationService.translate('contractApprovals.detail.rejectDialog.title'),
+      message: this.translationService.translate('contractApprovals.detail.rejectDialog.message', { name: employeeName }),
+      label: this.translationService.translate('contractApprovals.detail.rejectDialog.label'),
+      placeholder: this.translationService.translate('contractApprovals.detail.rejectDialog.placeholder'),
+      confirmText: this.translationService.translate('contractApprovals.detail.rejectDialog.confirmText'),
+      cancelText: this.translationService.translate('contractApprovals.detail.rejectDialog.cancelText'),
+      confirmVariant: 'danger',
+      icon: 'close',
+      required: true,
+      maxLength: 500,
+      rows: 4,
+    };
   }
 
   getStatusVariant(status: string): BadgeVariant {
@@ -134,8 +200,8 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
       catchError(error => {
         this.loading.set(false);
         this.notificationService.error(
-          'Approve Failed',
-          error.message || 'Failed to approve contract',
+          this.translationService.translate('contractApprovals.detail.notifications.approveFailed'),
+          error.message || this.translationService.translate('contractApprovals.detail.notifications.approveFailedMessage'),
           { duration: 5000, persistent: false, autoClose: true }
         );
         return of(false);
@@ -145,8 +211,10 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
         this.loading.set(false);
         if (success) {
           this.notificationService.success(
-            'Approved',
-            `Contract for ${this.approval!.contractEmployeeName || 'this contract'} has been approved`,
+            this.translationService.translate('contractApprovals.detail.notifications.approveSuccess'),
+            this.translationService.translate('contractApprovals.detail.notifications.approveSuccessMessage', { 
+              name: this.approval!.contractEmployeeName || 'this contract' 
+            }),
             { duration: 3000, autoClose: true }
           );
           this.approvalUpdated.emit();
@@ -160,8 +228,8 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
 
     if (!reason || !reason.trim()) {
       this.notificationService.error(
-        'Rejection Reason Required',
-        'Please provide a reason for rejection',
+        this.translationService.translate('contractApprovals.detail.notifications.rejectionReasonRequired'),
+        this.translationService.translate('contractApprovals.detail.notifications.rejectionReasonRequiredMessage'),
         { duration: 3000, autoClose: true }
       );
       return;
@@ -179,8 +247,8 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
       catchError(error => {
         this.loading.set(false);
         this.notificationService.error(
-          'Reject Failed',
-          error.message || 'Failed to reject contract',
+          this.translationService.translate('contractApprovals.detail.notifications.rejectFailed'),
+          error.message || this.translationService.translate('contractApprovals.detail.notifications.rejectFailedMessage'),
           { duration: 5000, persistent: false, autoClose: true }
         );
         return of(false);
@@ -190,8 +258,10 @@ export class ContractApprovalDetailComponent implements AfterViewInit, OnChanges
         this.loading.set(false);
         if (success) {
           this.notificationService.warning(
-            'Rejected',
-            `Contract for ${this.approval!.contractEmployeeName || 'this contract'} has been rejected`,
+            this.translationService.translate('contractApprovals.detail.notifications.rejectSuccess'),
+            this.translationService.translate('contractApprovals.detail.notifications.rejectSuccessMessage', { 
+              name: this.approval!.contractEmployeeName || 'this contract' 
+            }),
             { duration: 3000, autoClose: true }
           );
           this.approvalUpdated.emit();

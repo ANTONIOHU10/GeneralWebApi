@@ -123,6 +123,37 @@
     "auditLogs": "审计日志",
     "systemMonitor": "系统监控"
   },
+  "breadcrumb": {
+    "dashboard": "仪表板",
+    "tasks": "任务",
+    "myApprovals": "我的审批",
+    "notifications": "通知",
+    "hrManagement": "人力资源管理",
+    "employeeList": "员工列表",
+    "departments": "部门",
+    "positions": "职位",
+    "onboarding": "入职",
+    "contractManagement": "合同管理",
+    "contracts": "合同",
+    "contractApprovals": "合同审批",
+    "contractTemplates": "合同模板",
+    "expiryReminders": "到期提醒",
+    "documentCenter": "文档中心",
+    "identityDocuments": "身份文档",
+    "education": "教育",
+    "certifications": "证书",
+    "companyDocuments": "公司文档",
+    "systemManagement": "系统管理",
+    "users": "用户",
+    "roles": "角色",
+    "permissions": "权限",
+    "settings": "设置",
+    "monitoringAudit": "监控与审计",
+    "auditLogs": "审计日志",
+    "systemMonitor": "系统监控",
+    "securityAudit": "安全审计",
+    "backupRecovery": "备份和恢复"
+  },
   "notifications": {
     "title": "通知",
     "unreadCount": "{{count}} 条未读通知",
@@ -760,6 +791,69 @@
       "approveMessage": "批准 {{name}} 的合同？",
       "rejectTitle": "拒绝合同",
       "rejectMessage": "拒绝 {{name}} 的合同？"
+    },
+    "detail": {
+      "title": "合同审批详情",
+      "sections": {
+        "approvalInformation": "审批信息",
+        "approvalSteps": "审批步骤"
+      },
+      "fields": {
+        "approvalId": "审批ID",
+        "contractId": "合同ID",
+        "employeeId": "员工ID",
+        "employeeName": "员工姓名",
+        "contractType": "合同类型",
+        "status": "状态",
+        "progress": "进度",
+        "requestedBy": "申请人",
+        "requestedAt": "申请时间",
+        "approvedBy": "批准人",
+        "approvedAt": "批准时间",
+        "rejectedBy": "拒绝人",
+        "rejectedAt": "拒绝时间",
+        "rejectionReason": "拒绝原因",
+        "comments": "备注",
+        "steps": "步骤"
+      },
+      "steps": {
+        "role": "角色",
+        "approver": "审批人",
+        "due": "截止日期",
+        "processed": "处理时间"
+      },
+      "buttons": {
+        "approve": "批准",
+        "reject": "拒绝"
+      },
+      "approveDialog": {
+        "title": "批准合同",
+        "message": "批准 {{name}} 的合同？",
+        "label": "备注（可选）",
+        "placeholder": "输入批准备注...",
+        "confirmText": "批准",
+        "cancelText": "取消"
+      },
+      "rejectDialog": {
+        "title": "拒绝合同",
+        "message": "拒绝 {{name}} 的合同？",
+        "label": "拒绝原因",
+        "placeholder": "请输入拒绝原因...",
+        "confirmText": "拒绝",
+        "cancelText": "取消"
+      },
+      "notifications": {
+        "approveSuccess": "已批准",
+        "approveSuccessMessage": "{{name}} 的合同已批准",
+        "approveFailed": "批准失败",
+        "approveFailedMessage": "批准合同失败",
+        "rejectSuccess": "已拒绝",
+        "rejectSuccessMessage": "{{name}} 的合同已拒绝",
+        "rejectFailed": "拒绝失败",
+        "rejectFailedMessage": "拒绝合同失败",
+        "rejectionReasonRequired": "需要拒绝原因",
+        "rejectionReasonRequiredMessage": "请提供拒绝原因"
+      }
     }
   },
   "contractTemplates": {

@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/user-profile-modal/user-profile-modal.component.ts
-import { Component, Input, Output, EventEmitter, signal, computed, OnInit, ViewChild, TemplateRef, AfterViewInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed, OnInit, ViewChild, TemplateRef, AfterViewInit, OnChanges, SimpleChanges, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
@@ -20,7 +20,8 @@ import { NotificationService } from '../../services/notification.service';
 import { DialogService } from '../../services/dialog.service';
 import { TranslationService } from '@core/services/translation.service';
 import { TranslatePipe } from '@core/pipes/translate.pipe';
-import { catchError, of, take } from 'rxjs';
+import { catchError, of, take, Subject } from 'rxjs';
+import { distinctUntilChanged, filter, takeUntil } from 'rxjs/operators';
 
 /**
  * User Profile Modal Component
@@ -41,7 +42,7 @@ import { catchError, of, take } from 'rxjs';
   templateUrl: './user-profile-modal.component.html',
   styleUrls: ['./user-profile-modal.component.scss'],
 })
-export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChanges {
+export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   // Services
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
@@ -49,6 +50,7 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
   private notificationService = inject(NotificationService);
   private dialogService = inject(DialogService);
   private translationService = inject(TranslationService);
+  private destroy$ = new Subject<void>();
 
   @Input() employee: Employee | null = null;
   @Input() user: User | null = null;
@@ -91,17 +93,30 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
   });
 
   ngOnInit(): void {
-    this.updateSections();
+    // Wait for translations to load before updating sections
+    this.translationService.getTranslationsLoaded$().pipe(
+      distinctUntilChanged(),
+      filter(loaded => loaded),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.updateSections();
+    });
   }
 
   ngAfterViewInit(): void {
-    // Sections are already updated in ngOnInit
+    // Sections are updated after translations load in ngOnInit
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Update sections when employee or user data changes
+    // Update sections when employee or user data changes, but only if translations are loaded
     if (changes['employee'] || changes['user']) {
-      this.updateSections();
+      this.translationService.getTranslationsLoaded$().pipe(
+        distinctUntilChanged(),
+        filter(loaded => loaded),
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
+        this.updateSections();
+      });
     }
   }
 
@@ -503,6 +518,11 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
       console.error('Navigation error:', error);
       this.logoutLoading.set(false);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
 

@@ -123,6 +123,37 @@
     "auditLogs": "Audit Logs",
     "systemMonitor": "System Monitor"
   },
+  "breadcrumb": {
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "myApprovals": "My Approvals",
+    "notifications": "Notifications",
+    "hrManagement": "HR Management",
+    "employeeList": "Employee List",
+    "departments": "Departments",
+    "positions": "Positions",
+    "onboarding": "Onboarding",
+    "contractManagement": "Contract Management",
+    "contracts": "Contracts",
+    "contractApprovals": "Contract Approvals",
+    "contractTemplates": "Contract Templates",
+    "expiryReminders": "Expiry Reminders",
+    "documentCenter": "Document Center",
+    "identityDocuments": "Identity Documents",
+    "education": "Education",
+    "certifications": "Certifications",
+    "companyDocuments": "Company Documents",
+    "systemManagement": "System Management",
+    "users": "Users",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "settings": "Settings",
+    "monitoringAudit": "Monitoring & Audit",
+    "auditLogs": "Audit Logs",
+    "systemMonitor": "System Monitor",
+    "securityAudit": "Security Audit",
+    "backupRecovery": "Backup & Recovery"
+  },
   "notifications": {
     "title": "Notifications",
     "subtitle": "View and manage your notifications",
@@ -782,6 +813,69 @@
       "approveMessage": "Approve contract for {{name}}?",
       "rejectTitle": "Reject Contract",
       "rejectMessage": "Reject contract for {{name}}?"
+    },
+    "detail": {
+      "title": "Contract Approval Details",
+      "sections": {
+        "approvalInformation": "Approval Information",
+        "approvalSteps": "Approval Steps"
+      },
+      "fields": {
+        "approvalId": "Approval ID",
+        "contractId": "Contract ID",
+        "employeeId": "Employee ID",
+        "employeeName": "Employee Name",
+        "contractType": "Contract Type",
+        "status": "Status",
+        "progress": "Progress",
+        "requestedBy": "Requested By",
+        "requestedAt": "Requested At",
+        "approvedBy": "Approved By",
+        "approvedAt": "Approved At",
+        "rejectedBy": "Rejected By",
+        "rejectedAt": "Rejected At",
+        "rejectionReason": "Rejection Reason",
+        "comments": "Comments",
+        "steps": "Steps"
+      },
+      "steps": {
+        "role": "Role",
+        "approver": "Approver",
+        "due": "Due",
+        "processed": "Processed"
+      },
+      "buttons": {
+        "approve": "Approve",
+        "reject": "Reject"
+      },
+      "approveDialog": {
+        "title": "Approve Contract",
+        "message": "Approve contract for {{name}}?",
+        "label": "Comments (Optional)",
+        "placeholder": "Enter approval comments...",
+        "confirmText": "Approve",
+        "cancelText": "Cancel"
+      },
+      "rejectDialog": {
+        "title": "Reject Contract",
+        "message": "Reject contract for {{name}}?",
+        "label": "Rejection Reason",
+        "placeholder": "Please provide a reason for rejection...",
+        "confirmText": "Reject",
+        "cancelText": "Cancel"
+      },
+      "notifications": {
+        "approveSuccess": "Approved",
+        "approveSuccessMessage": "Contract for {{name}} has been approved",
+        "approveFailed": "Approve Failed",
+        "approveFailedMessage": "Failed to approve contract",
+        "rejectSuccess": "Rejected",
+        "rejectSuccessMessage": "Contract for {{name}} has been rejected",
+        "rejectFailed": "Reject Failed",
+        "rejectFailedMessage": "Failed to reject contract",
+        "rejectionReasonRequired": "Rejection Reason Required",
+        "rejectionReasonRequiredMessage": "Please provide a reason for rejection"
+      }
     }
   },
   "contractTemplates": {
