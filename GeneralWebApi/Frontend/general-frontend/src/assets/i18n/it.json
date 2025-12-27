@@ -1,0 +1,1694 @@
+{
+  "common": {
+    "appName": "GeneralWebApi",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "add": "Aggiungi",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "clear": "Pulisci",
+    "refresh": "Aggiorna",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "previous": "Precedente",
+    "submit": "Invia",
+    "reset": "Reimposta",
+    "actions": "Azioni",
+    "status": "Stato",
+    "type": "Tipo",
+    "priority": "Priorità",
+    "date": "Data",
+    "time": "Ora",
+    "name": "Nome",
+    "description": "Descrizione",
+    "createdAt": "Creato il",
+    "updatedAt": "Aggiornato il",
+    "noData": "Nessun dato disponibile",
+    "noResults": "Nessun risultato trovato",
+    "retry": "Riprova",
+    "dismiss": "Ignora",
+    "view": "Visualizza",
+    "notAvailable": "N/D",
+    "create": "Crea",
+    "validationError": "Errore di Validazione",
+    "deleteConfirm": {
+      "title": "Conferma Eliminazione",
+      "message": "Sei sicuro di voler eliminare questo elemento? Questa azione non può essere annullata."
+    }
+  },
+  "auth": {
+    "login": "Accedi",
+    "logout": "Esci",
+    "username": "Nome utente",
+    "password": "Password",
+    "email": "Email",
+    "forgotPassword": "Password dimenticata?",
+    "rememberMe": "Ricordami",
+    "loginSuccess": "Accesso riuscito",
+    "loginFailed": "Accesso fallito",
+    "invalidCredentials": "Nome utente o password non validi",
+    "sessionExpired": "La tua sessione è scaduta. Effettua nuovamente l'accesso."
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "appearance": "Aspetto",
+    "darkMode": "Modalità Scura",
+    "darkModeDescription": "Passa tra tema chiaro e scuro",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "notifications": "Notifiche",
+    "emailNotifications": "Notifiche Email",
+    "emailNotificationsDescription": "Ricevi notifiche via email",
+    "pushNotifications": "Notifiche Push",
+    "pushNotificationsDescription": "Ricevi notifiche push nel browser",
+    "languageRegion": "Lingua e Regione",
+    "language": "Lingua",
+    "languageDescription": "Seleziona la tua lingua preferita",
+    "timeZone": "Fuso Orario",
+    "timeZoneDescription": "Imposta il tuo fuso orario",
+    "security": "Sicurezza",
+    "twoFactorAuth": "Autenticazione a Due Fattori",
+    "twoFactorAuthDescription": "Aggiungi un ulteriore livello di sicurezza",
+    "enable2FA": "Abilita 2FA",
+    "changePassword": "Cambia Password",
+    "changePasswordDescription": "Aggiorna la password del tuo account"
+  },
+  "header": {
+    "notifications": "Notifiche",
+    "viewAll": "Visualizza Tutte le Notifiche",
+    "newNotifications": "{{count}} nuove",
+    "noNotifications": "Tutto aggiornato!",
+    "profile": "Profilo",
+    "settings": "Impostazioni",
+    "userProfileMenu": "Menu profilo utente",
+    "lightMode": "Modalità Chiara",
+    "darkMode": "Modalità Scura",
+    "switchToLightMode": "Passa alla modalità chiara",
+    "switchToDarkMode": "Passa alla modalità scura"
+  },
+  "sidebar": {
+    "workspace": "Area di Lavoro",
+    "dashboard": "Dashboard",
+    "tasks": "Attività",
+    "myApprovals": "Le Mie Approvazioni",
+    "notifications": "Notifiche",
+    "approvals": "Approvazioni",
+    "hrManagement": "Gestione Risorse Umane",
+    "employees": "Dipendenti",
+    "departments": "Dipartimenti",
+    "positions": "Posizioni",
+    "onboarding": "Onboarding",
+    "contractManagement": "Gestione Contratti",
+    "contracts": "Contratti",
+    "contractApprovals": "Approvazioni Contratti",
+    "contractTemplates": "Modelli Contratti",
+    "contractReminders": "Promemoria Contratti",
+    "documentCenter": "Centro Documenti",
+    "identityDocuments": "Documenti di Identità",
+    "education": "Formazione",
+    "certifications": "Certificazioni",
+    "companyDocuments": "Documenti Aziendali",
+    "systemManagement": "Gestione Sistema",
+    "users": "Utenti",
+    "roles": "Ruoli",
+    "permissions": "Permessi",
+    "monitoringAudit": "Monitoraggio e Audit",
+    "auditLogs": "Log di Audit",
+    "systemMonitor": "Monitor Sistema"
+  },
+  "breadcrumb": {
+    "dashboard": "Dashboard",
+    "tasks": "Attività",
+    "myApprovals": "Le Mie Approvazioni",
+    "notifications": "Notifiche",
+    "hrManagement": "Gestione Risorse Umane",
+    "employeeList": "Elenco Dipendenti",
+    "departments": "Dipartimenti",
+    "positions": "Posizioni",
+    "onboarding": "Onboarding",
+    "contractManagement": "Gestione Contratti",
+    "contracts": "Contratti",
+    "contractApprovals": "Approvazioni Contratti",
+    "contractTemplates": "Modelli Contratti",
+    "expiryReminders": "Promemoria Scadenze",
+    "documentCenter": "Centro Documenti",
+    "identityDocuments": "Documenti di Identità",
+    "education": "Formazione",
+    "certifications": "Certificazioni",
+    "companyDocuments": "Documenti Aziendali",
+    "systemManagement": "Gestione Sistema",
+    "users": "Utenti",
+    "roles": "Ruoli",
+    "permissions": "Permessi",
+    "settings": "Impostazioni",
+    "monitoringAudit": "Monitoraggio e Audit",
+    "auditLogs": "Log di Audit",
+    "systemMonitor": "Monitor Sistema",
+    "securityAudit": "Audit Sicurezza",
+    "backupRecovery": "Backup e Ripristino"
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "subtitle": "Visualizza e gestisci le tue notifiche",
+    "unreadCount": "{{count}} notifica/e non letta/e",
+    "allCaughtUp": "Tutto aggiornato!",
+    "markAllRead": "Segna Tutte come Lette",
+    "loading": "Caricamento notifiche...",
+    "emptyTitle": "Nessuna Notifica",
+    "emptyDescription": "Non hai notifiche al momento",
+    "noMatchFilters": "Nessuna notifica corrisponde ai filtri",
+    "noMatchFiltersDescription": "Prova ad aggiustare i filtri per vedere più notifiche",
+    "totalNotifications": "Totale Notifiche",
+    "unread": "Non letta",
+    "new": "Nuova",
+    "urgentHigh": "Urgente e Alta Priorità",
+    "read": "Letta",
+    "archived": "Archiviata",
+    "deleteNotification": "Elimina Notifica",
+    "filters": {
+      "title": "Filtri",
+      "type": "Tipo",
+      "status": "Stato",
+      "priority": "Priorità",
+      "clearFilters": "Pulisci Filtri",
+      "allTypes": "Tutti i Tipi",
+      "allStatus": "Tutti gli Stati",
+      "allPriorities": "Tutte le Priorità"
+    },
+    "types": {
+      "approval": "Approvazione",
+      "task": "Attività",
+      "contract": "Contratto",
+      "system": "Sistema",
+      "audit": "Audit",
+      "employee": "Dipendente"
+    },
+    "priorities": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Bassa"
+    },
+    "noNotifications": "Nessuna notifica",
+    "noNotificationsDescription": "Tutto aggiornato! Nessuna nuova notifica.",
+    "viewDetails": "Visualizza Dettagli"
+  },
+  "errors": {
+    "generic": "Si è verificato un errore",
+    "networkError": "Errore di rete. Controlla la tua connessione.",
+    "serverError": "Errore del server. Riprova più tardi.",
+    "notFound": "Risorsa non trovata",
+    "unauthorized": "Non sei autorizzato a eseguire questa azione",
+    "forbidden": "Accesso vietato",
+    "validationError": "Errore di validazione",
+    "timeout": "Timeout della richiesta. Riprova."
+  },
+  "empty": {
+    "noData": "Nessun dato disponibile",
+    "noResults": "Nessun risultato trovato",
+    "tryAgain": "Riprova",
+    "refresh": "Aggiorna"
+  },
+  "pagination": {
+    "page": "Pagina",
+    "of": "di",
+    "itemsPerPage": "Elementi per pagina",
+    "showing": "Mostrando",
+    "to": "a",
+    "ofTotal": "di {{total}}",
+    "goTo": "Vai a",
+    "go": "Vai",
+    "entries": "voci"
+  },
+  "time": {
+    "justNow": "Proprio ora",
+    "minutesAgo": "{{count}} minuto fa",
+    "minutesAgo_plural": "{{count}} minuti fa",
+    "hoursAgo": "{{count}} ora fa",
+    "hoursAgo_plural": "{{count}} ore fa",
+    "daysAgo": "{{count}} giorno fa",
+    "daysAgo_plural": "{{count}} giorni fa",
+    "weeksAgo": "{{count}} settimana fa",
+    "weeksAgo_plural": "{{count}} settimane fa",
+    "monthsAgo": "{{count}} mese fa",
+    "monthsAgo_plural": "{{count}} mesi fa",
+    "yearsAgo": "{{count}} anno fa",
+    "yearsAgo_plural": "{{count}} anni fa"
+  },
+  "login": {
+    "welcomeBack": "Bentornato",
+    "signInToContinue": "Accedi per continuare al tuo account",
+    "username": "Nome utente",
+    "password": "Password",
+    "rememberMe": "Ricordami",
+    "forgotPassword": "Password dimenticata?",
+    "signIn": "Accedi",
+    "dontHaveAccount": "Non hai un account?",
+    "contactAdministrator": "Contatta l'Amministratore",
+    "enterpriseManagementSystem": "Sistema di Gestione Aziendale",
+    "employeeManagement": "Gestione Dipendenti",
+    "analyticsDashboard": "Dashboard Analitica",
+    "secureAccess": "Accesso Sicuro",
+    "switchToLightMode": "Passa alla modalità chiara",
+    "switchToDarkMode": "Passa alla modalità scura"
+  },
+  "workspace": {
+    "title": "Area di Lavoro",
+    "dashboard": "Dashboard",
+    "tasks": "Attività",
+    "myApprovals": "Le Mie Approvazioni"
+  },
+  "contractManagement": {
+    "title": "Gestione Contratti",
+    "contracts": "Contratti",
+    "contractApprovals": "Approvazioni Contratti",
+    "contractTemplates": "Modelli Contratti",
+    "expiryReminders": "Promemoria Scadenze"
+  },
+  "systemManagement": {
+    "title": "Gestione Sistema"
+  },
+  "footer": {
+    "allRightsReserved": "Tutti i diritti riservati",
+    "privacy": "Privacy",
+    "terms": "Termini",
+    "help": "Aiuto",
+    "allSystemsOperational": "Tutti i sistemi operativi"
+  },
+  "profile": {
+    "title": "Profilo Utente",
+    "sections": {
+      "userInformation": "Informazioni Utente",
+      "basicInformation": "Informazioni di Base",
+      "contactInformation": "Informazioni di Contatto",
+      "compensation": "Compenso",
+      "emergencyContact": "Contatto di Emergenza",
+      "additionalInformation": "Informazioni Aggiuntive"
+    },
+    "fields": {
+      "username": "Nome utente",
+      "email": "Email",
+      "phone": "Telefono",
+      "role": "Ruolo",
+      "defaultRole": "Utente",
+      "accountCreated": "Account Creato",
+      "lastLogin": "Ultimo Accesso",
+      "fullName": "Nome Completo",
+      "employeeNumber": "Numero Dipendente",
+      "position": "Posizione",
+      "department": "Dipartimento",
+      "manager": "Manager",
+      "hireDate": "Data di Assunzione",
+      "employmentType": "Tipo di Impiego",
+      "status": "Stato",
+      "workingHours": "Ore di Lavoro/Settimana",
+      "hours": "ore",
+      "workEmail": "Email di Lavoro",
+      "address": "Indirizzo",
+      "salary": "Stipendio",
+      "name": "Nome",
+      "relation": "Relazione",
+      "taxCode": "Codice Fiscale"
+    },
+    "logout": {
+      "confirmTitle": "Conferma Uscita",
+      "confirmMessage": "Sei sicuro di voler uscire?",
+      "successTitle": "Uscita Riuscita",
+      "successMessage": "Sei uscito con successo"
+    }
+  },
+  "employees": {
+    "title": "Gestione Dipendenti",
+    "subtitle": "Gestisci e visualizza tutti i dipendenti nel sistema",
+    "searchPlaceholder": "Cerca dipendenti...",
+    "loading": "Caricamento dipendenti...",
+    "emptyTitle": "Nessun dipendente trovato",
+    "emptyDescription": "Non ci sono dipendenti da visualizzare al momento",
+    "emptyActionText": "Aggiungi Primo Dipendente",
+    "columns": {
+      "name": "Nome",
+      "position": "Posizione",
+      "department": "Dipartimento",
+      "status": "Stato",
+      "email": "Email",
+      "phone": "Telefono",
+      "employeeNumber": "Numero Dipendente",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "hireDate": "Data di Assunzione"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "edit": "Modifica",
+      "delete": "Elimina"
+    },
+    "tabs": {
+      "list": "Elenco Dipendenti",
+      "add": "Aggiungi Dipendente",
+      "search": "Cerca",
+      "reports": "Report",
+      "settings": "Impostazioni"
+    },
+    "add": {
+      "title": "Aggiungi Nuovo Dipendente",
+      "subtitle": "Crea un nuovo record dipendente nel sistema",
+      "sections": {
+        "personalInformation": "Informazioni Personali",
+        "personalInformationDescription": "Inserisci i dettagli personali del dipendente",
+        "workInformation": "Informazioni di Lavoro",
+        "workInformationDescription": "Inserisci i dettagli dell'impiego",
+        "addressInformation": "Informazioni Indirizzo",
+        "addressInformationDescription": "Dettagli indirizzo opzionali",
+        "emergencyContact": "Contatto di Emergenza",
+        "emergencyContactDescription": "Informazioni contatto di emergenza opzionali"
+      },
+      "fields": {
+        "firstName": "Nome",
+        "firstNamePlaceholder": "Inserisci nome",
+        "lastName": "Cognome",
+        "lastNamePlaceholder": "Inserisci cognome",
+        "email": "Email",
+        "emailPlaceholder": "Inserisci indirizzo email",
+        "phoneNumber": "Numero di Telefono",
+        "phoneNumberPlaceholder": "Inserisci numero di telefono",
+        "employeeNumber": "Numero Dipendente",
+        "employeeNumberPlaceholder": "Generato automaticamente se vuoto",
+        "hireDate": "Data di Assunzione",
+        "employmentStatus": "Stato di Impiego",
+        "employmentType": "Tipo di Impiego",
+        "department": "Dipartimento",
+        "position": "Posizione",
+        "manager": "Manager",
+        "currentSalary": "Stipendio Attuale",
+        "salaryCurrency": "Valuta Stipendio",
+        "address": "Indirizzo",
+        "addressPlaceholder": "Inserisci indirizzo",
+        "city": "Città",
+        "cityPlaceholder": "Inserisci città",
+        "postalCode": "Codice Postale",
+        "postalCodePlaceholder": "Inserisci codice postale",
+        "country": "Paese",
+        "countryPlaceholder": "Inserisci paese",
+        "emergencyContactName": "Nome Contatto di Emergenza",
+        "emergencyContactNamePlaceholder": "Inserisci nome contatto di emergenza",
+        "emergencyContactPhone": "Telefono Contatto di Emergenza",
+        "emergencyContactPhonePlaceholder": "Inserisci telefono contatto di emergenza",
+        "emergencyContactRelation": "Relazione",
+        "emergencyContactRelationPlaceholder": "Inserisci relazione",
+        "taxCode": "Codice Fiscale",
+        "taxCodePlaceholder": "Inserisci codice fiscale"
+      }
+    },
+    "detail": {
+      "title": {
+        "edit": "Modifica Dipendente",
+        "view": "Dettagli Dipendente",
+        "userProfile": "Profilo Utente"
+      },
+      "sections": {
+        "userInformation": "Informazioni Utente",
+        "userInformationDescription": "Dettagli account utente",
+        "personalInformation": "Informazioni Personali",
+        "personalInformationDescription": "Dettagli personali del dipendente",
+        "workInformation": "Informazioni di Lavoro",
+        "workInformationDescription": "Dettagli impiego e lavoro",
+        "addressInformation": "Informazioni Indirizzo",
+        "addressInformationDescription": "Dettagli indirizzo",
+        "emergencyContact": "Contatto di Emergenza",
+        "emergencyContactDescription": "Informazioni contatto di emergenza"
+      },
+      "fields": {
+        "username": "Nome Utente",
+        "usernamePlaceholder": "Nome utente",
+        "userEmail": "Email Utente",
+        "userEmailPlaceholder": "Email utente",
+        "role": "Ruolo",
+        "rolePlaceholder": "Ruolo utente",
+        "accountCreated": "Account Creato",
+        "accountCreatedPlaceholder": "Data creazione account",
+        "lastLogin": "Ultimo Accesso",
+        "lastLoginPlaceholder": "Data ultimo accesso",
+        "accountStatus": "Stato Account",
+        "accountStatusPlaceholder": "Stato account",
+        "firstName": "Nome",
+        "firstNamePlaceholder": "Inserisci nome",
+        "lastName": "Cognome",
+        "lastNamePlaceholder": "Inserisci cognome",
+        "email": "Email",
+        "emailPlaceholder": "Inserisci indirizzo email",
+        "phoneNumber": "Numero di Telefono",
+        "phoneNumberPlaceholder": "Inserisci numero di telefono",
+        "employeeNumber": "Numero Dipendente",
+        "employeeNumberPlaceholder": "Numero dipendente",
+        "employmentStatus": "Stato Occupazionale",
+        "employmentStatusPlaceholder": "Seleziona stato occupazionale",
+        "employmentType": "Tipo di Impiego",
+        "employmentTypePlaceholder": "Seleziona tipo di impiego",
+        "hireDate": "Data Assunzione",
+        "hireDatePlaceholder": "Seleziona data assunzione",
+        "terminationDate": "Data di Cessazione",
+        "terminationDatePlaceholder": "Seleziona data di cessazione (opzionale)",
+        "department": "Dipartimento",
+        "departmentPlaceholder": "Seleziona dipartimento",
+        "position": "Posizione",
+        "positionPlaceholder": "Seleziona posizione",
+        "manager": "Responsabile",
+        "managerPlaceholder": "Seleziona responsabile",
+        "currentSalary": "Salario Attuale",
+        "currentSalaryPlaceholder": "Inserisci importo salario",
+        "salaryCurrency": "Valuta Salario",
+        "salaryCurrencyPlaceholder": "es. USD, EUR",
+        "streetAddress": "Indirizzo",
+        "streetAddressPlaceholder": "Inserisci indirizzo",
+        "city": "Città",
+        "cityPlaceholder": "Inserisci città",
+        "postalCode": "Codice Postale",
+        "postalCodePlaceholder": "Inserisci codice postale",
+        "country": "Paese",
+        "countryPlaceholder": "Inserisci paese",
+        "contactName": "Nome Contatto",
+        "contactNamePlaceholder": "Inserisci nome contatto di emergenza",
+        "contactPhone": "Telefono Contatto",
+        "contactPhonePlaceholder": "Inserisci telefono contatto di emergenza",
+        "contactRelation": "Relazione Contatto",
+        "contactRelationPlaceholder": "es. Coniuge, Genitore"
+      },
+      "options": {
+        "role": {
+          "admin": "Amministratore",
+          "manager": "Responsabile",
+          "user": "Utente"
+        },
+        "accountStatus": {
+          "active": "Attivo",
+          "inactive": "Inattivo"
+        },
+        "employmentStatus": {
+          "active": "Attivo",
+          "inactive": "Inattivo",
+          "terminated": "Terminato",
+          "onLeave": "In Ferie"
+        },
+        "employmentType": {
+          "fullTime": "Tempo Pieno",
+          "partTime": "Tempo Parziale",
+          "contract": "Contratto",
+          "intern": "Stagista"
+        }
+      },
+      "buttons": {
+        "saveChanges": "Salva Modifiche",
+        "cancel": "Annulla",
+        "close": "Chiudi"
+      },
+      "confirm": {
+        "title": "Conferma Aggiornamento",
+        "message": "Sei sicuro di voler aggiornare il dipendente {{name}}?",
+        "confirmText": "Aggiorna",
+        "cancelText": "Annulla"
+      },
+      "id": "ID"
+    },
+    "delete": {
+      "confirmMessage": "Sei sicuro di voler eliminare {{name}}? Questa azione non può essere annullata.",
+      "bulkConfirmMessage": "Sei sicuro di voler eliminare {{count}} dipendente/i?\n\n{{names}}\n\nQuesta azione non può essere annullata.",
+      "deleteAll": "Elimina Tutti"
+    },
+    "search": {
+      "title": "Cerca Dipendente",
+      "subtitle": "Cerca e filtra dipendenti per vari criteri",
+      "cardTitle": "Cerca e Filtra Dipendenti",
+      "showing": "Mostrando {{count}} di {{total}} dipendenti",
+      "noResults": "Nessun Risultato",
+      "noResultsDescription": "Usa il modulo sopra per cercare dipendenti",
+      "loadingMessage": "Caricamento dipendenti...",
+      "emptyTitle": "Nessun dipendente trovato",
+      "emptyDescription": "Nessun dipendente corrisponde ai tuoi criteri di ricerca",
+      "loadEmployees": "Carica Dipendenti",
+      "fields": {
+        "departmentPlaceholder": "Seleziona un dipartimento (obbligatorio)",
+        "firstNamePlaceholder": "Cerca per nome",
+        "lastNamePlaceholder": "Cerca per cognome",
+        "emailPlaceholder": "Cerca per email",
+        "employeeNumberPlaceholder": "Cerca per numero dipendente",
+        "phonePlaceholder": "Cerca per telefono",
+        "positionPlaceholder": "Filtra per posizione",
+        "statusPlaceholder": "Filtra per stato",
+        "allStatuses": "Tutti gli Stati",
+        "hireDateFrom": "Data di Assunzione Da",
+        "hireDateTo": "Data di Assunzione A",
+        "selectStartDate": "Seleziona data di inizio",
+        "selectEndDate": "Seleziona data di fine"
+      }
+    },
+    "status": {
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "terminated": "Terminato"
+    },
+    "reports": {
+      "title": "Statistiche e Report Dipendenti",
+      "subtitle": "Analisi complete e approfondimenti sulla tua forza lavoro",
+      "departmentDistribution": "Distribuzione per Dipartimento",
+      "statusDistribution": "Distribuzione per Stato di Impiego",
+      "positionDistribution": "Distribuzione per Posizione",
+      "salaryRangeDistribution": "Distribuzione per Fascia di Stipendio",
+      "hiringTrends": "Tendenze di Assunzione (Ultimi 12 Mesi)",
+      "employmentTypeDistribution": "Distribuzione per Tipo di Impiego",
+      "cityDistribution": "Distribuzione per Città Principali",
+      "countryDistribution": "Distribuzione per Paese",
+      "contractTypeDistribution": "Distribuzione per Tipo di Contratto",
+      "workingHoursDistribution": "Distribuzione per Ore di Lavoro",
+      "departmentSalaryComparison": "Confronto Stipendi per Dipartimento",
+      "recentHires": "Assunzioni Recenti (Ultimi 90 Giorni)"
+    },
+    "settings": {
+      "title": "Impostazioni Dipendenti",
+      "subtitle": "Configura le preferenze di gestione dipendenti e le impostazioni del sistema",
+      "generalSettings": "Impostazioni Generali",
+      "autoGenerateId": "Genera automaticamente ID dipendente",
+      "autoGenerateIdDescription": "Genera automaticamente ID univoci per i nuovi dipendenti",
+      "sendWelcomeEmail": "Invia email di benvenuto",
+      "sendWelcomeEmailDescription": "Invia email di benvenuto ai nuovi dipendenti alla creazione",
+      "requireManagerApproval": "Richiedi approvazione manager",
+      "requireManagerApprovalDescription": "Richiedi approvazione manager per l'aggiunta di nuovi dipendenti",
+      "notificationSettings": "Impostazioni Notifiche",
+      "enableNotifications": "Abilita notifiche",
+      "enableNotificationsDescription": "Ricevi notifiche per eventi importanti dei dipendenti",
+      "emailNotifications": "Notifiche email",
+      "emailNotificationsDescription": "Invia notifiche via email",
+      "smsNotifications": "Notifiche SMS",
+      "smsNotificationsDescription": "Invia notifiche via SMS",
+      "dataManagement": "Gestione Dati",
+      "autoBackup": "Backup automatico dati dipendenti",
+      "autoBackupDescription": "Esegui backup automatico dei dati dipendenti quotidianamente",
+      "archiveInactive": "Archivia dipendenti inattivi",
+      "archiveInactiveDescription": "Sposta dipendenti inattivi in archivio dopo 1 anno",
+      "accessControl": "Controllo Accesso",
+      "restrictPersonalData": "Limita accesso dati personali",
+      "restrictPersonalDataDescription": "Solo HR e manager possono visualizzare dati personali dei dipendenti",
+      "requireTwoFactor": "Richiedi autenticazione a due fattori",
+      "requireTwoFactorDescription": "Richiedi 2FA per accedere ai dati dei dipendenti",
+      "resetToDefault": "Reimposta ai Predefiniti",
+      "saveSettings": "Salva Impostazioni"
+    }
+  },
+  "contracts": {
+    "title": "Gestione Contratti",
+    "subtitle": "Gestisci e visualizza tutti i contratti nel sistema",
+    "searchPlaceholder": "Cerca contratti...",
+    "loading": "Caricamento contratti...",
+    "emptyTitle": "Nessun contratto trovato",
+    "emptyDescription": "Non ci sono contratti da visualizzare al momento",
+    "emptyActionText": "Aggiungi Primo Contratto",
+    "columns": {
+      "employee": "Dipendente",
+      "contractType": "Tipo di Contratto",
+      "startDate": "Data di Inizio",
+      "endDate": "Data di Fine",
+      "status": "Stato",
+      "salary": "Stipendio"
+    },
+    "types": {
+      "indefinite": "Indeterminato",
+      "fixed": "A Tempo Determinato",
+      "partTime": "Part Time",
+      "temporary": "Temporaneo",
+      "internship": "Stage"
+    },
+    "status": {
+      "active": "Attivo",
+      "expired": "Scaduto",
+      "terminated": "Terminato",
+      "pending": "In Attesa"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "edit": "Modifica",
+      "delete": "Elimina"
+    },
+    "tabs": {
+      "list": "Elenco Contratti",
+      "add": "Aggiungi Contratto",
+      "search": "Cerca",
+      "submitApproval": "Invia per Approvazione"
+    },
+    "search": {
+      "title": "Cerca Contratti",
+      "subtitle": "Cerca e filtra contratti per vari criteri",
+      "cardTitle": "Cerca e Filtra Contratti",
+      "showing": "Mostrando {{count}} contratto/i",
+      "loadingMessage": "Caricamento contratti...",
+      "emptyTitle": "Nessun contratto trovato",
+      "emptyDescription": "Nessun contratto corrisponde ai tuoi criteri di ricerca",
+      "submitButton": "Cerca Contratti",
+      "fields": {
+        "employeeName": "Nome Dipendente",
+        "employeeNamePlaceholder": "Cerca per nome dipendente",
+        "contractType": "Tipo di Contratto",
+        "contractTypePlaceholder": "Filtra per tipo di contratto",
+        "allTypes": "Tutti i Tipi",
+        "status": "Stato",
+        "statusPlaceholder": "Filtra per stato",
+        "allStatuses": "Tutti gli Stati",
+        "startDateFrom": "Data di Inizio Da",
+        "startDateFromPlaceholder": "Seleziona data di inizio da",
+        "startDateTo": "Data di Inizio A",
+        "startDateToPlaceholder": "Seleziona data di inizio a"
+      }
+    },
+    "add": {
+      "sections": {
+        "contractInfo": "Informazioni Contratto",
+        "contractInfoDescription": "Inserisci i dettagli del contratto",
+        "approvalSettings": "Impostazioni Approvazione",
+        "approvalSettingsDescription": "Configura il flusso di approvazione del contratto (opzionale)"
+      },
+      "fields": {
+        "employee": "Dipendente",
+        "employeePlaceholder": "Seleziona dipendente",
+        "contractType": "Tipo di Contratto",
+        "contractTypePlaceholder": "Seleziona tipo di contratto",
+        "status": "Stato",
+        "statusPlaceholder": "Seleziona stato",
+        "startDate": "Data di Inizio",
+        "startDatePlaceholder": "Seleziona data di inizio",
+        "endDate": "Data di Fine",
+        "endDatePlaceholder": "Seleziona data di fine (opzionale)",
+        "salary": "Stipendio",
+        "salaryPlaceholder": "Inserisci stipendio (opzionale)",
+        "renewalReminder": "Data Promemoria Rinnovo",
+        "renewalReminderPlaceholder": "Seleziona data promemoria rinnovo (opzionale)",
+        "notes": "Note",
+        "notesPlaceholder": "Inserisci note aggiuntive (opzionale)",
+        "submitForApproval": "Invia per Approvazione",
+        "submitForApprovalPlaceholder": "Invia automaticamente il contratto per approvazione dopo la creazione",
+        "approvers": "Approvatori",
+        "approversPlaceholder": "Seleziona utenti specifici come approvatori (lascia vuoto per usare il flusso predefinito basato sui ruoli)",
+        "approversHint": "Seleziona utenti specifici che approveranno questo contratto. Se non vengono selezionati utenti, il sistema userà il flusso di approvazione predefinito basato sui ruoli.",
+        "approvalComments": "Commenti Approvazione",
+        "approvalCommentsPlaceholder": "Inserisci commenti per la richiesta di approvazione (opzionale)"
+      },
+      "submitButton": "Crea Contratto"
+    },
+    "submitApproval": {
+      "sections": {
+        "contractSelection": "Selezione Contratto",
+        "approvalSettings": "Impostazioni Approvazione"
+      },
+      "fields": {
+        "contract": "Contratto",
+        "contractPlaceholder": "Seleziona un contratto",
+        "approvers": "Approvatori",
+        "approversPlaceholder": "Seleziona approvatori (multipli)",
+        "comments": "Commenti Approvazione",
+        "commentsPlaceholder": "Inserisci commenti per la richiesta di approvazione (opzionale)"
+      },
+      "submitButton": "Invia per Approvazione"
+    },
+    "detail": {
+      "title": {
+        "edit": "Modifica Contratto",
+        "view": "Dettagli Contratto"
+      },
+      "sections": {
+        "contractInformation": "Informazioni Contratto",
+        "contractInformationDescription": "Dettagli contratto"
+      },
+      "fields": {
+        "employee": "Dipendente",
+        "employeePlaceholder": "Seleziona dipendente",
+        "employeeName": "Nome dipendente",
+        "contractType": "Tipo di Contratto",
+        "contractTypePlaceholder": "Seleziona tipo di contratto",
+        "status": "Stato",
+        "statusPlaceholder": "Seleziona stato",
+        "startDate": "Data di Inizio",
+        "startDatePlaceholder": "Seleziona data di inizio",
+        "endDate": "Data di Fine",
+        "endDatePlaceholder": "Seleziona data di fine (opzionale)",
+        "salary": "Stipendio",
+        "salaryPlaceholder": "Inserisci stipendio (opzionale)",
+        "renewalReminderDate": "Data Promemoria Rinnovo",
+        "renewalReminderDatePlaceholder": "Seleziona data promemoria rinnovo (opzionale)",
+        "notes": "Note",
+        "notesPlaceholder": "Inserisci note aggiuntive (opzionale)"
+      },
+      "buttons": {
+        "saveChanges": "Salva Modifiche",
+        "cancel": "Annulla",
+        "close": "Chiudi"
+      },
+      "confirm": {
+        "title": "Conferma Aggiornamento",
+        "message": "Sei sicuro di voler aggiornare il contratto per {{name}}?",
+        "confirmText": "Aggiorna",
+        "cancelText": "Annulla"
+      },
+      "notifications": {
+        "updateSuccess": "Contratto Aggiornato",
+        "updateSuccessMessage": "Il contratto per {{name}} è stato aggiornato con successo",
+        "updateFailed": "Aggiornamento Fallito",
+        "updateFailedMessage": "Impossibile aggiornare il contratto",
+        "loadFailed": "Caricamento Fallito",
+        "loadFailedMessage": "Impossibile caricare le informazioni di approvazione"
+      },
+      "approval": {
+        "title": "Informazioni Approvazione",
+        "loading": "Caricamento informazioni approvazione...",
+        "empty": "Nessuna informazione di approvazione disponibile per questo contratto.",
+        "approver": "Approvatore",
+        "approverRole": "Ruolo Approvatore",
+        "approverNotAssigned": "Approvatore non assegnato",
+        "processedBy": "Elaborato da",
+        "processedAt": "Elaborato il",
+        "comments": "Commenti",
+        "notes": "Note",
+        "dueDate": "Data di Scadenza"
+      }
+    },
+    "delete": {
+      "confirmMessage": "Sei sicuro di voler eliminare il contratto per {{name}}? Questa azione non può essere annullata."
+    }
+  },
+  "contractApprovals": {
+    "title": "Approvazioni Contratti",
+    "subtitle": "Gestisci e revisiona le richieste di approvazione contratti",
+    "loading": "Caricamento approvazioni...",
+    "emptyTitle": "Nessuna Approvazione",
+    "emptyDescription": "Nessuna approvazione contratto corrisponde al filtro selezionato",
+    "stats": {
+      "pending": "In Attesa",
+      "approved": "Approvata",
+      "rejected": "Rifiutata"
+    },
+    "columns": {
+      "employee": "Dipendente",
+      "contractType": "Tipo di Contratto",
+      "status": "Stato",
+      "progress": "Progresso",
+      "requestedBy": "Richiesto Da",
+      "requestedAt": "Richiesto Il"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "approve": "Approva",
+      "reject": "Rifiuta"
+    },
+    "filterOptions": {
+      "all": "Tutte",
+      "pending": "In Attesa",
+      "approved": "Approvate",
+      "rejected": "Rifiutate"
+    },
+    "dialog": {
+      "approveTitle": "Approva Contratto",
+      "approveMessage": "Approva il contratto per {{name}}?",
+      "rejectTitle": "Rifiuta Contratto",
+      "rejectMessage": "Rifiuta il contratto per {{name}}?"
+    },
+    "detail": {
+      "title": "Dettagli Approvazione Contratto",
+      "sections": {
+        "approvalInformation": "Informazioni Approvazione",
+        "approvalSteps": "Passaggi Approvazione"
+      },
+      "fields": {
+        "approvalId": "ID Approvazione",
+        "contractId": "ID Contratto",
+        "employeeId": "ID Dipendente",
+        "employeeName": "Nome Dipendente",
+        "contractType": "Tipo di Contratto",
+        "status": "Stato",
+        "progress": "Progresso",
+        "requestedBy": "Richiesto Da",
+        "requestedAt": "Richiesto Il",
+        "approvedBy": "Approvato Da",
+        "approvedAt": "Approvato Il",
+        "rejectedBy": "Rifiutato Da",
+        "rejectedAt": "Rifiutato Il",
+        "rejectionReason": "Motivo Rifiuto",
+        "comments": "Commenti",
+        "steps": "Passaggi"
+      },
+      "steps": {
+        "role": "Ruolo",
+        "approver": "Approvatore",
+        "due": "Scadenza",
+        "processed": "Elaborato"
+      },
+      "buttons": {
+        "approve": "Approva",
+        "reject": "Rifiuta"
+      },
+      "approveDialog": {
+        "title": "Approva Contratto",
+        "message": "Approva il contratto per {{name}}?",
+        "label": "Commenti (Opzionale)",
+        "placeholder": "Inserisci commenti approvazione...",
+        "confirmText": "Approva",
+        "cancelText": "Annulla"
+      },
+      "rejectDialog": {
+        "title": "Rifiuta Contratto",
+        "message": "Rifiuta il contratto per {{name}}?",
+        "label": "Motivo Rifiuto",
+        "placeholder": "Fornisci un motivo per il rifiuto...",
+        "confirmText": "Rifiuta",
+        "cancelText": "Annulla"
+      },
+      "notifications": {
+        "approveSuccess": "Approvato",
+        "approveSuccessMessage": "Il contratto per {{name}} è stato approvato",
+        "approveFailed": "Approvazione Fallita",
+        "approveFailedMessage": "Impossibile approvare il contratto",
+        "rejectSuccess": "Rifiutato",
+        "rejectSuccessMessage": "Il contratto per {{name}} è stato rifiutato",
+        "rejectFailed": "Rifiuto Fallito",
+        "rejectFailedMessage": "Impossibile rifiutare il contratto",
+        "rejectionReasonRequired": "Motivo Rifiuto Richiesto",
+        "rejectionReasonRequiredMessage": "Fornisci un motivo per il rifiuto"
+      }
+    }
+  },
+  "contractTemplates": {
+    "title": "Modelli Contratti",
+    "subtitle": "Gestisci modelli di contratti per creazione rapida",
+    "searchPlaceholder": "Cerca modelli...",
+    "loading": "Caricamento modelli...",
+    "emptyTitle": "Nessun Modello",
+    "emptyDescription": "Nessun modello contratto corrisponde al filtro selezionato",
+    "tabs": {
+      "list": "Elenco Modelli",
+      "add": "Aggiungi Modello"
+    },
+    "columns": {
+      "name": "Nome",
+      "description": "Descrizione",
+      "contractType": "Tipo",
+      "category": "Categoria",
+      "usageCount": "Utilizzo",
+      "status": "Stato",
+      "default": "Predefinito",
+      "version": "Versione"
+    },
+    "stats": {
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "default": "Predefinito"
+    },
+    "status": {
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "default": "Predefinito"
+    },
+    "filterOptions": {
+      "all": "Tutti",
+      "active": "Attivi",
+      "inactive": "Inattivi",
+      "default": "Predefiniti"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "duplicate": "Duplica"
+    },
+    "add": {
+      "title": "Aggiungi Modello Contratto",
+      "subtitle": "Crea un nuovo modello di contratto",
+      "sections": {
+        "templateInfo": "Informazioni Modello",
+        "templateInfoDescription": "Inserisci informazioni di base del modello",
+        "templateContent": "Contenuto Modello",
+        "templateContentDescription": "Inserisci contenuto del modello e variabili",
+        "settings": "Impostazioni",
+        "settingsDescription": "Configura impostazioni del modello"
+      },
+      "fields": {
+        "name": "Nome Modello",
+        "namePlaceholder": "Inserisci nome modello",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione modello",
+        "contractType": "Tipo di Contratto",
+        "contractTypePlaceholder": "Seleziona tipo di contratto",
+        "category": "Categoria",
+        "categoryPlaceholder": "Seleziona categoria",
+        "templateContent": "Contenuto Modello",
+        "templateContentPlaceholder": "Inserisci contenuto modello (supporta variabili come {{employeeName}})",
+        "variables": "Variabili (JSON)",
+        "legalRequirements": "Requisiti Legali",
+        "legalRequirementsPlaceholder": "Inserisci requisiti legali o note di conformità",
+        "tags": "Tag (array JSON)",
+        "isActive": "Attivo",
+        "isDefault": "Imposta come Predefinito"
+      },
+      "submitButton": "Crea Modello",
+      "confirmTitle": "Conferma Aggiunta",
+      "confirmMessage": "Sei sicuro di voler aggiungere il modello \"{{name}}\"?"
+    }
+  },
+  "contractReminders": {
+    "title": "Promemoria Scadenze Contratti",
+    "subtitle": "Monitora contratti in scadenza",
+    "loading": "Caricamento promemoria...",
+    "loadingFailed": "Caricamento promemoria fallito",
+    "emptyTitle": "Nessun Promemoria",
+    "emptyDescription": "Nessun contratto in scadenza nel periodo selezionato",
+    "filterLabel": "Mostra contratti in scadenza entro:",
+    "filterOptions": {
+      "7days": "7 giorni",
+      "30days": "30 giorni",
+      "60days": "60 giorni",
+      "90days": "90 giorni"
+    },
+    "stats": {
+      "expired": "Scaduto",
+      "urgent": "Urgente (≤7 giorni)",
+      "warning": "Avviso (8-30 giorni)",
+      "info": "Info (>30 giorni)"
+    },
+    "columns": {
+      "employee": "Dipendente",
+      "type": "Tipo",
+      "endDate": "Data di Fine",
+      "daysLeft": "Giorni Rimanenti",
+      "status": "Stato"
+    },
+    "status": {
+      "expired": "Scaduto",
+      "today": "Oggi",
+      "tomorrow": "Domani",
+      "daysLeft": "{{count}} Giorni"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "renew": "Rinnova"
+    },
+    "renew": {
+      "confirmTitle": "Rinnova Contratto",
+      "confirmMessage": "Rinnovare il contratto per {{name}}?",
+      "successTitle": "Rinnovo Contratto",
+      "successMessage": "Rinnovo avviato per {{name}}"
+    }
+  },
+  "users": {
+    "title": "Gestione Utenti",
+    "subtitle": "Gestisci gli utenti del sistema e il loro accesso",
+    "searchPlaceholder": "Cerca utenti...",
+    "loading": "Caricamento utenti...",
+    "emptyTitle": "Nessun Utente",
+    "emptyDescription": "Nessun utente trovato",
+    "stats": {
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "locked": "Bloccato"
+    },
+    "tabs": {
+      "list": "Elenco Utenti",
+      "add": "Aggiungi Utente"
+    },
+    "status": {
+      "active": "Attivo",
+      "inactive": "Inattivo"
+    },
+    "add": {
+      "sections": {
+        "userInfo": "Informazioni Utente",
+        "userInfoDescription": "Inserisci informazioni di base dell'utente",
+        "accountSettings": "Impostazioni Account",
+        "accountSettingsDescription": "Configura impostazioni account"
+      },
+      "fields": {
+        "username": "Nome utente",
+        "usernamePlaceholder": "Inserisci nome utente",
+        "email": "Email",
+        "emailPlaceholder": "Inserisci email",
+        "firstName": "Nome",
+        "firstNamePlaceholder": "Inserisci nome",
+        "lastName": "Cognome",
+        "lastNamePlaceholder": "Inserisci cognome",
+        "phone": "Numero di Telefono",
+        "phonePlaceholder": "Inserisci numero di telefono",
+        "password": "Password",
+        "passwordPlaceholder": "Inserisci password",
+        "confirmPassword": "Conferma Password",
+        "confirmPasswordPlaceholder": "Conferma password",
+        "roles": "Ruoli",
+        "rolesPlaceholder": "Seleziona ruoli",
+        "isActive": "Attivo"
+      },
+      "submitButton": "Crea Utente",
+      "confirmTitle": "Conferma Creazione",
+      "confirmMessage": "Sei sicuro di voler creare l'utente {{name}}?"
+    },
+    "detail": {
+      "title": {
+        "edit": "Modifica Utente",
+        "view": "Dettagli Utente"
+      },
+      "sections": {
+        "userInformation": "Informazioni Utente",
+        "accountSettings": "Impostazioni Account"
+      },
+      "fields": {
+        "username": "Nome utente",
+        "usernamePlaceholder": "Inserisci nome utente",
+        "email": "Email",
+        "emailPlaceholder": "Inserisci email",
+        "firstName": "Nome",
+        "firstNamePlaceholder": "Inserisci nome",
+        "lastName": "Cognome",
+        "lastNamePlaceholder": "Inserisci cognome",
+        "phoneNumber": "Numero di Telefono",
+        "phoneNumberPlaceholder": "Inserisci numero di telefono",
+        "roles": "Ruoli",
+        "rolesPlaceholder": "Seleziona ruoli",
+        "active": "Attivo"
+      },
+      "viewFields": {
+        "username": "Nome utente",
+        "email": "Email",
+        "firstName": "Nome",
+        "lastName": "Cognome",
+        "phoneNumber": "Numero di Telefono",
+        "status": "Stato",
+        "emailConfirmed": "Email Confermata",
+        "roles": "Ruoli",
+        "createdAt": "Creato il",
+        "updatedAt": "Aggiornato il",
+        "lastLogin": "Ultimo Accesso",
+        "lockoutEnd": "Fine Blocco"
+      },
+      "options": {
+        "yes": "Sì",
+        "no": "No",
+        "active": "Attivo",
+        "inactive": "Inattivo"
+      },
+      "buttons": {
+        "updateUser": "Aggiorna Utente",
+        "cancel": "Annulla"
+      },
+      "confirm": {
+        "title": "Conferma Aggiornamento",
+        "message": "Aggiornare l'utente \"{{name}}\"?",
+        "confirmText": "Aggiorna",
+        "cancelText": "Annulla"
+      },
+      "notifications": {
+        "updateSuccess": "Utente Aggiornato",
+        "updateSuccessMessage": "Utente \"{{name}}\" aggiornato con successo!",
+        "updateFailed": "Aggiornamento Utente Fallito",
+        "updateFailedMessage": "Impossibile aggiornare l'utente."
+      }
+    }
+  },
+  "roles": {
+    "title": "Gestione Ruoli",
+    "subtitle": "Gestisci i ruoli utente e i loro permessi",
+    "list": "Elenco Ruoli",
+    "add": {
+      "title": "Aggiungi Nuovo Ruolo",
+      "subtitle": "Crea un nuovo ruolo e assegna permessi"
+    },
+    "edit": "Modifica Ruolo",
+    "details": "Dettagli Ruolo",
+    "searchPlaceholder": "Cerca ruoli...",
+    "loading": "Caricamento ruoli...",
+    "emptyTitle": "Nessun Ruolo",
+    "emptyDescription": "Nessun ruolo trovato",
+    "stats": {
+      "totalRoles": "Totale Ruoli",
+      "systemRoles": "Ruoli di Sistema",
+      "customRoles": "Ruoli Personalizzati"
+    },
+    "columns": {
+      "name": "Nome Ruolo",
+      "description": "Descrizione",
+      "permissions": "Permessi",
+      "users": "Utenti",
+      "type": "Tipo",
+      "createdAt": "Creato il"
+    },
+    "form": {
+      "roleInformation": "Informazioni Ruolo",
+      "roleInformationDescription": "Inserisci informazioni di base del ruolo",
+      "permissions": "Permessi",
+      "permissionsDescription": "Seleziona permessi per questo ruolo",
+      "name": "Nome Ruolo",
+      "namePlaceholder": "Inserisci nome ruolo",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Inserisci descrizione ruolo",
+      "permissionsPlaceholder": "Seleziona permessi",
+      "submitButton": "Crea Ruolo",
+      "confirmTitle": "Conferma Creazione",
+      "confirmMessage": "Sei sicuro di voler creare il ruolo {{name}}?"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "edit": "Modifica",
+      "delete": "Elimina"
+    },
+    "update": "Aggiorna Ruolo",
+    "tabs": {
+      "list": "Elenco Ruoli",
+      "add": "Aggiungi Ruolo"
+    },
+    "type": {
+      "system": "Sistema",
+      "custom": "Personalizzato"
+    },
+    "morePermissions": "+{{count}} in più",
+    "delete": {
+      "confirmMessage": "Eliminare il ruolo \"{{name}}\"? Questa azione non può essere annullata."
+    },
+    "detail": {
+      "title": {
+        "edit": "Modifica Ruolo",
+        "view": "Dettagli Ruolo"
+      },
+      "sections": {
+        "roleInformation": "Informazioni Ruolo",
+        "permissions": "Permessi"
+      },
+      "fields": {
+        "name": "Nome Ruolo",
+        "namePlaceholder": "Inserisci nome ruolo",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione ruolo",
+        "permissions": "Permessi",
+        "permissionsPlaceholder": "Seleziona permessi"
+      },
+      "viewFields": {
+        "roleName": "Nome Ruolo",
+        "type": "Tipo",
+        "users": "Utenti",
+        "createdAt": "Creato il",
+        "updatedAt": "Aggiornato il",
+        "permissions": "Permessi"
+      },
+      "buttons": {
+        "updateRole": "Aggiorna Ruolo",
+        "cancel": "Annulla"
+      },
+      "confirm": {
+        "title": "Conferma Aggiornamento",
+        "message": "Aggiornare il ruolo \"{{name}}\"?",
+        "confirmText": "Aggiorna",
+        "cancelText": "Annulla"
+      },
+      "notifications": {
+        "updateSuccess": "Ruolo Aggiornato",
+        "updateSuccessMessage": "Ruolo \"{{name}}\" aggiornato con successo!",
+        "updateFailed": "Aggiornamento Ruolo Fallito",
+        "updateFailedMessage": "Impossibile aggiornare il ruolo.",
+        "loadFailed": "Caricamento Fallito",
+        "loadFailedMessage": "Impossibile caricare i dettagli del ruolo"
+      }
+    }
+  },
+  "permissions": {
+    "title": "Gestione Permessi",
+    "subtitle": "Visualizza e gestisci i permessi del sistema",
+    "searchPlaceholder": "Cerca permessi...",
+    "loading": "Caricamento permessi...",
+    "loadingFailed": "Caricamento permessi fallito",
+    "emptyTitle": "Nessun Permesso",
+    "emptyDescription": "Nessun permesso trovato",
+    "filterByModule": "Filtra per Modulo",
+    "filterAll": "Tutti",
+    "tabs": {
+      "list": "Elenco Permessi",
+      "add": "Aggiungi Permesso"
+    },
+    "stats": {
+      "totalPermissions": "Totale Permessi"
+    },
+    "columns": {
+      "name": "Nome Permesso",
+      "description": "Descrizione",
+      "category": "Categoria",
+      "module": "Modulo",
+      "roles": "Ruoli",
+      "type": "Tipo"
+    },
+    "form": {
+      "resource": "Risorsa",
+      "action": "Azione",
+      "category": "Categoria"
+    },
+    "actions": {
+      "create": "Crea",
+      "read": "Leggi",
+      "update": "Aggiorna",
+      "delete": "Elimina",
+      "assign": "Assegna",
+      "approve": "Approva",
+      "export": "Esporta",
+      "admin": "Amministratore",
+      "config": "Configurazione",
+      "audit": "Audit",
+      "manage": "Gestisci"
+    },
+    "categories": {
+      "employeeManagement": "Gestione Dipendenti",
+      "roleManagement": "Gestione Ruoli",
+      "permissionManagement": "Gestione Permessi",
+      "departmentManagement": "Gestione Dipartimenti",
+      "positionManagement": "Gestione Posizioni",
+      "contractManagement": "Gestione Contratti",
+      "systemAdministration": "Amministrazione Sistema",
+      "userManagement": "Gestione Utenti"
+    },
+    "details": {
+      "title": "Dettagli Permesso"
+    },
+    "type": {
+      "system": "Sistema",
+      "custom": "Personalizzato"
+    },
+    "add": {
+      "title": "Aggiungi Nuovo Permesso",
+      "subtitle": "Crea un nuovo permesso di sistema",
+      "sections": {
+        "permissionInfo": "Informazioni Permesso",
+        "permissionInfoDescription": "Inserisci informazioni di base del permesso"
+      },
+      "fields": {
+        "name": "Nome Permesso",
+        "namePlaceholder": "Generato automaticamente da Risorsa e Azione",
+        "nameHint": "Generato automaticamente come Risorsa.Azione (es., Employees.View)",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione permesso",
+        "resource": "Risorsa",
+        "resourcePlaceholder": "Seleziona risorsa",
+        "action": "Azione",
+        "actionPlaceholder": "Seleziona azione",
+        "category": "Categoria",
+        "categoryPlaceholder": "Seleziona categoria"
+      },
+      "confirmTitle": "Conferma Aggiunta",
+      "confirmMessage": "Aggiungere il permesso \"{{name}}\"?",
+      "messages": {
+        "selectResourceAction": "Seleziona Risorsa e Azione per generare il nome del permesso"
+      }
+    }
+  },
+  "departments": {
+    "title": "Gestione Dipartimenti",
+    "subtitle": "Gestisci e visualizza tutti i dipartimenti nel sistema",
+    "searchPlaceholder": "Cerca dipartimenti...",
+    "loading": "Caricamento dipartimenti...",
+    "emptyTitle": "Nessun dipartimento trovato",
+    "emptyDescription": "Non ci sono dipartimenti da visualizzare al momento",
+    "emptyActionText": "Aggiungi Primo Dipartimento",
+    "columns": {
+      "code": "Codice",
+      "name": "Nome",
+      "description": "Descrizione",
+      "parentDepartment": "Dipartimento Padre",
+      "level": "Livello"
+    },
+    "tabs": {
+      "list": "Elenco Dipartimenti",
+      "add": "Aggiungi Dipartimento",
+      "search": "Cerca Dipartimento"
+    },
+    "delete": {
+      "confirmMessage": "Sei sicuro di voler eliminare {{name}}? Questa azione non può essere annullata."
+    },
+    "search": {
+      "title": "Cerca Dipartimento",
+      "subtitle": "Cerca e filtra dipartimenti per vari criteri",
+      "cardTitle": "Cerca e Filtra Dipartimenti",
+      "showing": "Mostrando {{count}} dipartimento/i",
+      "loadingMessage": "Caricamento dipartimenti...",
+      "emptyTitle": "Nessun dipartimento trovato",
+      "emptyDescription": "Nessun dipartimento corrisponde ai tuoi criteri di ricerca",
+      "submitButton": "Cerca Dipartimenti",
+      "fields": {
+        "name": "Nome Dipartimento",
+        "namePlaceholder": "Cerca per nome",
+        "code": "Codice Dipartimento",
+        "codePlaceholder": "Cerca per codice",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Cerca per descrizione",
+        "parentDepartment": "Dipartimento Padre",
+        "parentDepartmentPlaceholder": "Filtra per dipartimento padre",
+        "allDepartments": "Tutti i Dipartimenti",
+        "level": "Livello",
+        "levelPlaceholder": "Filtra per livello",
+        "allLevels": "Tutti i Livelli"
+      }
+    },
+    "add": {
+      "sectionTitle": "Informazioni Dipartimento",
+      "sectionDescription": "Inserisci i dettagli del dipartimento",
+      "fields": {
+        "name": "Nome Dipartimento",
+        "namePlaceholder": "Inserisci nome dipartimento",
+        "code": "Codice Dipartimento",
+        "codePlaceholder": "Inserisci codice dipartimento",
+        "level": "Livello",
+        "levelPlaceholder": "Inserisci livello",
+        "parentDepartment": "Dipartimento Padre",
+        "parentDepartmentPlaceholder": "Seleziona dipartimento padre (opzionale)",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione dipartimento"
+      },
+      "submitButton": "Crea Dipartimento",
+      "cancelButton": "Annulla",
+      "confirmTitle": "Conferma Creazione",
+      "confirmMessage": "Sei sicuro di voler creare il dipartimento {{name}}?",
+      "confirmButton": "Crea"
+    },
+    "detail": {
+      "title": {
+        "edit": "Modifica Dipartimento",
+        "view": "Dettagli Dipartimento"
+      },
+      "sections": {
+        "departmentInformation": "Informazioni Dipartimento",
+        "departmentInformationDescription": "Dettagli dipartimento"
+      },
+      "fields": {
+        "name": "Nome Dipartimento",
+        "namePlaceholder": "Inserisci nome dipartimento",
+        "code": "Codice Dipartimento",
+        "codePlaceholder": "Inserisci codice dipartimento",
+        "level": "Livello",
+        "levelPlaceholder": "Inserisci livello",
+        "parentDepartment": "Dipartimento Padre",
+        "parentDepartmentPlaceholder": "Seleziona dipartimento padre (opzionale)",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione dipartimento"
+      },
+      "buttons": {
+        "saveChanges": "Salva Modifiche",
+        "cancel": "Annulla",
+        "close": "Chiudi"
+      },
+      "confirm": {
+        "title": "Conferma Aggiornamento",
+        "message": "Sei sicuro di voler aggiornare il dipartimento {{name}}?",
+        "confirmText": "Aggiorna",
+        "cancelText": "Annulla"
+      }
+    }
+  },
+  "positions": {
+    "title": "Gestione Posizioni",
+    "subtitle": "Gestisci e visualizza tutte le posizioni nel sistema",
+    "searchPlaceholder": "Cerca posizioni...",
+    "loading": "Caricamento posizioni...",
+    "emptyTitle": "Nessuna posizione trovata",
+    "emptyDescription": "Non ci sono posizioni da visualizzare al momento",
+    "emptyActionText": "Aggiungi Prima Posizione",
+    "columns": {
+      "code": "Codice",
+      "name": "Nome",
+      "description": "Descrizione",
+      "department": "Dipartimento",
+      "isManagement": "Gestione",
+      "level": "Livello",
+      "minSalary": "Stipendio Min",
+      "maxSalary": "Stipendio Max"
+    },
+    "tabs": {
+      "list": "Elenco Posizioni",
+      "add": "Aggiungi Posizione",
+      "search": "Cerca Posizione"
+    },
+    "delete": {
+      "confirmTitle": "Conferma Eliminazione",
+      "confirmMessage": "Sei sicuro di voler eliminare la posizione {{name}}? Questa azione non può essere annullata."
+    },
+    "yes": "Sì",
+    "no": "No",
+    "search": {
+      "title": "Cerca Posizione",
+      "subtitle": "Cerca e filtra posizioni per vari criteri",
+      "cardTitle": "Cerca e Filtra Posizioni",
+      "showing": "Mostrando {{count}} posizione/i",
+      "loadingMessage": "Caricamento posizioni...",
+      "emptyTitle": "Nessuna posizione trovata",
+      "emptyDescription": "Nessuna posizione corrisponde ai tuoi criteri di ricerca",
+      "submitButton": "Cerca Posizioni",
+      "fields": {
+        "title": "Titolo Posizione",
+        "titlePlaceholder": "Cerca per titolo",
+        "code": "Codice Posizione",
+        "codePlaceholder": "Cerca per codice",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Cerca per descrizione",
+        "department": "Dipartimento",
+        "departmentPlaceholder": "Filtra per dipartimento",
+        "allDepartments": "Tutti i Dipartimenti",
+        "level": "Livello",
+        "levelPlaceholder": "Filtra per livello",
+        "allLevels": "Tutti i Livelli",
+        "isManagement": "Posizione di Gestione",
+        "isManagementPlaceholder": "Filtra per stato di gestione",
+        "allPositions": "Tutte le Posizioni",
+        "management": "Gestione",
+        "nonManagement": "Non Gestione"
+      }
+    },
+    "add": {
+      "sections": {
+        "positionInfo": "Informazioni Posizione",
+        "positionInfoDescription": "Inserisci i dettagli della posizione",
+        "salaryInfo": "Informazioni Stipendio",
+        "salaryInfoDescription": "Dettagli fascia stipendio opzionali"
+      },
+      "fields": {
+        "title": "Titolo Posizione",
+        "titlePlaceholder": "Inserisci titolo posizione",
+        "code": "Codice Posizione",
+        "codePlaceholder": "Inserisci codice posizione",
+        "level": "Livello",
+        "levelPlaceholder": "Inserisci livello",
+        "department": "Dipartimento",
+        "departmentPlaceholder": "Seleziona dipartimento",
+        "parentPosition": "Posizione Padre",
+        "parentPositionPlaceholder": "Seleziona posizione padre (opzionale)",
+        "isManagement": "È Posizione di Gestione",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione posizione",
+        "minSalary": "Stipendio Minimo",
+        "minSalaryPlaceholder": "Inserisci stipendio minimo",
+        "maxSalary": "Stipendio Massimo",
+        "maxSalaryPlaceholder": "Inserisci stipendio massimo"
+      },
+      "submitButton": "Crea Posizione",
+      "confirmTitle": "Conferma Creazione",
+      "confirmMessage": "Sei sicuro di voler creare la posizione {{name}}?"
+    },
+    "detail": {
+      "title": {
+        "edit": "Modifica Posizione",
+        "view": "Dettagli Posizione"
+      },
+      "sections": {
+        "positionInformation": "Informazioni Posizione",
+        "positionInformationDescription": "Dettagli posizione",
+        "salaryInformation": "Informazioni Stipendio",
+        "salaryInformationDescription": "Dettagli fascia stipendio"
+      },
+      "fields": {
+        "title": "Titolo Posizione",
+        "titlePlaceholder": "Inserisci titolo posizione",
+        "code": "Codice Posizione",
+        "codePlaceholder": "Inserisci codice posizione",
+        "level": "Livello",
+        "levelPlaceholder": "Inserisci livello",
+        "department": "Dipartimento",
+        "departmentPlaceholder": "Seleziona dipartimento",
+        "parentPosition": "Posizione Padre",
+        "parentPositionPlaceholder": "Seleziona posizione padre (opzionale)",
+        "isManagement": "È Posizione di Gestione",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione posizione",
+        "minSalary": "Stipendio Minimo",
+        "minSalaryPlaceholder": "Inserisci stipendio minimo",
+        "maxSalary": "Stipendio Massimo",
+        "maxSalaryPlaceholder": "Inserisci stipendio massimo"
+      },
+      "buttons": {
+        "saveChanges": "Salva Modifiche",
+        "cancel": "Annulla",
+        "close": "Chiudi"
+      },
+      "confirm": {
+        "title": "Conferma Aggiornamento",
+        "message": "Sei sicuro di voler aggiornare la posizione {{name}}?",
+        "confirmText": "Aggiorna",
+        "cancelText": "Annulla"
+      }
+    }
+  },
+  "auditLogs": {
+    "title": "Log di Audit",
+    "subtitle": "Traccia e revisiona tutte le attività e modifiche del sistema",
+    "searchPlaceholder": "Cerca log di audit...",
+    "loading": "Caricamento log di audit...",
+    "emptyTitle": "Nessun Log di Audit",
+    "emptyDescription": "Nessun log di audit trovato",
+    "stats": {
+      "totalLogs": "Totale Log",
+      "info": "Info",
+      "warning": "Avviso",
+      "error": "Errore",
+      "critical": "Critico"
+    },
+    "tabs": {
+      "list": "Elenco Log di Audit",
+      "search": "Cerca Log di Audit"
+    },
+    "search": {
+      "title": "Ricerca Avanzata",
+      "loading": "Ricerca log di audit...",
+      "emptyTitle": "Nessun Risultato",
+      "emptyDescription": "Nessun log di audit corrisponde ai tuoi criteri di ricerca",
+      "filtersSection": "Filtri di Ricerca",
+      "filtersDescription": "Filtra i log di audit per vari criteri"
+    }
+  },
+  "systemMonitor": {
+    "title": "Monitor Sistema",
+    "subtitle": "Monitoraggio in tempo reale dello stato dell'infrastruttura",
+    "autoRefresh": "Auto-aggiornamento: {{seconds}}s",
+    "loading": "Caricamento dati stato sistema...",
+    "connectionError": "Errore di Connessione",
+    "tryAgain": "Riprova",
+    "info": "I dati di stato vengono aggiornati automaticamente ogni 30 secondi. Aggiornamento manuale disponibile tramite i pulsanti sopra."
+  },
+  "view": {
+    "switchToCard": "Passa alla vista a schede",
+    "switchToTable": "Passa alla vista tabella",
+    "cardView": "Vista a Schede",
+    "tableView": "Vista Tabella"
+  },
+  "dashboard": {
+    "title": "Panoramica Dashboard",
+    "subtitle": "Benvenuto nella tua dashboard di gestione",
+    "refresh": "Aggiorna",
+    "loading": "Caricamento dati dashboard...",
+    "stats": {
+      "totalEmployees": "Totale Dipendenti",
+      "activeContracts": "Contratti Attivi",
+      "departments": "Dipartimenti",
+      "pendingApprovals": "Approvazioni in Attesa"
+    },
+    "actions": {
+      "viewDetails": "Visualizza Dettagli",
+      "manage": "Gestisci",
+      "viewAll": "Visualizza Tutto",
+      "review": "Revisiona"
+    },
+    "recentActivities": {
+      "title": "Attività Recenti",
+      "subtitle": "Ultimi aggiornamenti e notifiche",
+      "noActivities": "Nessuna attività recente",
+      "viewAll": "Visualizza Tutte le Attività"
+    }
+  },
+  "table": {
+    "actions": {
+      "view": "Visualizza",
+      "edit": "Modifica",
+      "delete": "Elimina"
+    },
+    "emptyMessage": "Nessun dato disponibile",
+    "loading": "Caricamento..."
+  },
+  "tabs": {
+    "list": "Elenco",
+    "add": "Aggiungi",
+    "search": "Cerca",
+    "edit": "Modifica",
+    "details": "Dettagli",
+    "reports": "Report",
+    "settings": "Impostazioni",
+    "submitApproval": "Invia per Approvazione"
+  },
+  "tasks": {
+    "title": "Le Mie Attività",
+    "subtitle": "Gestisci la tua lista di cose da fare",
+    "loading": "Caricamento attività...",
+    "emptyTitle": "Nessuna attività trovata",
+    "emptyDescription": "Non hai ancora attività. Crea la tua prima attività per iniziare!",
+    "emptyActionText": "Crea Prima Attività",
+    "newTask": "Nuova Attività",
+    "editTask": "Modifica Attività",
+    "createNewTask": "Crea Nuova Attività",
+    "updateTask": "Aggiorna Attività",
+    "createTask": "Crea Attività",
+    "deleteTask": "Elimina attività",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "Inserisci titolo attività",
+    "descriptionLabel": "Descrizione",
+    "descriptionPlaceholder": "Inserisci descrizione attività (opzionale)",
+    "status": "Stato",
+    "priority": "Priorità",
+    "statusAll": "Tutte",
+    "statusPending": "In Attesa",
+    "statusInProgress": "In Corso",
+    "statusCompleted": "Completata",
+    "statusCancelled": "Annullata",
+    "priorityLow": "Bassa",
+    "priorityMedium": "Media",
+    "priorityHigh": "Alta",
+    "priorityUrgent": "Urgente"
+  },
+  "approvals": {
+    "title": "Gestione Approvazioni",
+    "subtitle": "Gestisci e revisiona approvazioni in attesa",
+    "loading": "Caricamento approvazioni...",
+    "emptyTitle": "Nessuna Approvazione",
+    "emptyDescription": "Nessuna approvazione corrisponde al filtro selezionato",
+    "filter": "Filtro",
+    "stats": {
+      "pending": "In Attesa",
+      "approved": "Approvata",
+      "rejected": "Rifiutata"
+    },
+    "columns": {
+      "type": "Tipo",
+      "title": "Titolo",
+      "requester": "Richiedente",
+      "status": "Stato",
+      "priority": "Priorità",
+      "progress": "Progresso",
+      "approver": "Approvatore",
+      "dueDate": "Data di Scadenza"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "approve": "Approva",
+      "reject": "Rifiuta"
+    },
+    "filterOptions": {
+      "all": "Tutte",
+      "pending": "In Attesa",
+      "approved": "Approvate",
+      "rejected": "Rifiutate"
+    },
+    "dialog": {
+      "approveTitle": "Approva Richiesta",
+      "approveMessage": "Fornisci un commento per questa approvazione:",
+      "approvePlaceholder": "Inserisci commento approvazione (opzionale)",
+      "rejectTitle": "Rifiuta Richiesta",
+      "rejectMessage": "Fornisci un motivo per il rifiuto:",
+      "rejectPlaceholder": "Inserisci motivo rifiuto (obbligatorio)"
+    }
+  }
+}
