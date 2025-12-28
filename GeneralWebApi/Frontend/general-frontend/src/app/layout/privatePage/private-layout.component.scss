@@ -45,7 +45,7 @@
         transparent 100%
       );
       pointer-events: none;
-      z-index: 0;
+      z-index: -1; // Use negative z-index to ensure it stays behind content without creating stacking context
     }
 
     // Page Content Container
@@ -55,7 +55,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       position: relative;
-      z-index: 1;
+      // Removed z-index to prevent stacking context that blocks dropdowns
 
       // Custom scrollbar for content
       &::-webkit-scrollbar {
