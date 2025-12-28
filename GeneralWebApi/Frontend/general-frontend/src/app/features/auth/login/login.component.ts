@@ -8,8 +8,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '../../../Shared/services/notification.service';
+import { TranslationService } from '@core/services/translation.service';
 import {
   BaseInputComponent,
   BaseButtonComponent,
@@ -36,6 +38,7 @@ export class LoginComponent implements OnInit {
   private auth = inject(AuthService);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
+  private translationService = inject(TranslationService);
 
   // Form group
   loginForm!: FormGroup;
@@ -115,8 +118,8 @@ export class LoginComponent implements OnInit {
 
     if (!username || !password) {
       this.notificationService.error(
-        'Validation Error',
-        'Please enter both username and password'
+        this.translationService.translate('auth.loginFailed'),
+        this.translationService.translate('auth.errors.validationError')
       );
       return;
     }
@@ -147,26 +150,27 @@ export class LoginComponent implements OnInit {
             } else {
               console.error('❌ Navigation failed!');
               this.notificationService.error(
-                'Navigation Error',
-                'Navigation failed - please refresh the page'
+                this.translationService.translate('auth.loginFailed'),
+                this.translationService.translate('auth.errors.navigationError')
               );
             }
           })
           .catch(err => {
             console.error('❌ Navigation error:', err);
             this.notificationService.error(
-              'Navigation Error',
-              'Navigation error: ' + err.message
+              this.translationService.translate('auth.loginFailed'),
+              this.translationService.translate('auth.errors.navigationError')
             );
           });
 
         this.loading.set(false);
       },
-      error: err => {
+      error: (err: unknown) => {
         console.error('❌ Login failed:', err);
+        const errorMessage = this.translateErrorMessage(err);
         this.notificationService.error(
-          'Login Failed',
-          err.message || 'Login failed. Please check your credentials.'
+          this.translationService.translate('auth.loginFailed'),
+          errorMessage
         );
         this.loading.set(false);
       },
@@ -190,12 +194,77 @@ export class LoginComponent implements OnInit {
   }
 
   /**
+   * Translate error message from backend response
+   */
+  private translateErrorMessage(error: unknown): string {
+    let errorMessage = '';
+
+    // Handle HttpErrorResponse
+    if (error instanceof HttpErrorResponse) {
+      const apiError = error.error;
+      if (apiError?.message) {
+        errorMessage = apiError.message;
+      } else if (apiError?.error) {
+        errorMessage = apiError.error;
+      }
+    } 
+    // Handle Error object (after interceptor processing)
+    else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    // Handle generic object
+    else if (error && typeof error === 'object' && 'message' in error) {
+      errorMessage = String((error as { message: unknown }).message);
+    }
+
+    // Fallback to default message
+    if (!errorMessage || errorMessage.trim() === '') {
+      return this.translationService.translate('auth.errors.default');
+    }
+
+    // Map backend error messages to translated messages
+    const errorMessageLower = errorMessage.toLowerCase();
+
+    // Invalid credentials
+    if (errorMessageLower.includes('invalid') && 
+        (errorMessageLower.includes('credential') || errorMessageLower.includes('username') || errorMessageLower.includes('password'))) {
+      return this.translationService.translate('auth.errors.invalidCredentials');
+    }
+    // User not found
+    if (errorMessageLower.includes('user') && errorMessageLower.includes('not found')) {
+      return this.translationService.translate('auth.errors.userNotFound');
+    }
+    // User locked
+    if (errorMessageLower.includes('locked') || errorMessageLower.includes('blocked')) {
+      return this.translationService.translate('auth.errors.userLocked');
+    }
+    // Network error
+    if (errorMessageLower.includes('network') || 
+        errorMessageLower.includes('connection') ||
+        errorMessageLower.includes('timeout') ||
+        errorMessageLower.includes('failed to fetch')) {
+      return this.translationService.translate('auth.errors.networkError');
+    }
+    // Server error (5xx)
+    if (error instanceof HttpErrorResponse && error.status >= 500) {
+      return this.translationService.translate('auth.errors.serverError');
+    }
+
+    // Return original message if no translation found
+    return errorMessage;
+  }
+
+  /**
    * Get error message for a form field
    */
   getFieldError(fieldName: string): string {
     const field = this.loginForm.get(fieldName);
     if (field?.hasError('required') && field?.touched) {
-      return `${fieldName === 'username' ? 'Username' : 'Password'} is required`;
+      const fieldLabel = fieldName === 'username' 
+        ? this.translationService.translate('auth.username')
+        : this.translationService.translate('auth.password');
+      // Use simple "is required" message
+      return `${fieldLabel} is required`;
     }
     return '';
   }

@@ -55,6 +55,16 @@
     "loginFailed": "Error al iniciar sesión",
     "invalidCredentials": "Nombre de usuario o contraseña inválidos",
     "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+    "errors": {
+      "invalidCredentials": "Nombre de usuario o contraseña inválidos. Verifica tus credenciales e intenta de nuevo.",
+      "userNotFound": "Usuario no encontrado. Verifica tu nombre de usuario.",
+      "userLocked": "Esta cuenta ha sido bloqueada. Por favor, contacta a un administrador.",
+      "networkError": "Error de red. Verifica tu conexión e intenta de nuevo.",
+      "serverError": "Error del servidor. Por favor, intenta más tarde.",
+      "validationError": "Por favor, ingresa tanto el nombre de usuario como la contraseña.",
+      "navigationError": "Error de navegación. Por favor, actualiza la página.",
+      "default": "Error al iniciar sesión. Verifica tus credenciales e intenta de nuevo."
+    },
     "changePassword": {
       "title": "Cambiar contraseña",
       "sections": {

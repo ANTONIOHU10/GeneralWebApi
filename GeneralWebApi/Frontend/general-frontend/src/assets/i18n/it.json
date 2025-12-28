@@ -55,6 +55,16 @@
     "loginFailed": "Accesso fallito",
     "invalidCredentials": "Nome utente o password non validi",
     "sessionExpired": "La tua sessione è scaduta. Effettua nuovamente l'accesso.",
+    "errors": {
+      "invalidCredentials": "Nome utente o password non validi. Controlla le tue credenziali e riprova.",
+      "userNotFound": "Utente non trovato. Controlla il tuo nome utente.",
+      "userLocked": "Questo account è stato bloccato. Contatta un amministratore.",
+      "networkError": "Errore di rete. Controlla la tua connessione e riprova.",
+      "serverError": "Errore del server. Riprova più tardi.",
+      "validationError": "Inserisci sia il nome utente che la password.",
+      "navigationError": "Navigazione fallita. Aggiorna la pagina.",
+      "default": "Accesso fallito. Controlla le tue credenziali e riprova."
+    },
     "changePassword": {
       "title": "Cambia password",
       "sections": {

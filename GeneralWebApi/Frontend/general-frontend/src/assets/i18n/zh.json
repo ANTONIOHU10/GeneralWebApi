@@ -55,6 +55,16 @@
     "loginFailed": "登录失败",
     "invalidCredentials": "用户名或密码错误",
     "sessionExpired": "会话已过期，请重新登录",
+    "errors": {
+      "invalidCredentials": "用户名或密码错误。请检查您的凭据后重试。",
+      "userNotFound": "用户不存在。请检查您的用户名。",
+      "userLocked": "此账户已被锁定。请联系管理员。",
+      "networkError": "网络错误。请检查您的网络连接后重试。",
+      "serverError": "服务器错误。请稍后重试。",
+      "validationError": "请输入用户名和密码。",
+      "navigationError": "导航失败。请刷新页面。",
+      "default": "登录失败。请检查您的凭据后重试。"
+    },
     "changePassword": {
       "title": "修改密码",
       "sections": {

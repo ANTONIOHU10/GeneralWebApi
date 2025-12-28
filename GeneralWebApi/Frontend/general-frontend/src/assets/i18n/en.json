@@ -55,6 +55,16 @@
     "loginFailed": "Login failed",
     "invalidCredentials": "Invalid username or password",
     "sessionExpired": "Your session has expired. Please login again.",
+    "errors": {
+      "invalidCredentials": "Invalid username or password. Please check your credentials and try again.",
+      "userNotFound": "User not found. Please check your username.",
+      "userLocked": "This account has been locked. Please contact an administrator.",
+      "networkError": "Network error. Please check your connection and try again.",
+      "serverError": "Server error. Please try again later.",
+      "validationError": "Please enter both username and password.",
+      "navigationError": "Navigation failed. Please refresh the page.",
+      "default": "Login failed. Please check your credentials and try again."
+    },
     "changePassword": {
       "title": "Change Password",
       "sections": {
