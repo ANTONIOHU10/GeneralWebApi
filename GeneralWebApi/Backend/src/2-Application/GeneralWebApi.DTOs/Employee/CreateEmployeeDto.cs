@@ -24,4 +24,6 @@ public class CreateEmployeeDto
     public string EmergencyContactRelation { get; set; } = string.Empty;
     // Required: Tax code (fiscal code) - database column does not allow NULL
     public string TaxCode { get; set; } = string.Empty;
+    // Optional: Avatar URL for employee profile picture
+    public string? Avatar { get; set; }
 }

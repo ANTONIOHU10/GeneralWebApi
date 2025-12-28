@@ -222,14 +222,49 @@
     vertical-align: middle;
     font-size: $font-size-sm;
     line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    max-width: 0; // Required for text-overflow to work with table-layout: fixed
     
+    // For custom templates (like avatar, badge), don't apply any overflow restrictions
+    > ng-container,
+    > app-base-avatar,
+    > app-base-badge {
+      display: inline-block;
+      overflow: visible;
+      max-width: none;
+    }
+    
+    // Apply ellipsis only to text content spans (not custom templates, icons, or boolean cells)
+    > span:not(.material-icons) {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+    
+    // Boolean cells should not have ellipsis
+    .boolean-cell {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+    }
+    
+    // Center and right aligned cells
     &[style*="text-align: right"],
     &[style*="text-align: center"] {
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
+      
+      > span:not(.material-icons) {
+        display: inline-block;
+      }
+    }
+    
+    // Left aligned text cells
+    &[style*="text-align: left"] {
+      > span:not(.material-icons):not(.boolean-cell *) {
+        min-width: 0;
+      }
     }
 
     &.actions-cell {

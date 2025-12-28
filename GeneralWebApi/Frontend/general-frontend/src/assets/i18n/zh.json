@@ -550,6 +550,13 @@
         "cancel": "取消",
         "close": "关闭"
       },
+      "errors": {
+        "avatarUploadFailed": "头像上传失败",
+        "invalidImageType": "无效的图片类型",
+        "invalidImageTypeMessage": "请选择有效的图片文件（JPG、PNG、GIF等）",
+        "imageTooLarge": "图片文件过大",
+        "imageTooLargeMessage": "图片文件大小不能超过5MB"
+      },
       "confirm": {
         "title": "确认更新",
         "message": "您确定要更新员工 {{name}} 吗？",

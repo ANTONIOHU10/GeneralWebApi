@@ -273,6 +273,8 @@ export class EmployeeService extends BaseHttpService {
       EmergencyContactRelation: employee.emergencyContact?.relation || '',
       // TaxCode: 如果前端提供了，则包含；否则不包含（更新时保留原有值）
       ...(employee.taxCode ? { TaxCode: employee.taxCode } : {}),
+      // Avatar: 如果前端提供了，则包含；否则不包含（更新时保留原有值或null）
+      Avatar: employee.avatar || null,
     };
   }
 

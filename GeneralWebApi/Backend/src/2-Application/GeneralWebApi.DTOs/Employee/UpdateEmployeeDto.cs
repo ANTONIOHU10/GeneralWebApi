@@ -23,4 +23,5 @@ public class UpdateEmployeeDto
     public string EmergencyContactName { get; set; } = string.Empty;
     public string EmergencyContactPhone { get; set; } = string.Empty;
     public string EmergencyContactRelation { get; set; } = string.Empty;
+    public string? Avatar { get; set; }
 }

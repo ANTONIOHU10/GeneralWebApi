@@ -590,6 +590,13 @@
         "cancel": "Annulla",
         "close": "Chiudi"
       },
+      "errors": {
+        "avatarUploadFailed": "Caricamento Avatar Fallito",
+        "invalidImageType": "Tipo di Immagine Non Valido",
+        "invalidImageTypeMessage": "Seleziona un file immagine valido (JPG, PNG, GIF, ecc.)",
+        "imageTooLarge": "File Immagine Troppo Grande",
+        "imageTooLargeMessage": "La dimensione del file immagine non deve superare 5MB"
+      },
       "confirm": {
         "title": "Conferma Aggiornamento",
         "message": "Sei sicuro di voler aggiornare il dipendente {{name}}?",

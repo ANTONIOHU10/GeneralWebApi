@@ -162,7 +162,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       {
         key: 'fullName',
         label: this.translationService.translate('employees.columns.name'),
-        width: '200px',
+        width: '250px', // Increased width to prevent text truncation
         align: 'left',
         type: 'text',
         sortable: true, // Will be mapped to 'firstname' in onTableSortChange

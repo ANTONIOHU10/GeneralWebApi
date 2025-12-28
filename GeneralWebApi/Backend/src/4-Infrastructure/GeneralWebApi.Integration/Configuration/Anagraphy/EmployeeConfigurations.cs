@@ -60,6 +60,9 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.Property(e => e.EmploymentType).HasMaxLength(20).HasDefaultValue("FullTime");
               builder.Property(e => e.WorkingHoursPerWeek);
               builder.Property(e => e.IsManager).HasDefaultValue(false);
+
+              // avatar - URL to profile picture
+              builder.Property(e => e.Avatar).HasMaxLength(500);
               #endregion
 
               #region Foreign Key Relationships

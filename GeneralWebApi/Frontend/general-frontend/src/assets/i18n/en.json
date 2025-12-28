@@ -590,6 +590,13 @@
         "cancel": "Cancel",
         "close": "Close"
       },
+      "errors": {
+        "avatarUploadFailed": "Avatar Upload Failed",
+        "invalidImageType": "Invalid Image Type",
+        "invalidImageTypeMessage": "Please select a valid image file (JPG, PNG, GIF, etc.)",
+        "imageTooLarge": "Image File Too Large",
+        "imageTooLargeMessage": "Image file size must not exceed 5MB"
+      },
       "confirm": {
         "title": "Confirm Update",
         "message": "Are you sure you want to update employee {{name}}?",

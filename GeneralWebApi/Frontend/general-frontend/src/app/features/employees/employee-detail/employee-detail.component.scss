@@ -20,6 +20,122 @@
   margin-bottom: $spacing-6;
   border-bottom: 1px solid var(--border-primary);
 
+  .avatar-section {
+    flex-shrink: 0;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+
+    .avatar-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity $duration-200 $ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    &:hover .avatar-overlay {
+      opacity: 1;
+    }
+
+    .avatar-input {
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .avatar-upload-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background-color: var(--color-primary-500);
+      color: white;
+      cursor: pointer;
+      transition: all $duration-200 $ease-in-out;
+      border: 2px solid white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      &:hover {
+        background-color: var(--color-primary-600);
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &.uploading {
+        background-color: var(--color-warning-500);
+        cursor: wait;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      .material-icons {
+        font-size: 1.25rem;
+      }
+
+      &[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .avatar-remove-button {
+      position: absolute;
+      top: -0.5rem;
+      right: -0.5rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background-color: var(--color-error-500);
+      color: white;
+      border: 2px solid white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all $duration-200 $ease-in-out;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+      &:hover {
+        background-color: var(--color-error-600);
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .material-icons {
+        font-size: 1rem;
+      }
+    }
+  }
+
   .employee-header-info {
     flex: 1;
     display: flex;
@@ -45,6 +161,15 @@
       font-size: 0.875rem;
       color: var(--text-tertiary);
     }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
 

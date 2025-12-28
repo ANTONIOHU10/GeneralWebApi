@@ -44,6 +44,9 @@ public class Employee : BaseEntity
     public int? WorkingHoursPerWeek { get; set; }
     public bool IsManager { get; set; } = false;
 
+    // Avatar - URL to the employee's profile picture
+    public string? Avatar { get; set; }
+
 
     #region navigation properties
 

@@ -41,4 +41,5 @@ public class EmployeeDto
     public int Version { get; set; }
     public int SortOrder { get; set; }
     public string? Remarks { get; set; }
+    public string? Avatar { get; set; }
 }

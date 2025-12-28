@@ -567,6 +567,13 @@
         "cancel": "Cancelar",
         "close": "Cerrar"
       },
+      "errors": {
+        "avatarUploadFailed": "Error al Subir Avatar",
+        "invalidImageType": "Tipo de Imagen Inválido",
+        "invalidImageTypeMessage": "Por favor, selecciona un archivo de imagen válido (JPG, PNG, GIF, etc.)",
+        "imageTooLarge": "Archivo de Imagen Demasiado Grande",
+        "imageTooLargeMessage": "El tamaño del archivo de imagen no debe exceder 5MB"
+      },
       "confirm": {
         "updateTitle": "Confirmar Actualización",
         "updateMessage": "¿Está seguro de que desea actualizar el empleado {{employeeName}}?"

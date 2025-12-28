@@ -17,7 +17,8 @@ import { TranslationService } from '@core/services/translation.service';
 import { EmployeeFacade } from '@store/employee/employee.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
-import { DialogService, OperationNotificationService } from '../../../Shared/services';
+import { DialogService, OperationNotificationService, NotificationService } from '../../../Shared/services';
+import { DocumentService } from '@core/services/document.service';
 import { Observable, combineLatest, of, Subject } from 'rxjs';
 import { filter, first, pairwise, debounceTime, startWith, catchError, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Department } from 'app/contracts/departments/department.model';
@@ -52,7 +53,9 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   private positionFacade = inject(PositionFacade);
   private dialogService = inject(DialogService);
   private operationNotification = inject(OperationNotificationService);
+  private notificationService = inject(NotificationService);
   private translationService = inject(TranslationService);
+  private documentService = inject(DocumentService);
   private cdr = inject(ChangeDetectorRef);
 
   @Input() employee: Employee | null = null;
@@ -76,6 +79,11 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   // Form data
   formData: Record<string, unknown> = {};
+
+  // Avatar upload state
+  avatarPreview = signal<string>('');
+  avatarUploading = signal(false);
+  selectedAvatarFile: File | null = null;
 
   // Destroy subject for cleanup
   private destroy$ = new Subject<void>();
@@ -985,6 +993,14 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
       emergencyContactPhone: this.employee.emergencyContact?.phone || '',
       emergencyContactRelation: this.employee.emergencyContact?.relation || '',
     };
+
+    // Initialize avatar preview
+    if (this.employee.avatar) {
+      this.avatarPreview.set(this.employee.avatar);
+    } else {
+      this.avatarPreview.set('');
+    }
+    this.selectedAvatarFile = null;
   }
 
   /**
@@ -1284,47 +1300,149 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         employeeName,
       });
 
-      // Prepare update data matching backend UpdateEmployeeDto
-      const updateData: Partial<Employee> = {
-        firstName,
-        lastName,
-        email: (data['email'] as string)?.trim() || '',
-        phone: (data['phoneNumber'] as string)?.trim() || undefined,
-        employeeNumber: (data['employeeNumber'] as string)?.trim() || undefined,
-        hireDate: (data['hireDate'] as string) || '',
-        terminationDate: (data['terminationDate'] as string) || null,
-        status: (data['employmentStatus'] as string) as 'Active' | 'Inactive' | 'Terminated',
-        employmentType: (data['employmentType'] as string) || undefined,
-        departmentId: data['departmentId'] as number || null,
-        positionId: data['positionId'] as number || null,
-        managerId: data['managerId'] ? (data['managerId'] as number).toString() : null,
-        salary: data['currentSalary'] as number || undefined,
-        salaryCurrency: (data['salaryCurrency'] as string)?.trim() || undefined,
-        address: {
-          street: (data['address'] as string)?.trim() || '',
-          city: (data['city'] as string)?.trim() || '',
-          state: '',
-          zipCode: (data['postalCode'] as string)?.trim() || '',
-          country: (data['country'] as string)?.trim() || '',
-        },
-        emergencyContact: {
-          name: (data['emergencyContactName'] as string)?.trim() || '',
-          phone: (data['emergencyContactPhone'] as string)?.trim() || '',
-          relation: (data['emergencyContactRelation'] as string)?.trim() || '',
-        },
-      };
-
-      // Dispatch update action through Facade
-      if (this.employee) {
-        this.employeeFacade.updateEmployee(this.employee.id, updateData);
+      // Upload avatar if a new file was selected
+      let avatarUrl = this.employee?.avatar || '';
+      if (this.selectedAvatarFile) {
+        this.avatarUploading.set(true);
+        this.documentService.uploadFile(this.selectedAvatarFile).pipe(
+          takeUntil(this.destroy$),
+          catchError((error) => {
+            console.error('Avatar upload failed:', error);
+            this.avatarUploading.set(false);
+            this.notificationService.error(
+              this.translationService.translate('employees.detail.errors.avatarUploadFailed'),
+              error.message || 'Failed to upload avatar'
+            );
+            return of(null);
+          })
+        ).subscribe({
+          next: (uploadResponse) => {
+            this.avatarUploading.set(false);
+            if (uploadResponse) {
+              // Build avatar URL from file ID
+              avatarUrl = this.documentService.getFileDownloadUrl(uploadResponse.id);
+              this.avatarPreview.set(avatarUrl);
+              // Continue with employee update
+              this.updateEmployeeWithAvatar(data, avatarUrl);
+            }
+          }
+        });
+        return; // Wait for avatar upload to complete
       }
+
+      // No new avatar, proceed with update
+      this.updateEmployeeWithAvatar(data, avatarUrl);
     });
+  }
+
+  /**
+   * Update employee with avatar URL
+   */
+  private updateEmployeeWithAvatar(data: Record<string, unknown>, avatarUrl: string): void {
+    if (!this.employee) return;
+
+    const firstName = (data['firstName'] as string)?.trim() || '';
+    const lastName = (data['lastName'] as string)?.trim() || '';
+
+    // Prepare update data matching backend UpdateEmployeeDto
+    const updateData: Partial<Employee> = {
+      firstName,
+      lastName,
+      email: (data['email'] as string)?.trim() || '',
+      phone: (data['phoneNumber'] as string)?.trim() || undefined,
+      employeeNumber: (data['employeeNumber'] as string)?.trim() || undefined,
+      hireDate: (data['hireDate'] as string) || '',
+      terminationDate: (data['terminationDate'] as string) || null,
+      status: (data['employmentStatus'] as string) as 'Active' | 'Inactive' | 'Terminated',
+      employmentType: (data['employmentType'] as string) || undefined,
+      departmentId: data['departmentId'] as number || null,
+      positionId: data['positionId'] as number || null,
+      managerId: data['managerId'] ? (data['managerId'] as number).toString() : null,
+      salary: data['currentSalary'] as number || undefined,
+      salaryCurrency: (data['salaryCurrency'] as string)?.trim() || undefined,
+      avatar: avatarUrl, // Include avatar URL
+      address: {
+        street: (data['address'] as string)?.trim() || '',
+        city: (data['city'] as string)?.trim() || '',
+        state: '',
+        zipCode: (data['postalCode'] as string)?.trim() || '',
+        country: (data['country'] as string)?.trim() || '',
+      },
+      emergencyContact: {
+        name: (data['emergencyContactName'] as string)?.trim() || '',
+        phone: (data['emergencyContactPhone'] as string)?.trim() || '',
+        relation: (data['emergencyContactRelation'] as string)?.trim() || '',
+      },
+    };
+
+    // Dispatch update action through Facade
+    if (this.employee) {
+      this.employeeFacade.updateEmployee(this.employee.id, updateData);
+    }
+  }
+
+  /**
+   * Handle avatar file selection
+   */
+  onAvatarFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      this.notificationService.error(
+        this.translationService.translate('employees.detail.errors.invalidImageType'),
+        this.translationService.translate('employees.detail.errors.invalidImageTypeMessage')
+      );
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      this.notificationService.error(
+        this.translationService.translate('employees.detail.errors.imageTooLarge'),
+        this.translationService.translate('employees.detail.errors.imageTooLargeMessage')
+      );
+      return;
+    }
+
+    // Store selected file
+    this.selectedAvatarFile = file;
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      if (result) {
+        this.avatarPreview.set(result);
+      }
+    };
+    reader.readAsDataURL(file);
+
+    // Reset input to allow selecting the same file again
+    input.value = '';
+  }
+
+  /**
+   * Remove selected avatar
+   */
+  onRemoveAvatar(): void {
+    this.selectedAvatarFile = null;
+    this.avatarPreview.set(this.employee?.avatar || '');
   }
 
   /**
    * Handle form cancel
    */
   onFormCancel(): void {
+    // Reset avatar selection
+    this.selectedAvatarFile = null;
+    if (this.employee) {
+      this.avatarPreview.set(this.employee.avatar || '');
+    }
     this.onClose();
   }
 

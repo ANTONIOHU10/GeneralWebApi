@@ -132,6 +132,7 @@ export interface CreateEmployeeRequest {
   emergencyContactPhone?: string;
   emergencyContactRelation?: string;
   taxCode: string; // Required: Tax code (fiscal code) - database does not allow NULL
+  avatar?: string; // Optional: Avatar URL for employee profile picture
 }
 
 // Request DTO for updating employee - matches backend UpdateEmployeeDto
@@ -160,4 +161,5 @@ export interface UpdateEmployeeRequest {
   EmergencyContactPhone: string;
   EmergencyContactRelation: string;
   TaxCode?: string; // Optional: if not provided, existing value is preserved
+  Avatar?: string | null; // Optional: Avatar URL for employee profile picture
 }
