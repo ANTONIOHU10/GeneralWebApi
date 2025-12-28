@@ -636,7 +636,15 @@
       "contractTypeDistribution": "Distribución por Tipo de Contrato",
       "workingHoursDistribution": "Distribución por Horas de Trabajo",
       "departmentSalaryComparison": "Comparación Salarial por Departamento",
-      "recentHires": "Contrataciones Recientes (Últimos 90 Días)"
+      "recentHires": "Contrataciones Recientes (Últimos 90 Días)",
+      "success": {
+        "title": "Datos Cargados",
+        "message": "Se cargaron exitosamente {{count}} empleado(s)"
+      },
+      "errors": {
+        "loadFailed": "Error al Cargar",
+        "loadFailedMessage": "Ocurrió un error al cargar los datos de empleados"
+      }
     },
     "settings": {
       "title": "Configuración de Empleados",
@@ -666,7 +674,15 @@
       "requireTwoFactor": "Requerir autenticación de dos factores",
       "requireTwoFactorDescription": "Requerir 2FA para acceder a datos de empleados",
       "resetToDefault": "Restablecer a Valores Predeterminados",
-      "saveSettings": "Guardar Configuración"
+      "saveSettings": "Guardar Configuración",
+      "success": {
+        "title": "Configuración Guardada",
+        "message": "La configuración de empleados se ha guardado exitosamente"
+      },
+      "errors": {
+        "saveFailed": "Error al Guardar",
+        "saveFailedMessage": "Ocurrió un error al guardar la configuración. Por favor, intente de nuevo"
+      }
     }
   },
   "departments": {

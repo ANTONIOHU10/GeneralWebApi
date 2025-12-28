@@ -616,7 +616,15 @@
       "contractTypeDistribution": "合同类型分布",
       "workingHoursDistribution": "工作时间分布",
       "departmentSalaryComparison": "部门薪资对比",
-      "recentHires": "近期入职（过去90天）"
+      "recentHires": "近期入职（过去90天）",
+      "success": {
+        "title": "数据加载成功",
+        "message": "成功加载了 {{count}} 名员工数据"
+      },
+      "errors": {
+        "loadFailed": "加载失败",
+        "loadFailedMessage": "加载员工数据时发生错误"
+      }
     },
     "settings": {
       "title": "员工设置",
@@ -646,7 +654,15 @@
       "requireTwoFactor": "需要双因素认证",
       "requireTwoFactorDescription": "访问员工数据需要双因素认证",
       "resetToDefault": "重置为默认",
-      "saveSettings": "保存设置"
+      "saveSettings": "保存设置",
+      "success": {
+        "title": "设置已保存",
+        "message": "员工设置已成功保存"
+      },
+      "errors": {
+        "saveFailed": "保存失败",
+        "saveFailedMessage": "保存设置时发生错误，请重试"
+      }
     }
   },
   "contracts": {

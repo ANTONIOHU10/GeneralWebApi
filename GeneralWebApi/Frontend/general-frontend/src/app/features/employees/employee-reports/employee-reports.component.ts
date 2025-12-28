@@ -666,8 +666,8 @@ export class EmployeeReportsComponent implements OnInit {
         this.loading$.next(false);
         
         this.notificationService.error(
-          'Load Failed',
-          errorMessage,
+          this.translationService.translate('employees.reports.errors.loadFailed'),
+          this.translationService.translate('employees.reports.errors.loadFailedMessage'),
           {
             duration: 5000,
             persistent: false,
@@ -682,8 +682,8 @@ export class EmployeeReportsComponent implements OnInit {
         if (response?.data) {
           this.employees$.next(response.data);
           this.notificationService.success(
-            'Data Loaded',
-            `Successfully loaded ${response.data.length} employee(s)`,
+            this.translationService.translate('employees.reports.success.title'),
+            this.translationService.translate('employees.reports.success.message', { count: response.data.length }),
             {
               duration: 3000,
               autoClose: true,

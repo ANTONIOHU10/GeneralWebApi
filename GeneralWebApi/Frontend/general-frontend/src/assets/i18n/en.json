@@ -656,7 +656,15 @@
       "contractTypeDistribution": "Contract Type Distribution",
       "workingHoursDistribution": "Working Hours Distribution",
       "departmentSalaryComparison": "Department Salary Comparison",
-      "recentHires": "Recent Hires (Last 90 Days)"
+      "recentHires": "Recent Hires (Last 90 Days)",
+      "success": {
+        "title": "Data Loaded",
+        "message": "Successfully loaded {{count}} employee(s)"
+      },
+      "errors": {
+        "loadFailed": "Load Failed",
+        "loadFailedMessage": "An error occurred while loading employee data"
+      }
     },
     "settings": {
       "title": "Employee Settings",
@@ -686,7 +694,15 @@
       "requireTwoFactor": "Require two-factor authentication",
       "requireTwoFactorDescription": "Require 2FA for accessing employee data",
       "resetToDefault": "Reset to Default",
-      "saveSettings": "Save Settings"
+      "saveSettings": "Save Settings",
+      "success": {
+        "title": "Settings Saved",
+        "message": "Employee settings have been saved successfully"
+      },
+      "errors": {
+        "saveFailed": "Save Failed",
+        "saveFailedMessage": "An error occurred while saving settings. Please try again"
+      }
     }
   },
   "contracts": {
