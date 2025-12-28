@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject, Host
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
+import { TokenService } from '@core/services/token.service';
 import { Notification } from 'app/contracts/notifications/notification.model';
 import { catchError, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -31,6 +32,7 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
   @Output() notificationItemClick = new EventEmitter<Notification>();
 
   private notificationService = inject(NotificationService);
+  private tokenService = inject(TokenService);
   private router = inject(Router);
   private elementRef = inject(ElementRef);
   private destroy$ = new Subject<void>();
@@ -63,8 +65,15 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
 
   /**
    * Load recent notifications (last 5 unread or recent)
+   * Only loads if user is authenticated
    */
   private loadRecentNotifications(): void {
+    // Don't load notifications if user is not authenticated
+    if (!this.tokenService.isAuthenticated() || this.tokenService.isExpired()) {
+      this.recentNotifications = [];
+      return;
+    }
+
     if (this.isLoadingNotifications) return;
     
     this.isLoadingNotifications = true;

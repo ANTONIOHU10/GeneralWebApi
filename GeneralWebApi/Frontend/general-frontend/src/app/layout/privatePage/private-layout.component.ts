@@ -11,6 +11,7 @@ import { UserProfileModalComponent } from '../../Shared/components/user-profile-
 import { NotificationCenterComponent } from '../../features/notifications/notification-center/notification-center.component';
 import { BaseModalComponent } from '../../Shared/components/base/base-modal/base-modal.component';
 import { BaseSelectComponent } from '../../Shared/components/base/base-select/base-select.component';
+import { ChangePasswordModalComponent } from '../../Shared/components/change-password-modal/change-password-modal.component';
 import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { User } from 'app/users/user.model';
@@ -37,6 +38,7 @@ import { catchError, of, Observable } from 'rxjs';
     NotificationCenterComponent,
     BaseModalComponent,
     BaseSelectComponent,
+    ChangePasswordModalComponent,
     TranslatePipe,
   ],
 })
@@ -61,6 +63,9 @@ export class PrivateLayoutComponent implements OnInit {
   
   // Settings panel state
   isSettingsPanelOpen = false;
+  
+  // Change password modal state
+  isChangePasswordModalOpen = false;
 
   // Language and timezone settings
   currentLanguage = this.localeService.getCurrentLanguage();
@@ -193,6 +198,28 @@ export class PrivateLayoutComponent implements OnInit {
    */
   onSettingsPanelClose(): void {
     this.isSettingsPanelOpen = false;
+  }
+
+  /**
+   * Handle change password button click
+   */
+  onChangePasswordClick(): void {
+    this.isChangePasswordModalOpen = true;
+  }
+
+  /**
+   * Handle change password modal close
+   */
+  onChangePasswordModalClose(): void {
+    this.isChangePasswordModalOpen = false;
+  }
+
+  /**
+   * Handle password changed event
+   */
+  onPasswordChanged(): void {
+    // Password changed successfully, modal will close automatically
+    // You can add additional logic here if needed
   }
 
   /**

@@ -178,9 +178,17 @@
             <span>{{ 'settings.changePassword' | translate }}</span>
             <span class="settings-description">{{ 'settings.changePasswordDescription' | translate }}</span>
           </label>
-          <button class="settings-button" type="button">{{ 'settings.changePassword' | translate }}</button>
+          <button class="settings-button" type="button" (click)="onChangePasswordClick()">{{ 'settings.changePassword' | translate }}</button>
         </div>
       </div>
     </div>
   </app-base-modal>
+
+  <!-- Change Password Modal -->
+  <app-change-password-modal
+    [isOpen]="isChangePasswordModalOpen"
+    [username]="currentUser?.userName || ''"
+    (closeEvent)="onChangePasswordModalClose()"
+    (passwordChanged)="onPasswordChanged()"
+  ></app-change-password-modal>
 </div>

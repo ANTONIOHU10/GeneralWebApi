@@ -190,14 +190,14 @@ public class AuthController(IUserService userService) : BaseController
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            var success = await _userService.UpdatePasswordAsync(req.Username, req.NewPassword);
+            var result = await _userService.UpdatePasswordAsync(req.Username, req.OldPassword, req.NewPassword);
 
-            if (!success)
+            if (!result.Success)
             {
                 return BadRequest(ApiResponse<UpdatePasswordResponseData>.ErrorResult(
-                    ErrorTitles.Authentication.PasswordUpdateFailed,
+                    result.ErrorTitle ?? ErrorTitles.Authentication.PasswordUpdateFailed,
                     400,
-                    ErrorMessages.Authentication.PasswordUpdateFailed
+                    result.ErrorMessage ?? ErrorMessages.Authentication.PasswordUpdateFailed
                 ));
             }
 

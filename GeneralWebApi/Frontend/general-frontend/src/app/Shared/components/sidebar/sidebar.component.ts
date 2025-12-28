@@ -15,7 +15,7 @@ export interface NavItem {
 }
 
 export interface NavSection {
-  title: string;
+  title: string; // Translation key, not translated text
   items: NavItem[];
   expandable?: boolean;
   expanded?: boolean;
@@ -145,6 +145,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   /**
    * Apply translations to navigation sections
+   * Note: We keep the original translation keys and let the template handle translation
+   * This prevents issues when translations reload
    */
   private applyTranslations(): void {
     if (!this.translationService.isLoaded()) {
@@ -153,14 +155,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.filteredSections = this.navSections.map(section => ({
-      ...section,
-      title: this.translationService.translate(section.title),
-      items: section.items.map(item => ({
-        ...item,
-        label: this.translationService.translate(item.label),
-      })),
-    }));
+    // Keep original translation keys, don't replace them
+    // The template will handle translation via translate pipe
+    this.filteredSections = [...this.navSections];
 
     // Update search if there's a query
     if (this.searchQuery.trim()) {
@@ -206,24 +203,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
 
     const query = this.searchQuery.toLowerCase();
-    // Apply translations first, then filter
-    const translatedSections = this.navSections.map(section => ({
-      ...section,
-      title: this.translationService.translate(section.title),
-      items: section.items.map(item => ({
-        ...item,
-        label: this.translationService.translate(item.label),
-      })),
-    }));
-    
-    this.filteredSections = translatedSections
+    // Translate for search comparison only, but keep original keys in the result
+    this.filteredSections = this.navSections
       .map(section => {
-        const filteredItems = section.items.filter(item =>
-          item.label.toLowerCase().includes(query) ||
-          section.title.toLowerCase().includes(query)
-        );
+        const translatedTitle = this.translationService.translate(section.title);
+        const filteredItems = section.items.filter(item => {
+          const translatedLabel = this.translationService.translate(item.label);
+          return (
+            translatedLabel.toLowerCase().includes(query) ||
+            translatedTitle.toLowerCase().includes(query)
+          );
+        });
 
         if (filteredItems.length > 0) {
+          // Keep original translation keys, not translated text
           return { ...section, items: filteredItems, expanded: true };
         }
         return null;

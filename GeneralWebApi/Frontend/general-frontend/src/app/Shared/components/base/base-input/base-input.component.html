@@ -12,7 +12,7 @@
 
     <input
       [id]="inputId"
-      [type]="type"
+      [type]="actualInputType"
       [placeholder]="placeholder"
       [disabled]="disabled"
       [readonly]="readonly"
@@ -30,8 +30,21 @@
       {{ suffixIcon }}
     </span>
 
+    <!-- Password visibility toggle button -->
     <button
-      *ngIf="clearable && value"
+      *ngIf="isPasswordType"
+      type="button"
+      class="password-toggle-button"
+      (click)="togglePasswordVisibility()"
+      [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+      tabindex="0"
+    >
+      <span class="material-icons">{{ passwordToggleIcon }}</span>
+    </button>
+
+    <!-- Clear button (only show if not password type or if password is visible) -->
+    <button
+      *ngIf="clearable && value && !isPasswordType"
       type="button"
       class="clear-button"
       (click)="onClear()"

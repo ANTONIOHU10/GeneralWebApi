@@ -54,7 +54,57 @@
     "loginSuccess": "Accesso riuscito",
     "loginFailed": "Accesso fallito",
     "invalidCredentials": "Nome utente o password non validi",
-    "sessionExpired": "La tua sessione è scaduta. Effettua nuovamente l'accesso."
+    "sessionExpired": "La tua sessione è scaduta. Effettua nuovamente l'accesso.",
+    "changePassword": {
+      "title": "Cambia password",
+      "sections": {
+        "passwordInformation": "Informazioni password",
+        "passwordInformationDescription": "Aggiorna la password del tuo account. Assicurati di utilizzare una password sicura."
+      },
+      "fields": {
+        "oldPassword": "Password attuale",
+        "oldPasswordPlaceholder": "Inserisci la tua password attuale",
+        "newPassword": "Nuova password",
+        "newPasswordPlaceholder": "Inserisci la tua nuova password",
+        "newPasswordHint": "La password deve contenere almeno 8 caratteri e includere maiuscole, minuscole, numeri e simboli speciali",
+        "confirmPassword": "Conferma nuova password",
+        "confirmPasswordPlaceholder": "Conferma la tua nuova password"
+      },
+      "buttons": {
+        "submit": "Cambia password",
+        "cancel": "Annulla"
+      },
+      "success": {
+        "title": "Password cambiata",
+        "message": "La tua password è stata aggiornata con successo."
+      },
+      "errors": {
+        "passwordMismatch": "Le password non corrispondono",
+        "passwordMismatchMessage": "La nuova password e la conferma non corrispondono.",
+        "samePassword": "Password non valida",
+        "samePasswordMessage": "La nuova password deve essere diversa dalla password attuale.",
+        "usernameRequired": "Nome utente richiesto",
+        "usernameRequiredMessage": "Il nome utente è richiesto per cambiare la password.",
+        "oldPasswordRequired": "Password attuale richiesta",
+        "oldPasswordRequiredMessage": "Inserisci la tua password attuale.",
+        "oldPasswordIncorrect": "La password attuale che hai inserito non è corretta.",
+        "invalidPassword": "Password non valida",
+        "userNotFound": "Utente non trovato",
+        "passwordValidationFailed": "Validazione password fallita",
+        "insufficientDifference": "Password troppo simile",
+        "insufficientDifferenceMessage": "La nuova password deve avere almeno 4 caratteri diversi dalla password attuale.",
+        "updateFailed": "Aggiornamento fallito",
+        "updateFailedMessage": "Impossibile aggiornare la password. Riprova."
+      },
+      "validation": {
+        "required": "La password è richiesta",
+        "minLength": "La password deve contenere almeno 8 caratteri",
+        "uppercase": "La password deve contenere almeno una lettera maiuscola (A-Z)",
+        "lowercase": "La password deve contenere almeno una lettera minuscola (a-z)",
+        "number": "La password deve contenere almeno un numero (0-9)",
+        "special": "La password deve contenere almeno un simbolo speciale (@$!%*?&)"
+      }
+    }
   },
   "settings": {
     "title": "Impostazioni",
@@ -1842,9 +1892,5 @@
         "cancel": "Annulla"
       }
     }
-  },
-  "table": {
-    "loading": "Caricamento...",
-    "emptyMessage": "Nessun dato disponibile"
   }
 }

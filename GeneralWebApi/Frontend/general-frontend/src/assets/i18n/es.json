@@ -54,7 +54,57 @@
     "loginSuccess": "Inicio de sesión exitoso",
     "loginFailed": "Error al iniciar sesión",
     "invalidCredentials": "Nombre de usuario o contraseña inválidos",
-    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+    "changePassword": {
+      "title": "Cambiar contraseña",
+      "sections": {
+        "passwordInformation": "Información de contraseña",
+        "passwordInformationDescription": "Actualiza la contraseña de tu cuenta. Asegúrate de usar una contraseña segura."
+      },
+      "fields": {
+        "oldPassword": "Contraseña actual",
+        "oldPasswordPlaceholder": "Ingresa tu contraseña actual",
+        "newPassword": "Nueva contraseña",
+        "newPasswordPlaceholder": "Ingresa tu nueva contraseña",
+        "newPasswordHint": "La contraseña debe tener al menos 8 caracteres y contener mayúsculas, minúsculas, números y símbolos especiales",
+        "confirmPassword": "Confirmar nueva contraseña",
+        "confirmPasswordPlaceholder": "Confirma tu nueva contraseña"
+      },
+      "buttons": {
+        "submit": "Cambiar contraseña",
+        "cancel": "Cancelar"
+      },
+      "success": {
+        "title": "Contraseña cambiada",
+        "message": "Tu contraseña ha sido actualizada exitosamente."
+      },
+      "errors": {
+        "passwordMismatch": "Contraseñas no coinciden",
+        "passwordMismatchMessage": "La nueva contraseña y la confirmación no coinciden.",
+        "samePassword": "Contraseña inválida",
+        "samePasswordMessage": "La nueva contraseña debe ser diferente de la contraseña actual.",
+        "usernameRequired": "Nombre de usuario requerido",
+        "usernameRequiredMessage": "Se requiere el nombre de usuario para cambiar la contraseña.",
+        "oldPasswordRequired": "Contraseña actual requerida",
+        "oldPasswordRequiredMessage": "Por favor, ingresa tu contraseña actual.",
+        "oldPasswordIncorrect": "La contraseña actual que ingresaste es incorrecta.",
+        "invalidPassword": "Contraseña inválida",
+        "userNotFound": "Usuario no encontrado",
+        "passwordValidationFailed": "Validación de contraseña fallida",
+        "insufficientDifference": "Contraseña demasiado similar",
+        "insufficientDifferenceMessage": "La nueva contraseña debe tener al menos 4 caracteres diferentes de la contraseña actual.",
+        "updateFailed": "Actualización fallida",
+        "updateFailedMessage": "Error al actualizar la contraseña. Por favor, inténtalo de nuevo."
+      },
+      "validation": {
+        "required": "La contraseña es requerida",
+        "minLength": "La contraseña debe tener al menos 8 caracteres",
+        "uppercase": "La contraseña debe contener al menos una letra mayúscula (A-Z)",
+        "lowercase": "La contraseña debe contener al menos una letra minúscula (a-z)",
+        "number": "La contraseña debe contener al menos un número (0-9)",
+        "special": "La contraseña debe contener al menos un símbolo especial (@$!%*?&)"
+      }
+    }
   },
   "settings": {
     "title": "Configuración",
@@ -1696,9 +1746,5 @@
         "cancel": "Cancelar"
       }
     }
-  },
-  "table": {
-    "loading": "Cargando...",
-    "emptyMessage": "No hay datos disponibles"
   }
 }

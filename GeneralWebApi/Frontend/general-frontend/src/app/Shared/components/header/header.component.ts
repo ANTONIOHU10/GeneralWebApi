@@ -5,9 +5,10 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { NotificationCenterService } from '@core/services/notification-center.service';
+import { TokenService } from '@core/services/token.service';
 import { Notification } from 'app/contracts/notifications/notification.model';
 import { catchError, of, interval, Subject } from 'rxjs';
-import { takeUntil, startWith, switchMap } from 'rxjs/operators';
+import { takeUntil, startWith, switchMap, filter } from 'rxjs/operators';
 import { HeaderBrandComponent } from './components/header-brand/header-brand.component';
 import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
 import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
@@ -44,6 +45,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private notificationCenterService = inject(NotificationCenterService);
+  private tokenService = inject(TokenService);
   private destroy$ = new Subject<void>();
 
   notificationCount = 0;
@@ -115,8 +117,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   /**
    * Load notification count from backend
    * Public method to allow external refresh
+   * Only loads if user is authenticated
    */
   loadNotificationCount(): void {
+    // Don't load notifications if user is not authenticated
+    if (!this.tokenService.isAuthenticated() || this.tokenService.isExpired()) {
+      this.notificationCount = 0;
+      return;
+    }
+
     this.notificationService.getUnreadCount().pipe(
       takeUntil(this.destroy$),
       catchError((error) => {
@@ -132,10 +141,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Start polling for notification count updates (every 30 seconds)
+   * Only polls if user is authenticated
    */
   private startNotificationCountPolling(): void {
     interval(30000).pipe(
       startWith(0),
+      // Check authentication before each poll
+      filter(() => this.tokenService.isAuthenticated() && !this.tokenService.isExpired()),
       switchMap(() => this.notificationService.getUnreadCount()),
       takeUntil(this.destroy$),
       catchError((error) => {
@@ -152,10 +164,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   /**
    * Subscribe to notification refresh events from NotificationCenterService
    * This ensures the header count updates immediately when notifications are modified
+   * Only refreshes if user is authenticated
    */
   private subscribeToNotificationRefresh(): void {
     this.notificationCenterService.notificationCountRefresh$.pipe(
-      takeUntil(this.destroy$)
+      takeUntil(this.destroy$),
+      // Only refresh if user is authenticated
+      filter(() => this.tokenService.isAuthenticated() && !this.tokenService.isExpired())
     ).subscribe({
       next: () => {
         // Immediately refresh notification count when notification status changes

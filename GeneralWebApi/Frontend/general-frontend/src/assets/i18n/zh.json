@@ -54,7 +54,57 @@
     "loginSuccess": "登录成功",
     "loginFailed": "登录失败",
     "invalidCredentials": "用户名或密码错误",
-    "sessionExpired": "会话已过期，请重新登录"
+    "sessionExpired": "会话已过期，请重新登录",
+    "changePassword": {
+      "title": "修改密码",
+      "sections": {
+        "passwordInformation": "密码信息",
+        "passwordInformationDescription": "更新您的账户密码。请确保使用强密码。"
+      },
+      "fields": {
+        "oldPassword": "当前密码",
+        "oldPasswordPlaceholder": "请输入当前密码",
+        "newPassword": "新密码",
+        "newPasswordPlaceholder": "请输入新密码",
+        "newPasswordHint": "密码必须至少8个字符，包含大写字母、小写字母、数字和特殊符号",
+        "confirmPassword": "确认新密码",
+        "confirmPasswordPlaceholder": "请再次输入新密码"
+      },
+      "buttons": {
+        "submit": "修改密码",
+        "cancel": "取消"
+      },
+      "success": {
+        "title": "密码已修改",
+        "message": "您的密码已成功更新。"
+      },
+      "errors": {
+        "passwordMismatch": "密码不匹配",
+        "passwordMismatchMessage": "新密码和确认密码不匹配。",
+        "samePassword": "密码无效",
+        "samePasswordMessage": "新密码必须与当前密码不同。",
+        "usernameRequired": "需要用户名",
+        "usernameRequiredMessage": "修改密码需要用户名。",
+        "oldPasswordRequired": "需要当前密码",
+        "oldPasswordRequiredMessage": "请输入您的当前密码。",
+        "oldPasswordIncorrect": "您输入的当前密码不正确。",
+        "invalidPassword": "密码无效",
+        "userNotFound": "用户不存在",
+        "passwordValidationFailed": "密码验证失败",
+        "insufficientDifference": "密码过于相似",
+        "insufficientDifferenceMessage": "新密码必须与当前密码至少有4个字符不同。",
+        "updateFailed": "更新失败",
+        "updateFailedMessage": "密码更新失败，请重试。"
+      },
+      "validation": {
+        "required": "密码是必填项",
+        "minLength": "密码必须至少8个字符",
+        "uppercase": "密码必须包含至少一个大写字母 (A-Z)",
+        "lowercase": "密码必须包含至少一个小写字母 (a-z)",
+        "number": "密码必须包含至少一个数字 (0-9)",
+        "special": "密码必须包含至少一个特殊符号 (@$!%*?&)"
+      }
+    }
   },
   "settings": {
     "title": "设置",
@@ -1730,10 +1780,6 @@
       "rejectMessage": "请提供拒绝原因：",
       "rejectPlaceholder": "输入拒绝原因（必填）"
     }
-  },
-  "table": {
-    "loading": "加载中...",
-    "emptyMessage": "暂无数据"
   },
   "notifications": {
     "title": "通知",

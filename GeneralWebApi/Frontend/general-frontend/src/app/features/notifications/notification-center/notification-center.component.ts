@@ -20,6 +20,7 @@ import {
 import { NotificationService } from '../../../Shared/services';
 import { NotificationCenterService } from '../../../core/services/notification-center.service';
 import { TranslationService } from '@core/services/translation.service';
+import { TokenService } from '@core/services/token.service';
 import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { ApprovalNotificationProvider } from '../../../core/services/notification-providers/approval-notification.provider';
 import { TaskNotificationProvider } from '../../../core/services/notification-providers/task-notification.provider';
@@ -56,6 +57,7 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   private notificationCenterService = inject(NotificationCenterService);
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslationService);
+  private tokenService = inject(TokenService);
   private router = inject(Router);
   private approvalProvider = inject(ApprovalNotificationProvider);
   private taskProvider = inject(TaskNotificationProvider);
@@ -137,10 +139,12 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
     this.loadNotifications();
     
     // Auto-refresh every 30 seconds
+    // Only refresh if user is authenticated
     interval(30000)
       .pipe(
         takeUntil(this.destroy$),
-        startWith(0)
+        startWith(0),
+        filter(() => this.tokenService.isAuthenticated() && !this.tokenService.isExpired())
       )
       .subscribe(() => {
         this.loadNotifications();
@@ -203,8 +207,18 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
 
   /**
    * Load notifications from all providers
+   * Only loads if user is authenticated
    */
   loadNotifications(): void {
+    // Don't load notifications if user is not authenticated
+    if (!this.tokenService.isAuthenticated() || this.tokenService.isExpired()) {
+      this.notifications.set([]);
+      this.notificationsData$.next([]);
+      this.loading$.next(false);
+      this.error$.next(null);
+      return;
+    }
+
     this.loading$.next(true);
     this.error$.next(null);
 

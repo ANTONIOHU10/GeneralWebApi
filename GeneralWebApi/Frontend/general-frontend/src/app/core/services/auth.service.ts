@@ -14,6 +14,8 @@ import {
   LogoutData,
   UserInfoRequest,
   UserInfoData,
+  UpdatePasswordRequest,
+  UpdatePasswordData,
 } from 'app/contracts/auth/auth.models';
 import { ApiResponse } from 'app/contracts/common/api-response';
 import { decodeJwt } from '@core/utils/jwt.util';
@@ -144,5 +146,10 @@ export class AuthService extends BaseHttpService {
       email?: string;
       roles?: string[];
     }>(`${this.endpoint}/me`);
+  }
+
+  // Update password - automatically extracts data
+  updatePassword(payload: UpdatePasswordRequest): Observable<UpdatePasswordData> {
+    return this.put<UpdatePasswordData>(`${this.endpoint}/update-password`, payload);
   }
 }

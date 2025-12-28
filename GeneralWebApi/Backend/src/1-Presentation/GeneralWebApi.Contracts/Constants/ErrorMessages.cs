@@ -35,6 +35,9 @@ public static class ErrorMessages
         public const string ClaimsGenerationFailed = "Failed to generate user claims. Please try again";
         public const string LogoutFailed = "Failed to log out. Please try again";
         public const string PasswordUpdateFailed = "Failed to update password. Please ensure your new password meets the requirements";
+        public const string OldPasswordIncorrect = "The current password you entered is incorrect. Please check and try again";
+        public const string PasswordValidationFailed = "The new password does not meet the security requirements. Please ensure it contains at least 8 characters, including uppercase, lowercase, numbers, and special symbols";
+        public const string PasswordTooSimilar = "The new password is too similar to your current password. Please choose a password with at least 4 different characters";
     }
 
     /// <summary>

@@ -12,6 +12,6 @@ public interface IUserService
     Task<bool> ValidateUserAsync(string username, string password);
     Task<(bool Success, string ErrorMessage)> RegisterUserAsync(string username, string password, string email);
     string GeneratePasswordHash(string password);
-    Task<bool> UpdatePasswordAsync(string username, string newPassword);
+    Task<UpdatePasswordResult> UpdatePasswordAsync(string username, string oldPassword, string newPassword);
 
 }

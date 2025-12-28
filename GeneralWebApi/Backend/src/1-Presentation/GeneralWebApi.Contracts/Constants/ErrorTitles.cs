@@ -33,6 +33,8 @@ public static class ErrorTitles
         public const string ClaimsGenerationFailed = "Claims generation failed";
         public const string LogoutFailed = "Logout failed";
         public const string PasswordUpdateFailed = "Password update failed";
+        public const string OldPasswordIncorrect = "Old password incorrect";
+        public const string PasswordValidationFailed = "Password validation failed";
     }
 
     /// <summary>

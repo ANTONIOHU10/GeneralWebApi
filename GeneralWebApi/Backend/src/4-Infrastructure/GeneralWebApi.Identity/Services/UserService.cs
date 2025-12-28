@@ -443,14 +443,28 @@ public class UserService : IUserService
         return employeeNumber;
     }
 
-    public async Task<bool> UpdatePasswordAsync(string username, string newPassword)
+    public async Task<UpdatePasswordResult> UpdatePasswordAsync(string username, string oldPassword, string newPassword)
     {
         try
         {
+            // Validate old password first
+            if (!await ValidateUserAsync(username, oldPassword))
+            {
+                _logger.LogWarning(LogTemplates.Identity.UserLoginFailed, username, "Old password is incorrect");
+                return UpdatePasswordResult.CreateError(
+                    "Old password incorrect",
+                    "The current password you entered is incorrect. Please check and try again"
+                );
+            }
+
             var user = await _userRepository.GetByNameAsync(username);
             if (user == null)
             {
-                return false;
+                _logger.LogWarning(LogTemplates.Identity.UserLoginFailed, username, "User not found");
+                return UpdatePasswordResult.CreateError(
+                    "User not found",
+                    "The specified user could not be found"
+                );
             }
 
             user.PasswordHash = GeneratePasswordHash(newPassword);
@@ -462,12 +476,15 @@ public class UserService : IUserService
             await _userRepository.UpdatePasswordAsync(user);
 
             _logger.LogInformation(LogTemplates.Identity.PasswordUpdate, username);
-            return true;
+            return UpdatePasswordResult.CreateSuccess();
         }
         catch (Exception ex)
         {
             _logger.LogError(LogTemplates.Identity.PasswordUpdateError, ex.Message);
-            return false;
+            return UpdatePasswordResult.CreateError(
+                "Password update failed",
+                "Failed to update password. Please ensure your new password meets the requirements"
+            );
         }
     }
 

@@ -62,6 +62,8 @@ export class BaseInputComponent implements ControlValueAccessor {
   @Output() inputClear = new EventEmitter<void>();
 
   value = '';
+  showPassword = false; // Track password visibility state
+  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onChange = (_value: string) => {
     // ControlValueAccessor implementation
@@ -97,10 +99,26 @@ export class BaseInputComponent implements ControlValueAccessor {
     const classes = [
       'base-input',
       this.prefixIcon ? 'with-prefix' : '',
-      this.suffixIcon || this.clearable ? 'with-suffix' : '',
+      this.suffixIcon || (this.clearable && !this.isPasswordType) || this.isPasswordType ? 'with-suffix' : '',
     ].filter(Boolean);
 
     return classes.join(' ');
+  }
+
+  get isPasswordType(): boolean {
+    return this.type === 'password';
+  }
+
+  get actualInputType(): string {
+    // If it's a password field and showPassword is true, show as text
+    if (this.isPasswordType && this.showPassword) {
+      return 'text';
+    }
+    return this.type;
+  }
+
+  get passwordToggleIcon(): string {
+    return this.showPassword ? 'visibility_off' : 'visibility';
   }
 
   get autocompleteValue(): string {
@@ -144,6 +162,10 @@ export class BaseInputComponent implements ControlValueAccessor {
     this.value = '';
     this.onChange(this.value);
     this.inputClear.emit();
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   // ControlValueAccessor implementation

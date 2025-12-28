@@ -115,6 +115,40 @@ input {
   }
 }
 
+.password-toggle-button {
+  position: absolute;
+  right: $spacing-3;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-1;
+  border-radius: $border-radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  transition: all $duration-200 $ease-out;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+
+  &:hover {
+    background: var(--background-tertiary);
+    color: var(--text-primary);
+  }
+
+  &:focus {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+  }
+
+  .material-icons {
+    font-size: 1.25rem;
+  }
+}
+
 .clear-button {
   position: absolute;
   right: $spacing-3;

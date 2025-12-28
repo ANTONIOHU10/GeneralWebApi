@@ -54,7 +54,57 @@
     "loginSuccess": "Login successful",
     "loginFailed": "Login failed",
     "invalidCredentials": "Invalid username or password",
-    "sessionExpired": "Your session has expired. Please login again."
+    "sessionExpired": "Your session has expired. Please login again.",
+    "changePassword": {
+      "title": "Change Password",
+      "sections": {
+        "passwordInformation": "Password Information",
+        "passwordInformationDescription": "Update your account password. Make sure to use a strong password."
+      },
+      "fields": {
+        "oldPassword": "Current Password",
+        "oldPasswordPlaceholder": "Enter your current password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter your new password",
+        "newPasswordHint": "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special symbol",
+        "confirmPassword": "Confirm New Password",
+        "confirmPasswordPlaceholder": "Confirm your new password"
+      },
+      "buttons": {
+        "submit": "Change Password",
+        "cancel": "Cancel"
+      },
+      "success": {
+        "title": "Password Changed",
+        "message": "Your password has been successfully updated."
+      },
+      "errors": {
+        "passwordMismatch": "Password Mismatch",
+        "passwordMismatchMessage": "New password and confirm password do not match.",
+        "samePassword": "Invalid Password",
+        "samePasswordMessage": "New password must be different from current password.",
+        "usernameRequired": "Username Required",
+        "usernameRequiredMessage": "Username is required to change password.",
+        "oldPasswordRequired": "Current Password Required",
+        "oldPasswordRequiredMessage": "Please enter your current password.",
+        "oldPasswordIncorrect": "The current password you entered is incorrect.",
+        "invalidPassword": "Invalid Password",
+        "userNotFound": "User Not Found",
+        "passwordValidationFailed": "Password Validation Failed",
+        "insufficientDifference": "Password Too Similar",
+        "insufficientDifferenceMessage": "New password must have at least 4 characters different from current password.",
+        "updateFailed": "Update Failed",
+        "updateFailedMessage": "Failed to update password. Please try again."
+      },
+      "validation": {
+        "required": "Password is required",
+        "minLength": "Password must be at least 8 characters long",
+        "uppercase": "Password must contain at least one uppercase letter (A-Z)",
+        "lowercase": "Password must contain at least one lowercase letter (a-z)",
+        "number": "Password must contain at least one number (0-9)",
+        "special": "Password must contain at least one special symbol (@$!%*?&)"
+      }
+    }
   },
   "settings": {
     "title": "Settings",
@@ -1770,9 +1820,5 @@
       "rejectMessage": "Please provide a reason for rejection:",
       "rejectPlaceholder": "Enter rejection reason (required)"
     }
-  },
-  "table": {
-    "loading": "Loading...",
-    "emptyMessage": "No data available"
   }
 }
