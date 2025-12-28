@@ -103,19 +103,7 @@
 <!-- Approve Dialog -->
 <app-base-prompt-dialog
   [isOpen]="!!showApproveDialog().approval"
-  [config]="{
-    title: 'Approve Contract',
-    message: `Approve contract for ${showApproveDialog().approval?.contractEmployeeName || 'this contract'}?`,
-    label: 'Comments (Optional)',
-    placeholder: 'Enter approval comments...',
-    confirmText: 'Approve',
-    cancelText: 'Cancel',
-    confirmVariant: 'primary',
-    icon: 'check',
-    required: false,
-    maxLength: 500,
-    rows: 4
-  }"
+  [config]="approveDialogConfig()"
   (confirm)="onApproveConfirm($event)"
   (cancelAction)="onApproveDialogClose()"
   (dialogClose)="onApproveDialogClose()"
@@ -124,19 +112,7 @@
 <!-- Reject Dialog -->
 <app-base-prompt-dialog
   [isOpen]="!!showRejectDialog().approval"
-  [config]="{
-    title: 'Reject Contract',
-    message: `Reject contract for ${showRejectDialog().approval?.contractEmployeeName || 'this contract'}?`,
-    label: 'Rejection Reason',
-    placeholder: 'Please provide a reason for rejection...',
-    confirmText: 'Reject',
-    cancelText: 'Cancel',
-    confirmVariant: 'danger',
-    icon: 'close',
-    required: true,
-    maxLength: 500,
-    rows: 4
-  }"
+  [config]="rejectDialogConfig()"
   (confirm)="onRejectConfirm($event)"
   (cancelAction)="onRejectDialogClose()"
   (dialogClose)="onRejectDialogClose()"

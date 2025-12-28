@@ -190,6 +190,43 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
   showApproveDialog = signal<{ approval: ContractApproval | null }>({ approval: null });
   showRejectDialog = signal<{ approval: ContractApproval | null }>({ approval: null });
 
+  // Computed dialog configs
+  approveDialogConfig = computed(() => {
+    const approval = this.showApproveDialog().approval;
+    const employeeName = approval?.contractEmployeeName || 'this contract';
+    return {
+      title: this.translationService.translate('contractApprovals.dialog.approveTitle'),
+      message: this.translationService.translate('contractApprovals.dialog.approveMessage', { name: employeeName }),
+      label: this.translationService.translate('contractApprovals.dialog.approveLabel'),
+      placeholder: this.translationService.translate('contractApprovals.dialog.approvePlaceholder'),
+      confirmText: this.translationService.translate('contractApprovals.actions.approve'),
+      cancelText: this.translationService.translate('common.cancel'),
+      confirmVariant: 'primary' as const,
+      icon: 'check',
+      required: false,
+      maxLength: 500,
+      rows: 4,
+    };
+  });
+
+  rejectDialogConfig = computed(() => {
+    const approval = this.showRejectDialog().approval;
+    const employeeName = approval?.contractEmployeeName || 'this contract';
+    return {
+      title: this.translationService.translate('contractApprovals.dialog.rejectTitle'),
+      message: this.translationService.translate('contractApprovals.dialog.rejectMessage', { name: employeeName }),
+      label: this.translationService.translate('contractApprovals.dialog.rejectLabel'),
+      placeholder: this.translationService.translate('contractApprovals.dialog.rejectPlaceholder'),
+      confirmText: this.translationService.translate('contractApprovals.actions.reject'),
+      cancelText: this.translationService.translate('common.cancel'),
+      confirmVariant: 'danger' as const,
+      icon: 'close',
+      required: true,
+      maxLength: 500,
+      rows: 4,
+    };
+  });
+
   onApprove(approval: ContractApproval): void {
     this.showApproveDialog.set({ approval });
   }

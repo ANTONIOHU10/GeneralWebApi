@@ -793,8 +793,12 @@
     "dialog": {
       "approveTitle": "批准合同",
       "approveMessage": "批准 {{name}} 的合同？",
+      "approveLabel": "备注（可选）",
+      "approvePlaceholder": "输入批准备注...",
       "rejectTitle": "拒绝合同",
-      "rejectMessage": "拒绝 {{name}} 的合同？"
+      "rejectMessage": "拒绝 {{name}} 的合同？",
+      "rejectLabel": "拒绝原因",
+      "rejectPlaceholder": "请输入拒绝原因..."
     },
     "detail": {
       "title": "合同审批详情",
@@ -935,6 +939,48 @@
       "submitButton": "创建模板",
       "confirmTitle": "确认添加",
       "confirmMessage": "您确定要添加模板 \"{{name}}\" 吗？"
+    },
+    "delete": {
+      "confirmTitle": "删除模板",
+      "confirmMessage": "删除模板 \"{{name}}\" 吗？此操作无法撤销。",
+      "confirmText": "删除",
+      "cancelText": "取消"
+    },
+    "detail": {
+      "title": {
+        "edit": "编辑模板",
+        "view": "模板详情"
+      },
+      "sections": {
+        "templateInformation": "模板信息",
+        "templateInformationDescription": "模板基本信息",
+        "templateContent": "模板内容",
+        "templateContentDescription": "模板内容和变量",
+        "settings": "设置",
+        "settingsDescription": "模板设置"
+      },
+      "fields": {
+        "name": "模板名称",
+        "namePlaceholder": "输入模板名称",
+        "description": "描述",
+        "descriptionPlaceholder": "输入模板描述",
+        "contractType": "合同类型",
+        "contractTypePlaceholder": "选择合同类型",
+        "category": "类别",
+        "categoryPlaceholder": "选择类别",
+        "templateContent": "模板内容",
+        "templateContentPlaceholder": "输入模板内容（支持变量如 {{employeeName}}）",
+        "variables": "变量（JSON）",
+        "legalRequirements": "法律要求",
+        "legalRequirementsPlaceholder": "输入法律要求或合规说明",
+        "tags": "标签（JSON数组）",
+        "isActive": "活跃",
+        "isDefault": "设为默认"
+      },
+      "buttons": {
+        "updateTemplate": "更新模板",
+        "cancel": "取消"
+      }
     }
   },
   "contractReminders": {
@@ -1638,7 +1684,10 @@
     "priorityLow": "低",
     "priorityMedium": "中",
     "priorityHigh": "高",
-    "priorityUrgent": "紧急"
+    "priorityUrgent": "紧急",
+    "delete": {
+      "confirmMessage": "您确定要删除任务 \"{{title}}\" 吗？此操作无法撤销。"
+    }
   },
   "approvals": {
     "title": "审批管理",

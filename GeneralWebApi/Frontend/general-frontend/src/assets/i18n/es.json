@@ -1538,6 +1538,165 @@
       "rejectPlaceholder": "Ingrese razón de rechazo (requerido)"
     }
   },
+  "tasks": {
+    "title": "Mis Tareas",
+    "subtitle": "Gestiona tu lista de tareas personales",
+    "loading": "Cargando tareas...",
+    "emptyTitle": "No se encontraron tareas",
+    "emptyDescription": "Aún no tienes tareas. ¡Crea tu primera tarea para comenzar!",
+    "emptyActionText": "Crear Primera Tarea",
+    "newTask": "Nueva Tarea",
+    "editTask": "Editar Tarea",
+    "createNewTask": "Crear Nueva Tarea",
+    "updateTask": "Actualizar Tarea",
+    "createTask": "Crear Tarea",
+    "deleteTask": "Eliminar tarea",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Ingrese título de tarea",
+    "descriptionLabel": "Descripción",
+    "descriptionPlaceholder": "Ingrese descripción de tarea (opcional)",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "statusAll": "Todas",
+    "statusPending": "Pendiente",
+    "statusInProgress": "En Progreso",
+    "statusCompleted": "Completada",
+    "statusCancelled": "Cancelada",
+    "priorityLow": "Baja",
+    "priorityMedium": "Media",
+    "priorityHigh": "Alta",
+    "priorityUrgent": "Urgente",
+    "delete": {
+      "confirmMessage": "¿Está seguro de que desea eliminar la tarea \"{{title}}\"? Esta acción no se puede deshacer."
+    }
+  },
+  "contractApprovals": {
+    "title": "Aprobaciones de Contratos",
+    "subtitle": "Gestionar y revisar solicitudes de aprobación de contratos",
+    "loading": "Cargando aprobaciones...",
+    "emptyTitle": "No hay Aprobaciones",
+    "emptyDescription": "No hay aprobaciones de contratos que coincidan con el filtro seleccionado",
+    "stats": {
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado"
+    },
+    "columns": {
+      "employee": "Empleado",
+      "contractType": "Tipo de Contrato",
+      "status": "Estado",
+      "progress": "Progreso",
+      "requestedBy": "Solicitado Por",
+      "requestedAt": "Solicitado En"
+    },
+    "actions": {
+      "view": "Ver",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    },
+    "filterOptions": {
+      "all": "Todas",
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado"
+    },
+    "dialog": {
+      "approveTitle": "Aprobar Contrato",
+      "approveMessage": "¿Aprobar contrato para {{name}}?",
+      "approveLabel": "Comentarios (Opcional)",
+      "approvePlaceholder": "Ingrese comentarios de aprobación...",
+      "rejectTitle": "Rechazar Contrato",
+      "rejectMessage": "¿Rechazar contrato para {{name}}?",
+      "rejectLabel": "Razón de Rechazo",
+      "rejectPlaceholder": "Por favor proporcione una razón para el rechazo..."
+    }
+  },
+  "contractTemplates": {
+    "title": "Plantillas de Contrato",
+    "subtitle": "Gestionar plantillas de contrato para creación rápida de contratos",
+    "searchPlaceholder": "Buscar plantillas...",
+    "loading": "Cargando plantillas...",
+    "emptyTitle": "No hay Plantillas",
+    "emptyDescription": "No hay plantillas de contrato que coincidan con el filtro seleccionado",
+    "tabs": {
+      "list": "Lista de Plantillas",
+      "add": "Agregar Plantilla"
+    },
+    "columns": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "contractType": "Tipo",
+      "category": "Categoría",
+      "usageCount": "Uso",
+      "status": "Estado",
+      "default": "Predeterminado",
+      "version": "Versión"
+    },
+    "stats": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "default": "Predeterminado"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "default": "Predeterminado"
+    },
+    "filterOptions": {
+      "all": "Todas",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "default": "Predeterminado"
+    },
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "duplicate": "Duplicar"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar Plantilla",
+      "confirmMessage": "¿Eliminar plantilla \"{{name}}\"? Esta acción no se puede deshacer.",
+      "confirmText": "Eliminar",
+      "cancelText": "Cancelar"
+    },
+    "detail": {
+      "title": {
+        "edit": "Editar Plantilla",
+        "view": "Detalles de Plantilla"
+      },
+      "sections": {
+        "templateInformation": "Información de Plantilla",
+        "templateInformationDescription": "Información básica de la plantilla",
+        "templateContent": "Contenido de Plantilla",
+        "templateContentDescription": "Contenido y variables de la plantilla",
+        "settings": "Configuración",
+        "settingsDescription": "Configuración de la plantilla"
+      },
+      "fields": {
+        "name": "Nombre de Plantilla",
+        "namePlaceholder": "Ingrese nombre de plantilla",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ingrese descripción de plantilla",
+        "contractType": "Tipo de Contrato",
+        "contractTypePlaceholder": "Seleccione tipo de contrato",
+        "category": "Categoría",
+        "categoryPlaceholder": "Seleccione categoría",
+        "templateContent": "Contenido de Plantilla",
+        "templateContentPlaceholder": "Ingrese contenido de plantilla (admite variables como {{employeeName}})",
+        "variables": "Variables (JSON)",
+        "legalRequirements": "Requisitos Legales",
+        "legalRequirementsPlaceholder": "Ingrese requisitos legales o notas de cumplimiento",
+        "tags": "Etiquetas (array JSON)",
+        "isActive": "Activo",
+        "isDefault": "Establecer como Predeterminado"
+      },
+      "buttons": {
+        "updateTemplate": "Actualizar Plantilla",
+        "cancel": "Cancelar"
+      }
+    }
+  },
   "table": {
     "loading": "Cargando...",
     "emptyMessage": "No hay datos disponibles"

@@ -833,8 +833,12 @@
     "dialog": {
       "approveTitle": "Approve Contract",
       "approveMessage": "Approve contract for {{name}}?",
+      "approveLabel": "Comments (Optional)",
+      "approvePlaceholder": "Enter approval comments...",
       "rejectTitle": "Reject Contract",
-      "rejectMessage": "Reject contract for {{name}}?"
+      "rejectMessage": "Reject contract for {{name}}?",
+      "rejectLabel": "Rejection Reason",
+      "rejectPlaceholder": "Please provide a reason for rejection..."
     },
     "detail": {
       "title": "Contract Approval Details",
@@ -975,6 +979,48 @@
       "submitButton": "Create Template",
       "confirmTitle": "Confirm Add",
       "confirmMessage": "Are you sure you want to add template \"{{name}}\"?"
+    },
+    "delete": {
+      "confirmTitle": "Delete Template",
+      "confirmMessage": "Delete template \"{{name}}\"? This action cannot be undone.",
+      "confirmText": "Delete",
+      "cancelText": "Cancel"
+    },
+    "detail": {
+      "title": {
+        "edit": "Edit Template",
+        "view": "Template Details"
+      },
+      "sections": {
+        "templateInformation": "Template Information",
+        "templateInformationDescription": "Template basic information",
+        "templateContent": "Template Content",
+        "templateContentDescription": "Template content and variables",
+        "settings": "Settings",
+        "settingsDescription": "Template settings"
+      },
+      "fields": {
+        "name": "Template Name",
+        "namePlaceholder": "Enter template name",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter template description",
+        "contractType": "Contract Type",
+        "contractTypePlaceholder": "Select contract type",
+        "category": "Category",
+        "categoryPlaceholder": "Select category",
+        "templateContent": "Template Content",
+        "templateContentPlaceholder": "Enter template content (supports variables like {{employeeName}})",
+        "variables": "Variables (JSON)",
+        "legalRequirements": "Legal Requirements",
+        "legalRequirementsPlaceholder": "Enter legal requirements or compliance notes",
+        "tags": "Tags (JSON array)",
+        "isActive": "Active",
+        "isDefault": "Set as Default"
+      },
+      "buttons": {
+        "updateTemplate": "Update Template",
+        "cancel": "Cancel"
+      }
     }
   },
   "contractReminders": {
@@ -1678,7 +1724,10 @@
     "priorityLow": "Low",
     "priorityMedium": "Medium",
     "priorityHigh": "High",
-    "priorityUrgent": "Urgent"
+    "priorityUrgent": "Urgent",
+    "delete": {
+      "confirmMessage": "Are you sure you want to delete task \"{{title}}\"? This action cannot be undone."
+    }
   },
   "approvals": {
     "title": "Approval Management",

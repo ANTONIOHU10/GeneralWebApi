@@ -202,8 +202,9 @@ export class TaskListComponent implements OnInit, OnDestroy {
    * Delete task
    */
   onDeleteTask(task: Task): void {
+    const confirmMessage = this.translationService.translate('tasks.delete.confirmMessage', { title: task.title });
     this.dialogService
-      .confirmDelete(`Are you sure you want to delete "${task.title}"?`)
+      .confirmDelete(confirmMessage)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (confirmed: boolean) => {

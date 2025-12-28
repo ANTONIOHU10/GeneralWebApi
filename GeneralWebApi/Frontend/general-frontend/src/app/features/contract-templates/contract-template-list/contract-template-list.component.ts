@@ -310,11 +310,14 @@ export class ContractTemplateListComponent implements OnInit, OnDestroy {
   }
 
   onDelete(template: ContractTemplate): void {
+    const t = (key: string, params?: Record<string, string | number>) => 
+      this.translationService.translate(key, params);
+    
     this.dialogService.confirm({
-      title: 'Delete Template',
-      message: `Delete template "${template.name}"? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: t('contractTemplates.delete.confirmTitle'),
+      message: t('contractTemplates.delete.confirmMessage', { name: template.name }),
+      confirmText: t('contractTemplates.delete.confirmText'),
+      cancelText: t('contractTemplates.delete.cancelText'),
       confirmVariant: 'danger',
       icon: 'warning',
     }).pipe(first(), filter(c => c)).subscribe(() => {

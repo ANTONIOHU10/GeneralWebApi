@@ -1669,7 +1669,10 @@
     "priorityLow": "Bassa",
     "priorityMedium": "Media",
     "priorityHigh": "Alta",
-    "priorityUrgent": "Urgente"
+    "priorityUrgent": "Urgente",
+    "delete": {
+      "confirmMessage": "Sei sicuro di voler eliminare l'attività \"{{title}}\"? Questa azione non può essere annullata."
+    }
   },
   "approvals": {
     "title": "Gestione Approvazioni",
@@ -1711,6 +1714,133 @@
       "rejectTitle": "Rifiuta Richiesta",
       "rejectMessage": "Fornisci un motivo per il rifiuto:",
       "rejectPlaceholder": "Inserisci motivo rifiuto (obbligatorio)"
+    }
+  },
+  "contractApprovals": {
+    "title": "Approvazioni Contratti",
+    "subtitle": "Gestisci e revisiona le richieste di approvazione contratti",
+    "loading": "Caricamento approvazioni...",
+    "emptyTitle": "Nessuna Approvazione",
+    "emptyDescription": "Nessuna approvazione contratto corrisponde al filtro selezionato",
+    "stats": {
+      "pending": "In Attesa",
+      "approved": "Approvata",
+      "rejected": "Rifiutata"
+    },
+    "columns": {
+      "employee": "Dipendente",
+      "contractType": "Tipo Contratto",
+      "status": "Stato",
+      "progress": "Progresso",
+      "requestedBy": "Richiesto Da",
+      "requestedAt": "Richiesto Il"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "approve": "Approva",
+      "reject": "Rifiuta"
+    },
+    "filterOptions": {
+      "all": "Tutte",
+      "pending": "In Attesa",
+      "approved": "Approvata",
+      "rejected": "Rifiutata"
+    },
+    "dialog": {
+      "approveTitle": "Approva Contratto",
+      "approveMessage": "Approva contratto per {{name}}?",
+      "approveLabel": "Commenti (Opzionale)",
+      "approvePlaceholder": "Inserisci commenti approvazione...",
+      "rejectTitle": "Rifiuta Contratto",
+      "rejectMessage": "Rifiuta contratto per {{name}}?",
+      "rejectLabel": "Motivo Rifiuto",
+      "rejectPlaceholder": "Fornisci un motivo per il rifiuto..."
+    }
+  },
+  "contractTemplates": {
+    "title": "Modelli Contratto",
+    "subtitle": "Gestisci modelli contratto per creazione rapida contratti",
+    "searchPlaceholder": "Cerca modelli...",
+    "loading": "Caricamento modelli...",
+    "emptyTitle": "Nessun Modello",
+    "emptyDescription": "Nessun modello contratto corrisponde al filtro selezionato",
+    "tabs": {
+      "list": "Elenco Modelli",
+      "add": "Aggiungi Modello"
+    },
+    "columns": {
+      "name": "Nome",
+      "description": "Descrizione",
+      "contractType": "Tipo",
+      "category": "Categoria",
+      "usageCount": "Utilizzi",
+      "status": "Stato",
+      "default": "Predefinito",
+      "version": "Versione"
+    },
+    "stats": {
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "default": "Predefinito"
+    },
+    "status": {
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "default": "Predefinito"
+    },
+    "filterOptions": {
+      "all": "Tutti",
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "default": "Predefinito"
+    },
+    "actions": {
+      "view": "Visualizza",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "duplicate": "Duplica"
+    },
+    "delete": {
+      "confirmTitle": "Elimina Modello",
+      "confirmMessage": "Elimina modello \"{{name}}\"? Questa azione non può essere annullata.",
+      "confirmText": "Elimina",
+      "cancelText": "Annulla"
+    },
+    "detail": {
+      "title": {
+        "edit": "Modifica Modello",
+        "view": "Dettagli Modello"
+      },
+      "sections": {
+        "templateInformation": "Informazioni Modello",
+        "templateInformationDescription": "Informazioni base del modello",
+        "templateContent": "Contenuto Modello",
+        "templateContentDescription": "Contenuto e variabili del modello",
+        "settings": "Impostazioni",
+        "settingsDescription": "Impostazioni del modello"
+      },
+      "fields": {
+        "name": "Nome Modello",
+        "namePlaceholder": "Inserisci nome modello",
+        "description": "Descrizione",
+        "descriptionPlaceholder": "Inserisci descrizione modello",
+        "contractType": "Tipo Contratto",
+        "contractTypePlaceholder": "Seleziona tipo contratto",
+        "category": "Categoria",
+        "categoryPlaceholder": "Seleziona categoria",
+        "templateContent": "Contenuto Modello",
+        "templateContentPlaceholder": "Inserisci contenuto modello (supporta variabili come {{employeeName}})",
+        "variables": "Variabili (JSON)",
+        "legalRequirements": "Requisiti Legali",
+        "legalRequirementsPlaceholder": "Inserisci requisiti legali o note di conformità",
+        "tags": "Tag (array JSON)",
+        "isActive": "Attivo",
+        "isDefault": "Imposta come Predefinito"
+      },
+      "buttons": {
+        "updateTemplate": "Aggiorna Modello",
+        "cancel": "Annulla"
+      }
     }
   },
   "table": {
