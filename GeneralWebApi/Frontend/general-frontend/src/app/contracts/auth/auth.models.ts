@@ -1,6 +1,7 @@
 export interface LoginRequest {
   username: string;
   password: string;
+  rememberMe?: boolean;
 }
 // src/app/contracts/auth/auth.models.ts
 export interface LoginData {

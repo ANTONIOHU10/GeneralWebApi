@@ -29,6 +29,8 @@ export class AuthService extends BaseHttpService {
   login(payload: LoginRequest): Observable<LoginData> {
     console.log('AuthService: Starting login request...', payload);
 
+    const rememberMe = payload.rememberMe ?? false;
+
     return this.post<LoginData>(`${this.endpoint}/login`, payload).pipe(
       tap(data => {
         console.log('AuthService: Login response received:', data);
@@ -39,10 +41,11 @@ export class AuthService extends BaseHttpService {
 
         if (tokenData?.accessToken) {
           console.log('AuthService: Setting access token...');
-          this.token.setAccessToken(tokenData.accessToken);
+          // Use rememberMe to determine storage strategy
+          this.token.setAccessToken(tokenData.accessToken, rememberMe);
           console.log(
             'AuthService: Access token set, verifying...',
-            localStorage.getItem('access_token')
+            this.token.getAccessToken()
           );
         } else {
           console.error('AuthService: No access token in response!');
@@ -50,24 +53,43 @@ export class AuthService extends BaseHttpService {
 
         if (tokenData?.refreshToken) {
           console.log('AuthService: Setting refresh token...');
-          this.token.setRefreshToken(tokenData.refreshToken);
+          // Use rememberMe to determine storage strategy
+          this.token.setRefreshToken(tokenData.refreshToken, rememberMe);
         }
+
+        // Save refresh token expiration time if provided
+        if (tokenData?.refreshTokenExpiresAt) {
+          this.token.setRefreshTokenExpiresAt(tokenData.refreshTokenExpiresAt);
+        }
+
+        // Save remember me preference
+        this.token.setRememberMe(rememberMe);
       })
     );
   }
 
   // Refresh token - automatically extracts data and handles token storage
   refreshToken(payload: RefreshTokenRequest): Observable<RefreshTokenData> {
+    // Get rememberMe preference to maintain storage strategy
+    const rememberMe = this.token.getRememberMe();
+
     return this.post<RefreshTokenData>(`${this.endpoint}/refresh`, payload).pipe(
       tap(data => {
         // Extract token from response data
         const tokenData = data?.token;
 
         if (tokenData?.accessToken) {
-          this.token.setAccessToken(tokenData.accessToken);
+          // Use rememberMe to maintain storage strategy
+          this.token.setAccessToken(tokenData.accessToken, rememberMe);
         }
         if (tokenData?.refreshToken) {
-          this.token.setRefreshToken(tokenData.refreshToken);
+          // Use rememberMe to maintain storage strategy
+          this.token.setRefreshToken(tokenData.refreshToken, rememberMe);
+        }
+
+        // Update refresh token expiration time if provided
+        if (tokenData?.refreshTokenExpiresAt) {
+          this.token.setRefreshTokenExpiresAt(tokenData.refreshTokenExpiresAt);
         }
       })
     );

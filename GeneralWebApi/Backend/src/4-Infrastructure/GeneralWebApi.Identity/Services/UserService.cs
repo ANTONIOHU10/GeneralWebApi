@@ -41,7 +41,7 @@ public class UserService : IUserService
         _refreshTokenRepository = refreshTokenRepository;
     }
 
-    public async Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password)
+    public async Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password, bool rememberMe = false)
     {
         try
         {
@@ -61,7 +61,8 @@ public class UserService : IUserService
             var refreshToken = _jwtService.GenerateRefreshToken();
 
             // Store refresh token in both cache and database for redundancy
-            await StoreRefreshTokenAsync(refreshToken, username, claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty);
+            // Use longer expiration for "Remember Me" (30 days) vs normal (7 days)
+            await StoreRefreshTokenAsync(refreshToken, username, claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty, rememberMe);
 
             _logger.LogInformation(LogTemplates.Identity.UserLoginSuccess, username);
             return (true, accessToken, refreshToken);
@@ -491,9 +492,11 @@ public class UserService : IUserService
     /// <summary>
     /// Store refresh token in both cache and database for redundancy
     /// </summary>
-    private async Task StoreRefreshTokenAsync(string refreshToken, string username, string userId)
+    private async Task StoreRefreshTokenAsync(string refreshToken, string username, string userId, bool rememberMe = false)
     {
-        var expiresAt = DateTime.UtcNow.AddDays(7);
+        // Use longer expiration for "Remember Me" (30 days) vs normal (7 days)
+        var expirationDays = rememberMe ? 30 : 7;
+        var expiresAt = DateTime.UtcNow.AddDays(expirationDays);
 
         // Store in database
         var refreshTokenEntity = new RefreshToken
@@ -514,7 +517,7 @@ public class UserService : IUserService
         {
             try
             {
-                await _cacheService.SetAsync($"refreshToken:{refreshToken}", username, TimeSpan.FromDays(7));
+                await _cacheService.SetAsync($"refreshToken:{refreshToken}", username, TimeSpan.FromDays(expirationDays));
             }
             catch (Exception cacheEx)
             {

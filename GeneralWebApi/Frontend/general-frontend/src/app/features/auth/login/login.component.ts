@@ -10,8 +10,10 @@ import {
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '@core/services/auth.service';
+import { TokenService } from '@core/services/token.service';
 import { NotificationService } from '../../../Shared/services/notification.service';
 import { TranslationService } from '@core/services/translation.service';
+import { firstValueFrom } from 'rxjs';
 import {
   BaseInputComponent,
   BaseButtonComponent,
@@ -39,6 +41,7 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslationService);
+  private tokenService = inject(TokenService);
 
   // Form group
   loginForm!: FormGroup;
@@ -52,6 +55,8 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
     this.initializeTheme();
+    // Attempt auto-login if user has valid refresh token
+    this.attemptAutoLogin();
   }
 
   /**
@@ -89,10 +94,14 @@ export class LoginComponent implements OnInit {
    * Initialize login form with validators
    */
   private initializeForm(): void {
+    // Check if there's a remembered username
+    const rememberedUsername = this.tokenService.getRememberedUsername();
+    const rememberMe = this.tokenService.getRememberMe();
+
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required]],
+      username: [rememberedUsername || '', [Validators.required]],
       password: ['', [Validators.required]],
-      rememberMe: [false],
+      rememberMe: [rememberMe],
     });
   }
 
@@ -128,16 +137,18 @@ export class LoginComponent implements OnInit {
 
     console.log('🚀 Starting login...');
 
-    this.auth.login({ username, password }).subscribe({
+    const rememberMe = formValue.rememberMe || false;
+
+    this.auth.login({ username, password, rememberMe }).subscribe({
       next: data => {
         console.log('✅ Login successful!', data);
-        console.log('🔑 Token saved:', localStorage.getItem('access_token'));
+        console.log('🔑 Token saved:', this.tokenService.getAccessToken());
 
-        // Save remember me preference
-        if (formValue.rememberMe) {
-          localStorage.setItem('remember_me', 'true');
+        // Save or clear remembered username based on rememberMe
+        if (rememberMe) {
+          this.tokenService.setRememberedUsername(username);
         } else {
-          localStorage.removeItem('remember_me');
+          this.tokenService.clearRememberedUsername();
         }
 
         console.log('🧭 Attempting navigation to /private/employees...');
@@ -175,6 +186,57 @@ export class LoginComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  /**
+   * Attempt automatic login using refresh token if available
+   */
+  private async attemptAutoLogin(): Promise<void> {
+    const refreshToken = this.tokenService.getRefreshToken();
+    const accessToken = this.tokenService.getAccessToken();
+
+    // Check if refresh token exists and is not expired
+    if (!refreshToken || this.tokenService.isRefreshTokenExpired()) {
+      // No valid refresh token, stay on login page
+      return;
+    }
+
+    // If we have a valid refresh token but no valid access token, try to refresh
+    if (!accessToken || this.tokenService.isExpired()) {
+      console.log('🔄 LoginComponent: Attempting auto-login with refresh token...');
+      this.loading.set(true);
+
+      try {
+        await firstValueFrom(
+          this.auth.refreshToken({ refreshToken })
+        );
+        console.log('✅ LoginComponent: Auto-login successful');
+        // Navigate to main page
+        this.router.navigate(['/private/employees']).then(success => {
+          if (success) {
+            console.log('🎉 Auto-login navigation successful!');
+          } else {
+            console.error('❌ Auto-login navigation failed!');
+          }
+          this.loading.set(false);
+        }).catch(err => {
+          console.error('❌ Auto-login navigation error:', err);
+          this.loading.set(false);
+        });
+      } catch (error) {
+        console.error('❌ LoginComponent: Auto-login failed', error);
+        // Clear tokens if refresh fails
+        this.tokenService.clearAllTokens();
+        this.loading.set(false);
+        // Stay on login page, user can manually login
+      }
+    } else if (accessToken && !this.tokenService.isExpired()) {
+      // Already have valid access token, navigate to main page
+      console.log('✅ LoginComponent: Already authenticated, redirecting...');
+      this.router.navigate(['/private/employees']).catch(err => {
+        console.error('❌ Navigation error:', err);
+      });
+    }
   }
 
   /**

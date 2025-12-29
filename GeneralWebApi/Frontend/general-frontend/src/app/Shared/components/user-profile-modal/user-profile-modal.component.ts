@@ -481,6 +481,7 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
 
   /**
    * Perform local logout (clear tokens and redirect)
+   * clearAllTokens() already clears all tokens, remembered username, and remember_me preference
    */
   private performLocalLogout(): void {
     // Prevent duplicate calls
@@ -488,11 +489,9 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
       return;
     }
 
-    // Clear all tokens
+    // Clear all tokens, remembered username, and remember_me preference
+    // This includes: access_token, refresh_token, remembered_username, remember_me
     this.tokenService.clearAllTokens();
-
-    // Clear any other user-related data
-    localStorage.removeItem('remember_me');
 
     // Show success notification
     this.notificationService.success(

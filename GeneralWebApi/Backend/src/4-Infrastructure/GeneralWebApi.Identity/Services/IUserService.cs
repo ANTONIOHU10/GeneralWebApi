@@ -4,8 +4,8 @@ namespace GeneralWebApi.Identity.Services;
 
 public interface IUserService
 {
-    // Legacy methods (for backward compatibility)
-    Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password);
+    // Login with optional RememberMe parameter (defaults to false for backward compatibility)
+    Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password, bool rememberMe = false);
     Task<(bool Success, string? AccessToken, string? RefreshToken)> RefreshTokenAsync(string refreshToken);
     Task<bool> LogoutAsync(string refreshToken);
     Task<ClaimsPrincipal?> GetUserClaimsAsync(string userName);

@@ -25,7 +25,7 @@ public class AuthController(IUserService userService) : BaseController
     {
         return await ValidateAndExecuteAsync(request, async (req) =>
         {
-            var (success, accessToken, refreshToken) = await _userService.LoginAsync(request.Username, request.Password);
+            var (success, accessToken, refreshToken) = await _userService.LoginAsync(request.Username, request.Password, request.RememberMe);
 
             if (!success)
             {
@@ -43,6 +43,10 @@ public class AuthController(IUserService userService) : BaseController
                 .Select(c => c.Value)
                 .ToArray() ?? [];
 
+            // Calculate refresh token expiration based on RememberMe
+            // RememberMe = true: 30 days, false: 7 days
+            var refreshTokenExpirationDays = request.RememberMe ? 30 : 7;
+
             // here we don't use the AutoMapper to map the response data
             // because the LoginResponseData is not a complex object
             var responseData = new LoginResponseData
@@ -58,7 +62,7 @@ public class AuthController(IUserService userService) : BaseController
                     TokenType = "Bearer",
                     ExpiresIn = 3600, // 1 hour
                     ExpiresAt = DateTime.UtcNow.AddHours(1),
-                    RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7)
+                    RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(refreshTokenExpirationDays)
                 }
             };
 
