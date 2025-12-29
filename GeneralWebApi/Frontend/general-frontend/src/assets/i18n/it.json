@@ -114,6 +114,40 @@
         "number": "La password deve contenere almeno un numero (0-9)",
         "special": "La password deve contenere almeno un simbolo speciale (@$!%*?&)"
       }
+    },
+    "forgotPassword": {
+      "title": "Password dimenticata",
+      "description": "Inserisci il tuo indirizzo email e ti invieremo un link per reimpostare la password.",
+      "sendResetLink": "Invia link di reset",
+      "backToLogin": "Torna al login",
+      "emailSent": "Email inviata",
+      "checkEmail": "Se l'email esiste, ti abbiamo inviato un link per reimpostare la password. Controlla la tua email.",
+      "checkEmailMessage": "Controlla la tua email e clicca sul link di reset per reimpostare la tua password.",
+      "success": "Richiesta riuscita",
+      "error": "Richiesta fallita",
+      "validationError": "Errore di validazione",
+      "pleaseEnterEmail": "Inserisci un indirizzo email valido"
+    },
+    "resetPassword": {
+      "title": "Reimposta password",
+      "description": "Inserisci la tua nuova password.",
+      "newPassword": "Nuova password",
+      "confirmPassword": "Conferma password",
+      "resetPassword": "Reimposta password",
+      "backToLogin": "Torna al login",
+      "success": "Password reimpostata con successo",
+      "passwordResetSuccess": "La tua password è stata reimpostata con successo.",
+      "error": "Reset fallito",
+      "resetFailed": "Impossibile reimpostare la password. Riprova.",
+      "invalidToken": "Token non valido",
+      "invalidOrExpiredToken": "Il token di reset non è valido o è scaduto. Richiedi un nuovo reset della password.",
+      "tokenExpiredOrInvalid": "Il token di reset è scaduto o non è valido. Richiedi un nuovo reset della password.",
+      "verifyingToken": "Verifica del token in corso...",
+      "validationError": "Errore di validazione",
+      "pleaseFillAllFields": "Compila tutti i campi",
+      "passwordTooShort": "La password deve contenere almeno 6 caratteri",
+      "passwordsDoNotMatch": "Le password non corrispondono",
+      "fieldRequired": "Questo campo è obbligatorio"
     }
   },
   "settings": {

@@ -16,6 +16,12 @@ import {
   UserInfoData,
   UpdatePasswordRequest,
   UpdatePasswordData,
+  ForgotPasswordRequest,
+  ForgotPasswordData,
+  ResetPasswordRequest,
+  ResetPasswordData,
+  VerifyResetTokenRequest,
+  VerifyResetTokenData,
 } from 'app/contracts/auth/auth.models';
 import { ApiResponse } from 'app/contracts/common/api-response';
 import { decodeJwt } from '@core/utils/jwt.util';
@@ -173,5 +179,20 @@ export class AuthService extends BaseHttpService {
   // Update password - automatically extracts data
   updatePassword(payload: UpdatePasswordRequest): Observable<UpdatePasswordData> {
     return this.put<UpdatePasswordData>(`${this.endpoint}/update-password`, payload);
+  }
+
+  // Forgot password - automatically extracts data
+  forgotPassword(payload: ForgotPasswordRequest): Observable<ForgotPasswordData> {
+    return this.post<ForgotPasswordData>(`${this.endpoint}/forgot-password`, payload);
+  }
+
+  // Reset password - automatically extracts data
+  resetPassword(payload: ResetPasswordRequest): Observable<ResetPasswordData> {
+    return this.post<ResetPasswordData>(`${this.endpoint}/reset-password`, payload);
+  }
+
+  // Verify reset token - automatically extracts data
+  verifyResetToken(payload: VerifyResetTokenRequest): Observable<VerifyResetTokenData> {
+    return this.post<VerifyResetTokenData>(`${this.endpoint}/verify-reset-token`, payload);
   }
 }

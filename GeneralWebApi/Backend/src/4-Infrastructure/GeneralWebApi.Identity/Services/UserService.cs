@@ -9,6 +9,7 @@ using GeneralWebApi.Integration.Repository.BasesRepository;
 using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using GeneralWebApi.Logging.Services;
 using GeneralWebApi.Logging.Templates;
+using GeneralWebApi.Email.Services;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace GeneralWebApi.Identity.Services;
@@ -22,6 +23,8 @@ public class UserService : IUserService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IRedisCacheService _cacheService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IPasswordResetTokenRepository _passwordResetTokenRepository;
+    private readonly IEmailService? _emailService;
 
     // need to save the refresh token in static, because it's a random byte array
     // but access token is a decoded string, it contains all users' information to be validated
@@ -31,7 +34,7 @@ public class UserService : IUserService
     private static readonly ConcurrentDictionary<string, (string UserId, DateTime Expiry)> _refreshTokens = new();
 
     // the registration of the UserService is in the ServiceCollectionExtensions.cs file
-    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository, IEmployeeRepository employeeRepository, IRedisCacheService cacheService, IRefreshTokenRepository refreshTokenRepository)
+    public UserService(IJwtService jwtService, ILoggingService logger, IUserRepository userRepository, IEmployeeRepository employeeRepository, IRedisCacheService cacheService, IRefreshTokenRepository refreshTokenRepository, IPasswordResetTokenRepository passwordResetTokenRepository, IEmailService? emailService = null)
     {
         _jwtService = jwtService;
         _logger = logger;
@@ -39,6 +42,8 @@ public class UserService : IUserService
         _employeeRepository = employeeRepository;
         _cacheService = cacheService;
         _refreshTokenRepository = refreshTokenRepository;
+        _passwordResetTokenRepository = passwordResetTokenRepository;
+        _emailService = emailService;
     }
 
     public async Task<(bool Success, string? AccessToken, string? RefreshToken)> LoginAsync(string username, string password, bool rememberMe = false)
@@ -610,6 +615,197 @@ public class UserService : IUserService
             {
                 _logger.LogWarning("Failed to update refresh token in cache: {Error}", cacheEx.Message);
             }
+        }
+    }
+
+    /// <summary>
+    /// Generate a password reset token and send reset email
+    /// </summary>
+    public async Task<(bool Success, string Message)> ForgotPasswordAsync(string email, string? requestedFromIp = null, string? requestedFromUserAgent = null)
+    {
+        try
+        {
+            _logger.LogInformation("Password reset requested for email: {Email}", email);
+
+            // Find user by email
+            var user = await _userRepository.GetByEmailAsync(email);
+            
+            // Always return success message to prevent user enumeration
+            // Don't reveal whether the email exists or not
+            if (user == null)
+            {
+                _logger.LogWarning("Password reset requested for non-existent email: {Email}", email);
+                // Return success message even if user doesn't exist (security best practice)
+                return (true, "If the email exists, a password reset link has been sent.");
+            }
+
+            // Generate secure reset token
+            var tokenBytes = RandomNumberGenerator.GetBytes(32);
+            var token = Convert.ToBase64String(tokenBytes)
+                .Replace("+", "-")
+                .Replace("/", "_")
+                .Replace("=", "");
+
+            // Hash the token before storing (security best practice)
+            var tokenHash = Convert.ToBase64String(SHA256.HashData(tokenBytes));
+
+            // Create password reset token entity
+            var resetToken = new PasswordResetToken
+            {
+                Id = Guid.NewGuid(),
+                Token = tokenHash, // Store hashed token
+                UserId = user.Id,
+                Email = user.Email,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(30), // Token expires in 30 minutes
+                CreatedAt = DateTime.UtcNow,
+                IsUsed = false,
+                RequestedFromIp = requestedFromIp,
+                RequestedFromUserAgent = requestedFromUserAgent
+            };
+
+            // Save token to database
+            await _passwordResetTokenRepository.AddAsync(resetToken);
+
+            // Send email with reset link
+            if (_emailService != null)
+            {
+                var emailSent = await _emailService.SendPasswordResetEmailAsync(user.Email, user.Name, token);
+                if (emailSent)
+                {
+                    _logger.LogInformation("Password reset email sent successfully to: {Email}", email);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to send password reset email to: {Email}, but token was saved. Token: {Token}", email, token);
+                }
+            }
+            else
+            {
+                // Fallback: log the token if email service is not available (for development)
+                _logger.LogInformation("Email service not available. Password reset token generated for user: {Username}, Token: {Token}", user.Name, token);
+            }
+
+            return (true, "If the email exists, a password reset link has been sent.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error processing password reset request for email: {Email}, Error: {Error}", email, ex.Message);
+            // Still return success to prevent user enumeration
+            return (true, "If the email exists, a password reset link has been sent.");
+        }
+    }
+
+    /// <summary>
+    /// Reset password using a valid reset token
+    /// </summary>
+    public async Task<(bool Success, string? ErrorMessage)> ResetPasswordAsync(string token, string newPassword)
+    {
+        try
+        {
+            _logger.LogInformation("Password reset attempt with token");
+
+            // Convert URL-safe token back to base64
+            var base64Token = token.Replace("-", "+").Replace("_", "/");
+            var padding = 4 - (base64Token.Length % 4);
+            if (padding != 4) base64Token += new string('=', padding);
+            
+            var tokenBytes = Convert.FromBase64String(base64Token);
+            var tokenHash = Convert.ToBase64String(SHA256.HashData(tokenBytes));
+
+            // Find token in database
+            var resetToken = await _passwordResetTokenRepository.GetByTokenAsync(tokenHash);
+
+            if (resetToken == null)
+            {
+                _logger.LogWarning("Invalid password reset token");
+                return (false, "Invalid or expired reset token.");
+            }
+
+            // Check if token is expired
+            if (resetToken.ExpiresAt < DateTime.UtcNow)
+            {
+                _logger.LogWarning("Expired password reset token for user: {UserId}", resetToken.UserId);
+                return (false, "Reset token has expired. Please request a new one.");
+            }
+
+            // Check if token is already used
+            if (resetToken.IsUsed)
+            {
+                _logger.LogWarning("Already used password reset token for user: {UserId}", resetToken.UserId);
+                return (false, "Reset token has already been used. Please request a new one.");
+            }
+
+            // Get user
+            var user = await _userRepository.GetByIdAsync(resetToken.UserId);
+            if (user == null)
+            {
+                _logger.LogWarning("User not found for password reset token: {UserId}", resetToken.UserId);
+                return (false, "User not found.");
+            }
+
+            // Validate new password (add your password requirements here)
+            if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+            {
+                return (false, "Password must be at least 6 characters long.");
+            }
+
+            // Generate new password hash
+            var passwordHash = GeneratePasswordHash(newPassword);
+
+            // Update user password
+            user.PasswordHash = passwordHash;
+            user.UpdatedBy = "System";
+            user.UpdatedAt = DateTime.UtcNow;
+            user.Version = user.Version + 1;
+
+            await _userRepository.UpdatePasswordAsync(user);
+
+            // Mark token as used
+            await _passwordResetTokenRepository.MarkAsUsedAsync(tokenHash);
+
+            // Revoke all refresh tokens for security
+            await _refreshTokenRepository.RevokeUserTokensAsync(user.Id);
+
+            _logger.LogInformation("Password reset successful for user: {Username}", user.Name);
+            return (true, null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error resetting password: {Error}", ex.Message);
+            return (false, "An error occurred while resetting your password. Please try again.");
+        }
+    }
+
+    /// <summary>
+    /// Verify if a reset token is valid
+    /// </summary>
+    public async Task<(bool IsValid, string? Email)> VerifyResetTokenAsync(string token)
+    {
+        try
+        {
+            // Convert URL-safe token back to base64
+            var base64Token = token.Replace("-", "+").Replace("_", "/");
+            var padding = 4 - (base64Token.Length % 4);
+            if (padding != 4) base64Token += new string('=', padding);
+            
+            var tokenBytes = Convert.FromBase64String(base64Token);
+            var tokenHash = Convert.ToBase64String(SHA256.HashData(tokenBytes));
+
+            // Check if token is valid
+            var isValid = await _passwordResetTokenRepository.IsTokenValidAsync(tokenHash);
+
+            if (!isValid)
+            {
+                return (false, null);
+            }
+
+            // Get token to retrieve email
+            var resetToken = await _passwordResetTokenRepository.GetByTokenAsync(tokenHash);
+            return (true, resetToken?.Email);
+        }
+        catch
+        {
+            return (false, null);
         }
     }
 }

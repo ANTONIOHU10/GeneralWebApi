@@ -209,4 +209,91 @@ public class AuthController(IUserService userService) : BaseController
         });
     }
 
+    [HttpPost("forgot-password")]
+    [EnableRateLimiting("Default")]
+    [AllowAnonymous]
+    public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+        return await ValidateAndExecuteAsync(request, async (req) =>
+        {
+            // Get client IP and user agent for security logging
+            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+
+            var (success, message) = await _userService.ForgotPasswordAsync(req.Email, clientIp, userAgent);
+
+            if (!success)
+            {
+                return BadRequest(ApiResponse<ForgotPasswordResponseData>.ErrorResult(
+                    "Password reset failed",
+                    400,
+                    message
+                ));
+            }
+
+            // Always return success message to prevent user enumeration
+            var responseData = new ForgotPasswordResponseData
+            {
+                Message = message
+            };
+
+            return Ok(ApiResponse<ForgotPasswordResponseData>.SuccessResult(responseData, message));
+        });
+    }
+
+    [HttpPost("reset-password")]
+    [EnableRateLimiting("Default")]
+    [AllowAnonymous]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        return await ValidateAndExecuteAsync(request, async (req) =>
+        {
+            var (success, errorMessage) = await _userService.ResetPasswordAsync(req.Token, req.NewPassword);
+
+            if (!success)
+            {
+                return BadRequest(ApiResponse<ResetPasswordResponseData>.ErrorResult(
+                    "Password reset failed",
+                    400,
+                    errorMessage ?? "Invalid or expired reset token"
+                ));
+            }
+
+            var responseData = new ResetPasswordResponseData
+            {
+                Message = "Password reset successfully"
+            };
+
+            return Ok(ApiResponse<ResetPasswordResponseData>.SuccessResult(responseData, "Password reset successfully"));
+        });
+    }
+
+    [HttpPost("verify-reset-token")]
+    [EnableRateLimiting("Default")]
+    [AllowAnonymous]
+    public async Task<ActionResult> VerifyResetToken([FromBody] VerifyResetTokenRequest request)
+    {
+        return await ValidateAndExecuteAsync(request, async (req) =>
+        {
+            var (isValid, email) = await _userService.VerifyResetTokenAsync(req.Token);
+
+            var responseData = new VerifyResetTokenResponseData
+            {
+                IsValid = isValid,
+                Email = email
+            };
+
+            if (!isValid)
+            {
+                return BadRequest(ApiResponse<VerifyResetTokenResponseData>.ErrorResult(
+                    "Invalid token",
+                    400,
+                    "Invalid or expired reset token"
+                ));
+            }
+
+            return Ok(ApiResponse<VerifyResetTokenResponseData>.SuccessResult(responseData, "Token is valid"));
+        });
+    }
+
 }

@@ -114,6 +114,40 @@
         "number": "密码必须包含至少一个数字 (0-9)",
         "special": "密码必须包含至少一个特殊符号 (@$!%*?&)"
       }
+    },
+    "forgotPassword": {
+      "title": "忘记密码",
+      "description": "请输入您的邮箱地址，我们将向您发送密码重置链接。",
+      "sendResetLink": "发送重置链接",
+      "backToLogin": "返回登录",
+      "emailSent": "邮件已发送",
+      "checkEmail": "如果该邮箱存在，我们已向您发送了密码重置链接。请检查您的邮箱。",
+      "checkEmailMessage": "请检查您的邮箱并点击重置链接来重置您的密码。",
+      "success": "请求成功",
+      "error": "请求失败",
+      "validationError": "验证错误",
+      "pleaseEnterEmail": "请输入有效的邮箱地址"
+    },
+    "resetPassword": {
+      "title": "重置密码",
+      "description": "请输入您的新密码。",
+      "newPassword": "新密码",
+      "confirmPassword": "确认密码",
+      "resetPassword": "重置密码",
+      "backToLogin": "返回登录",
+      "success": "密码重置成功",
+      "passwordResetSuccess": "您的密码已成功重置。",
+      "error": "重置失败",
+      "resetFailed": "密码重置失败，请重试。",
+      "invalidToken": "无效的令牌",
+      "invalidOrExpiredToken": "重置令牌无效或已过期。请重新请求密码重置。",
+      "tokenExpiredOrInvalid": "重置令牌已过期或无效。请重新请求密码重置。",
+      "verifyingToken": "正在验证令牌...",
+      "validationError": "验证错误",
+      "pleaseFillAllFields": "请填写所有字段",
+      "passwordTooShort": "密码必须至少6个字符",
+      "passwordsDoNotMatch": "密码不匹配",
+      "fieldRequired": "此字段为必填项"
     }
   },
   "settings": {

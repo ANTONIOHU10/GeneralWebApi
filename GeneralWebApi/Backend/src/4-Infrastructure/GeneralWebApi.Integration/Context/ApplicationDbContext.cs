@@ -20,6 +20,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<FileDocument> FileDocuments { get; set; }
     public DbSet<ExternalApiConfig> ExternalApiConfigs { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
     #endregion
 

@@ -212,7 +212,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
           return (
             translatedLabel.toLowerCase().includes(query) ||
             translatedTitle.toLowerCase().includes(query)
-          );
+        );
         });
 
         if (filteredItems.length > 0) {

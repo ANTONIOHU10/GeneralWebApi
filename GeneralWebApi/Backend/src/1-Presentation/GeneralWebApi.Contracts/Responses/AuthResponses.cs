@@ -60,6 +60,22 @@ public class UserInfoResponseData
     public string[]? Roles { get; set; }
 }
 
+public class ForgotPasswordResponseData
+{
+    public string Message { get; set; } = "If the email exists, a password reset link has been sent.";
+}
+
+public class ResetPasswordResponseData
+{
+    public string Message { get; set; } = "Password reset successfully";
+}
+
+public class VerifyResetTokenResponseData
+{
+    public bool IsValid { get; set; }
+    public string? Email { get; set; }
+}
+
 //Factory methods for creating ApiResponse instances
 public static class AuthResponse
 {

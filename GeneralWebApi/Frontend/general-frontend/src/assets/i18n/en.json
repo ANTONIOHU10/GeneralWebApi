@@ -114,6 +114,40 @@
         "number": "Password must contain at least one number (0-9)",
         "special": "Password must contain at least one special symbol (@$!%*?&)"
       }
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "description": "Enter your email address and we'll send you a password reset link.",
+      "sendResetLink": "Send Reset Link",
+      "backToLogin": "Back to Login",
+      "emailSent": "Email Sent",
+      "checkEmail": "If the email exists, we've sent you a password reset link. Please check your email.",
+      "checkEmailMessage": "Please check your email and click the reset link to reset your password.",
+      "success": "Request Successful",
+      "error": "Request Failed",
+      "validationError": "Validation Error",
+      "pleaseEnterEmail": "Please enter a valid email address"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "description": "Enter your new password.",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "resetPassword": "Reset Password",
+      "backToLogin": "Back to Login",
+      "success": "Password Reset Successful",
+      "passwordResetSuccess": "Your password has been successfully reset.",
+      "error": "Reset Failed",
+      "resetFailed": "Failed to reset password. Please try again.",
+      "invalidToken": "Invalid Token",
+      "invalidOrExpiredToken": "Reset token is invalid or expired. Please request a new password reset.",
+      "tokenExpiredOrInvalid": "Reset token has expired or is invalid. Please request a new password reset.",
+      "verifyingToken": "Verifying token...",
+      "validationError": "Validation Error",
+      "pleaseFillAllFields": "Please fill in all fields",
+      "passwordTooShort": "Password must be at least 6 characters long",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "fieldRequired": "This field is required"
     }
   },
   "settings": {

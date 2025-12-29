@@ -13,5 +13,8 @@ public interface IUserService
     Task<(bool Success, string ErrorMessage)> RegisterUserAsync(string username, string password, string email);
     string GeneratePasswordHash(string password);
     Task<UpdatePasswordResult> UpdatePasswordAsync(string username, string oldPassword, string newPassword);
+    Task<(bool Success, string Message)> ForgotPasswordAsync(string email, string? requestedFromIp = null, string? requestedFromUserAgent = null);
+    Task<(bool Success, string? ErrorMessage)> ResetPasswordAsync(string token, string newPassword);
+    Task<(bool IsValid, string? Email)> VerifyResetTokenAsync(string token);
 
 }

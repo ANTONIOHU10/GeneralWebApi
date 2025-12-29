@@ -20,13 +20,13 @@
     <div class="employee-detail-header">
       <div class="avatar-section">
         <div class="avatar-wrapper">
-          <app-base-avatar
+      <app-base-avatar
             [src]="avatarPreview() || employee.avatar || ''"
-            [fallbackText]="getInitials()"
-            [alt]="getFullName()"
-            size="large"
-            shape="circle"
-          ></app-base-avatar>
+        [fallbackText]="getInitials()"
+        [alt]="getFullName()"
+        size="large"
+        shape="circle"
+      ></app-base-avatar>
           @if (mode === 'edit') {
             <div class="avatar-overlay">
               <input

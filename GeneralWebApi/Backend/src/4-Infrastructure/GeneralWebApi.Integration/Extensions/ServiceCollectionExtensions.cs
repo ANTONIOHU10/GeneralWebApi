@@ -142,6 +142,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IContractRepository, ContractRepository>();
         services.AddScoped<IContractApprovalRepository, ContractApprovalRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
         services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 
         // Permission repositories

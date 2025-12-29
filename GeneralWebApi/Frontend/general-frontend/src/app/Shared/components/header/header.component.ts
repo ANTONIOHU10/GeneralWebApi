@@ -55,6 +55,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   };
 
   /**
+   * Check if user is authenticated
+   */
+  get isAuthenticated(): boolean {
+    return this.tokenService.isAuthenticated() && !this.tokenService.isExpired();
+  }
+
+  /**
    * Handle theme toggle button click
    */
   onThemeToggle(): void {
@@ -181,8 +188,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Load user profile from API or JWT token
+   * Only loads if user is authenticated
    */
   private loadUserProfile(): void {
+    // Don't load user profile if user is not authenticated
+    if (!this.tokenService.isAuthenticated() || this.tokenService.isExpired()) {
+      this.userProfile.name = 'Guest';
+      this.userProfile.role = 'User';
+      return;
+    }
+
     // Try to get user info from API first
     this.authService.getCurrentUser().pipe(
       catchError(() => {

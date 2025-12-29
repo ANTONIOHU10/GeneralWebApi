@@ -243,8 +243,8 @@ export class LoginComponent implements OnInit {
    * Handle forgot password click
    */
   onForgotPassword(): void {
-    console.log('Forgot password clicked');
-    // TODO: Implement forgot password functionality
+    // Navigate to forgot password page
+    this.router.navigate(['/forgot-password']);
   }
 
   /**

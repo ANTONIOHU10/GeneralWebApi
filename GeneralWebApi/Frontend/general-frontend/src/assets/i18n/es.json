@@ -114,6 +114,40 @@
         "number": "La contraseña debe contener al menos un número (0-9)",
         "special": "La contraseña debe contener al menos un símbolo especial (@$!%*?&)"
       }
+    },
+    "forgotPassword": {
+      "title": "Olvidé mi contraseña",
+      "description": "Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+      "sendResetLink": "Enviar enlace de restablecimiento",
+      "backToLogin": "Volver al inicio de sesión",
+      "emailSent": "Correo enviado",
+      "checkEmail": "Si el correo existe, te hemos enviado un enlace para restablecer tu contraseña. Por favor, revisa tu correo.",
+      "checkEmailMessage": "Por favor, revisa tu correo y haz clic en el enlace de restablecimiento para restablecer tu contraseña.",
+      "success": "Solicitud exitosa",
+      "error": "Solicitud fallida",
+      "validationError": "Error de validación",
+      "pleaseEnterEmail": "Por favor, ingresa una dirección de correo electrónico válida"
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "description": "Ingresa tu nueva contraseña.",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "resetPassword": "Restablecer contraseña",
+      "backToLogin": "Volver al inicio de sesión",
+      "success": "Contraseña restablecida exitosamente",
+      "passwordResetSuccess": "Tu contraseña ha sido restablecida exitosamente.",
+      "error": "Restablecimiento fallido",
+      "resetFailed": "Error al restablecer la contraseña. Por favor, inténtalo de nuevo.",
+      "invalidToken": "Token inválido",
+      "invalidOrExpiredToken": "El token de restablecimiento es inválido o ha expirado. Por favor, solicita un nuevo restablecimiento de contraseña.",
+      "tokenExpiredOrInvalid": "El token de restablecimiento ha expirado o es inválido. Por favor, solicita un nuevo restablecimiento de contraseña.",
+      "verifyingToken": "Verificando token...",
+      "validationError": "Error de validación",
+      "pleaseFillAllFields": "Por favor, completa todos los campos",
+      "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden",
+      "fieldRequired": "Este campo es requerido"
     }
   },
   "settings": {

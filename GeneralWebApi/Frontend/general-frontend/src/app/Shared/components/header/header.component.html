@@ -12,22 +12,24 @@
       (themeToggle)="onThemeToggle()"
     ></app-quick-actions>
 
-    <!-- Notification Dropdown -->
-    <app-notification-dropdown
-      [notificationCount]="notificationCount"
-      (viewAllClick)="onViewAllNotifications()"
-      (notificationItemClick)="onNotificationItemClick($event)"
-    ></app-notification-dropdown>
+    <!-- Notification Dropdown (only show if authenticated) -->
+    @if (isAuthenticated) {
+      <app-notification-dropdown
+        [notificationCount]="notificationCount"
+        (viewAllClick)="onViewAllNotifications()"
+        (notificationItemClick)="onNotificationItemClick($event)"
+      ></app-notification-dropdown>
 
-    <!-- Divider -->
-    <div class="header-divider"></div>
+      <!-- Divider -->
+      <div class="header-divider"></div>
 
-    <!-- User Profile -->
-    <app-user-profile
-      [userName]="userProfile.name"
-      [userRole]="userProfile.role"
-      (profileClick)="onProfileClick()"
-    ></app-user-profile>
+      <!-- User Profile (only show if authenticated) -->
+      <app-user-profile
+        [userName]="userProfile.name"
+        [userRole]="userProfile.role"
+        (profileClick)="onProfileClick()"
+      ></app-user-profile>
+    }
 
     <!-- Mobile Menu Toggle -->
     @if (showSidebarToggle) {

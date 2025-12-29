@@ -33,14 +33,18 @@ export class PublicLayoutComponent {
   }
 
   /**
-   * Check current route and hide header/footer on login page
+   * Check current route and hide header/footer on login, forgot password, and reset password pages
    */
   private checkRoute(): void {
     const url = this.router.url;
-    const isLoginPage = url === '/login' || url === '/' || url === '';
+    const isAuthPage = url === '/login' || 
+                       url === '/' || 
+                       url === '' ||
+                       url.startsWith('/forgot-password') ||
+                       url.startsWith('/reset-password');
     
-    this.showHeader = !isLoginPage;
-    this.showFooter = !isLoginPage;
+    this.showHeader = !isAuthPage;
+    this.showFooter = !isAuthPage;
   }
 
   /**

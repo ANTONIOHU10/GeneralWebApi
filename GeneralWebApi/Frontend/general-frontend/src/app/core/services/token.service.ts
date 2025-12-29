@@ -18,7 +18,7 @@ export class TokenService {
    */
   setAccessToken(token: string, rememberMe: boolean = false): void {
     if (rememberMe) {
-      localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    localStorage.setItem(ACCESS_TOKEN_KEY, token);
       // Also clear from sessionStorage if exists
       sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     } else {
@@ -48,7 +48,7 @@ export class TokenService {
    */
   setRefreshToken(token: string, rememberMe: boolean = false): void {
     if (rememberMe) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, token);
+    localStorage.setItem(REFRESH_TOKEN_KEY, token);
       // Also clear from sessionStorage if exists
       sessionStorage.removeItem(REFRESH_TOKEN_KEY);
     } else {

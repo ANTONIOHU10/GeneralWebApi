@@ -37,5 +37,7 @@
       Include="..\..\4-Infrastructure\GeneralWebApi.HttpClient\GeneralWebApi.HttpClient.csproj" />
     <ProjectReference
       Include="..\..\4-Infrastructure\GeneralWebApi.Scheduler\GeneralWebApi.Scheduler.csproj" />
+    <ProjectReference
+      Include="..\..\4-Infrastructure\GeneralWebApi.Email\GeneralWebApi.Email.csproj" />
   </ItemGroup>
 </Project>

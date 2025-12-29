@@ -16,6 +16,7 @@ using GeneralWebApi.Application.Extensions;
 using GeneralWebApi.Caching.Extensions;
 using GeneralWebApi.HttpClient.Extensions;
 using GeneralWebApi.Scheduler.Extensions;
+using GeneralWebApi.Email.Extensions;
 using GeneralWebApi.Middleware;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
@@ -110,6 +111,9 @@ builder.Services.AddExternalHttpClient(builder.Configuration);
 
 // add scheduler services
 builder.Services.AddSchedulerServices(builder.Configuration);
+
+// add email service
+builder.Services.AddEmailService(builder.Configuration);
 
 // add global exception handling
 builder.Services.AddGlobalExceptionHandling();

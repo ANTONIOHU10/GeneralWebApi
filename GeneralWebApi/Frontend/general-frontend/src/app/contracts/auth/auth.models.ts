@@ -59,6 +59,32 @@ export interface UserInfoData {
   roles: string[];
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordData {
+  message: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+export interface ResetPasswordData {
+  message: string;
+}
+
+export interface VerifyResetTokenRequest {
+  token: string;
+}
+
+export interface VerifyResetTokenData {
+  isValid: boolean;
+  email?: string;
+}
+
 // Backward-compat (deprecated): old flat responses used before ApiResponse<T>
 export interface LoginResponse {
   accessToken: string;

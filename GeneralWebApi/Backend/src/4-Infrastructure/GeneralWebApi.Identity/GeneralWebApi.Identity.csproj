@@ -27,6 +27,7 @@
     <ProjectReference Include="..\GeneralWebApi.Logging\GeneralWebApi.Logging.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Integration\GeneralWebApi.Integration.csproj" />
     <ProjectReference Include="..\GeneralWebApi.Caching\GeneralWebApi.Caching.csproj" />
+    <ProjectReference Include="..\GeneralWebApi.Email\GeneralWebApi.Email.csproj" />
   </ItemGroup>
 
 </Project>
