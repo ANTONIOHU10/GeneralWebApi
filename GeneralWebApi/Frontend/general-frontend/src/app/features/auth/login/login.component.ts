@@ -251,8 +251,8 @@ export class LoginComponent implements OnInit {
    * Handle contact administrator click
    */
   onContactAdmin(): void {
-    console.log('Contact administrator clicked');
-    // TODO: Implement contact administrator functionality
+    // Navigate to contact admin page
+    this.router.navigate(['/contact-admin']);
   }
 
   /**

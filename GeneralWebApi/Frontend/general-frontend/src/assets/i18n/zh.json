@@ -146,8 +146,21 @@
       "validationError": "验证错误",
       "pleaseFillAllFields": "请填写所有字段",
       "passwordTooShort": "密码必须至少6个字符",
-      "passwordsDoNotMatch": "密码不匹配",
-      "fieldRequired": "此字段为必填项"
+      "passwordsDoNotMatch": "密码不匹配"
+    },
+    "contactAdmin": {
+      "title": "联系管理员",
+      "description": "如果您需要帮助或遇到问题，请通过以下方式联系我们的管理员。",
+      "email": "邮箱",
+      "phone": "电话",
+      "officeHours": "办公时间",
+      "support": "技术支持",
+      "officeHoursValue": "周一至周五：9:00 - 18:00（北京时间）",
+      "phoneNote": "工作时间：周一至周五 9:00-18:00",
+      "supportDescription": "我们的技术支持团队随时为您提供帮助。请在工作时间内联系我们，我们会在24小时内回复您的邮件。",
+      "backToLogin": "返回登录",
+      "copyEmail": "复制邮箱地址",
+      "copyPhone": "复制电话号码"
     }
   },
   "settings": {

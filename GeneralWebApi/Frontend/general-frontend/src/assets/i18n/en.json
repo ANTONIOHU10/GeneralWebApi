@@ -146,8 +146,21 @@
       "validationError": "Validation Error",
       "pleaseFillAllFields": "Please fill in all fields",
       "passwordTooShort": "Password must be at least 6 characters long",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "fieldRequired": "This field is required"
+      "passwordsDoNotMatch": "Passwords do not match"
+    },
+    "contactAdmin": {
+      "title": "Contact Administrator",
+      "description": "If you need help or encounter any issues, please contact our administrator through the following methods.",
+      "email": "Email",
+      "phone": "Phone",
+      "officeHours": "Office Hours",
+      "support": "Technical Support",
+      "officeHoursValue": "Monday to Friday: 9:00 AM - 6:00 PM (Beijing Time)",
+      "phoneNote": "Business Hours: Monday to Friday 9:00 AM - 6:00 PM",
+      "supportDescription": "Our technical support team is ready to assist you. Please contact us during business hours, and we will respond to your email within 24 hours.",
+      "backToLogin": "Back to Login",
+      "copyEmail": "Copy email address",
+      "copyPhone": "Copy phone number"
     }
   },
   "settings": {

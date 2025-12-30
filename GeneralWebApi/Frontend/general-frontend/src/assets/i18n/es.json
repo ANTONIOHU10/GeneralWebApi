@@ -146,8 +146,21 @@
       "validationError": "Error de validación",
       "pleaseFillAllFields": "Por favor, completa todos los campos",
       "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
-      "passwordsDoNotMatch": "Las contraseñas no coinciden",
-      "fieldRequired": "Este campo es requerido"
+      "passwordsDoNotMatch": "Las contraseñas no coinciden"
+    },
+    "contactAdmin": {
+      "title": "Contactar al administrador",
+      "description": "Si necesitas ayuda o encuentras algún problema, por favor contacta a nuestro administrador a través de los siguientes métodos.",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "officeHours": "Horario de oficina",
+      "support": "Soporte técnico",
+      "officeHoursValue": "Lunes a Viernes: 9:00 - 18:00 (Hora de Beijing)",
+      "phoneNote": "Horario laboral: Lunes a Viernes 9:00-18:00",
+      "supportDescription": "Nuestro equipo de soporte técnico está listo para ayudarte. Contáctanos durante el horario laboral y responderemos a tu correo electrónico en un plazo de 24 horas.",
+      "backToLogin": "Volver al inicio de sesión",
+      "copyEmail": "Copiar dirección de correo",
+      "copyPhone": "Copiar número de teléfono"
     }
   },
   "settings": {

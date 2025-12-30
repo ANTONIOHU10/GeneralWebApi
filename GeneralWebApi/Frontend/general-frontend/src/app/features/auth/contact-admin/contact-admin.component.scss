@@ -1,0 +1,195 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/auth/contact-admin/contact-admin.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+.contact-admin-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-6;
+  background: var(--bg-primary);
+}
+
+.contact-admin-content {
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-container {
+  background: var(--bg-surface);
+  border-radius: $border-radius-lg;
+  padding: $spacing-8;
+  box-shadow: $shadow-lg;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: $spacing-8;
+
+  .header-icon {
+    margin-bottom: $spacing-4;
+
+    .material-icons {
+      font-size: 4rem;
+      color: var(--color-primary-600);
+    }
+  }
+
+  h2 {
+    margin: 0 0 $spacing-2 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  margin-bottom: $spacing-6;
+}
+
+.contact-item {
+  display: flex;
+  gap: $spacing-4;
+  padding: $spacing-5;
+  background: var(--bg-secondary);
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-color);
+  transition: all $duration-200 $ease-in-out;
+
+  &:hover {
+    border-color: var(--color-primary-300);
+    box-shadow: $shadow-sm;
+  }
+
+  .contact-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary-50);
+    border-radius: $border-radius-md;
+    color: var(--color-primary-600);
+
+    .material-icons {
+      font-size: 1.5rem;
+    }
+  }
+
+  .contact-details {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 $spacing-2 0;
+      font-size: $font-size-sm;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .contact-value {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+      margin-bottom: $spacing-1;
+
+      .contact-link {
+        color: var(--color-primary-600);
+        text-decoration: none;
+        font-size: $font-size-base;
+        font-weight: 500;
+        transition: color $duration-200 $ease-in-out;
+
+        &:hover {
+          color: var(--color-primary-700);
+          text-decoration: underline;
+        }
+      }
+
+      .copy-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: $border-radius-sm;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all $duration-200 $ease-in-out;
+
+        &:hover {
+          background: var(--bg-tertiary);
+          color: var(--color-primary-600);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+
+        .material-icons {
+          font-size: 1.125rem;
+        }
+      }
+    }
+
+    .contact-value-text {
+      margin: 0;
+      color: var(--text-primary);
+      font-size: $font-size-base;
+      line-height: 1.5;
+    }
+
+    .contact-note {
+      margin: $spacing-1 0 0 0;
+      color: var(--text-secondary);
+      font-size: $font-size-xs;
+      font-style: italic;
+    }
+  }
+}
+
+.form-footer {
+  margin-top: $spacing-6;
+}
+
+// Full width button style
+::ng-deep .full-width {
+  width: 100%;
+  display: flex !important;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .contact-admin-container {
+    padding: $spacing-4;
+  }
+
+  .form-container {
+    padding: $spacing-6;
+  }
+
+  .contact-item {
+    flex-direction: column;
+    gap: $spacing-3;
+
+    .contact-icon {
+      align-self: flex-start;
+    }
+  }
+}
+

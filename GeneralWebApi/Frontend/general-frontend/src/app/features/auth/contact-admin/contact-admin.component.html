@@ -1,0 +1,99 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/auth/contact-admin/contact-admin.component.html -->
+<div class="contact-admin-container">
+  <div class="contact-admin-content">
+    <div class="form-container">
+      <div class="form-header">
+        <div class="header-icon">
+          <span class="material-icons">support_agent</span>
+        </div>
+        <h2>{{ 'auth.contactAdmin.title' | translate }}</h2>
+        <p>{{ 'auth.contactAdmin.description' | translate }}</p>
+      </div>
+
+      <div class="contact-info">
+        <!-- Email Section -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <span class="material-icons">email</span>
+          </div>
+          <div class="contact-details">
+            <h3>{{ 'auth.contactAdmin.email' | translate }}</h3>
+            <div class="contact-value">
+              <a href="mailto:admin&#64;generalwebapi.com" class="contact-link">
+                admin&#64;generalwebapi.com
+              </a>
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyToClipboard('admin@generalwebapi.com')"
+                [attr.aria-label]="'auth.contactAdmin.copyEmail' | translate"
+                [title]="'auth.contactAdmin.copyEmail' | translate"
+              >
+                <span class="material-icons">content_copy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone Section -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <span class="material-icons">phone</span>
+          </div>
+          <div class="contact-details">
+            <h3>{{ 'auth.contactAdmin.phone' | translate }}</h3>
+            <div class="contact-value">
+              <a href="tel:+86-400-123-4567" class="contact-link">
+                +86-400-123-4567
+              </a>
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyToClipboard('+86-400-123-4567')"
+                [attr.aria-label]="'auth.contactAdmin.copyPhone' | translate"
+                [title]="'auth.contactAdmin.copyPhone' | translate"
+              >
+                <span class="material-icons">content_copy</span>
+              </button>
+            </div>
+            <p class="contact-note">{{ 'auth.contactAdmin.phoneNote' | translate }}</p>
+          </div>
+        </div>
+
+        <!-- Office Hours Section -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <span class="material-icons">schedule</span>
+          </div>
+          <div class="contact-details">
+            <h3>{{ 'auth.contactAdmin.officeHours' | translate }}</h3>
+            <p class="contact-value-text">{{ 'auth.contactAdmin.officeHoursValue' | translate }}</p>
+          </div>
+        </div>
+
+        <!-- Support Section -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <span class="material-icons">help_outline</span>
+          </div>
+          <div class="contact-details">
+            <h3>{{ 'auth.contactAdmin.support' | translate }}</h3>
+            <p class="contact-value-text">{{ 'auth.contactAdmin.supportDescription' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Login Button -->
+      <div class="form-footer">
+        <app-base-button
+          [text]="'auth.contactAdmin.backToLogin' | translate"
+          variant="primary"
+          (buttonClick)="goToLogin()"
+          icon="arrow_back"
+          customClass="full-width"
+        ></app-base-button>
+      </div>
+    </div>
+  </div>
+</div>
+
