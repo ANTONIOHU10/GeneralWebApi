@@ -1333,7 +1333,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
             this.avatarUploading.set(false);
             this.notificationService.error(
               this.translationService.translate('employees.detail.errors.avatarUploadFailed'),
-              error.message || 'Failed to upload avatar'
+              error.message || this.translationService.translate('employees.detail.errors.avatarUploadFailedMessage')
             );
             return of(null);
           })

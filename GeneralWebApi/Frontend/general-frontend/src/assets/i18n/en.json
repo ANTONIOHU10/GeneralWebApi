@@ -64,6 +64,7 @@
       "networkError": "Network error. Please check your connection and try again.",
       "serverError": "Server error. Please try again later.",
       "validationError": "Please enter both username and password.",
+      "pleaseEnterCredentials": "Please enter both username and password.",
       "navigationError": "Navigation failed. Please refresh the page.",
       "default": "Login failed. Please check your credentials and try again."
     },
@@ -643,6 +644,7 @@
       },
       "errors": {
         "avatarUploadFailed": "Avatar Upload Failed",
+        "avatarUploadFailedMessage": "An error occurred while uploading the avatar. Please try again.",
         "invalidImageType": "Invalid Image Type",
         "invalidImageTypeMessage": "Please select a valid image file (JPG, PNG, GIF, etc.)",
         "imageTooLarge": "Image File Too Large",
@@ -660,6 +662,24 @@
       "confirmMessage": "Are you sure you want to delete {{name}}? This action cannot be undone.",
       "bulkConfirmMessage": "Are you sure you want to delete {{count}} employee(s)?\n\n{{names}}\n\nThis action cannot be undone.",
       "deleteAll": "Delete All"
+    },
+    "employee": "Employee",
+    "operations": {
+      "errorTitle": "Operation Failed",
+      "loading": {
+        "processing": "Processing...",
+        "deleting": "Deleting employee...",
+        "updating": "Updating employee...",
+        "creating": "Creating employee..."
+      },
+      "success": {
+        "deleteTitle": "Employee Deleted",
+        "deleteMessage": "{{name}} has been successfully deleted.",
+        "updateTitle": "Employee Updated",
+        "updateMessage": "{{name}} has been successfully updated.",
+        "createTitle": "Employee Created",
+        "createMessage": "{{name}} has been successfully created."
+      }
     },
     "search": {
       "title": "Search Employee",
@@ -865,7 +885,19 @@
         "approvalComments": "Approval Comments",
         "approvalCommentsPlaceholder": "Enter comments for approval request (optional)"
       },
-      "submitButton": "Create Contract"
+      "submitButton": "Create Contract",
+      "errors": {
+        "loadEmployeesFailed": "Load Failed",
+        "loadEmployeesFailedMessage": "Failed to load employees. Please try again.",
+        "loadUsersFailed": "Load Failed",
+        "loadUsersFailedMessage": "Failed to load users. Please try again.",
+        "createFailed": "Creation Failed",
+        "createFailedMessage": "Failed to create contract. Please try again."
+      },
+      "notifications": {
+        "createSuccess": "Contract Created",
+        "createSuccessMessage": "Contract for {{name}} has been created successfully"
+      }
     },
     "submitApproval": {
       "sections": {
@@ -1125,7 +1157,13 @@
       },
       "submitButton": "Create Template",
       "confirmTitle": "Confirm Add",
-      "confirmMessage": "Are you sure you want to add template \"{{name}}\"?"
+      "confirmMessage": "Are you sure you want to add template \"{{name}}\"?",
+      "notifications": {
+        "createSuccess": "Template Added",
+        "createSuccessMessage": "Template \"{{name}}\" added successfully!",
+        "createFailed": "Add Template Failed",
+        "createFailedMessage": "Failed to add template. Please try again."
+      }
     },
     "delete": {
       "confirmTitle": "Delete Template",

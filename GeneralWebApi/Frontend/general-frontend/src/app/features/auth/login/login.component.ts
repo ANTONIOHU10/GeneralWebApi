@@ -115,8 +115,8 @@ export class LoginComponent implements OnInit {
         this.loginForm.get(key)?.markAsTouched();
       });
       this.notificationService.error(
-        'Validation Error',
-        'Please enter both username and password'
+        this.translationService.translate('common.validationError'),
+        this.translationService.translate('auth.errors.pleaseEnterCredentials')
       );
       return;
     }

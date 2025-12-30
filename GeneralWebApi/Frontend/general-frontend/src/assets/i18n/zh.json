@@ -64,6 +64,7 @@
       "networkError": "网络错误。请检查您的网络连接后重试。",
       "serverError": "服务器错误。请稍后重试。",
       "validationError": "请输入用户名和密码。",
+      "pleaseEnterCredentials": "请输入用户名和密码。",
       "navigationError": "导航失败。请刷新页面。",
       "default": "登录失败。请检查您的凭据后重试。"
     },
@@ -603,6 +604,7 @@
       },
       "errors": {
         "avatarUploadFailed": "头像上传失败",
+        "avatarUploadFailedMessage": "上传头像时发生错误，请重试。",
         "invalidImageType": "无效的图片类型",
         "invalidImageTypeMessage": "请选择有效的图片文件（JPG、PNG、GIF等）",
         "imageTooLarge": "图片文件过大",
@@ -620,6 +622,24 @@
       "confirmMessage": "您确定要删除 {{name}} 吗？此操作无法撤销。",
       "bulkConfirmMessage": "您确定要删除 {{count}} 个员工吗？\n\n{{names}}\n\n此操作无法撤销。",
       "deleteAll": "全部删除"
+    },
+    "employee": "员工",
+    "operations": {
+      "errorTitle": "操作失败",
+      "loading": {
+        "processing": "处理中...",
+        "deleting": "正在删除员工...",
+        "updating": "正在更新员工...",
+        "creating": "正在创建员工..."
+      },
+      "success": {
+        "deleteTitle": "员工已删除",
+        "deleteMessage": "{{name}} 已成功删除。",
+        "updateTitle": "员工已更新",
+        "updateMessage": "{{name}} 已成功更新。",
+        "createTitle": "员工已创建",
+        "createMessage": "{{name}} 已成功创建。"
+      }
     },
     "search": {
       "title": "搜索员工",
@@ -825,7 +845,19 @@
         "approvalComments": "审批意见",
         "approvalCommentsPlaceholder": "输入审批请求意见（可选）"
       },
-      "submitButton": "创建合同"
+      "submitButton": "创建合同",
+      "errors": {
+        "loadEmployeesFailed": "加载员工失败",
+        "loadEmployeesFailedMessage": "加载员工列表失败，请重试。",
+        "loadUsersFailed": "加载用户失败",
+        "loadUsersFailedMessage": "加载用户列表失败，请重试。",
+        "createFailed": "创建失败",
+        "createFailedMessage": "创建合同失败，请重试。"
+      },
+      "notifications": {
+        "createSuccess": "合同已创建",
+        "createSuccessMessage": "{{name}} 的合同已成功创建"
+      }
     },
     "submitApproval": {
       "sections": {
@@ -1085,7 +1117,13 @@
       },
       "submitButton": "创建模板",
       "confirmTitle": "确认添加",
-      "confirmMessage": "您确定要添加模板 \"{{name}}\" 吗？"
+      "confirmMessage": "您确定要添加模板 \"{{name}}\" 吗？",
+      "notifications": {
+        "createSuccess": "模板已添加",
+        "createSuccessMessage": "模板 \"{{name}}\" 已成功添加！",
+        "createFailed": "添加模板失败",
+        "createFailedMessage": "添加模板失败，请重试。"
+      }
     },
     "delete": {
       "confirmTitle": "删除模板",

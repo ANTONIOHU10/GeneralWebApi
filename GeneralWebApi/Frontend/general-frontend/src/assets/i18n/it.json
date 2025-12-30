@@ -64,6 +64,7 @@
       "networkError": "Errore di rete. Controlla la tua connessione e riprova.",
       "serverError": "Errore del server. Riprova più tardi.",
       "validationError": "Inserisci sia il nome utente che la password.",
+      "pleaseEnterCredentials": "Inserisci sia il nome utente che la password.",
       "navigationError": "Navigazione fallita. Aggiorna la pagina.",
       "default": "Accesso fallito. Controlla le tue credenziali e riprova."
     },
@@ -643,6 +644,7 @@
       },
       "errors": {
         "avatarUploadFailed": "Caricamento Avatar Fallito",
+        "avatarUploadFailedMessage": "Si è verificato un errore durante il caricamento dell'avatar. Riprova.",
         "invalidImageType": "Tipo di Immagine Non Valido",
         "invalidImageTypeMessage": "Seleziona un file immagine valido (JPG, PNG, GIF, ecc.)",
         "imageTooLarge": "File Immagine Troppo Grande",
@@ -660,6 +662,24 @@
       "confirmMessage": "Sei sicuro di voler eliminare {{name}}? Questa azione non può essere annullata.",
       "bulkConfirmMessage": "Sei sicuro di voler eliminare {{count}} dipendente/i?\n\n{{names}}\n\nQuesta azione non può essere annullata.",
       "deleteAll": "Elimina Tutti"
+    },
+    "employee": "Dipendente",
+    "operations": {
+      "errorTitle": "Operazione Fallita",
+      "loading": {
+        "processing": "Elaborazione in corso...",
+        "deleting": "Eliminazione dipendente in corso...",
+        "updating": "Aggiornamento dipendente in corso...",
+        "creating": "Creazione dipendente in corso..."
+      },
+      "success": {
+        "deleteTitle": "Dipendente Eliminato",
+        "deleteMessage": "{{name}} è stato eliminato con successo.",
+        "updateTitle": "Dipendente Aggiornato",
+        "updateMessage": "{{name}} è stato aggiornato con successo.",
+        "createTitle": "Dipendente Creato",
+        "createMessage": "{{name}} è stato creato con successo."
+      }
     },
     "search": {
       "title": "Cerca Dipendente",

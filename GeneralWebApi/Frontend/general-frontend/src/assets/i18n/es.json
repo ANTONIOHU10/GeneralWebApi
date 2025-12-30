@@ -64,6 +64,7 @@
       "networkError": "Error de red. Verifica tu conexión e intenta de nuevo.",
       "serverError": "Error del servidor. Por favor, intenta más tarde.",
       "validationError": "Por favor, ingresa tanto el nombre de usuario como la contraseña.",
+      "pleaseEnterCredentials": "Por favor, ingresa tanto el nombre de usuario como la contraseña.",
       "navigationError": "Error de navegación. Por favor, actualiza la página.",
       "default": "Error al iniciar sesión. Verifica tus credenciales e intenta de nuevo."
     },
@@ -620,6 +621,7 @@
       },
       "errors": {
         "avatarUploadFailed": "Error al Subir Avatar",
+        "avatarUploadFailedMessage": "Ocurrió un error al subir el avatar. Por favor, inténtalo de nuevo.",
         "invalidImageType": "Tipo de Imagen Inválido",
         "invalidImageTypeMessage": "Por favor, selecciona un archivo de imagen válido (JPG, PNG, GIF, etc.)",
         "imageTooLarge": "Archivo de Imagen Demasiado Grande",
@@ -640,6 +642,24 @@
       "confirmMessage": "¿Está seguro de que desea eliminar {{name}}? Esta acción no se puede deshacer.",
       "bulkConfirmMessage": "¿Está seguro de que desea eliminar {{count}} empleado(s)?\n\n{{names}}\n\nEsta acción no se puede deshacer.",
       "deleteAll": "Eliminar Todos"
+    },
+    "employee": "Empleado",
+    "operations": {
+      "errorTitle": "Operación Fallida",
+      "loading": {
+        "processing": "Procesando...",
+        "deleting": "Eliminando empleado...",
+        "updating": "Actualizando empleado...",
+        "creating": "Creando empleado..."
+      },
+      "success": {
+        "deleteTitle": "Empleado Eliminado",
+        "deleteMessage": "{{name}} ha sido eliminado exitosamente.",
+        "updateTitle": "Empleado Actualizado",
+        "updateMessage": "{{name}} ha sido actualizado exitosamente.",
+        "createTitle": "Empleado Creado",
+        "createMessage": "{{name}} ha sido creado exitosamente."
+      }
     },
     "search": {
       "title": "Buscar Empleado",

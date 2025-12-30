@@ -135,8 +135,8 @@ export class AddContractTemplateComponent implements OnInit, OnDestroy {
         next: () => {
           this.loading.set(false);
           this.notificationService.success(
-            'Template Added',
-            `Template "${data['name']}" added successfully!`,
+            this.translationService.translate('contractTemplates.add.notifications.createSuccess'),
+            this.translationService.translate('contractTemplates.add.notifications.createSuccessMessage', { name: data['name'] as string }),
             { duration: 3000, autoClose: true }
           );
           this.templateCreated.emit();
@@ -145,8 +145,8 @@ export class AddContractTemplateComponent implements OnInit, OnDestroy {
         error: (err) => {
           this.loading.set(false);
           this.notificationService.error(
-            'Add Template Failed',
-            err.message || 'Failed to add template.',
+            this.translationService.translate('contractTemplates.add.notifications.createFailed'),
+            err.message || this.translationService.translate('contractTemplates.add.notifications.createFailedMessage'),
             { duration: 5000, persistent: false, autoClose: true }
           );
         }

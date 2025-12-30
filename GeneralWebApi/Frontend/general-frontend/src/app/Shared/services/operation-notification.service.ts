@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NotificationService } from './notification.service';
 import { LoadingService } from './loading.service';
+import { TranslationService } from '@core/services/translation.service';
 
 /**
  * Operation state interface
@@ -133,6 +134,7 @@ export interface OperationNotificationConfig {
 export class OperationNotificationService {
   private notificationService = inject(NotificationService);
   private loadingService = inject(LoadingService);
+  private translationService = inject(TranslationService);
 
   // Track current operation
   private currentOperation: CurrentOperation = { type: null };
@@ -160,7 +162,10 @@ export class OperationNotificationService {
           // Only show notification if it's a different error (prevent duplicates)
           if (this.lastErrorShown !== error) {
             this.lastErrorShown = error;
-            this.notificationService.error('Operation Failed', error);
+            this.notificationService.error(
+              this.translationService.translate('employees.operations.errorTitle'),
+              error
+            );
           }
         } else {
           // Error cleared - reset flag and last error
@@ -235,18 +240,18 @@ export class OperationNotificationService {
     loadingMessages?: OperationNotificationConfig['loadingMessages']
   ): string {
     if (!operation) {
-      return loadingMessages?.default || 'Processing...';
+      return loadingMessages?.default || this.translationService.translate('employees.operations.loading.processing');
     }
 
     switch (operation.toLowerCase()) {
       case 'delete':
-        return loadingMessages?.delete || 'Deleting employee...';
+        return loadingMessages?.delete || this.translationService.translate('employees.operations.loading.deleting');
       case 'update':
-        return loadingMessages?.update || 'Updating employee...';
+        return loadingMessages?.update || this.translationService.translate('employees.operations.loading.updating');
       case 'create':
-        return loadingMessages?.create || 'Creating employee...';
+        return loadingMessages?.create || this.translationService.translate('employees.operations.loading.creating');
       default:
-        return loadingMessages?.default || 'Processing...';
+        return loadingMessages?.default || this.translationService.translate('employees.operations.loading.processing');
     }
   }
 
@@ -266,22 +271,28 @@ export class OperationNotificationService {
 
     switch (type) {
       case 'delete':
-        title = 'Employee Deleted';
+        title = this.translationService.translate('employees.operations.success.deleteTitle');
         message = successMessages?.delete
           ? successMessages.delete(employeeName)
-          : `${employeeName || 'Employee'} has been successfully deleted.`;
+          : this.translationService.translate('employees.operations.success.deleteMessage', { 
+              name: employeeName || this.translationService.translate('employees.employee') 
+            });
         break;
       case 'update':
-        title = 'Employee Updated';
+        title = this.translationService.translate('employees.operations.success.updateTitle');
         message = successMessages?.update
           ? successMessages.update(employeeName)
-          : `${employeeName || 'Employee'} has been successfully updated.`;
+          : this.translationService.translate('employees.operations.success.updateMessage', { 
+              name: employeeName || this.translationService.translate('employees.employee') 
+            });
         break;
       case 'create':
-        title = 'Employee Created';
+        title = this.translationService.translate('employees.operations.success.createTitle');
         message = successMessages?.create
           ? successMessages.create(employeeName)
-          : `${employeeName || 'Employee'} has been successfully created.`;
+          : this.translationService.translate('employees.operations.success.createMessage', { 
+              name: employeeName || this.translationService.translate('employees.employee') 
+            });
         break;
       default:
         return;

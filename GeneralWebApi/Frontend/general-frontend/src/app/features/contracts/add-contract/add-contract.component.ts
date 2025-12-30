@@ -136,8 +136,8 @@ export class AddContractComponent implements OnInit, OnDestroy {
         console.error('❌ Error loading employees:', error);
         this.loadingEmployees.set(false);
         this.notificationService.error(
-          'Load Failed',
-          'Failed to load employees. Please try again.',
+          this.translationService.translate('contracts.add.errors.loadEmployeesFailed'),
+          this.translationService.translate('contracts.add.errors.loadEmployeesFailedMessage'),
           { duration: 5000, persistent: false, autoClose: true }
         );
         return of(null);
@@ -183,8 +183,8 @@ export class AddContractComponent implements OnInit, OnDestroy {
         console.error('❌ Error loading users:', error);
         this.loadingUsers.set(false);
         this.notificationService.error(
-          'Load Failed',
-          'Failed to load users. Please try again.',
+          this.translationService.translate('contracts.add.errors.loadUsersFailed'),
+          this.translationService.translate('contracts.add.errors.loadUsersFailedMessage'),
           { duration: 5000, persistent: false, autoClose: true }
         );
         return of([]);
@@ -317,8 +317,8 @@ export class AddContractComponent implements OnInit, OnDestroy {
       catchError(error => {
         this.loading.set(false);
         this.notificationService.error(
-          'Creation Failed',
-          error.message || 'Failed to create contract',
+          this.translationService.translate('contracts.add.errors.createFailed'),
+          error.message || this.translationService.translate('contracts.add.errors.createFailedMessage'),
           { duration: 5000, persistent: false, autoClose: true }
         );
         return of(null);
@@ -328,8 +328,8 @@ export class AddContractComponent implements OnInit, OnDestroy {
         if (contract) {
           this.loading.set(false);
           this.notificationService.success(
-            'Contract Created',
-            `Contract for ${employeeName} has been created successfully`,
+            this.translationService.translate('contracts.add.notifications.createSuccess'),
+            this.translationService.translate('contracts.add.notifications.createSuccessMessage', { name: employeeName }),
             { duration: 3000, autoClose: true }
           );
           this.contractCreated.emit();
