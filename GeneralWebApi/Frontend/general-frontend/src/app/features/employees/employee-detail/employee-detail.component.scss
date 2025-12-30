@@ -142,6 +142,12 @@
     flex-direction: column;
     gap: $spacing-2;
 
+    .employee-actions {
+      margin-top: $spacing-2;
+    }
+    flex-direction: column;
+    gap: $spacing-2;
+
     .employee-name {
       margin: 0;
       font-size: 1.5rem;

@@ -9,6 +9,7 @@ import {
   PaginatedResponse,
   CreateEmployeeRequest,
   UpdateEmployeeRequest,
+  EmployeeHierarchy,
 } from 'app/contracts/employees/employee.model';
 import { ApiResponse } from 'app/contracts/common/api-response';
 
@@ -164,6 +165,11 @@ export class EmployeeService extends BaseHttpService {
     );
   }
 
+  // Get employee hierarchy (organization chart)
+  getEmployeeHierarchy(id: string): Observable<EmployeeHierarchy> {
+    return this.get<EmployeeHierarchy>(`${this.endpoint}/${id}/hierarchy`);
+  }
+
   // 根据部门ID获取员工列表 (deprecated - use searchEmployees instead)
   getEmployeesByDepartment(departmentId: number): Observable<Employee[]> {
     return this.get<BackendEmployee[]>(`${this.endpoint}/department/${departmentId}`).pipe(
@@ -231,6 +237,20 @@ export class EmployeeService extends BaseHttpService {
     );
   }
 
+  // Get list of managers from backend
+  getManagers(searchTerm?: string, excludeEmployeeId?: string): Observable<Employee[]> {
+    const params: Record<string, string> = {};
+    if (searchTerm) {
+      params['searchTerm'] = searchTerm;
+    }
+    if (excludeEmployeeId) {
+      params['excludeEmployeeId'] = excludeEmployeeId;
+    }
+    return this.get<BackendEmployee[]>(`${this.endpoint}/managers`, params).pipe(
+      map(backendEmployees => backendEmployees.map(emp => this.transformBackendEmployee(emp)))
+    );
+  }
+
   // 转换前端 Employee 格式到后端 UpdateEmployeeDto 格式
   private transformEmployeeToUpdateDto(
     id: string,
@@ -262,6 +282,7 @@ export class EmployeeService extends BaseHttpService {
       TerminationDate: employee.terminationDate ? formatDate(employee.terminationDate) : null,
       EmploymentStatus: employee.status || '',
       EmploymentType: employee.employmentType || '',
+      IsManager: employee.isManager ?? false,
       CurrentSalary: employee.salary ?? null,
       SalaryCurrency: employee.salaryCurrency || null,
       Address: employee.address?.street || '',

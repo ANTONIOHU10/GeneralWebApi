@@ -7,11 +7,13 @@ import {
   BaseModalComponent,
   BaseAvatarComponent,
   BaseBadgeComponent,
+  BaseButtonComponent,
   BadgeVariant,
   BaseFormComponent,
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
+import { EmployeeHierarchyComponent } from '../employee-hierarchy/employee-hierarchy.component';
 import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { TranslationService } from '@core/services/translation.service';
 import { EmployeeFacade } from '@store/employee/employee.facade';
@@ -19,6 +21,7 @@ import { DepartmentFacade } from '@store/department/department.facade';
 import { PositionFacade } from '@store/position/position.facade';
 import { DialogService, OperationNotificationService, NotificationService } from '../../../Shared/services';
 import { DocumentService } from '@core/services/document.service';
+import { EmployeeService } from '@core/services/employee.service';
 import { Observable, combineLatest, of, Subject } from 'rxjs';
 import { filter, first, pairwise, debounceTime, startWith, catchError, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Department } from 'app/contracts/departments/department.model';
@@ -41,7 +44,9 @@ import { Position } from 'app/contracts/positions/position.model';
     BaseModalComponent,
     BaseAvatarComponent,
     BaseBadgeComponent,
+    BaseButtonComponent,
     BaseFormComponent,
+    EmployeeHierarchyComponent,
     TranslatePipe,
   ],
   templateUrl: './employee-detail.component.html',
@@ -56,6 +61,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslationService);
   private documentService = inject(DocumentService);
+  private employeeService = inject(EmployeeService);
   private cdr = inject(ChangeDetectorRef);
 
   @Input() employee: Employee | null = null;
@@ -84,6 +90,9 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   avatarPreview = signal<string>('');
   avatarUploading = signal(false);
   selectedAvatarFile: File | null = null;
+
+  // Hierarchy modal state
+  showHierarchyModal = signal(false);
 
   // Destroy subject for cleanup
   private destroy$ = new Subject<void>();
@@ -345,12 +354,25 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         options: [] as SelectOption[], // Will be populated dynamically
       },
       {
+        key: 'isManager',
+        type: 'select',
+        label: 'Is Manager',
+        placeholder: 'Is this employee a manager?',
+        section: 'Work Information',
+        order: 7,
+        colSpan: 1,
+        options: [
+          { value: true, label: 'Yes' },
+          { value: false, label: 'No' },
+        ] as SelectOption[],
+      },
+      {
         key: 'currentSalary',
         type: 'number',
         label: 'Current Salary',
         placeholder: 'Enter salary amount',
         section: 'Work Information',
-        order: 7,
+        order: 8,
         colSpan: 1,
         min: 0,
       },
@@ -360,7 +382,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
         label: 'Salary Currency',
         placeholder: 'e.g., USD, EUR',
         section: 'Work Information',
-        order: 8,
+        order: 9,
         colSpan: 1,
       },
       // Address Information Section
@@ -838,12 +860,25 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
           options: [] as SelectOption[], // Will be populated dynamically
         },
         {
+          key: 'isManager',
+          type: 'select',
+          label: t('employees.detail.fields.isManager'),
+          placeholder: t('employees.detail.fields.isManagerPlaceholder'),
+          section: workInfoSection,
+          order: 7,
+          colSpan: 1,
+          options: [
+            { value: true, label: t('common.yes') },
+            { value: false, label: t('common.no') },
+          ] as SelectOption[],
+        },
+        {
           key: 'currentSalary',
           type: 'number',
           label: t('employees.detail.fields.currentSalary'),
           placeholder: t('employees.detail.fields.currentSalaryPlaceholder'),
           section: workInfoSection,
-          order: 7,
+          order: 8,
           colSpan: 1,
           min: 0,
         },
@@ -853,7 +888,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
           label: t('employees.detail.fields.salaryCurrency'),
           placeholder: t('employees.detail.fields.salaryCurrencyPlaceholder'),
           section: workInfoSection,
-          order: 8,
+          order: 9,
           colSpan: 1,
         },
         // Address Information Section
@@ -983,6 +1018,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
       departmentId: this.employee.departmentId || null,
       positionId: this.employee.positionId || null,
       managerId: this.employee.managerId ? parseInt(this.employee.managerId) : null,
+      isManager: this.employee.isManager ?? false,
       currentSalary: this.employee.salary || null,
       salaryCurrency: this.employee.salaryCurrency || '',
       address: this.employee.address?.street || '',
@@ -1205,39 +1241,27 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Load manager options from employees list when user clicks dropdown
+   * Load manager options from backend when user clicks dropdown
    */
   private loadManagerOptionsIfNeeded(): void {
     // Set loading state
     this.fieldLoading.update(loading => ({ ...loading, managerId: true }));
     
-    // Check if employees are already loaded
-    this.employeeFacade.employees$.pipe(
-      first()
-    ).subscribe(employees => {
-      if (employees.length === 0) {
-        // Load employees if not loaded
-        this.employeeFacade.loadEmployees();
-        
-        // Wait for employees to load
-        this.employeeFacade.employees$.pipe(
-          filter(loadedEmps => loadedEmps.length > 0),
-          first(),
-          catchError(error => {
-            console.error('❌ Error loading employees:', error);
-            this.fieldLoading.update(loading => ({ ...loading, managerId: false }));
-            return of([]);
-          })
-        ).subscribe(loadedEmployees => {
-          this.updateManagerOptions(loadedEmployees);
+    // Load managers from backend API
+    const excludeEmployeeId = this.employee?.id;
+    this.employeeService.getManagers(undefined, excludeEmployeeId)
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          console.error('❌ Error loading managers:', error);
           this.fieldLoading.update(loading => ({ ...loading, managerId: false }));
-        });
-      } else {
-        // Employees already loaded
-        this.updateManagerOptions(employees);
+          return of([]);
+        })
+      )
+      .subscribe(managers => {
+        this.updateManagerOptions(managers);
         this.fieldLoading.update(loading => ({ ...loading, managerId: false }));
-      }
-    });
+      });
   }
 
   /**
@@ -1254,13 +1278,11 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Update manager field options
    */
-  private updateManagerOptions(employees: Employee[]): void {
-    const managerOptions: SelectOption[] = employees
-      .filter(emp => emp.id !== this.employee?.id && emp.isManager)
-      .map(emp => ({
-        value: parseInt(emp.id),
-        label: `${emp.firstName} ${emp.lastName}`
-      }));
+  private updateManagerOptions(managers: Employee[]): void {
+    const managerOptions: SelectOption[] = managers.map(manager => ({
+      value: parseInt(manager.id),
+      label: `${manager.firstName} ${manager.lastName}${manager.employeeNumber ? ` (${manager.employeeNumber})` : ''}`
+    }));
 
     const managerField = this.formConfig.fields.find(f => f.key === 'managerId');
     if (managerField) {
@@ -1358,6 +1380,7 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
       departmentId: data['departmentId'] as number || null,
       positionId: data['positionId'] as number || null,
       managerId: data['managerId'] ? (data['managerId'] as number).toString() : null,
+      isManager: (data['isManager'] as boolean) ?? false,
       salary: data['currentSalary'] as number || undefined,
       salaryCurrency: (data['salaryCurrency'] as string)?.trim() || undefined,
       avatar: avatarUrl, // Include avatar URL
@@ -1432,6 +1455,30 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   onRemoveAvatar(): void {
     this.selectedAvatarFile = null;
     this.avatarPreview.set(this.employee?.avatar || '');
+  }
+
+  /**
+   * View employee hierarchy (organization chart)
+   */
+  onViewHierarchy(): void {
+    if (this.employee?.id) {
+      this.showHierarchyModal.set(true);
+    }
+  }
+
+  /**
+   * Close hierarchy modal
+   */
+  onCloseHierarchyModal(): void {
+    this.showHierarchyModal.set(false);
+  }
+
+  /**
+   * Get full name for employee
+   */
+  getFullNameForHierarchy(): string {
+    if (!this.employee) return '';
+    return `${this.employee.firstName} ${this.employee.lastName}`;
   }
 
   /**

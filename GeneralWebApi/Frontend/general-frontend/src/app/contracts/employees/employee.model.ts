@@ -104,6 +104,23 @@ export interface PaginatedResponse<T> {
   hasNextPage: boolean;
 }
 
+// Employee hierarchy for organization chart
+export interface EmployeeHierarchy {
+  id: number;
+  firstName: string;
+  lastName: string;
+  employeeNumber: string;
+  email?: string;
+  positionTitle?: string;
+  departmentName?: string;
+  avatar?: string;
+  isManager: boolean;
+  employmentStatus: string;
+  fullName: string;
+  manager?: EmployeeHierarchy;
+  subordinates: EmployeeHierarchy[];
+}
+
 export interface EmployeeCardData {
   employee: Employee;
   showActions?: boolean;
@@ -122,6 +139,7 @@ export interface CreateEmployeeRequest {
   hireDate: string; // ISO date string
   employmentStatus: string; // Required: e.g., "Active", "Inactive", "Terminated"
   employmentType: string; // Required: e.g., "FullTime", "PartTime"
+  isManager?: boolean; // Whether the employee is a manager
   currentSalary?: number;
   salaryCurrency?: string;
   address?: string;
@@ -151,6 +169,7 @@ export interface UpdateEmployeeRequest {
   TerminationDate?: string | null; // ISO 8601 date string
   EmploymentStatus: string;
   EmploymentType: string;
+  IsManager: boolean;
   CurrentSalary?: number | null;
   SalaryCurrency?: string | null;
   Address: string;

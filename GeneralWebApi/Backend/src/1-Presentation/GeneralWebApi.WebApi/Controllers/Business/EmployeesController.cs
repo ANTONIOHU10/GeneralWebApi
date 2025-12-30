@@ -127,4 +127,64 @@ public class EmployeesController : BaseController
         });
     }
 
+    /// <summary>
+    /// Get employee hierarchy (manager chain and subordinates)
+    /// </summary>
+    /// <param name="id">Employee ID</param>
+    /// <returns>Employee hierarchy tree</returns>
+    [HttpGet("{id:int}/hierarchy")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view employee hierarchy
+    public async Task<ActionResult<ApiResponse<EmployeeHierarchyDto>>> GetEmployeeHierarchy(int id)
+    {
+        return await ValidateAndExecuteAsync(id, async (validatedId) =>
+        {
+            var query = new GetEmployeeHierarchyQuery { EmployeeId = validatedId };
+            var result = await _mediator.Send(query);
+            
+            if (result == null)
+            {
+                return NotFound(ApiResponse<EmployeeHierarchyDto>.ErrorResult(
+                    "Employee not found",
+                    404,
+                    $"Employee with ID {validatedId} not found"));
+            }
+            
+            return Ok(ApiResponse<EmployeeHierarchyDto>.SuccessResult(result, "Employee hierarchy retrieved successfully"));
+        });
+    }
+
+    /// <summary>
+    /// Get list of managers (employees with IsManager = true)
+    /// </summary>
+    /// <param name="searchTerm">Optional search term to filter managers by name</param>
+    /// <param name="excludeEmployeeId">Optional employee ID to exclude from results (e.g., current employee being edited)</param>
+    /// <returns>List of managers</returns>
+    [HttpGet("managers")]
+    [Authorize(Policy = "AllRoles")] // All authenticated users can view managers
+    public async Task<ActionResult<ApiResponse<List<EmployeeDto>>>> GetManagers([FromQuery] string? searchTerm = null, [FromQuery] int? excludeEmployeeId = null)
+    {
+        return await ValidateAndExecuteAsync((searchTerm, excludeEmployeeId), async (validatedParams) =>
+        {
+            var searchDto = new EmployeeSearchDto
+            {
+                EmploymentStatus = "Active", // Only active employees
+                PageNumber = 1,
+                PageSize = 100, // Get up to 100 managers
+                SearchTerm = validatedParams.searchTerm
+            };
+            
+            var query = new GetEmployeesQuery { EmployeeSearchDto = searchDto };
+            var result = await _mediator.Send(query);
+            
+            // Filter to only managers and exclude specified employee if provided
+            var managers = result.Items
+                .Where(e => e.IsManager && (validatedParams.excludeEmployeeId == null || e.Id != validatedParams.excludeEmployeeId))
+                .OrderBy(e => e.FirstName)
+                .ThenBy(e => e.LastName)
+                .ToList();
+            
+            return Ok(ApiResponse<List<EmployeeDto>>.SuccessResult(managers, "Managers retrieved successfully"));
+        });
+    }
+
 }

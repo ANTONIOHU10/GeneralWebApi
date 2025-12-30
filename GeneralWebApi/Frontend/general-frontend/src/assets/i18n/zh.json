@@ -38,6 +38,8 @@
     "notAvailable": "不适用",
     "create": "创建",
     "validationError": "验证错误",
+    "yes": "是",
+    "no": "否",
     "deleteConfirm": {
       "title": "确认删除",
       "message": "您确定要删除此项吗？此操作无法撤销。"
@@ -550,6 +552,8 @@
         "positionPlaceholder": "选择职位",
         "manager": "经理",
         "managerPlaceholder": "选择经理",
+        "isManager": "是否为经理",
+        "isManagerPlaceholder": "该员工是否为经理？",
         "currentSalary": "当前薪资",
         "currentSalaryPlaceholder": "输入薪资金额",
         "salaryCurrency": "薪资货币",
@@ -710,6 +714,19 @@
         "saveFailed": "保存失败",
         "saveFailedMessage": "保存设置时发生错误，请重试"
       }
+    },
+    "hierarchy": {
+      "title": "组织架构",
+      "description": "查看员工的上下级关系",
+      "loading": "加载组织架构中...",
+      "emptyTitle": "未找到组织架构",
+      "emptyDescription": "该员工没有上下级关系",
+      "viewHierarchy": "查看组织架构",
+      "managers": "上级",
+      "subordinates": "下属",
+      "manager": "经理",
+      "expandAll": "展开全部",
+      "collapseAll": "折叠全部"
     }
   },
   "contracts": {

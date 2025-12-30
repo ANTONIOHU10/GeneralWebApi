@@ -1,0 +1,175 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-hierarchy/employee-hierarchy.component.html -->
+<div class="employee-hierarchy-container">
+  <!-- Header -->
+  <div class="hierarchy-header">
+    <h3>{{ 'employees.hierarchy.title' | translate }}</h3>
+    @if (hierarchy()) {
+      <div class="header-actions">
+        <app-base-button
+          [text]="'employees.hierarchy.expandAll' | translate"
+          variant="outline"
+          size="small"
+          (buttonClick)="expandAll()"
+          icon="unfold_more"
+        ></app-base-button>
+        <app-base-button
+          [text]="'employees.hierarchy.collapseAll' | translate"
+          variant="outline"
+          size="small"
+          (buttonClick)="collapseAll()"
+          icon="unfold_less"
+        ></app-base-button>
+      </div>
+    }
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <app-base-loading [message]="'employees.hierarchy.loading' | translate"></app-base-loading>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @else if (!loading() && !hierarchy()) {
+    <app-base-empty
+      [title]="'employees.hierarchy.emptyTitle' | translate"
+      [description]="'employees.hierarchy.emptyDescription' | translate"
+    ></app-base-empty>
+  }
+
+  <!-- Hierarchy Tree -->
+  @else if (hierarchy()) {
+    <div class="hierarchy-tree">
+      <!-- Manager Chain (Upward) -->
+      @if (hierarchy()!.manager) {
+        <div class="manager-chain">
+          <div class="chain-label">{{ 'employees.hierarchy.managers' | translate }}</div>
+          <div class="tree-node manager-node">
+            <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: hierarchy()!.manager }"></ng-container>
+          </div>
+        </div>
+      }
+
+      <!-- Root Employee -->
+      <div class="root-node">
+        <div class="node-card root-card">
+          <app-base-avatar
+            [src]="hierarchy()!.avatar || ''"
+            [fallbackText]="getInitials(hierarchy()!)"
+            [alt]="hierarchy()!.fullName"
+            size="large"
+            shape="circle"
+          ></app-base-avatar>
+          <div class="node-info">
+            <div class="node-name">{{ hierarchy()!.fullName }}</div>
+            <div class="node-details">
+              @if (hierarchy()!.positionTitle) {
+                <span class="node-position">{{ hierarchy()!.positionTitle }}</span>
+              }
+              @if (hierarchy()!.departmentName) {
+                <span class="node-department">{{ hierarchy()!.departmentName }}</span>
+              }
+            </div>
+            <div class="node-badges">
+              <app-base-badge
+                [text]="hierarchy()!.employmentStatus"
+                [variant]="getStatusVariant(hierarchy()!.employmentStatus)"
+                size="small"
+              ></app-base-badge>
+              @if (hierarchy()!.isManager) {
+                <app-base-badge
+                  [text]="'employees.hierarchy.manager' | translate"
+                  variant="primary"
+                  size="small"
+                ></app-base-badge>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subordinates (Downward) -->
+      @if (hierarchy()!.subordinates && hierarchy()!.subordinates.length > 0) {
+        <div class="subordinates-section">
+          <div class="section-label">{{ 'employees.hierarchy.subordinates' | translate }} ({{ hierarchy()!.subordinates.length }})</div>
+          <div class="subordinates-tree">
+            @for (subordinate of hierarchy()!.subordinates; track subordinate.id) {
+              <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: subordinate }"></ng-container>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Node Template (Recursive) -->
+<ng-template #nodeTemplate let-node>
+  <div class="tree-node" [class.expanded]="isExpanded(node.id)">
+    <div class="node-card" [class.has-children]="node.subordinates && node.subordinates.length > 0">
+      <div 
+        class="node-content" 
+        [class.clickable]="node.subordinates && node.subordinates.length > 0"
+        (click)="node.subordinates && node.subordinates.length > 0 ? toggleNode(node.id) : null"
+        (keydown.enter)="node.subordinates && node.subordinates.length > 0 ? toggleNode(node.id) : null"
+        (keydown.space)="node.subordinates && node.subordinates.length > 0 ? toggleNode(node.id) : null"
+        [tabindex]="node.subordinates && node.subordinates.length > 0 ? 0 : -1"
+        [attr.role]="node.subordinates && node.subordinates.length > 0 ? 'button' : null"
+        [attr.aria-label]="node.subordinates && node.subordinates.length > 0 ? ('employees.hierarchy.expandNode' | translate) : null"
+      >
+        @if (node.subordinates && node.subordinates.length > 0) {
+          <button class="expand-button" [class.expanded]="isExpanded(node.id)">
+            <span class="material-icons">{{ isExpanded(node.id) ? 'expand_more' : 'chevron_right' }}</span>
+          </button>
+        } @else {
+          <div class="expand-placeholder"></div>
+        }
+        
+        <app-base-avatar
+          [src]="node.avatar || ''"
+          [fallbackText]="getInitials(node)"
+          [alt]="node.fullName"
+          size="medium"
+          shape="circle"
+        ></app-base-avatar>
+        
+        <div class="node-info">
+          <div class="node-name">{{ node.fullName }}</div>
+          <div class="node-details">
+            @if (node.positionTitle) {
+              <span class="node-position">{{ node.positionTitle }}</span>
+            }
+            @if (node.departmentName) {
+              <span class="node-department">{{ node.departmentName }}</span>
+            }
+          </div>
+          <div class="node-badges">
+            <app-base-badge
+              [text]="node.employmentStatus"
+              [variant]="getStatusVariant(node.employmentStatus)"
+              size="small"
+            ></app-base-badge>
+            @if (node.isManager) {
+              <app-base-badge
+                [text]="'employees.hierarchy.manager' | translate"
+                variant="primary"
+                size="small"
+              ></app-base-badge>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Subordinates (Recursive) -->
+      @if (isExpanded(node.id) && node.subordinates && node.subordinates.length > 0) {
+        <div class="children-container">
+          @for (child of node.subordinates; track child.id) {
+            <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: child }"></ng-container>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</ng-template>
+

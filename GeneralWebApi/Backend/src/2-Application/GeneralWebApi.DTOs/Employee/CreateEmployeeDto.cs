@@ -13,6 +13,7 @@ public class CreateEmployeeDto
     public DateTime HireDate { get; set; }
     public string EmploymentStatus { get; set; } = string.Empty;
     public string EmploymentType { get; set; } = string.Empty;
+    public bool IsManager { get; set; } = false;
     public decimal? CurrentSalary { get; set; }
     public string? SalaryCurrency { get; set; }
     public string Address { get; set; } = string.Empty;

@@ -14,6 +14,7 @@ public class UpdateEmployeeDto
     public DateTime? TerminationDate { get; set; }
     public string EmploymentStatus { get; set; } = string.Empty;
     public string EmploymentType { get; set; } = string.Empty;
+    public bool IsManager { get; set; }
     public decimal? CurrentSalary { get; set; }
     public string? SalaryCurrency { get; set; }
     public string Address { get; set; } = string.Empty;

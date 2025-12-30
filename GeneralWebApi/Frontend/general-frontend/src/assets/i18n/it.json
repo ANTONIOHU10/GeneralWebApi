@@ -38,6 +38,8 @@
     "notAvailable": "N/D",
     "create": "Crea",
     "validationError": "Errore di Validazione",
+    "yes": "Sì",
+    "no": "No",
     "deleteConfirm": {
       "title": "Conferma Eliminazione",
       "message": "Sei sicuro di voler eliminare questo elemento? Questa azione non può essere annullata."
@@ -590,6 +592,8 @@
         "positionPlaceholder": "Seleziona posizione",
         "manager": "Responsabile",
         "managerPlaceholder": "Seleziona responsabile",
+        "isManager": "È un Responsabile",
+        "isManagerPlaceholder": "Questo dipendente è un responsabile?",
         "currentSalary": "Salario Attuale",
         "currentSalaryPlaceholder": "Inserisci importo salario",
         "salaryCurrency": "Valuta Salario",
@@ -750,6 +754,19 @@
         "saveFailed": "Salvataggio Fallito",
         "saveFailedMessage": "Si è verificato un errore durante il salvataggio delle impostazioni. Riprova"
       }
+    },
+    "hierarchy": {
+      "title": "Organigramma",
+      "description": "Visualizza il manager e i subordinati del dipendente",
+      "loading": "Caricamento organigramma...",
+      "emptyTitle": "Nessun Organigramma Trovato",
+      "emptyDescription": "Questo dipendente non ha manager o subordinati",
+      "viewHierarchy": "Visualizza Organigramma",
+      "managers": "Manager",
+      "subordinates": "Subordinati",
+      "manager": "Manager",
+      "expandAll": "Espandi Tutto",
+      "collapseAll": "Comprimi Tutto"
     }
   },
   "contracts": {

@@ -9,6 +9,7 @@ import { EmployeeReportsComponent } from '../employee-reports/employee-reports.c
 import { EmployeeSettingsComponent } from '../employee-settings/employee-settings.component';
 import { SearchEmployeeComponent } from '../search-employee/search-employee.component';
 import { EmployeeDetailComponent } from '../employee-detail/employee-detail.component';
+import { EmployeeHierarchyComponent } from '../employee-hierarchy/employee-hierarchy.component';
 import {
   BasePrivatePageContainerComponent,
   BaseSearchComponent,
@@ -17,6 +18,7 @@ import {
   BaseAvatarComponent,
   BaseBadgeComponent,
   BaseButtonComponent,
+  BaseModalComponent,
   TabItem,
   TableColumn,
   TableAction,
@@ -45,6 +47,8 @@ import {
     EmployeeSettingsComponent,
     SearchEmployeeComponent,
     EmployeeDetailComponent,
+    EmployeeHierarchyComponent,
+    BaseModalComponent,
     BasePrivatePageContainerComponent,
     BaseSearchComponent,
     BaseAsyncStateComponent,
@@ -82,6 +86,10 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   
   // View mode: 'table' or 'card'
   viewMode = signal<'table' | 'card'>('table');
+
+  // Hierarchy modal state
+  showHierarchyModal = signal(false);
+  selectedEmployeeForHierarchy = signal<Employee | null>(null);
 
   // Table configuration
   tableColumns: TableColumn[] = [];
@@ -219,6 +227,15 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         showLabel: false,
         onClick: (employee: unknown) => {
           this.onViewEmployee(employee as Employee);
+        },
+      },
+      {
+        label: this.translationService.translate('employees.hierarchy.viewHierarchy'),
+        icon: 'people',
+        variant: 'primary',
+        showLabel: false,
+        onClick: (employee: unknown) => {
+          this.onViewHierarchy(employee as Employee);
         },
       },
       {
@@ -519,6 +536,22 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
    */
   onTableRowClick(employee: unknown): void {
     this.onViewEmployee(employee as Employee);
+  }
+
+  /**
+   * View employee hierarchy (organization chart)
+   */
+  onViewHierarchy(employee: Employee): void {
+    this.selectedEmployeeForHierarchy.set(employee);
+    this.showHierarchyModal.set(true);
+  }
+
+  /**
+   * Close hierarchy modal
+   */
+  onCloseHierarchyModal(): void {
+    this.showHierarchyModal.set(false);
+    this.selectedEmployeeForHierarchy.set(null);
   }
 
   /**

@@ -38,6 +38,8 @@
     "notAvailable": "N/A",
     "create": "Create",
     "validationError": "Validation Error",
+    "yes": "Yes",
+    "no": "No",
     "deleteConfirm": {
       "title": "Confirm Delete",
       "message": "Are you sure you want to delete this item? This action cannot be undone."
@@ -590,6 +592,8 @@
         "positionPlaceholder": "Select position",
         "manager": "Manager",
         "managerPlaceholder": "Select manager",
+        "isManager": "Is Manager",
+        "isManagerPlaceholder": "Is this employee a manager?",
         "currentSalary": "Current Salary",
         "currentSalaryPlaceholder": "Enter salary amount",
         "salaryCurrency": "Salary Currency",
@@ -750,6 +754,19 @@
         "saveFailed": "Save Failed",
         "saveFailedMessage": "An error occurred while saving settings. Please try again"
       }
+    },
+    "hierarchy": {
+      "title": "Organization Chart",
+      "description": "View employee's manager and subordinates",
+      "loading": "Loading organization chart...",
+      "emptyTitle": "No Hierarchy Found",
+      "emptyDescription": "This employee has no manager or subordinates",
+      "viewHierarchy": "View Organization Chart",
+      "managers": "Managers",
+      "subordinates": "Subordinates",
+      "manager": "Manager",
+      "expandAll": "Expand All",
+      "collapseAll": "Collapse All"
     }
   },
   "contracts": {

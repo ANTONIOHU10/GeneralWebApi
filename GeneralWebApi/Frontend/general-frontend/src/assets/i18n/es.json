@@ -38,6 +38,8 @@
     "notAvailable": "N/A",
     "create": "Crear",
     "validationError": "Error de Validación",
+    "yes": "Sí",
+    "no": "No",
     "deleteConfirm": {
       "title": "Confirmar Eliminación",
       "message": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer."
@@ -567,6 +569,8 @@
         "positionPlaceholder": "Seleccione la posición",
         "manager": "Gerente",
         "managerPlaceholder": "Seleccione el gerente",
+        "isManager": "Es Gerente",
+        "isManagerPlaceholder": "¿Este empleado es un gerente?",
         "currentSalary": "Salario Actual",
         "currentSalaryPlaceholder": "Ingrese el monto del salario",
         "salaryCurrency": "Moneda del Salario",
@@ -730,6 +734,19 @@
         "saveFailed": "Error al Guardar",
         "saveFailedMessage": "Ocurrió un error al guardar la configuración. Por favor, intente de nuevo"
       }
+    },
+    "hierarchy": {
+      "title": "Organigrama",
+      "description": "Ver el gerente y subordinados del empleado",
+      "loading": "Cargando organigrama...",
+      "emptyTitle": "No se Encontró Organigrama",
+      "emptyDescription": "Este empleado no tiene gerente ni subordinados",
+      "viewHierarchy": "Ver Organigrama",
+      "managers": "Gerentes",
+      "subordinates": "Subordinados",
+      "manager": "Gerente",
+      "expandAll": "Expandir Todo",
+      "collapseAll": "Colapsar Todo"
     }
   },
   "departments": {

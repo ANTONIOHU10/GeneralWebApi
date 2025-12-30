@@ -71,6 +71,15 @@
             {{ 'employees.detail.id' | translate }}: {{ employee.employeeNumber }}
           </span>
         </div>
+        <div class="employee-actions">
+          <app-base-button
+            [text]="'employees.hierarchy.viewHierarchy' | translate"
+            variant="outline"
+            size="small"
+            (buttonClick)="onViewHierarchy()"
+            icon="people"
+          ></app-base-button>
+        </div>
       </div>
     </div>
 
@@ -88,4 +97,27 @@
     </div>
   </div>
 </app-base-modal>
+
+<!-- Employee Hierarchy Modal -->
+@if (showHierarchyModal() && employee) {
+  <app-base-modal
+    [isOpen]="showHierarchyModal()"
+    [title]="'employees.hierarchy.title' | translate"
+    [config]="{
+      size: 'large',
+      closable: true,
+      backdrop: true,
+      keyboard: true,
+      animation: true,
+      centered: true,
+      scrollable: true
+    }"
+    (closeEvent)="onCloseHierarchyModal()"
+  >
+    <app-employee-hierarchy
+      [employeeId]="employee.id"
+      [employeeName]="getFullNameForHierarchy()"
+    ></app-employee-hierarchy>
+  </app-base-modal>
+}
 

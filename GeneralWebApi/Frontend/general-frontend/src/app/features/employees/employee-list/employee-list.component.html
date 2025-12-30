@@ -127,3 +127,26 @@
   (closeEvent)="onCloseDetailModal()"
   (employeeUpdated)="onEmployeeUpdated($event)"
 ></app-employee-detail>
+
+<!-- Employee Hierarchy Modal -->
+@if (showHierarchyModal() && selectedEmployeeForHierarchy()) {
+  <app-base-modal
+    [isOpen]="showHierarchyModal()"
+    [title]="'employees.hierarchy.title' | translate"
+    [config]="{
+      size: 'large',
+      closable: true,
+      backdrop: true,
+      keyboard: true,
+      animation: true,
+      centered: true,
+      scrollable: true
+    }"
+    (closeEvent)="onCloseHierarchyModal()"
+  >
+    <app-employee-hierarchy
+      [employeeId]="selectedEmployeeForHierarchy()!.id"
+      [employeeName]="getFullName(selectedEmployeeForHierarchy()!)"
+    ></app-employee-hierarchy>
+  </app-base-modal>
+}

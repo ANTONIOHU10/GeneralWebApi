@@ -154,5 +154,99 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         };
     }
 
+    /// <summary>
+    /// Get employee by ID with all hierarchy relations (Manager chain and Subordinates)
+    /// </summary>
+    public async Task<Employee?> GetByIdWithRelationsAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var employee = await GetActiveAndEnabledEntities()
+            .Include(e => e.Department)
+            .Include(e => e.Position)
+            .Include(e => e.Manager)
+                .ThenInclude(m => m!.Department)
+            .Include(e => e.Manager)
+                .ThenInclude(m => m!.Position)
+            .Include(e => e.Manager)
+                .ThenInclude(m => m!.Manager)
+            .Include(e => e.Subordinates)
+                .ThenInclude(s => s.Department)
+            .Include(e => e.Subordinates)
+                .ThenInclude(s => s.Position)
+            .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        if (employee != null)
+        {
+            // Recursively load manager chain
+            await LoadManagerChainAsync(employee, cancellationToken);
+
+            // Recursively load subordinates with visited tracking to prevent duplicates
+            var visited = new HashSet<int>();
+            await LoadSubordinatesAsync(employee, visited, cancellationToken);
+        }
+
+        return employee;
+    }
+
+    /// <summary>
+    /// Recursively load manager chain
+    /// </summary>
+    private async Task LoadManagerChainAsync(Employee employee, CancellationToken cancellationToken)
+    {
+        if (employee.ManagerId == null || employee.Manager != null)
+        {
+            return; // Already loaded or no manager
+        }
+
+        var manager = await GetActiveAndEnabledEntities()
+            .Include(e => e.Department)
+            .Include(e => e.Position)
+            .Include(e => e.Manager)
+            .FirstOrDefaultAsync(e => e.Id == employee.ManagerId, cancellationToken);
+
+        if (manager != null)
+        {
+            employee.Manager = manager;
+            // Recursively load manager's manager
+            await LoadManagerChainAsync(manager, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// Recursively load subordinates with visited tracking to prevent duplicates
+    /// </summary>
+    private async Task LoadSubordinatesAsync(Employee employee, HashSet<int> visited, CancellationToken cancellationToken)
+    {
+        // Prevent circular references and duplicate processing
+        if (visited.Contains(employee.Id))
+        {
+            return;
+        }
+
+        visited.Add(employee.Id);
+
+        // Get all direct subordinates (may already be loaded via Include, but we need to ensure all are loaded)
+        var directSubordinateIds = employee.Subordinates.Select(s => s.Id).ToHashSet();
+        var allSubordinates = await GetActiveAndEnabledEntities()
+            .Include(e => e.Department)
+            .Include(e => e.Position)
+            .Where(e => e.ManagerId == employee.Id && e.EmploymentStatus == "Active")
+            .ToListAsync(cancellationToken);
+
+        // Add subordinates that aren't already in the collection
+        foreach (var subordinate in allSubordinates)
+        {
+            if (!directSubordinateIds.Contains(subordinate.Id))
+            {
+                employee.Subordinates.Add(subordinate);
+            }
+
+            // Recursively load subordinate's subordinates (only if not already visited)
+            if (!visited.Contains(subordinate.Id))
+            {
+                await LoadSubordinatesAsync(subordinate, visited, cancellationToken);
+            }
+        }
+    }
+
     #endregion
 }

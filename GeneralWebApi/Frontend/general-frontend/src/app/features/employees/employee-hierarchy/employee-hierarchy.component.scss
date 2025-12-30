@@ -1,0 +1,329 @@
+// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-hierarchy/employee-hierarchy.component.scss
+@use '../../../../styles/core/variable' as *;
+@use '../../../../styles/core/mixin' as *;
+
+// Component-specific variables
+$hierarchy-card-width: 22.5rem; // 360px - increased for better content display
+$hierarchy-avatar-large: $spacing-16; // 64px
+$hierarchy-avatar-medium: $spacing-12; // 48px
+$hierarchy-expand-button-size: $spacing-6; // 24px
+
+.employee-hierarchy-container {
+  padding: $spacing-4;
+  background: var(--bg-surface);
+  border-radius: $border-radius-lg;
+}
+
+.hierarchy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-6;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: $spacing-2;
+  }
+}
+
+.loading-container {
+  padding: $spacing-8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hierarchy-tree {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.manager-chain {
+  .chain-label {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: $spacing-3;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .manager-node {
+    padding-left: $spacing-4;
+    border-left: 2px solid var(--color-primary-300);
+    
+    // Ensure manager cards have same size as other cards
+    .node-card {
+      width: $hierarchy-card-width;
+      max-width: $hierarchy-card-width;
+      box-sizing: border-box;
+    }
+  }
+}
+
+.root-node {
+  display: flex;
+  justify-content: center;
+  margin: $spacing-4 0;
+
+  .root-card {
+    background: var(--color-primary-50);
+    border: 2px solid var(--color-primary-300);
+    padding: $spacing-5;
+    width: $hierarchy-card-width;
+    max-width: $hierarchy-card-width;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-3;
+    
+    // Avatar styling - fixed size to prevent card from stretching
+    app-base-avatar {
+      flex-shrink: 0;
+      width: $hierarchy-avatar-large;
+      height: $hierarchy-avatar-large;
+      min-width: $hierarchy-avatar-large;
+      min-height: $hierarchy-avatar-large;
+      max-width: $hierarchy-avatar-large;
+      max-height: $hierarchy-avatar-large;
+      
+      ::ng-deep .base-avatar {
+        width: $hierarchy-avatar-large;
+        height: $hierarchy-avatar-large;
+        min-width: $hierarchy-avatar-large;
+        min-height: $hierarchy-avatar-large;
+        max-width: $hierarchy-avatar-large;
+        max-height: $hierarchy-avatar-large;
+      }
+      
+      ::ng-deep img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    
+    .node-info {
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .node-name {
+        text-align: center;
+      }
+      
+      .node-details {
+        align-items: center;
+        text-align: center;
+      }
+      
+      .node-badges {
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.subordinates-section {
+  .section-label {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: $spacing-3;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .subordinates-tree {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    padding-left: $spacing-4;
+    border-left: 2px solid var(--color-primary-300);
+  }
+}
+
+.tree-node {
+  position: relative;
+
+  .node-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $border-radius-md;
+    padding: $spacing-4;
+    margin-bottom: $spacing-2;
+    width: $hierarchy-card-width;
+    max-width: $hierarchy-card-width;
+    box-sizing: border-box;
+    transition: all $duration-200 $ease-in-out;
+
+    &:hover {
+      border-color: var(--color-primary-300);
+      box-shadow: $shadow-sm;
+    }
+
+  }
+
+  .node-content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    width: 100%;
+    
+    // Avatar styling - fixed size to prevent card from stretching
+    app-base-avatar {
+      flex-shrink: 0;
+      width: $hierarchy-avatar-medium;
+      height: $hierarchy-avatar-medium;
+      min-width: $hierarchy-avatar-medium;
+      min-height: $hierarchy-avatar-medium;
+      max-width: $hierarchy-avatar-medium;
+      max-height: $hierarchy-avatar-medium;
+      
+      ::ng-deep .base-avatar {
+        width: $hierarchy-avatar-medium;
+        height: $hierarchy-avatar-medium;
+        min-width: $hierarchy-avatar-medium;
+        min-height: $hierarchy-avatar-medium;
+        max-width: $hierarchy-avatar-medium;
+        max-height: $hierarchy-avatar-medium;
+      }
+      
+      ::ng-deep img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    
+    &.clickable {
+      cursor: pointer;
+    }
+  }
+
+  .expand-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $hierarchy-expand-button-size;
+    height: $hierarchy-expand-button-size;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: $border-radius-sm;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all $duration-200 $ease-in-out;
+    flex-shrink: 0;
+    margin-top: $spacing-1;
+
+    &:hover {
+      background: var(--bg-tertiary);
+      color: var(--color-primary-600);
+    }
+
+    .material-icons {
+      font-size: $font-size-xl;
+      transition: transform $duration-200 $ease-in-out;
+    }
+
+    &.expanded .material-icons {
+      transform: rotate(90deg);
+    }
+  }
+
+  .expand-placeholder {
+    width: $hierarchy-expand-button-size;
+    flex-shrink: 0;
+  }
+
+  .node-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .node-name {
+      font-size: $font-size-base;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: $spacing-1;
+      text-align: center;
+      width: 100%;
+    }
+
+    .node-details {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-1;
+      margin-bottom: $spacing-2;
+      font-size: $font-size-sm;
+      color: var(--text-secondary);
+      text-align: center;
+      width: 100%;
+
+      .node-position {
+        font-weight: 500;
+      }
+
+      .node-department {
+        opacity: 0.8;
+      }
+    }
+
+    .node-badges {
+      display: flex;
+      gap: $spacing-2;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+  }
+
+  .children-container {
+    margin-left: $spacing-6;
+    margin-top: $spacing-2;
+    padding-left: $spacing-4;
+    border-left: 2px dashed var(--border-color);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .hierarchy-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-3;
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+
+  .root-card,
+  .node-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .tree-node .children-container {
+    margin-left: $spacing-3;
+  }
+}
+

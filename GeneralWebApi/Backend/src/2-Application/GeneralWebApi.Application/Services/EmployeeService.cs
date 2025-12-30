@@ -145,6 +145,22 @@ public class EmployeeService : IEmployeeService
         }
 
         _mapper.Map(updateDto, existingEmployee);
+        
+        // Automatically set IsManager to true if employee has subordinates
+        // Check if any other employees have this employee as their manager
+        var hasSubordinates = await _employeeRepository.GetPagedAsync(1, 1, null, null, null, "Active", null, null, null, null, null, null, null, null, false, cancellationToken);
+        var hasSubordinatesResult = hasSubordinates.Items.Any(e => e.ManagerId == id && e.Id != id);
+        if (hasSubordinatesResult && !existingEmployee.IsManager)
+        {
+            existingEmployee.IsManager = true;
+            _logger.LogInformation("Automatically set IsManager to true for employee {EmployeeId} because they have subordinates", id);
+        }
+        // If manually set IsManager, respect the manual setting
+        else if (updateDto.IsManager != existingEmployee.IsManager)
+        {
+            existingEmployee.IsManager = updateDto.IsManager;
+        }
+        
         var updatedEmployee = await _employeeRepository.UpdateAsync(existingEmployee, cancellationToken);
 
         _logger.LogInformation("Successfully updated employee with ID: {EmployeeId}", id);
@@ -181,5 +197,82 @@ public class EmployeeService : IEmployeeService
         while (await _employeeRepository.ExistsByEmployeeNumberAsync(employeeNumber, cancellationToken));
 
         return employeeNumber;
+    }
+
+    /// <summary>
+    /// Get employee hierarchy (manager chain upward and subordinates downward)
+    /// </summary>
+    public async Task<EmployeeHierarchyDto?> GetHierarchyAsync(int employeeId, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting hierarchy for employee with ID: {EmployeeId}", employeeId);
+
+        var employee = await _employeeRepository.GetByIdWithRelationsAsync(employeeId, cancellationToken);
+        if (employee == null)
+        {
+            _logger.LogWarning("Employee with ID {EmployeeId} not found", employeeId);
+            return null;
+        }
+
+        var visited = new HashSet<int>(); // Prevent circular references
+        return BuildHierarchyTree(employee, visited);
+    }
+
+    /// <summary>
+    /// Build hierarchy tree recursively
+    /// </summary>
+    private EmployeeHierarchyDto BuildHierarchyTree(Employee employee, HashSet<int> visited)
+    {
+        // Prevent circular references
+        if (visited.Contains(employee.Id))
+        {
+            return new EmployeeHierarchyDto
+            {
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                EmployeeNumber = employee.EmployeeNumber,
+                Email = employee.Email,
+                PositionTitle = employee.Position?.Title,
+                DepartmentName = employee.Department?.Name,
+                Avatar = employee.Avatar,
+                IsManager = employee.IsManager,
+                EmploymentStatus = employee.EmploymentStatus
+            };
+        }
+
+        visited.Add(employee.Id);
+
+        var dto = new EmployeeHierarchyDto
+        {
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            EmployeeNumber = employee.EmployeeNumber,
+            Email = employee.Email,
+            PositionTitle = employee.Position?.Title,
+            DepartmentName = employee.Department?.Name,
+            Avatar = employee.Avatar,
+            IsManager = employee.IsManager,
+            EmploymentStatus = employee.EmploymentStatus
+        };
+
+        // Build manager chain (upward) - only one level up to avoid deep recursion
+        if (employee.Manager != null && !visited.Contains(employee.Manager.Id))
+        {
+            dto.Manager = BuildHierarchyTree(employee.Manager, new HashSet<int>(visited));
+        }
+
+        // Build subordinates (downward)
+        if (employee.Subordinates != null && employee.Subordinates.Any())
+        {
+            dto.Subordinates = employee.Subordinates
+                .Where(s => s.EmploymentStatus == "Active" && !visited.Contains(s.Id)) // Only show active employees and avoid cycles
+                .Select(s => BuildHierarchyTree(s, new HashSet<int>(visited)))
+                .OrderBy(s => s.LastName)
+                .ThenBy(s => s.FirstName)
+                .ToList();
+        }
+
+        return dto;
     }
 }
