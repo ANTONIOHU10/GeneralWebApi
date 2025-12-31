@@ -243,3 +243,4 @@ export class NotificationDetailComponent implements OnInit, OnDestroy {
   }
 }
 
+
