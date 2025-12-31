@@ -221,6 +221,17 @@ public static class EnumValues
             "HKD",               // Hong Kong Dollar
             "SGD"                // Singapore Dollar
         };
+
+        public static readonly string[] ManagerRoles =
+        {
+            "None",              // No management role
+            "Manager",           // Department Manager (primary manager)
+            "DeputyManager",     // Deputy Manager
+            "AssistantManager", // Assistant Manager
+            "TeamLead",          // Team Lead
+            "ProjectManager",    // Project Manager
+            "RegionalManager"   // Regional Manager
+        };
     }
 
     /// <summary>

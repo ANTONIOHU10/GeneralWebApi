@@ -59,7 +59,8 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.Property(e => e.EmploymentStatus).HasMaxLength(20).HasDefaultValue("Active");
               builder.Property(e => e.EmploymentType).HasMaxLength(20).HasDefaultValue("FullTime");
               builder.Property(e => e.WorkingHoursPerWeek);
-              builder.Property(e => e.IsManager).HasDefaultValue(false);
+              builder.Property(e => e.IsManager).HasDefaultValue(false);  // Legacy field
+              builder.Property(e => e.ManagerRole).HasMaxLength(20).HasDefaultValue("None");
 
               // avatar - URL to profile picture
               builder.Property(e => e.Avatar).HasMaxLength(500);
@@ -94,13 +95,11 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.HasIndex(e => e.EmploymentStatus);
               builder.HasIndex(e => e.HireDate);
               builder.HasIndex(e => e.IsManager);
-              #endregion
-
-              #region Check Constraints
-              // Ensure only one manager per department
-              builder.HasIndex(e => new { e.DepartmentId, e.IsManager })
-                     .HasFilter("IsManager = 1")
-                     .IsUnique();
+              builder.HasIndex(e => e.ManagerRole);
+              // Removed unique constraint: Allow multiple managers per department with different roles
+              // builder.HasIndex(e => new { e.DepartmentId, e.IsManager })
+              //        .HasFilter("IsManager = 1")
+              //        .IsUnique();
               #endregion
        }
 }

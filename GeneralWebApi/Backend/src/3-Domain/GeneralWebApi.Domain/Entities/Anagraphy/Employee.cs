@@ -42,7 +42,8 @@ public class Employee : BaseEntity
     public string EmploymentStatus { get; set; } = string.Empty;
     public string EmploymentType { get; set; } = string.Empty;
     public int? WorkingHoursPerWeek { get; set; }
-    public bool IsManager { get; set; } = false;
+    public bool IsManager { get; set; } = false;  // Legacy field, kept for backward compatibility
+    public string ManagerRole { get; set; } = "None";  // Management role: None, Manager, DeputyManager, AssistantManager, TeamLead, ProjectManager, RegionalManager
 
     // Avatar - URL to the employee's profile picture
     public string? Avatar { get; set; }
