@@ -105,7 +105,7 @@ export class ContractService extends BaseHttpService {
   }
 
   // Get expiring contracts
-  getExpiringContracts(daysFromNow: number = 30): Observable<Contract[]> {
+  getExpiringContracts(daysFromNow = 30): Observable<Contract[]> {
     const params = { daysFromNow };
     return this.get<BackendContract[]>(`${this.endpoint}/expiring`, params).pipe(
       map(backendContracts => backendContracts.map(contract => this.transformBackendContract(contract)))

@@ -226,7 +226,7 @@ export class LocaleService {
   /**
    * Get language options for select component
    */
-  getLanguageOptions(): Array<{ value: string; label: string }> {
+  getLanguageOptions(): { value: string; label: string }[] {
     return this.languages.map(lang => ({
       value: lang.code,
       label: `${lang.nativeName} (${lang.name})`,
@@ -236,7 +236,7 @@ export class LocaleService {
   /**
    * Get timezone options for select component
    */
-  getTimezoneOptions(): Array<{ value: string; label: string }> {
+  getTimezoneOptions(): { value: string; label: string }[] {
     return this.timezones.map(tz => ({
       value: tz.value,
       label: tz.label,

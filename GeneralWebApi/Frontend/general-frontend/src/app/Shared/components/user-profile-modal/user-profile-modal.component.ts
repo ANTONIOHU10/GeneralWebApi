@@ -356,7 +356,7 @@ export class UserProfileModalComponent implements OnInit, AfterViewInit, OnChang
   /**
    * Format currency for display
    */
-  formatCurrency(amount: number, currency: string = 'USD'): string {
+  formatCurrency(amount: number, currency = 'USD'): string {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency,

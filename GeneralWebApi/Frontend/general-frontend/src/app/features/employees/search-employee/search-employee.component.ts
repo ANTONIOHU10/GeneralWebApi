@@ -3,7 +3,7 @@ import { Component, OnInit, inject, signal, computed, effect } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, of, Observable } from 'rxjs';
-import { filter, startWith, first, catchError, take, distinctUntilChanged } from 'rxjs/operators';
+import { filter, startWith, first, catchError, take, distinctUntilChanged, map } from 'rxjs/operators';
 import { EmployeeDetailComponent } from '../employee-detail/employee-detail.component';
 import {
   BaseCardComponent,
@@ -86,6 +86,7 @@ export class SearchEmployeeComponent implements OnInit {
   // Observables from NgRx Store (for async pipe - automatically managed)
   departments$ = this.departmentFacade.departments$;
   positions$ = this.positionFacade.positions$;
+  pageSize$: Observable<number> = this.employeeFacade.pagination$.pipe(map(p => p.pageSize));
 
   // Observables for BaseAsyncStateComponent
   // Note: error$ removed - errors will be shown via NotificationService instead

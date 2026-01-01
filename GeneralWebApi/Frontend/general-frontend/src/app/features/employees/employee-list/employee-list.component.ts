@@ -615,13 +615,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle table page size change
-   */
-  onTablePageSizeChange(pageSize: number): void {
-    this.onPageSizeChange(pageSize);
-  }
-
-  /**
    * Toggle between table and card view
    */
   toggleViewMode(): void {

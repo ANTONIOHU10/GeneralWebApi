@@ -40,7 +40,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // Route to breadcrumb mapping (using translation keys)
-  private getRouteMap(): Record<string, Array<{ labelKey: string; icon: string }>> {
+  private getRouteMap(): Record<string, { labelKey: string; icon: string }[]> {
     return {
       '/private/dashboard': [{ labelKey: 'breadcrumb.dashboard', icon: 'dashboard' }],
       '/private/tasks': [{ labelKey: 'breadcrumb.tasks', icon: 'task_alt' }],

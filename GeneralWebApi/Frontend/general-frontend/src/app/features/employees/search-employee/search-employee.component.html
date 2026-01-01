@@ -62,7 +62,7 @@
           loading: false,
           emptyMessage: ''
         }"
-        [pageSize]="25"
+        [pageSize]="(pageSize$ | async) || 10"
         (rowClick)="onRowClick($event)"
       ></app-base-table>
     </app-base-async-state>

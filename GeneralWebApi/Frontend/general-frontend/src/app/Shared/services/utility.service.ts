@@ -101,8 +101,8 @@ export class UtilityService {
    */
   formatNumber(
     value: number,
-    decimals: number = 2,
-    locale: string = 'en-US'
+    decimals = 2,
+    locale = 'en-US'
   ): string {
     return new Intl.NumberFormat(locale, {
       minimumFractionDigits: decimals,
@@ -115,8 +115,8 @@ export class UtilityService {
    */
   formatCurrency(
     value: number,
-    currency: string = 'USD',
-    locale: string = 'en-US'
+    currency = 'USD',
+    locale = 'en-US'
   ): string {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
@@ -231,7 +231,7 @@ export class UtilityService {
   /**
    * Generate unique ID
    */
-  generateId(prefix: string = 'id'): string {
+  generateId(prefix = 'id'): string {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
@@ -258,7 +258,7 @@ export class UtilityService {
   /**
    * Truncate string
    */
-  truncate(str: string, length: number, suffix: string = '...'): string {
+  truncate(str: string, length: number, suffix = '...'): string {
     if (str.length <= length) {
       return str;
     }

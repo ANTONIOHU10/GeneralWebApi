@@ -302,7 +302,7 @@ export class SearchAuditLogComponent implements OnInit, OnDestroy {
     }
 
     // Description: Human-readable description of the operation
-    let description = log.details ?? log.errorMessage ?? log.entityName ?? null;
+    const description = log.details ?? log.errorMessage ?? log.entityName ?? null;
 
     // Changes field is no longer used - we only show Old Values and New Values separately
     return {

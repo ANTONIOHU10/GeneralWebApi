@@ -40,7 +40,7 @@ export class AddRoleComponent implements OnInit, OnDestroy {
   permissionsLoading = signal(false);
   permissionsLoaded = false; // Track if permissions have been loaded
   fieldLoading: Record<string, boolean> = {}; // Track loading state for each field
-  permissionMap: Map<string, number> = new Map(); // Map permission names to IDs
+  permissionMap = new Map<string, number>(); // Map permission names to IDs
 
   formData: Record<string, unknown> = {
     name: '',

@@ -193,7 +193,7 @@ export class AuditLogListComponent implements OnInit, OnDestroy {
 
     // Description: Human-readable description of the operation
     // Prefer details (which contains operation summary), fallback to errorMessage or entityName
-    let description = log.details ?? log.errorMessage ?? log.entityName ?? null;
+    const description = log.details ?? log.errorMessage ?? log.entityName ?? null;
 
     // Changes field is no longer used - we only show Old Values and New Values separately
     // Set changes to null to avoid confusion

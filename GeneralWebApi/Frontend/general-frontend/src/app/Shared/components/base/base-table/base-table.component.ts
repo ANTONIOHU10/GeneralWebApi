@@ -221,6 +221,12 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
     return Math.min(this.startIndex + this.pageSize, this.filteredData.length);
   }
 
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.pageSizeChange.emit(size);
+    this.goToPage(1);
+  }
+
   get visiblePages(): number[] {
     const pages: number[] = [];
     const maxVisible = 5;
@@ -287,12 +293,6 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
 
     this.currentPage = page;
     this.pageChange.emit(page);
-    this.updateData();
-  }
-
-  onPageSizeChange(pageSize: number): void {
-    this.pageSize = pageSize;
-    this.pageSizeChange.emit(pageSize);
     this.updateData();
   }
 

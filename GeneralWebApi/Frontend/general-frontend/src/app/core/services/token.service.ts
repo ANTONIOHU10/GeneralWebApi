@@ -16,7 +16,7 @@ export class TokenService {
    * @param token Access token
    * @param rememberMe If true, use localStorage (persistent), else use sessionStorage (session-only)
    */
-  setAccessToken(token: string, rememberMe: boolean = false): void {
+  setAccessToken(token: string, rememberMe = false): void {
     if (rememberMe) {
     localStorage.setItem(ACCESS_TOKEN_KEY, token);
       // Also clear from sessionStorage if exists
@@ -46,7 +46,7 @@ export class TokenService {
    * @param token Refresh token
    * @param rememberMe If true, use localStorage (persistent), else use sessionStorage (session-only)
    */
-  setRefreshToken(token: string, rememberMe: boolean = false): void {
+  setRefreshToken(token: string, rememberMe = false): void {
     if (rememberMe) {
     localStorage.setItem(REFRESH_TOKEN_KEY, token);
       // Also clear from sessionStorage if exists

@@ -49,7 +49,7 @@ export class ResetPasswordComponent implements OnInit {
   tokenValid = signal(false);
 
   // Token from URL
-  token: string = '';
+  token = '';
 
   ngOnInit(): void {
     // Get token from query parameters
