@@ -33,7 +33,7 @@ export class BasePaginationComponent implements OnChanges {
   @Input() currentPage = 1;
   @Input() totalPages = 1;
   @Input() totalItems = 0;
-  @Input() pageSize = 10;
+  @Input() pageSize = 25;
   @Input() config: PaginationConfig = {
     showFirstLast: true,
     showPrevNext: true,
@@ -74,8 +74,12 @@ export class BasePaginationComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['currentPage'] || changes['totalPages'] || changes['config']) {
+    if (changes['currentPage'] || changes['totalPages'] || changes['config'] || changes['pageSize']) {
       this.updateVisiblePages();
+      console.log('currentPage', this.currentPage);
+      console.log('totalPages', this.totalPages);
+      console.log('config', this.config);
+      console.log('pageSize', this.pageSize);
     }
   }
 
@@ -89,10 +93,10 @@ export class BasePaginationComponent implements OnChanges {
 
   onPageSizeChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    const newPageSize = parseInt(target.value, 10);
-
+    const newPageSize = parseInt(target.value,10);
+    console.log('onPageSizeChange', this.currentPage, this.pageSize);
     this.pageSize = newPageSize;
-    this.currentPage = 1;
+    //this.currentPage = 1;
     this.pageSizeChange.emit(newPageSize);
     this.pageChange.emit(1);
   }

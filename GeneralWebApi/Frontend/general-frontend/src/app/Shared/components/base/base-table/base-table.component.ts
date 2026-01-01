@@ -59,6 +59,7 @@ export interface TableConfig {
   size?: 'small' | 'medium' | 'large';
   loading?: boolean;
   emptyMessage?: string;
+  serverSidePagination?: boolean; 
 }
 
 @Component({
@@ -94,9 +95,12 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
     size: 'medium',
     loading: false,
     emptyMessage: 'No data available',
+    serverSidePagination: true,
   };
-  @Input() pageSize = 10;
+  @Input() pageSize = 100;
   @Input() customClass = '';
+  @Input() currentPage: number = 1;
+  @Input() totalPages: number = 1;
 
   // Use ContentChild to get template references from parent component
   // Template reference names should match the templateKey in TableColumn
@@ -119,11 +123,11 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
     direction: 'asc' | 'desc';
   }>();
   @Output() pageChange = new EventEmitter<number>();
+  @Output() pageSizeChange = new EventEmitter<number>();
 
   searchQuery = '';
   sortColumn = '';
   sortDirection: 'asc' | 'desc' = 'asc';
-  currentPage = 1;
   filteredData: unknown[] = [];
   paginatedData: unknown[] = [];
 
@@ -204,9 +208,10 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
     return this.columns.length + (this.actions.length > 0 ? 1 : 0);
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.filteredData.length / this.pageSize);
-  }
+  // get totalPages(): number {
+  //   //return Math.ceil(this.filteredData.length / this.pageSize);
+  //   return this.totalPagesGet || 1;
+  // }
 
   get startIndex(): number {
     return (this.currentPage - 1) * this.pageSize;
@@ -234,6 +239,7 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
   }
 
   ngOnChanges(): void {
+    console.log('🔄 ngOnChanges', this.data);
     this.updateData();
   }
 
@@ -255,7 +261,7 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
   }
 
   onSearchChange(): void {
-    this.currentPage = 1;
+    //this.currentPage = 1;
     this.updateData();
   }
 
@@ -281,6 +287,12 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
 
     this.currentPage = page;
     this.pageChange.emit(page);
+    this.updateData();
+  }
+
+  onPageSizeChange(pageSize: number): void {
+    this.pageSize = pageSize;
+    this.pageSizeChange.emit(pageSize);
     this.updateData();
   }
 
@@ -389,28 +401,28 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
   }
 
   private updateData(): void {
-    // Filter data based on search query
-    this.filteredData = this.data.filter(item => {
-      if (!this.searchQuery) return true;
-
-      return this.columns.some(column => {
-        const value = this.getValue(item, column.key);
-        return String(value)
-          .toLowerCase()
-          .includes(this.searchQuery.toLowerCase());
-      });
-    });
-
-    // Sort data
+    this.filteredData = this.data;
+    // 1️⃣ Filter
+    // this.filteredData = this.data.filter(item => {
+    //   if (!this.searchQuery) return true;
+  
+    //   return this.columns.some(column => {
+    //     const value = this.getValue(item, column.key);
+    //     return String(value)
+    //       .toLowerCase()
+    //       .includes(this.searchQuery.toLowerCase());
+    //   });
+    // });
+  
+    // 2️⃣ Sort
     if (this.sortColumn) {
       this.filteredData.sort((a, b) => {
         const aValue = this.getValue(a, this.sortColumn);
         const bValue = this.getValue(b, this.sortColumn);
-
-        // Convert to comparable values
+  
         const aComparable = aValue == null ? '' : String(aValue);
         const bComparable = bValue == null ? '' : String(bValue);
-
+  
         if (aComparable < bComparable)
           return this.sortDirection === 'asc' ? -1 : 1;
         if (aComparable > bComparable)
@@ -418,10 +430,19 @@ export class BaseTableComponent implements OnInit, OnChanges, AfterContentInit {
         return 0;
       });
     }
-
-    // Paginate data
-    const start = this.startIndex;
-    const end = this.endIndex;
-    this.paginatedData = this.filteredData.slice(start, end);
+  
+    // 3️⃣ Pagination（🔥 关键判断）
+    console.log(' 🔥 serverSidePagination', this.config.serverSidePagination);
+    if (this.config.serverSidePagination) {
+      // ✅ 后端已分页：直接展示
+      this.paginatedData = [...this.filteredData];
+      console.log(' 🔥 serverSidePagination', this.paginatedData);
+    } else {
+      // ❌ 前端分页（老模式）
+      const start = this.startIndex;
+      const end = this.endIndex;
+      this.paginatedData = this.filteredData.slice(start, end);
+    }
   }
+  
 }

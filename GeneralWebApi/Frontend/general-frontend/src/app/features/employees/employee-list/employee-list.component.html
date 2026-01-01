@@ -56,10 +56,13 @@
         [columns]="tableColumns"
         [actions]="tableActions"
         [config]="tableConfig"
-        [pageSize]="20"
+        [pageSize]="(pageSize$ | async) || 20"
+        [currentPage]="(currentPage$ | async) || 1"
+        [totalPages]="(totalPages$ | async) || 1"
         (rowClick)="onTableRowClick($event)"
         (sortChange)="onTableSortChange($event)"
         (pageChange)="onTablePageChange($event)"
+        (pageSizeChange)="onTablePageSizeChange($event)"
         class="employee-table"
       >
         <!-- Avatar Template -->

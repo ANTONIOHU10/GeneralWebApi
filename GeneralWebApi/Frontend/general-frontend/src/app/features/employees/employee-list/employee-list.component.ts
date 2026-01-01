@@ -1,7 +1,7 @@
 // src/app/features/employees/employee-list/employee-list.component.ts
-import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, from, Observable } from 'rxjs';
+import { Subject, from, Observable, combineLatest } from 'rxjs';
 import { takeUntil, filter, take, switchMap, concatMap, delay, map, distinctUntilChanged } from 'rxjs/operators';
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { EmployeeCardComponent } from '../employee-card/employee-card.component';
@@ -77,13 +77,18 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   pagination$ = this.employeeFacade.pagination$;
   filters$ = this.employeeFacade.filters$;
   operationInProgress$ = this.employeeFacade.operationInProgress$;
-
   // Local state
   activeTab = signal<'list' | 'add' | 'reports' | 'settings' | 'byDepartment'>('list');
   selectedEmployeeForDetail: Employee | null = null;
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view'; // Default to view mode
   
+  // pagination state
+  totalPages$: Observable<number> = this.employeeFacade.pagination$.pipe(map(pagination => pagination.totalPages));
+  currentPage$: Observable<number> = this.employeeFacade.pagination$.pipe(map(pagination => pagination.currentPage));
+  pageSize$: Observable<number> = this.employeeFacade.pagination$.pipe(map(pagination => pagination.pageSize));
+
+  // if currentPage is changed, we need to update the employeesArray$ observable
   // View mode: 'table' or 'card'
   viewMode = signal<'table' | 'card'>('table');
 
@@ -106,18 +111,30 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     size: 'medium',
     loading: false,
     emptyMessage: 'No employees found',
+    serverSidePagination: true,
   };
   
   // Convert employees$ to array for table with fullName field
-  employeesArray$ = this.employees$.pipe(
-    map(employees => {
+  // if currentPage is changed, we need to update the employeesArray$ observable
+  // we can do this by subscribing to the currentPage$ observable and updating the employeesArray$ observable when the page changes
+  // we can do this by subscribing to the currentPage$ observable and updating the employeesArray$ observable when the page changes
+  employeesArray$ = combineLatest([
+    this.employees$,
+    this.currentPage$ // 只用于触发刷新
+  ]).pipe(
+    map(([employees, page]) => {
+      console.log('🔄 employeesArray$', employees, page);
+
       if (!employees) return [];
-      return employees.map(employee => ({
-        ...employee,
-        fullName: `${employee.firstName} ${employee.lastName}`,
+
+      return employees.map(e => ({
+        ...e,
+        fullName: `${e.firstName} ${e.lastName}`,
       }));
     })
   );
+
+  
 
   // Tab configuration - will be initialized in ngOnInit after translations are loaded
   tabs: TabItem[] = [];
@@ -132,11 +149,23 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       this.initializeTabs();
       this.initializeTable();
     });
-
-    this.loadEmployees();
+    
+    this.currentPage$.pipe(take(1)).subscribe(page => {
+      this.loadEmployees(page);
+    });
     this.setupOperationListeners();
+    // this.getPaginationState();
   }
 
+
+  // private getPaginationState(): void {
+  //   this.pagination$.pipe(
+  //     take(1)
+  //   ).subscribe(pagination => {
+  //     this.currentPage$.(pagination.currentPage);
+  //     this.totalPages$.set(pagination.totalPages);
+  //   });
+  // }
   /**
    * Initialize tabs with translations
    */
@@ -310,9 +339,10 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadEmployees() {
+  // set the pagination state to the current page
+  loadEmployees(page: number) {
     console.log('🔄 Loading employees...');
-    this.employeeFacade.loadEmployees();
+    this.employeeFacade.loadEmployees({ pageNumber: page });
   }
 
   /**
@@ -388,7 +418,9 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEmployeeUpdated(employee: Employee) {
     // Reload employees to get updated data
-    this.loadEmployees();
+    this.currentPage$.pipe(take(1)).subscribe((page) => {
+      this.loadEmployees(page);
+    });
   }
 
   /**
@@ -575,8 +607,18 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   /**
    * Handle table page change
    */
+  // why does this method call loadEmployees() and where?
+
   onTablePageChange(page: number): void {
+
     this.onPageChange(page);
+  }
+
+  /**
+   * Handle table page size change
+   */
+  onTablePageSizeChange(pageSize: number): void {
+    this.onPageSizeChange(pageSize);
   }
 
   /**
@@ -620,7 +662,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   onPageSizeChange(pageSize: number) {
-    this.employeeFacade.setPagination({ pageSize, currentPage: 1 });
+    this.employeeFacade.setPagination({ pageSize });
   }
 
   clearFilters() {
@@ -635,7 +677,9 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
    * Handler for retry action in async state component
    */
   onRetryLoad = () => {
-    this.loadEmployees();
+    this.currentPage$.pipe(take(1)).subscribe((page) => {
+      this.loadEmployees(page);
+    });
   };
 
   /**

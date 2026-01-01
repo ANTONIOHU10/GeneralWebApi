@@ -338,7 +338,7 @@ export class PrivateLayoutComponent implements OnInit {
     this.employeeService.getEmployees({
       searchTerm: email,
       pageNumber: 1,
-      pageSize: 10
+      pageSize: 25
     }).pipe(
       catchError((error) => {
         console.error('Error searching employees:', error);

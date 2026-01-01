@@ -164,11 +164,12 @@
   >
     <app-base-pagination
       [currentPage]="currentPage"
-      [totalPages]="totalPages"
+      [totalPages]="totalPages || 1"
       [totalItems]="filteredData.length"
       [pageSize]="pageSize"
       [config]="paginationConfig"
       (pageChange)="goToPage($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
       class="table-pagination"
     ></app-base-pagination>
   </div>
