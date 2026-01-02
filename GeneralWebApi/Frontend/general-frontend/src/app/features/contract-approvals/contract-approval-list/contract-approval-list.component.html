@@ -72,9 +72,13 @@
       [data]="approvals()"
       [columns]="tableColumns"
       [actions]="tableActions"
-      [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true }"
-      [pageSize]="10"
+      [config]="{ showHeader: true, showFooter: true, showPagination: true, showSearch: false, showActions: true, striped: true, hoverable: true, serverSidePagination: true }"
+      [pageSize]="(pageSize$ | async) || 5"
+      [currentPage]="(currentPage$ | async) || 1"
+      [totalPages]="(totalPages$ | async) || 1"
       (rowClick)="onRowClick($event)"
+      (pageChange)="onTablePageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
     >
       <ng-template #cellTemplate let-row="row" let-column="column">
         <ng-container *ngIf="column.key === 'status'">

@@ -1,9 +1,9 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contracts/contract-detail/contract-detail.component.ts
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, delay, of, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { filter, first, takeUntil, catchError, distinctUntilChanged } from 'rxjs/operators';
-import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES } from 'app/contracts/contracts/contract.model';
+import { Contract, CONTRACT_TYPES, CONTRACT_STATUSES, UpdateContractRequest } from 'app/contracts/contracts/contract.model';
 import {
   BaseModalComponent,
   BaseFormComponent,
@@ -16,6 +16,7 @@ import { TranslationService } from '@core/services/translation.service';
 import { DialogService, NotificationService } from '../../../Shared/services';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 import { ContractApprovalStep } from 'app/contracts/contract-approvals/contract-approval.model';
+import { ContractService } from '../../../core/services/contract.service';
 
 /**
  * ContractDetailComponent - Modal component for displaying detailed contract information
@@ -40,6 +41,7 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
   private translationService = inject(TranslationService);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
+  private contractService = inject(ContractService);
 
   @Input() contract: Contract | null = null;
   @Input() isOpen = false;
@@ -441,32 +443,25 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
 
       this.loading.set(true);
 
-      // Simulate API call with mock data
-      const updatedContract: Contract = {
-        id: this.contract.id,
-        employeeId: data['employeeId'] as number,
-        employeeName: employeeName,
-        contractType: data['contractType'] as string,
-        status: data['status'] as string,
-        startDate: data['startDate'] as string,
-        endDate: data['endDate'] as string | null || null,
-        salary: data['salary'] as number | null || null,
-        notes: data['notes'] as string || '',
-        renewalReminderDate: data['renewalReminderDate'] as string | null || null,
-        createdAt: this.contract.createdAt,
-        updatedAt: new Date().toISOString(),
+      const updateRequest: UpdateContractRequest = {
+        Id: parseInt(this.contract.id, 10),
+        EmployeeId: data['employeeId'] as number,
+        ContractType: data['contractType'] as string,
+        StartDate: data['startDate'] as string,
+        EndDate: (data['endDate'] as string | null) || null,
+        Status: data['status'] as string,
+        Salary: (typeof data['salary'] === 'number' ? data['salary'] as number : null) || null,
+        Notes: (data['notes'] as string) || '',
+        RenewalReminderDate: (data['renewalReminderDate'] as string | null) || null,
       };
 
-      of(updatedContract).pipe(
-        delay(1000), // Simulate network delay
-        first()
-      ).subscribe({
+      this.contractService.updateContract(updateRequest).pipe(first()).subscribe({
         next: (contract: Contract) => {
           this.loading.set(false);
-          const employeeName = contract.employeeName || 'Unknown';
+          const nameForNotify = contract.employeeName || employeeName || 'Unknown';
           this.notificationService.success(
             this.translationService.translate('contracts.detail.notifications.updateSuccess'),
-            this.translationService.translate('contracts.detail.notifications.updateSuccessMessage', { name: employeeName }),
+            this.translationService.translate('contracts.detail.notifications.updateSuccessMessage', { name: nameForNotify }),
             { duration: 3000, autoClose: true }
           );
           this.contractUpdated.emit(contract);
@@ -476,7 +471,7 @@ export class ContractDetailComponent implements OnInit, OnChanges, OnDestroy {
           this.loading.set(false);
           this.notificationService.error(
             this.translationService.translate('contracts.detail.notifications.updateFailed'),
-            error.message || this.translationService.translate('contracts.detail.notifications.updateFailedMessage'),
+            error?.message || this.translationService.translate('contracts.detail.notifications.updateFailedMessage'),
             { duration: 5000, persistent: false, autoClose: true }
           );
         }

@@ -57,6 +57,11 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
   // All approvals loaded from backend (for statistics and filtering)
   private allApprovals = signal<ContractApproval[]>([]);
 
+  // Pagination state
+  totalPages$ = new BehaviorSubject<number>(1);
+  currentPage$ = new BehaviorSubject<number>(1);
+  pageSize$ = new BehaviorSubject<number>(5);
+
   // Computed statistics
   pendingCount = computed(() => this.allApprovals().filter(a => a.status === 'Pending').length);
   approvedCount = computed(() => this.allApprovals().filter(a => a.status === 'Approved').length);
@@ -113,8 +118,8 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
     // Note: Backend currently only supports pending approvals endpoint
     // For other filters, we'll need to load all and filter on frontend
     this.contractApprovalService.getPendingApprovals({
-      pageNumber: 1,
-      pageSize: 100, // Load first 100 approvals
+      pageNumber: this.currentPage$.value,
+      pageSize: this.pageSize$.value,
     }).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
@@ -142,6 +147,12 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
           
           this.approvals.set(filtered);
           this.approvalsData$.next(filtered);
+          const pagination = (response as { pagination?: { totalPages: number; pageSize: number; currentPage: number } }).pagination;
+          if (pagination) {
+            this.totalPages$.next(pagination.totalPages || 1);
+            this.pageSize$.next(pagination.pageSize || this.pageSize$.value);
+            this.currentPage$.next(pagination.currentPage || this.currentPage$.value);
+          }
           this.loading$.next(false);
           console.log('✅ Approvals loaded:', response.data.length);
         } else {
@@ -152,6 +163,17 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  onTablePageChange(page: number): void {
+    this.currentPage$.next(page);
+    this.loadApprovals();
+  }
+
+  onPageSizeChange(pageSize: number): void {
+    this.pageSize$.next(pageSize);
+    this.currentPage$.next(1);
+    this.loadApprovals();
   }
 
   onFilterChange(filter: 'all' | 'pending' | 'approved' | 'rejected'): void {

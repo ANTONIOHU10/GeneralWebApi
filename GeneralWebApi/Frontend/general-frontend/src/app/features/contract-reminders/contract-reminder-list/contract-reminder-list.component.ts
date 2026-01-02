@@ -19,6 +19,7 @@ import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Contract } from 'app/contracts/contracts/contract.model';
 import { ContractDetailComponent } from '../../contracts/contract-detail/contract-detail.component';
 import { ContractService } from '../../../core/services/contract.service';
+import { TableConfig } from '../../../Shared/components/base';
 
 interface ContractReminder extends Contract {
   daysUntilExpiry: number;
@@ -52,6 +53,7 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
   loading$ = new BehaviorSubject<boolean>(false);
   remindersData$ = new BehaviorSubject<ContractReminder[] | null>(null);
   filterDays = signal<number>(30);
+  error$ = new BehaviorSubject<string | null>(null);
 
   selectedContract: Contract | null = null;
   isDetailModalOpen = false;
@@ -64,6 +66,24 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
 
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
+  tableConfig: TableConfig = {
+    showHeader: true,
+    showFooter: true,
+    showPagination: true,
+    showSearch: false,
+    showActions: true,
+    striped: true,
+    hoverable: true,
+    bordered: false,
+    size: 'medium',
+    loading: false,
+    emptyMessage: '',
+    serverSidePagination: true,
+  };
+
+  totalPages$ = new BehaviorSubject<number>(1);
+  currentPage$ = new BehaviorSubject<number>(1);
+  pageSize$ = new BehaviorSubject<number>(5);
 
   /**
    * Initialize table config with translations
@@ -102,6 +122,7 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
 
   loadReminders(): void {
     this.loading$.next(true);
+    this.error$.next(null);
     
     // Load both expiring and expired contracts
     forkJoin({
@@ -111,6 +132,7 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
       first(),
       catchError(err => {
         this.loading$.next(false);
+        this.error$.next(err.message || this.translationService.translate('contractReminders.loadingFailed'));
         this.notificationService.error(
           this.translationService.translate('common.error'),
           err.message || this.translationService.translate('contractReminders.loadingFailed'),
@@ -147,13 +169,22 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
         .sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
       
       this.reminders.set(allReminders);
-      this.remindersData$.next(allReminders);
+      const totalItems = allReminders.length;
+      const pageSize = this.pageSize$.value;
+      const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+      const currentPage = Math.min(this.currentPage$.value, totalPages);
+      const startIndex = (currentPage - 1) * pageSize;
+      const pageData = allReminders.slice(startIndex, startIndex + pageSize);
+      this.totalPages$.next(totalPages);
+      this.currentPage$.next(currentPage);
+      this.remindersData$.next(pageData);
       this.loading$.next(false);
     });
   }
 
   onFilterChange(days: number): void {
     this.filterDays.set(days);
+    this.currentPage$.next(1);
     this.loadReminders();
   }
 
@@ -198,4 +229,15 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
   onRetryLoad = () => this.loadReminders();
   onContractUpdated = () => this.loadReminders();
   onCloseDetailModal = () => { this.isDetailModalOpen = false; this.selectedContract = null; };
+
+  onTablePageChange(page: number): void {
+    this.currentPage$.next(page);
+    this.loadReminders();
+  }
+
+  onPageSizeChange(pageSize: number): void {
+    this.pageSize$.next(pageSize);
+    this.currentPage$.next(1);
+    this.loadReminders();
+  }
 }

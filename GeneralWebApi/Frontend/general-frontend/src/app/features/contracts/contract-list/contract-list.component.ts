@@ -64,6 +64,15 @@ export class ContractListComponent implements OnInit, OnDestroy {
   loading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<string | null>(null);
 
+  // Pagination state
+  totalPages$ = new BehaviorSubject<number>(1);
+  currentPage$ = new BehaviorSubject<number>(1);
+  pageSize$ = new BehaviorSubject<number>(5);
+
+  // Sorting state
+  sortBy = signal<string>('startDate');
+  sortDescending = signal<boolean>(false);
+
   // Local state
   activeTab = signal<'list' | 'add' | 'search' | 'submit-approval'>('list');
   selectedContractForDetail: Contract | null = null;
@@ -89,6 +98,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
     size: 'medium',
     loading: false,
     emptyMessage: 'No contracts found',
+    serverSidePagination: true,
   };
   
   // Convert contracts$ to array for table
@@ -264,16 +274,18 @@ export class ContractListComponent implements OnInit, OnDestroy {
    * Handle table sort change (not implemented for contracts yet)
    */
   onTableSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
-    // TODO: Implement sorting for contracts
-    console.log('Sort changed:', event);
+    this.sortBy.set(event.column);
+    this.sortDescending.set(event.direction === 'desc');
+    this.currentPage$.next(1);
+    this.loadContracts(this.searchTerm());
   }
 
   /**
    * Handle table page change (not implemented for contracts yet)
    */
   onTablePageChange(page: number): void {
-    // TODO: Implement pagination for contracts
-    console.log('Page changed:', page);
+    this.currentPage$.next(page);
+    this.loadContracts(this.searchTerm());
   }
 
   ngOnDestroy() {
@@ -287,9 +299,11 @@ export class ContractListComponent implements OnInit, OnDestroy {
     this.error$.next(null);
 
     const params = {
-      pageNumber: 1,
-      pageSize: 100, // Load first 100 contracts
+      pageNumber: this.currentPage$.value,
+      pageSize: this.pageSize$.value,
       ...(searchTerm && searchTerm.trim() ? { searchTerm: searchTerm.trim() } : {}),
+      sortBy: this.sortBy(),
+      sortDescending: this.sortDescending(),
     };
 
     this.contractService.getContracts(params).pipe(
@@ -309,6 +323,12 @@ export class ContractListComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response?.data) {
           this.contracts$.next(response.data);
+          const pagination = (response as { pagination?: { totalPages: number; pageSize: number; currentPage: number } }).pagination;
+          if (pagination) {
+            this.totalPages$.next(pagination.totalPages || 1);
+            this.pageSize$.next(pagination.pageSize || this.pageSize$.value);
+            this.currentPage$.next(pagination.currentPage || this.currentPage$.value);
+          }
           this.loading$.next(false);
           console.log('✅ Contracts loaded:', response.data.length);
         } else {
@@ -317,6 +337,12 @@ export class ContractListComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.pageSize$.next(pageSize);
+    this.currentPage$.next(1);
+    this.loadContracts(this.searchTerm());
   }
 
   onEditContract(contract: Contract) {
@@ -415,7 +441,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
 
   onSearchChange(searchTerm: string) {
     this.searchTerm.set(searchTerm);
-    // Reload contracts with search term from backend
+    this.currentPage$.next(1);
     this.loadContracts(searchTerm);
   }
 
@@ -424,7 +450,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
   }
 
   onRetryLoad = () => {
-    this.loadContracts();
+    this.loadContracts(this.searchTerm());
   };
 
   onEmptyActionClick = () => {
