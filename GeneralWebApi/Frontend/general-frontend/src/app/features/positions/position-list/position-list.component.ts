@@ -71,6 +71,11 @@ export class PositionListComponent implements OnInit, OnDestroy {
   isDetailModalOpen = false;
   detailMode: 'edit' | 'view' = 'view';
   
+  // pagination state
+  totalPages$: Observable<number> = this.pagination$.pipe(map(p => p.totalPages));
+  currentPage$: Observable<number> = this.pagination$.pipe(map(p => p.currentPage));
+  pageSize$: Observable<number> = this.pagination$.pipe(map(p => p.pageSize));
+  
   // View mode: 'table' or 'card'
   viewMode = signal<'table' | 'card'>('table');
 
@@ -89,6 +94,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
     size: 'medium',
     loading: false,
     emptyMessage: '', // Will be set after translations load
+    serverSidePagination: true,
   };
   
   // Convert positions$ to array for table
@@ -304,6 +310,10 @@ export class PositionListComponent implements OnInit, OnDestroy {
    */
   onTablePageChange(page: number): void {
     this.positionFacade.setPagination({ currentPage: page });
+  }
+  
+  onPageSizeChange(pageSize: number): void {
+    this.positionFacade.setPagination({ pageSize });
   }
 
   private setupOperationListeners(): void {

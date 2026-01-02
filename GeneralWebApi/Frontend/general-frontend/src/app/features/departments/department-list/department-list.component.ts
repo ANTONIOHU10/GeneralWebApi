@@ -90,12 +90,18 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
     size: 'medium',
     loading: false,
     emptyMessage: 'No departments found',
+    serverSidePagination: true,
   };
   
   // Convert departments$ to array for table
   departmentsArray$ = this.departments$.pipe(
     map(departments => departments || [])
   );
+  
+  // pagination state
+  totalPages$: Observable<number> = this.departmentFacade.pagination$.pipe(map(p => p.totalPages));
+  currentPage$: Observable<number> = this.departmentFacade.pagination$.pipe(map(p => p.currentPage));
+  pageSize$: Observable<number> = this.departmentFacade.pagination$.pipe(map(p => p.pageSize));
 
   // Tab configuration - will be initialized in ngOnInit
   tabs: TabItem[] = [];
@@ -277,6 +283,10 @@ export class DepartmentListComponent implements OnInit, OnDestroy {
    */
   onTablePageChange(page: number): void {
     this.departmentFacade.setPagination({ currentPage: page });
+  }
+  
+  onPageSizeChange(pageSize: number): void {
+    this.departmentFacade.setPagination({ pageSize });
   }
 
   private setupOperationListeners(): void {
