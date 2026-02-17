@@ -94,4 +94,3 @@ export interface PagedResult<T> {
   hasPreviousPage: boolean;
   hasNextPage: boolean;
 }
-
