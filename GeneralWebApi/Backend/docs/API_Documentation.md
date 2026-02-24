@@ -1,32 +1,30 @@
-# 📚 API 文档
+# 📚 API Documentation
 
-## API Documentation
-
-**项目**: GeneralWebApi - Sistema di Gestione Aziendale Interna  
-**版本**: v1.0  
-**生成日期**: 2024 年 12 月 19 日  
+**Project**: GeneralWebApi - Enterprise Management System  
+**Version**: v1.0  
+**Last Updated**: December 19, 2024  
 **Base URL**: `https://api.company.com/api/v1`
 
 ---
 
-## 📋 目录
+## 📋 Table of Contents
 
-1. [认证和授权](#认证和授权)
-2. [员工管理 API](#员工管理api)
-3. [部门管理 API](#部门管理api)
-4. [职位管理 API](#职位管理api)
-5. [权限管理 API](#权限管理api)
-6. [文档管理 API](#文档管理api)
-7. [合同管理 API](#合同管理api)
-8. [通用响应格式](#通用响应格式)
-9. [错误处理](#错误处理)
-10. [状态码说明](#状态码说明)
+1. [Authentication and Authorization](#authentication-and-authorization)
+2. [Employee Management API](#employee-management-api)
+3. [Department Management API](#department-management-api)
+4. [Position Management API](#position-management-api)
+5. [Permission Management API](#permission-management-api)
+6. [Document Management API](#document-management-api)
+7. [Contract Management API](#contract-management-api)
+8. [Common Response Format](#common-response-format)
+9. [Error Handling](#error-handling)
+10. [Status Codes](#status-codes)
 
 ---
 
-## 🔐 认证和授权
+## 🔐 Authentication and Authorization
 
-### 获取访问令牌
+### Get Access Token
 
 ```http
 POST /api/v1/auth/login
@@ -38,12 +36,12 @@ Content-Type: application/json
 }
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
   "success": true,
-  "message": "登录成功",
+  "message": "Login successful",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "refreshToken": "refresh_token_here",
@@ -53,7 +51,7 @@ Content-Type: application/json
 }
 ```
 
-### 刷新令牌
+### Refresh Token
 
 ```http
 POST /api/v1/auth/refresh
@@ -64,7 +62,7 @@ Content-Type: application/json
 }
 ```
 
-### 注销
+### Logout
 
 ```http
 POST /api/v1/auth/logout
@@ -73,31 +71,31 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 👥 员工管理 API
+## 👥 Employee Management API
 
-### 获取员工列表
+### Get Employee List
 
 ```http
 GET /api/v1/employees?page=1&pageSize=10&search=john&departmentId=1&sortBy=firstName&sortDescending=false
 Authorization: Bearer {accessToken}
 ```
 
-**查询参数**:
+**Query Parameters**:
 
-- `page`: 页码 (默认: 1)
-- `pageSize`: 每页数量 (默认: 10, 最大: 100)
-- `search`: 搜索关键词 (姓名、员工编号、邮箱)
-- `departmentId`: 部门 ID 过滤
-- `positionId`: 职位 ID 过滤
-- `sortBy`: 排序字段 (firstName, lastName, employeeNumber, hireDate)
-- `sortDescending`: 是否降序 (默认: false)
+- `page`: Page number (default: 1)
+- `pageSize`: Items per page (default: 10, max: 100)
+- `search`: Search keyword (name, employee number, email)
+- `departmentId`: Filter by department ID
+- `positionId`: Filter by position ID
+- `sortBy`: Sort field (firstName, lastName, employeeNumber, hireDate)
+- `sortDescending`: Sort in descending order (default: false)
 
-**响应**:
+**Response**:
 
 ```json
 {
   "success": true,
-  "message": "员工列表获取成功",
+  "message": "Employee list retrieved successfully",
   "data": {
     "items": [
       {
@@ -120,19 +118,19 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 获取单个员工
+### Get Single Employee
 
 ```http
 GET /api/v1/employees/{id}
 Authorization: Bearer {accessToken}
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
   "success": true,
-  "message": "员工信息获取成功",
+  "message": "Employee information retrieved successfully",
   "data": {
     "id": 1,
     "firstName": "John",
@@ -166,7 +164,7 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 创建员工
+### Create Employee
 
 ```http
 POST /api/v1/employees
@@ -199,7 +197,7 @@ Content-Type: application/json
 }
 ```
 
-### 更新员工
+### Update Employee
 
 ```http
 PUT /api/v1/employees/{id}
@@ -216,7 +214,7 @@ Content-Type: application/json
 }
 ```
 
-### 删除员工
+### Delete Employee
 
 ```http
 DELETE /api/v1/employees/{id}
@@ -225,28 +223,28 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 🏢 部门管理 API
+## 🏢 Department Management API
 
-### 获取部门列表
+### Get Department List
 
 ```http
 GET /api/v1/departments?page=1&pageSize=10&search=it&parentId=1&level=2
 Authorization: Bearer {accessToken}
 ```
 
-### 获取部门层级结构
+### Get Department Hierarchy
 
 ```http
 GET /api/v1/departments/hierarchy
 Authorization: Bearer {accessToken}
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
   "success": true,
-  "message": "部门层级结构获取成功",
+  "message": "Department hierarchy retrieved successfully",
   "data": [
     {
       "id": 1,
@@ -272,14 +270,14 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 获取子部门
+### Get Sub-departments
 
 ```http
 GET /api/v1/departments/parent/{parentId}
 Authorization: Bearer {accessToken}
 ```
 
-### 创建部门
+### Create Department
 
 ```http
 POST /api/v1/departments
@@ -295,7 +293,7 @@ Content-Type: application/json
 }
 ```
 
-### 更新部门
+### Update Department
 
 ```http
 PUT /api/v1/departments/{id}
@@ -308,7 +306,7 @@ Content-Type: application/json
 }
 ```
 
-### 删除部门
+### Delete Department
 
 ```http
 DELETE /api/v1/departments/{id}
@@ -317,23 +315,23 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 💼 职位管理 API
+## 💼 Position Management API
 
-### 获取职位列表
+### Get Position List
 
 ```http
 GET /api/v1/positions?page=1&pageSize=10&departmentId=1&isManagement=false
 Authorization: Bearer {accessToken}
 ```
 
-### 获取单个职位
+### Get Single Position
 
 ```http
 GET /api/v1/positions/{id}
 Authorization: Bearer {accessToken}
 ```
 
-### 创建职位
+### Create Position
 
 ```http
 POST /api/v1/positions
@@ -353,7 +351,7 @@ Content-Type: application/json
 }
 ```
 
-### 更新职位
+### Update Position
 
 ```http
 PUT /api/v1/positions/{id}
@@ -367,7 +365,7 @@ Content-Type: application/json
 }
 ```
 
-### 删除职位
+### Delete Position
 
 ```http
 DELETE /api/v1/positions/{id}
@@ -376,30 +374,30 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 🔑 权限管理 API
+## 🔑 Permission Management API
 
-### 获取权限列表
+### Get Permission List
 
 ```http
 GET /api/v1/permissions?page=1&pageSize=10&category=EmployeeManagement&resource=Employee
 Authorization: Bearer {accessToken}
 ```
 
-### 获取角色列表
+### Get Role List
 
 ```http
 GET /api/v1/roles?page=1&pageSize=10
 Authorization: Bearer {accessToken}
 ```
 
-### 获取员工角色
+### Get Employee Roles
 
 ```http
 GET /api/v1/employees/{employeeId}/roles
 Authorization: Bearer {accessToken}
 ```
 
-### 分配角色给员工
+### Assign Roles to Employee
 
 ```http
 POST /api/v1/employees/{employeeId}/roles
@@ -411,21 +409,21 @@ Content-Type: application/json
 }
 ```
 
-### 移除员工角色
+### Remove Role from Employee
 
 ```http
 DELETE /api/v1/employees/{employeeId}/roles/{roleId}
 Authorization: Bearer {accessToken}
 ```
 
-### 获取角色权限
+### Get Role Permissions
 
 ```http
 GET /api/v1/roles/{roleId}/permissions
 Authorization: Bearer {accessToken}
 ```
 
-### 分配权限给角色
+### Assign Permissions to Role
 
 ```http
 POST /api/v1/roles/{roleId}/permissions
@@ -439,18 +437,18 @@ Content-Type: application/json
 
 ---
 
-## 📄 文档管理 API
+## 📄 Document Management API
 
-### 身份文档管理
+### Identity Document Management
 
-#### 获取员工身份文档
+#### Get Employee Identity Documents
 
 ```http
 GET /api/v1/identity-documents/employee/{employeeId}
 Authorization: Bearer {accessToken}
 ```
 
-#### 创建身份文档
+#### Create Identity Document
 
 ```http
 POST /api/v1/identity-documents
@@ -471,30 +469,30 @@ Content-Type: application/json
 }
 ```
 
-#### 获取即将过期的文档
+#### Get Expiring Documents
 
 ```http
 GET /api/v1/identity-documents/expiring?daysFromNow=30
 Authorization: Bearer {accessToken}
 ```
 
-#### 获取已过期的文档
+#### Get Expired Documents
 
 ```http
 GET /api/v1/identity-documents/expired
 Authorization: Bearer {accessToken}
 ```
 
-### 教育背景管理
+### Education Background Management
 
-#### 获取员工教育背景
+#### Get Employee Education Background
 
 ```http
 GET /api/v1/educations/employee/{employeeId}
 Authorization: Bearer {accessToken}
 ```
 
-#### 创建教育背景
+#### Create Education Background
 
 ```http
 POST /api/v1/educations
@@ -513,16 +511,16 @@ Content-Type: application/json
 }
 ```
 
-### 专业认证管理
+### Professional Certification Management
 
-#### 获取员工专业认证
+#### Get Employee Professional Certifications
 
 ```http
 GET /api/v1/certifications/employee/{employeeId}
 Authorization: Bearer {accessToken}
 ```
 
-#### 创建专业认证
+#### Create Professional Certification
 
 ```http
 POST /api/v1/certifications
@@ -543,23 +541,23 @@ Content-Type: application/json
 
 ---
 
-## 📋 合同管理 API
+## 📋 Contract Management API
 
-### 获取合同列表
+### Get Contract List
 
 ```http
 GET /api/v1/contracts?page=1&pageSize=10&status=Active&employeeId=1
 Authorization: Bearer {accessToken}
 ```
 
-### 获取员工合同
+### Get Employee Contracts
 
 ```http
 GET /api/v1/contracts/employee/{employeeId}
 Authorization: Bearer {accessToken}
 ```
 
-### 创建合同
+### Create Contract
 
 ```http
 POST /api/v1/contracts
@@ -578,7 +576,7 @@ Content-Type: application/json
 }
 ```
 
-### 更新合同
+### Update Contract
 
 ```http
 PUT /api/v1/contracts/{id}
@@ -592,14 +590,14 @@ Content-Type: application/json
 }
 ```
 
-### 获取即将到期的合同
+### Get Expiring Contracts
 
 ```http
 GET /api/v1/contracts/expiring?expiryDate=2024-12-31T00:00:00Z
 Authorization: Bearer {accessToken}
 ```
 
-### 获取按状态分类的合同
+### Get Contracts by Status
 
 ```http
 GET /api/v1/contracts/status/{status}
@@ -608,26 +606,26 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 📊 通用响应格式
+## 📊 Common Response Format
 
-### 成功响应
+### Success Response
 
 ```json
 {
   "success": true,
-  "message": "操作成功",
+  "message": "Operation successful",
   "data": { ... },
   "errors": null,
   "timestamp": "2024-12-19T10:30:00Z"
 }
 ```
 
-### 分页响应
+### Paginated Response
 
 ```json
 {
   "success": true,
-  "message": "数据获取成功",
+  "message": "Data retrieved successfully",
   "data": {
     "items": [ ... ],
     "totalCount": 100,
@@ -642,17 +640,17 @@ Authorization: Bearer {accessToken}
 }
 ```
 
-### 错误响应
+### Error Response
 
 ```json
 {
   "success": false,
-  "message": "操作失败",
+  "message": "Operation failed",
   "data": null,
   "errors": [
     {
       "field": "email",
-      "message": "邮箱格式不正确"
+      "message": "Invalid email format"
     }
   ],
   "timestamp": "2024-12-19T10:30:00Z"
@@ -661,91 +659,91 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## ❌ 错误处理
+## ❌ Error Handling
 
-### 验证错误 (400 Bad Request)
+### Validation Error (400 Bad Request)
 
 ```json
 {
   "success": false,
-  "message": "请求参数验证失败",
+  "message": "Request parameter validation failed",
   "data": null,
   "errors": [
     {
       "field": "firstName",
-      "message": "姓名不能为空"
+      "message": "First name cannot be empty"
     },
     {
       "field": "email",
-      "message": "邮箱格式不正确"
+      "message": "Invalid email format"
     }
   ],
   "timestamp": "2024-12-19T10:30:00Z"
 }
 ```
 
-### 未授权错误 (401 Unauthorized)
+### Unauthorized Error (401 Unauthorized)
 
 ```json
 {
   "success": false,
-  "message": "未授权访问",
+  "message": "Unauthorized access",
   "data": null,
   "errors": [
     {
       "field": "authorization",
-      "message": "访问令牌无效或已过期"
+      "message": "Access token is invalid or expired"
     }
   ],
   "timestamp": "2024-12-19T10:30:00Z"
 }
 ```
 
-### 禁止访问错误 (403 Forbidden)
+### Forbidden Error (403 Forbidden)
 
 ```json
 {
   "success": false,
-  "message": "禁止访问",
+  "message": "Access forbidden",
   "data": null,
   "errors": [
     {
       "field": "permission",
-      "message": "您没有执行此操作的权限"
+      "message": "You do not have permission to perform this operation"
     }
   ],
   "timestamp": "2024-12-19T10:30:00Z"
 }
 ```
 
-### 资源未找到错误 (404 Not Found)
+### Resource Not Found Error (404 Not Found)
 
 ```json
 {
   "success": false,
-  "message": "资源未找到",
+  "message": "Resource not found",
   "data": null,
   "errors": [
     {
       "field": "id",
-      "message": "指定的员工不存在"
+      "message": "The specified employee does not exist"
     }
   ],
   "timestamp": "2024-12-19T10:30:00Z"
 }
 ```
 
-### 服务器内部错误 (500 Internal Server Error)
+### Internal Server Error (500 Internal Server Error)
 
 ```json
 {
   "success": false,
-  "message": "服务器内部错误",
+  "message": "Internal server error",
   "data": null,
   "errors": [
     {
       "field": "system",
-      "message": "系统暂时不可用，请稍后重试"
+      "message": "System is temporarily unavailable, please try again later"
     }
   ],
   "timestamp": "2024-12-19T10:30:00Z"
@@ -754,29 +752,29 @@ Authorization: Bearer {accessToken}
 
 ---
 
-## 📋 状态码说明
+## 📋 Status Codes
 
-| 状态码 | 含义                  | 说明                     |
-| ------ | --------------------- | ------------------------ |
-| 200    | OK                    | 请求成功                 |
-| 201    | Created               | 资源创建成功             |
-| 204    | No Content            | 请求成功，无返回内容     |
-| 400    | Bad Request           | 请求参数错误             |
-| 401    | Unauthorized          | 未认证                   |
-| 403    | Forbidden             | 无权限                   |
-| 404    | Not Found             | 资源不存在               |
-| 409    | Conflict              | 资源冲突                 |
-| 422    | Unprocessable Entity  | 请求格式正确，但语义错误 |
-| 500    | Internal Server Error | 服务器内部错误           |
+| Status Code | Meaning                 | Description                          |
+| ----------- | ----------------------- | ------------------------------------ |
+| 200         | OK                      | Request successful                   |
+| 201         | Created                 | Resource created successfully        |
+| 204         | No Content              | Request successful, no content       |
+| 400         | Bad Request             | Invalid request parameters          |
+| 401         | Unauthorized            | Not authenticated                    |
+| 403         | Forbidden               | No permission                        |
+| 404         | Not Found               | Resource does not exist              |
+| 409         | Conflict                | Resource conflict                    |
+| 422         | Unprocessable Entity    | Valid format but semantic error      |
+| 500         | Internal Server Error   | Internal server error                |
 
 ---
 
-## 🔧 使用示例
+## 🔧 Usage Examples
 
-### JavaScript/TypeScript 示例
+### JavaScript/TypeScript Example
 
 ```typescript
-// 获取员工列表
+// Get employee list
 const getEmployees = async (page: number = 1, pageSize: number = 10) => {
   const response = await fetch(
     `/api/v1/employees?page=${page}&pageSize=${pageSize}`,
@@ -792,7 +790,7 @@ const getEmployees = async (page: number = 1, pageSize: number = 10) => {
   return result;
 };
 
-// 创建员工
+// Create employee
 const createEmployee = async (employeeData: any) => {
   const response = await fetch("/api/v1/employees", {
     method: "POST",
@@ -808,10 +806,10 @@ const createEmployee = async (employeeData: any) => {
 };
 ```
 
-### C# 示例
+### C# Example
 
 ```csharp
-// 使用HttpClient调用API
+// Using HttpClient to call API
 public class EmployeeApiClient
 {
     private readonly HttpClient _httpClient;
@@ -842,19 +840,18 @@ public class EmployeeApiClient
 
 ---
 
-## 📝 注意事项
+## 📝 Notes
 
-1. **认证**: 所有 API 调用都需要在 Header 中携带有效的访问令牌
-2. **分页**: 列表查询默认支持分页，建议合理设置 pageSize
-3. **搜索**: 支持多字段模糊搜索，具体字段请参考各 API 文档
-4. **排序**: 支持多字段排序，具体字段请参考各 API 文档
-5. **过滤**: 支持多条件过滤，具体参数请参考各 API 文档
-6. **版本控制**: API 支持版本控制，当前版本为 v1
-7. **限流**: API 有访问频率限制，请合理控制调用频率
+1. **Authentication**: All API calls require a valid access token in the Header
+2. **Pagination**: List queries support pagination by default, recommend setting pageSize appropriately
+3. **Search**: Supports multi-field fuzzy search, see specific API documentation for fields
+4. **Sorting**: Supports multi-field sorting, see specific API documentation for fields
+5. **Filtering**: Supports multi-condition filtering, see specific API documentation for parameters
+6. **Version Control**: API supports versioning, current version is v1
+7. **Rate Limiting**: API has access frequency limits, please control call frequency appropriately
 
 ---
 
-**文档版本**: v1.0  
-**最后更新**: 2024 年 12 月 19 日  
-**维护者**: 开发团队
-
+**Document Version**: v1.0  
+**Last Updated**: December 19, 2024  
+**Maintained by**: Development Team

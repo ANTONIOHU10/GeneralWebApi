@@ -1,102 +1,100 @@
-# 🚀 部署指南
+# 🚀 Deployment Guide
 
-## Deployment Guide
-
-**项目**: GeneralWebApi - Sistema di Gestione Aziendale Interna  
-**版本**: v1.0  
-**生成日期**: 2024 年 12 月 19 日
+**Project**: GeneralWebApi - Enterprise Management System  
+**Version**: v1.0  
+**Last Updated**: December 19, 2024
 
 ---
 
-## 📋 目录
+## 📋 Table of Contents
 
-1. [系统要求](#系统要求)
-2. [开发环境部署](#开发环境部署)
-3. [生产环境部署](#生产环境部署)
-4. [Docker 部署](#docker部署)
-5. [数据库配置](#数据库配置)
-6. [环境变量配置](#环境变量配置)
-7. [SSL 证书配置](#ssl证书配置)
-8. [监控和日志](#监控和日志)
-9. [故障排除](#故障排除)
-10. [维护和更新](#维护和更新)
+1. [System Requirements](#system-requirements)
+2. [Development Environment Deployment](#development-environment-deployment)
+3. [Production Environment Deployment](#production-environment-deployment)
+4. [Docker Deployment](#docker-deployment)
+5. [Database Configuration](#database-configuration)
+6. [Environment Variables Configuration](#environment-variables-configuration)
+7. [SSL Certificate Configuration](#ssl-certificate-configuration)
+8. [Monitoring and Logging](#monitoring-and-logging)
+9. [Troubleshooting](#troubleshooting)
+10. [Maintenance and Updates](#maintenance-and-updates)
 
 ---
 
-## 💻 系统要求
+## 💻 System Requirements
 
-### 最低要求
+### Minimum Requirements
 
-- **操作系统**: Windows Server 2019+ 或 Windows 10+
+- **Operating System**: Windows Server 2019+ or Windows 10+
 - **.NET Runtime**: .NET 9.0 Runtime
-- **数据库**: SQL Server 2019+ 或 SQL Server Express
-- **内存**: 4GB RAM (推荐 8GB+)
-- **存储**: 20GB 可用空间
-- **网络**: 稳定的网络连接
+- **Database**: SQL Server 2019+ or SQL Server Express
+- **Memory**: 4GB RAM (8GB+ recommended)
+- **Storage**: 20GB available space
+- **Network**: Stable network connection
 
-### 推荐配置
+### Recommended Configuration
 
-- **操作系统**: Windows Server 2022
+- **Operating System**: Windows Server 2022
 - **.NET Runtime**: .NET 9.0 Runtime
-- **数据库**: SQL Server 2022 Enterprise
-- **内存**: 16GB RAM
-- **存储**: 100GB SSD
-- **网络**: 千兆网络连接
+- **Database**: SQL Server 2022 Enterprise
+- **Memory**: 16GB RAM
+- **Storage**: 100GB SSD
+- **Network**: Gigabit network connection
 
-### 可选组件
+### Optional Components
 
-- **Redis**: 用于缓存和会话存储
-- **IIS**: Web 服务器
-- **Nginx**: 反向代理和负载均衡
-- **Docker**: 容器化部署
+- **Redis**: For caching and session storage
+- **IIS**: Web server
+- **Nginx**: Reverse proxy and load balancing
+- **Docker**: Containerized deployment
 
 ---
 
-## 🛠️ 开发环境部署
+## 🛠️ Development Environment Deployment
 
-### 1. 环境准备
+### 1. Environment Setup
 
-#### 安装必要软件
+#### Install Required Software
 
 ```powershell
-# 安装 .NET 9.0 SDK
+# Install .NET 9.0 SDK
 winget install Microsoft.DotNet.SDK.9
 
-# 安装 SQL Server Express (可选)
+# Install SQL Server Express (optional)
 winget install Microsoft.SQLServer.2022.Express
 
-# 安装 Visual Studio 2022 (推荐)
+# Install Visual Studio 2022 (recommended)
 winget install Microsoft.VisualStudio.2022.Community
 ```
 
-#### 安装 Redis (可选)
+#### Install Redis (Optional)
 
 ```powershell
-# 使用 Chocolatey 安装 Redis
+# Install Redis using Chocolatey
 choco install redis-64
 
-# 或使用 Docker 运行 Redis
+# Or run Redis using Docker
 docker run -d -p 6379:6379 --name redis redis:alpine
 ```
 
-### 2. 项目配置
+### 2. Project Configuration
 
-#### 克隆项目
+#### Clone Project
 
 ```bash
 git clone https://github.com/your-company/GeneralWebApi.git
 cd GeneralWebApi/GeneralWebApi/Backend
 ```
 
-#### 还原依赖包
+#### Restore Dependencies
 
 ```bash
 dotnet restore
 ```
 
-#### 配置数据库连接字符串
+#### Configure Database Connection String
 
-编辑 `appsettings.Development.json`:
+Edit `appsettings.Development.json`:
 
 ```json
 {
@@ -109,37 +107,37 @@ dotnet restore
 }
 ```
 
-### 3. 数据库初始化
+### 3. Database Initialization
 
-#### 运行数据库迁移
+#### Run Database Migrations
 
 ```bash
-# 在项目根目录执行
+# Execute in project root directory
 dotnet ef database update --project src/4-Infrastructure/GeneralWebApi.Integration --startup-project src/1-Presentation/GeneralWebApi.WebApi
 ```
 
-#### 运行种子数据
+#### Run Seed Data
 
 ```bash
-# 运行应用程序，种子数据会自动执行
+# Run the application, seed data will execute automatically
 dotnet run --project src/1-Presentation/GeneralWebApi.WebApi
 ```
 
-### 4. 启动应用程序
+### 4. Start Application
 
-#### 使用 Visual Studio
+#### Using Visual Studio
 
-1. 打开 `GeneralWebApi.sln`
-2. 设置 `GeneralWebApi.WebApi` 为启动项目
-3. 按 F5 启动调试
+1. Open `GeneralWebApi.sln`
+2. Set `GeneralWebApi.WebApi` as startup project
+3. Press F5 to start debugging
 
-#### 使用命令行
+#### Using Command Line
 
 ```bash
 dotnet run --project src/1-Presentation/GeneralWebApi.WebApi
 ```
 
-#### 使用 IIS Express
+#### Using IIS Express
 
 ```bash
 dotnet run --project src/1-Presentation/GeneralWebApi.WebApi --launch-profile "IIS Express"
@@ -147,58 +145,58 @@ dotnet run --project src/1-Presentation/GeneralWebApi.WebApi --launch-profile "I
 
 ---
 
-## 🏭 生产环境部署
+## 🏭 Production Environment Deployment
 
-### 1. 服务器准备
+### 1. Server Preparation
 
-#### Windows Server 配置
+#### Windows Server Configuration
 
 ```powershell
-# 启用 IIS 功能
+# Enable IIS features
 Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole, IIS-WebServer, IIS-CommonHttpFeatures, IIS-HttpErrors, IIS-HttpLogging, IIS-RequestFiltering, IIS-StaticContent, IIS-DefaultDocument, IIS-DirectoryBrowsing, IIS-ASPNET45
 
-# 安装 .NET 9.0 Hosting Bundle
-# 下载并安装: https://dotnet.microsoft.com/download/dotnet/9.0
+# Install .NET 9.0 Hosting Bundle
+# Download and install: https://dotnet.microsoft.com/download/dotnet/9.0
 ```
 
-#### 安装 SQL Server
+#### Install SQL Server
 
 ```powershell
-# 下载并安装 SQL Server 2022
-# 配置混合身份验证模式
-# 创建数据库用户和权限
+# Download and install SQL Server 2022
+# Configure mixed authentication mode
+# Create database users and permissions
 ```
 
-### 2. 应用程序发布
+### 2. Application Publishing
 
-#### 发布应用程序
+#### Publish Application
 
 ```bash
-# 发布到文件夹
+# Publish to folder
 dotnet publish src/1-Presentation/GeneralWebApi.WebApi -c Release -o ./publish
 
-# 发布到 IIS
+# Publish to IIS
 dotnet publish src/1-Presentation/GeneralWebApi.WebApi -c Release -o C:\inetpub\wwwroot\GeneralWebApi
 ```
 
-#### 配置 IIS
+#### Configure IIS
 
-1. 打开 IIS 管理器
-2. 创建新网站
-3. 设置物理路径为发布目录
-4. 配置应用程序池为 .NET CLR Version: No Managed Code
-5. 设置身份验证
+1. Open IIS Manager
+2. Create new website
+3. Set physical path to publish directory
+4. Configure application pool to .NET CLR Version: No Managed Code
+5. Set authentication
 
-### 3. 数据库配置
+### 3. Database Configuration
 
-#### 创建生产数据库
+#### Create Production Database
 
 ```sql
--- 创建数据库
+-- Create database
 CREATE DATABASE GeneralWebApi_Prod;
 GO
 
--- 创建数据库用户
+-- Create database user
 CREATE LOGIN [GeneralWebApiUser] WITH PASSWORD = 'YourSecurePassword123!';
 GO
 
@@ -208,72 +206,72 @@ GO
 CREATE USER [GeneralWebApiUser] FOR LOGIN [GeneralWebApiUser];
 GO
 
--- 分配权限
+-- Assign permissions
 ALTER ROLE db_datareader ADD MEMBER [GeneralWebApiUser];
 ALTER ROLE db_datawriter ADD MEMBER [GeneralWebApiUser];
 ALTER ROLE db_ddladmin ADD MEMBER [GeneralWebApiUser];
 GO
 ```
 
-#### 运行数据库迁移
+#### Run Database Migrations
 
 ```bash
-# 设置生产环境连接字符串
+# Set production environment connection string
 $env:ConnectionStrings__DefaultConnection="Server=YourServer;Database=GeneralWebApi_Prod;User Id=GeneralWebApiUser;Password=YourSecurePassword123!;MultipleActiveResultSets=true"
 
-# 运行迁移
+# Run migrations
 dotnet ef database update --project src/4-Infrastructure/GeneralWebApi.Integration --startup-project src/1-Presentation/GeneralWebApi.WebApi
 ```
 
 ---
 
-## 🐳 Docker 部署
+## 🐳 Docker Deployment
 
-### 1. Dockerfile 配置
+### 1. Dockerfile Configuration
 
-创建 `Dockerfile`:
+Create `Dockerfile`:
 
 ```dockerfile
-# 使用官方 .NET 9.0 运行时镜像
+# Use official .NET 9.0 runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-# 使用官方 .NET 9.0 SDK 镜像进行构建
+# Use official .NET 9.0 SDK image for build
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# 复制项目文件
+# Copy project files
 COPY ["src/1-Presentation/GeneralWebApi.WebApi/GeneralWebApi.WebApi.csproj", "src/1-Presentation/GeneralWebApi.WebApi/"]
 COPY ["src/2-Application/GeneralWebApi.Application/GeneralWebApi.Application.csproj", "src/2-Application/GeneralWebApi.Application/"]
 COPY ["src/3-Domain/GeneralWebApi.Domain/GeneralWebApi.Domain.csproj", "src/3-Domain/GeneralWebApi.Domain/"]
 COPY ["src/4-Infrastructure/GeneralWebApi.Integration/GeneralWebApi.Integration.csproj", "src/4-Infrastructure/GeneralWebApi.Integration/"]
 
-# 还原依赖包
+# Restore dependencies
 RUN dotnet restore "src/1-Presentation/GeneralWebApi.WebApi/GeneralWebApi.WebApi.csproj"
 
-# 复制所有源代码
+# Copy all source code
 COPY . .
 
-# 构建应用程序
+# Build application
 WORKDIR "/src/src/1-Presentation/GeneralWebApi.WebApi"
 RUN dotnet build "GeneralWebApi.WebApi.csproj" -c Release -o /app/build
 
-# 发布应用程序
+# Publish application
 FROM build AS publish
 RUN dotnet publish "GeneralWebApi.WebApi.csproj" -c Release -o /app/publish
 
-# 最终镜像
+# Final image
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "GeneralWebApi.WebApi.dll"]
 ```
 
-### 2. Docker Compose 配置
+### 2. Docker Compose Configuration
 
-创建 `docker-compose.yml`:
+Create `docker-compose.yml`:
 
 ```yaml
 version: "3.8"
@@ -325,38 +323,38 @@ networks:
     driver: bridge
 ```
 
-### 3. 构建和运行
+### 3. Build and Run
 
-#### 构建镜像
+#### Build Image
 
 ```bash
-# 构建应用程序镜像
+# Build application image
 docker build -t generalwebapi:latest .
 
-# 或使用 Docker Compose
+# Or use Docker Compose
 docker-compose build
 ```
 
-#### 运行容器
+#### Run Containers
 
 ```bash
-# 启动所有服务
+# Start all services
 docker-compose up -d
 
-# 查看日志
+# View logs
 docker-compose logs -f webapi
 
-# 停止服务
+# Stop services
 docker-compose down
 ```
 
 ---
 
-## 🗄️ 数据库配置
+## 🗄️ Database Configuration
 
-### 1. 连接字符串配置
+### 1. Connection String Configuration
 
-#### 开发环境
+#### Development Environment
 
 ```json
 {
@@ -366,7 +364,7 @@ docker-compose down
 }
 ```
 
-#### 生产环境
+#### Production Environment
 
 ```json
 {
@@ -376,37 +374,37 @@ docker-compose down
 }
 ```
 
-### 2. 数据库优化
+### 2. Database Optimization
 
-#### 索引优化
+#### Index Optimization
 
 ```sql
--- 为常用查询字段创建索引
+-- Create indexes for commonly queried fields
 CREATE INDEX IX_Employees_EmployeeNumber ON Employees(EmployeeNumber);
 CREATE INDEX IX_Employees_DepartmentId ON Employees(DepartmentId);
 CREATE INDEX IX_Employees_PositionId ON Employees(PositionId);
 CREATE INDEX IX_Employees_Email ON Employees(Email);
 
--- 为部门表创建索引
+-- Create indexes for department table
 CREATE INDEX IX_Departments_ParentDepartmentId ON Departments(ParentDepartmentId);
 CREATE INDEX IX_Departments_Level ON Departments(Level);
 
--- 为权限表创建索引
+-- Create indexes for permission tables
 CREATE INDEX IX_EmployeeRoles_EmployeeId ON EmployeeRoles(EmployeeId);
 CREATE INDEX IX_EmployeeRoles_RoleId ON EmployeeRoles(RoleId);
 CREATE INDEX IX_RolePermissions_RoleId ON RolePermissions(RoleId);
 CREATE INDEX IX_RolePermissions_PermissionId ON RolePermissions(PermissionId);
 ```
 
-#### 性能优化
+#### Performance Optimization
 
 ```sql
--- 更新统计信息
+-- Update statistics
 UPDATE STATISTICS Employees;
 UPDATE STATISTICS Departments;
 UPDATE STATISTICS Positions;
 
--- 重建索引
+-- Rebuild indexes
 ALTER INDEX ALL ON Employees REBUILD;
 ALTER INDEX ALL ON Departments REBUILD;
 ALTER INDEX ALL ON Positions REBUILD;
@@ -414,11 +412,11 @@ ALTER INDEX ALL ON Positions REBUILD;
 
 ---
 
-## ⚙️ 环境变量配置
+## ⚙️ Environment Variables Configuration
 
-### 1. 应用程序配置
+### 1. Application Configuration
 
-#### 开发环境 (.env.development)
+#### Development Environment (.env.development)
 
 ```env
 ASPNETCORE_ENVIRONMENT=Development
@@ -438,7 +436,7 @@ Logging__LogLevel__Microsoft=Warning
 Logging__LogLevel__System=Warning
 ```
 
-#### 生产环境 (.env.production)
+#### Production Environment (.env.production)
 
 ```env
 ASPNETCORE_ENVIRONMENT=Production
@@ -458,9 +456,9 @@ Logging__LogLevel__Microsoft=Warning
 Logging__LogLevel__System=Warning
 ```
 
-### 2. 配置管理
+### 2. Configuration Management
 
-#### 使用 appsettings.json
+#### Using appsettings.json
 
 ```json
 {
@@ -481,47 +479,47 @@ Logging__LogLevel__System=Warning
 
 ---
 
-## 🔒 SSL 证书配置
+## 🔒 SSL Certificate Configuration
 
-### 1. 开发环境 SSL
+### 1. Development Environment SSL
 
-#### 生成开发证书
+#### Generate Development Certificate
 
 ```bash
-# 生成开发证书
+# Generate development certificate
 dotnet dev-certs https --trust
 
-# 导出证书
+# Export certificate
 dotnet dev-certs https --export-path ./certificates/development.pfx --password YourPassword
 ```
 
-### 2. 生产环境 SSL
+### 2. Production Environment SSL
 
-#### 使用 Let's Encrypt
+#### Using Let's Encrypt
 
 ```bash
-# 安装 Certbot
-# 生成证书
+# Install Certbot
+# Generate certificate
 certbot certonly --standalone -d yourdomain.com
 
-# 配置IIS使用证书
-# 在IIS管理器中绑定HTTPS端口443
+# Configure IIS to use certificate
+# Bind HTTPS port 443 in IIS Manager
 ```
 
-#### 使用商业证书
+#### Using Commercial Certificate
 
-1. 购买 SSL 证书
-2. 生成证书签名请求(CSR)
-3. 提交给证书颁发机构
-4. 安装证书到 IIS
+1. Purchase SSL certificate
+2. Generate Certificate Signing Request (CSR)
+3. Submit to Certificate Authority
+4. Install certificate to IIS
 
 ---
 
-## 📊 监控和日志
+## 📊 Monitoring and Logging
 
-### 1. 日志配置
+### 1. Logging Configuration
 
-#### Serilog 配置
+#### Serilog Configuration
 
 ```json
 {
@@ -568,9 +566,9 @@ certbot certonly --standalone -d yourdomain.com
 }
 ```
 
-### 2. 健康检查
+### 2. Health Checks
 
-#### 配置健康检查
+#### Configure Health Checks
 
 ```csharp
 // Program.cs
@@ -582,7 +580,7 @@ builder.Services.AddHealthChecks()
 app.MapHealthChecks("/health");
 ```
 
-#### 监控端点
+#### Monitoring Endpoints
 
 ```http
 GET /health
@@ -592,158 +590,157 @@ GET /health/live
 
 ---
 
-## 🔧 故障排除
+## 🔧 Troubleshooting
 
-### 1. 常见问题
+### 1. Common Issues
 
-#### 数据库连接问题
+#### Database Connection Issues
 
 ```bash
-# 检查数据库服务状态
+# Check database service status
 sc query MSSQLSERVER
 
-# 检查连接字符串
+# Check connection string
 dotnet ef database update --verbose
 
-# 测试连接
+# Test connection
 sqlcmd -S YourServer -U YourUser -P YourPassword
 ```
 
-#### 应用程序启动问题
+#### Application Startup Issues
 
 ```bash
-# 检查端口占用
+# Check port usage
 netstat -ano | findstr :5000
 
-# 检查依赖项
+# Check dependencies
 dotnet list package
 
-# 清理和重建
+# Clean and rebuild
 dotnet clean
 dotnet build
 ```
 
-#### 权限问题
+#### Permission Issues
 
 ```bash
-# 检查IIS应用程序池身份
-# 检查数据库用户权限
-# 检查文件系统权限
+# Check IIS application pool identity
+# Check database user permissions
+# Check file system permissions
 ```
 
-### 2. 日志分析
+### 2. Log Analysis
 
-#### 查看应用程序日志
+#### View Application Logs
 
 ```bash
-# 查看IIS日志
+# View IIS logs
 Get-Content C:\inetpub\logs\LogFiles\W3SVC1\*.log | Select-String "ERROR"
 
-# 查看应用程序日志
+# View application logs
 Get-Content C:\inetpub\wwwroot\GeneralWebApi\logs\*.log | Select-String "ERROR"
 ```
 
-#### 数据库日志
+#### Database Logs
 
 ```sql
--- 查看SQL Server错误日志
+-- View SQL Server error logs
 EXEC xp_readerrorlog
 
--- 查看死锁信息
+-- View deadlock information
 SELECT * FROM sys.dm_tran_locks WHERE request_status = 'WAIT'
 ```
 
 ---
 
-## 🔄 维护和更新
+## 🔄 Maintenance and Updates
 
-### 1. 定期维护
+### 1. Regular Maintenance
 
-#### 数据库维护
+#### Database Maintenance
 
 ```sql
--- 更新统计信息
+-- Update statistics
 EXEC sp_updatestats
 
--- 重建索引
+-- Rebuild indexes
 ALTER INDEX ALL ON Employees REBUILD
 
--- 清理日志
+-- Clean up logs
 DBCC SHRINKFILE('GeneralWebApi_Log', 1)
 ```
 
-#### 应用程序维护
+#### Application Maintenance
 
 ```bash
-# 清理临时文件
+# Clean temporary files
 dotnet clean
 
-# 更新依赖包
+# Update dependencies
 dotnet list package --outdated
 dotnet add package PackageName --version LatestVersion
 ```
 
-### 2. 备份策略
+### 2. Backup Strategy
 
-#### 数据库备份
+#### Database Backup
 
 ```sql
--- 完整备份
+-- Full backup
 BACKUP DATABASE GeneralWebApi_Prod TO DISK = 'C:\Backups\GeneralWebApi_Full.bak'
 
--- 差异备份
+-- Differential backup
 BACKUP DATABASE GeneralWebApi_Prod TO DISK = 'C:\Backups\GeneralWebApi_Diff.bak' WITH DIFFERENTIAL
 
--- 事务日志备份
+-- Transaction log backup
 BACKUP LOG GeneralWebApi_Prod TO DISK = 'C:\Backups\GeneralWebApi_Log.trn'
 ```
 
-#### 应用程序备份
+#### Application Backup
 
 ```bash
-# 备份应用程序文件
+# Backup application files
 xcopy C:\inetpub\wwwroot\GeneralWebApi C:\Backups\GeneralWebApi\ /E /I /H /Y
 
-# 备份配置文件
+# Backup configuration files
 copy C:\inetpub\wwwroot\GeneralWebApi\appsettings.json C:\Backups\GeneralWebApi\
 ```
 
-### 3. 更新流程
+### 3. Update Process
 
-#### 应用程序更新
+#### Application Update
 
-1. 备份当前版本
-2. 停止应用程序
-3. 部署新版本
-4. 运行数据库迁移
-5. 启动应用程序
-6. 验证功能正常
+1. Backup current version
+2. Stop application
+3. Deploy new version
+4. Run database migrations
+5. Start application
+6. Verify functionality
 
-#### 数据库更新
+#### Database Update
 
-1. 备份数据库
-2. 运行迁移脚本
-3. 验证数据完整性
-4. 回滚计划准备
-
----
-
-## 📞 支持和联系
-
-### 技术支持
-
-- **邮箱**: support@company.com
-- **电话**: +1-800-123-4567
-- **文档**: https://docs.company.com
-
-### 紧急联系
-
-- **24/7 支持**: +1-800-911-HELP
-- **紧急邮箱**: emergency@company.com
+1. Backup database
+2. Run migration scripts
+3. Verify data integrity
+4. Prepare rollback plan
 
 ---
 
-**文档版本**: v1.0  
-**最后更新**: 2024 年 12 月 19 日  
-**维护者**: 开发团队
+## 📞 Support and Contact
 
+### Technical Support
+
+- **Email**: support@company.com
+- **Phone**: +1-800-123-4567
+- **Documentation**: https://docs.company.com
+
+### Emergency Contact
+
+- **24/7 Support**: +1-800-911-HELP
+- **Emergency Email**: emergency@company.com
+
+---
+
+**Document Version**: v1.0  
+**Last Updated**: December 19, 2024  
+**Maintained by**: Development Team
