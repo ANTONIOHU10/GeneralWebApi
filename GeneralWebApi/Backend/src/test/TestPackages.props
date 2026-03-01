@@ -1,14 +1,17 @@
 <Project>
-  <!-- Centralized package version management for test projects -->
-  <PropertyGroup>
-    <!-- Test Framework Package Versions -->
-    <XUnitVersion>2.9.3</XUnitVersion>
-    <XUnitRunnerVersion>3.1.5</XUnitRunnerVersion>
-    <MicrosoftNETTestSdkVersion>17.12.0</MicrosoftNETTestSdkVersion>
-    
-    <!-- Test Utilities Package Versions -->
-    <CoverletCollectorVersion>6.0.2</CoverletCollectorVersion>
-    <FluentAssertionsVersion>8.8.0</FluentAssertionsVersion>
-    <MoqVersion>4.20.72</MoqVersion>
-  </PropertyGroup>
+    <!-- Centralized package version management for test projects -->
+    <PropertyGroup>
+        <!-- Test Framework Package Versions -->
+        <XUnitVersion>2.9.3</XUnitVersion>
+        <XUnitRunnerVersion>3.1.5</XUnitRunnerVersion>
+        <MicrosoftNETTestSdkVersion>17.12.0</MicrosoftNETTestSdkVersion>
+
+        <!-- Test Utilities Package Versions -->
+        <CoverletCollectorVersion>6.0.2</CoverletCollectorVersion>
+        <FluentAssertionsVersion>8.8.0</FluentAssertionsVersion>
+        <MoqVersion>4.20.72</MoqVersion>
+
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <GenerateTargetFrameworkAttribute>true</GenerateTargetFrameworkAttribute>
+    </PropertyGroup>
 </Project>
