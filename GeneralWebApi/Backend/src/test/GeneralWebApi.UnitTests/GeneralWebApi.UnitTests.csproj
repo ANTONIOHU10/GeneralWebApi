@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   
   <Import Project="..\TestPackages.props" />
 
@@ -27,6 +27,10 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\2-Application\GeneralWebApi.Application\GeneralWebApi.Application.csproj" />
   </ItemGroup>
 
 </Project>
