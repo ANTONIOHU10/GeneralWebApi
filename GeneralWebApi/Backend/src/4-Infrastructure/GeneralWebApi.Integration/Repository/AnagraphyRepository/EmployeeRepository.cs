@@ -150,7 +150,7 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
             "employmentsstatus" => sortDescending ? query.OrderByDescending(e => e.EmploymentStatus) : query.OrderBy(e => e.EmploymentStatus),
             "department" => sortDescending ? query.OrderByDescending(e => e.Department!.Name) : query.OrderBy(e => e.Department!.Name),
             "position" => sortDescending ? query.OrderByDescending(e => e.Position!.Title) : query.OrderBy(e => e.Position!.Title),
-            _ => query.OrderBy(e => e.FirstName) // default to sort by first name
+            _ => query.OrderBy(e => e.EmployeeNumber) // default to sort by indexed employee number
         };
     }
 

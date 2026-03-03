@@ -20,6 +20,7 @@ public class EmployeesPerformanceTests : IClassFixture<CustomWebApplicationFacto
 {
     private readonly System.Net.Http.HttpClient _client;
     private readonly ITestOutputHelper _output;
+    private const int TIME_THREADSHOULD = 500; // ms
 
     public EmployeesPerformanceTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
     {
@@ -36,7 +37,7 @@ public class EmployeesPerformanceTests : IClassFixture<CustomWebApplicationFacto
             new AuthenticationHeaderValue("Bearer", token);
 
         var requestUrl = "/api/v1/Employees?api-version=1.0";
-        var thresholdMs = 10000; // 10 seconds threshold for basic regression protection
+        var thresholdMs = TIME_THREADSHOULD; // 1 second threshold for basic regression protection
 
         // Act
         var stopwatch = Stopwatch.StartNew();
@@ -69,7 +70,7 @@ public class EmployeesPerformanceTests : IClassFixture<CustomWebApplicationFacto
         var requestUrl = "/api/v1/Employees?api-version=1.0";
 
         var iterations = 5;           // number of measured requests
-        var thresholdMs = 10000;      // average threshold in milliseconds
+        var thresholdMs = TIME_THREADSHOULD;      // average threshold in milliseconds
         var warmupRequests = 1;       // warmup calls not included in average
 
         // Warmup (not measured)
