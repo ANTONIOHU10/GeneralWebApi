@@ -139,5 +139,5 @@ dotnet test
 
 ## 6. 文档与维护
 
-- 本文件位于 `Backend/src/test/TEST_PLAN.md`，随测试类别或包变更一起更新。
+- 本文件位于 `GeneralWebApi/Backend/src/test/TEST_PLAN.md`，随测试类别或包变更一起更新。
 - 新增测试类别（如“契约测试”“性能测试项目”）时，在本文档中补充项目名、职责与包依赖。
