@@ -5,6 +5,7 @@ using GeneralWebApi.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using GeneralWebApi.Contracts.Responses;
+using GeneralWebApi.Middleware;
 
 namespace GeneralWebApi.Controllers.v1;
 
@@ -32,5 +33,34 @@ public class TestController : BaseController
 
         return Ok(DocumentResponse.TestSuccess());
     }
+
+        [HttpGet("throw-validation")]
+        [AllowAnonymous]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public IActionResult ThrowValidationException()
+        {
+            throw new ValidationException("One or more validation errors occurred");
+        }
+
+        [HttpGet("throw-business")]
+        [AllowAnonymous]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public IActionResult ThrowBusinessException()
+        {
+            var details = new List<string>
+            {
+                "The operation violates a business rule"
+            };
+
+            throw new BusinessException("Business rule violation", "Business rule violation", details);
+        }
+
+        [HttpGet("throw-unhandled")]
+        [AllowAnonymous]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public IActionResult ThrowUnhandledException()
+        {
+            throw new Exception("Unexpected failure for testing global exception handling");
+        }
 
 }

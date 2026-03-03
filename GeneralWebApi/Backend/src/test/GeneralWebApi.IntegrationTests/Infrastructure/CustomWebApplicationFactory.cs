@@ -14,6 +14,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         // Ensure we run with Development settings (appsettings.Development.json, etc.)
         builder.UseEnvironment("Development");
 
+        // Ensure JWT authentication has a valid secret in tests to avoid configuration exceptions
+        Environment.SetEnvironmentVariable("JWT_SECRET", "TestSecretKey_For_IntegrationTests_1234567890");
+
         // You can customize services for tests here later (e.g. in‑memory DB, fake auth, etc.)
         // builder.ConfigureServices(services => { ... });
     }

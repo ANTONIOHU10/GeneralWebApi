@@ -110,7 +110,8 @@
    - [ ] 为 Domain 关键逻辑补充用例（例如：Employee/Department/Position 层级关系、Contracts/Tasks 生命周期、Audit 相关实体的必填字段与默认值等）。
    - [ ] 配置并定期查看 Coverlet 覆盖率，向 70%/80% 目标靠拢。
 2. **IntegrationTests**
-   - [ ] 引入 WebApplicationFactory，编写基础端到端用例（如健康检查、基础 CRUD API：Employees / Departments / Positions）。
+   - [x] 引入 WebApplicationFactory，编写基础端到端用例（如健康检查、基础 CRUD API：Employees / Departments / Positions）。
+     - [x] 已实现基础 WebApplicationFactory 集成测试：在 `GeneralWebApi.IntegrationTests` 项目中引入 `Microsoft.AspNetCore.Mvc.Testing` 并通过 `CustomWebApplicationFactory : WebApplicationFactory<Program>` 启动完整管道，编写 `TestControllerTests` 用例验证未知路由返回非 500（`Get_UnknownRoute_Should_Return_400`）以及基础业务路由 `/api/v1/Test/test` 正常返回非 500 状态（`Get_TestEndpoint_Should_Return_SomeStatus`）。
    - [ ] 按需引入 Testcontainers，为依赖数据库的关键业务流程（如员工层级查询、部门层级、职位按部门查询）编写集成用例，并验证数据持久化正确性。
    - [ ] （可选）为关键接口与安全敏感操作（如权限变更）添加简单性能/耗时断言与基础审计链路验证。
 3. **CI / 规范**

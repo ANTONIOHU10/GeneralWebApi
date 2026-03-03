@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace GeneralWebApi.Middleware;
 
@@ -41,6 +42,12 @@ public class GlobalExceptionMiddleware
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
+        if (context.Response.HasStarted || context.RequestAborted.IsCancellationRequested)
+        {
+            return;
+        }
+
+        context.Response.Clear();
         context.Response.ContentType = "application/json";
 
         var response = new ApiResponse<object>();
@@ -184,7 +191,16 @@ public class GlobalExceptionMiddleware
             WriteIndented = true
         });
 
-        await context.Response.WriteAsync(jsonResponse);
+        try
+        {
+            await context.Response.WriteAsync(jsonResponse);
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+        catch (IOException)
+        {
+        }
     }
 
     #region helper methods
