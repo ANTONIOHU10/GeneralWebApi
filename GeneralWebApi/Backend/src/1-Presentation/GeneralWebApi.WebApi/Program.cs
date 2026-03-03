@@ -152,3 +152,8 @@ app.MapControllers();
 app.UseRateLimiter();
 
 app.Run();
+
+// exposure the default Program for test project
+public partial class Program
+{
+}
