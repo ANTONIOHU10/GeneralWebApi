@@ -13,6 +13,7 @@ public class EmployeeSearchDto
     public string? Email { get; set; }
     public string? EmployeeNumber { get; set; }
     public string? Phone { get; set; }
+    public bool? IsManager { get; set; }
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
     public string? SortBy { get; set; }

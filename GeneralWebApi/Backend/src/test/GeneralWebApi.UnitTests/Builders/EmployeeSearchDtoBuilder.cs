@@ -19,6 +19,7 @@ public sealed class EmployeeSearchDtoBuilder
     private string? _email;
     private string? _employeeNumber;
     private string? _phone;
+    private bool? _isManager;
     private int _pageNumber = 1;
     private int _pageSize = 10;
     private string? _sortBy;
@@ -68,6 +69,7 @@ public sealed class EmployeeSearchDtoBuilder
             Email = _email,
             EmployeeNumber = _employeeNumber,
             Phone = _phone,
+            IsManager = _isManager,
             PageNumber = _pageNumber,
             PageSize = _pageSize,
             SortBy = _sortBy,

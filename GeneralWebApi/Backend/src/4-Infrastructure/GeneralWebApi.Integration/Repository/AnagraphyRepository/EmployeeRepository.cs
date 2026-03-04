@@ -43,7 +43,7 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         return employee;
     }
 
-    public async Task<PagedResult<Employee>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? positionId = null, string? employmentStatus = null, DateTime? hireDateFrom = null, DateTime? hireDateTo = null, string? firstName = null, string? lastName = null, string? email = null, string? employeeNumber = null, string? phone = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Employee>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? positionId = null, string? employmentStatus = null, DateTime? hireDateFrom = null, DateTime? hireDateTo = null, string? firstName = null, string? lastName = null, string? email = null, string? employeeNumber = null, string? phone = null, bool? isManager = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
         var query = GetActiveAndEnabledEntities()
             .Include(e => e.Department)
@@ -53,7 +53,7 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
             .AsQueryable();
 
         // Apply search filters
-        query = ApplySearchFilters(query, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo, firstName, lastName, email, employeeNumber, phone);
+        query = ApplySearchFilters(query, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo, firstName, lastName, email, employeeNumber, phone, isManager);
 
         // Apply sorting
         query = ApplySorting(query, sortBy, sortDescending);
@@ -73,7 +73,7 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 
     #region Private Helper Methods
 
-    private static IQueryable<Employee> ApplySearchFilters(IQueryable<Employee> query, string? searchTerm, int? departmentId, int? positionId, string? employmentStatus, DateTime? hireDateFrom, DateTime? hireDateTo, string? firstName = null, string? lastName = null, string? email = null, string? employeeNumber = null, string? phone = null)
+    private static IQueryable<Employee> ApplySearchFilters(IQueryable<Employee> query, string? searchTerm, int? departmentId, int? positionId, string? employmentStatus, DateTime? hireDateFrom, DateTime? hireDateTo, string? firstName = null, string? lastName = null, string? email = null, string? employeeNumber = null, string? phone = null, bool? isManager = null)
     {
         // General search term (searches across multiple fields)
         if (!string.IsNullOrEmpty(searchTerm))
@@ -108,6 +108,11 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         if (!string.IsNullOrEmpty(phone))
         {
             query = query.Where(e => !string.IsNullOrEmpty(e.PhoneNumber) && e.PhoneNumber.Contains(phone));
+        }
+
+        if (isManager.HasValue)
+        {
+            query = query.Where(e => e.IsManager == isManager.Value);
         }
 
         if (departmentId.HasValue)

@@ -101,6 +101,7 @@ public class EmployeeService : IEmployeeService
             searchDto.Email,
             searchDto.EmployeeNumber,
             searchDto.Phone,
+            searchDto.IsManager,
             searchDto.SortBy,
             searchDto.SortDescending,
             cancellationToken);
@@ -148,7 +149,24 @@ public class EmployeeService : IEmployeeService
         
         // Automatically set IsManager to true if employee has subordinates
         // Check if any other employees have this employee as their manager
-        var hasSubordinates = await _employeeRepository.GetPagedAsync(1, 1, null, null, null, "Active", null, null, null, null, null, null, null, null, false, cancellationToken);
+        var hasSubordinates = await _employeeRepository.GetPagedAsync(
+            pageNumber: 1,
+            pageSize: 1,
+            searchTerm: null,
+            departmentId: null,
+            positionId: null,
+            employmentStatus: "Active",
+            hireDateFrom: null,
+            hireDateTo: null,
+            firstName: null,
+            lastName: null,
+            email: null,
+            employeeNumber: null,
+            phone: null,
+            isManager: null,
+            sortBy: null,
+            sortDescending: false,
+            cancellationToken: cancellationToken);
         var hasSubordinatesResult = hasSubordinates.Items.Any(e => e.ManagerId == id && e.Id != id);
         if (hasSubordinatesResult && !existingEmployee.IsManager)
         {

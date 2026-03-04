@@ -170,15 +170,16 @@ public class EmployeesController : BaseController
                 EmploymentStatus = "Active", // Only active employees
                 PageNumber = 1,
                 PageSize = 100, // Get up to 100 managers
-                SearchTerm = validatedParams.searchTerm
+                SearchTerm = validatedParams.searchTerm,
+                IsManager = true
             };
             
             var query = new GetEmployeesQuery { EmployeeSearchDto = searchDto };
             var result = await _mediator.Send(query);
             
-            // Filter to only managers and exclude specified employee if provided
+            // Exclude specified employee if provided and sort result
             var managers = result.Items
-                .Where(e => e.IsManager && (validatedParams.excludeEmployeeId == null || e.Id != validatedParams.excludeEmployeeId))
+                .Where(e => validatedParams.excludeEmployeeId == null || e.Id != validatedParams.excludeEmployeeId)
                 .OrderBy(e => e.FirstName)
                 .ThenBy(e => e.LastName)
                 .ToList();

@@ -11,7 +11,7 @@ namespace GeneralWebApi.UnitTests.Features.Employees;
 
 /// <summary>
 /// Unit tests for <see cref="SearchEmployeesQueryHandler"/>.
-/// Handler builds an EmployeeSearchDto with PageSize = int.MaxValue and returns Items list.
+/// Handler uses the incoming EmployeeSearchDto (including paging) and returns Items list.
 /// </summary>
 public sealed class SearchEmployeesQueryHandlerTests
 {
@@ -33,7 +33,7 @@ public sealed class SearchEmployeesQueryHandlerTests
             new EmployeeDtoBuilder().WithId(1).WithName("John", "Doe").Build(),
             new EmployeeDtoBuilder().WithId(2).WithName("Johnny", "Smith").Build()
         };
-        var paged = new PagedResult<EmployeeDto>(items, 2, 1, int.MaxValue);
+        var paged = new PagedResult<EmployeeDto>(items, 2, searchDto.PageNumber, searchDto.PageSize);
         _employeeServiceMock
             .Setup(s => s.GetPagedAsync(It.IsAny<EmployeeSearchDto>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(paged);
@@ -49,10 +49,10 @@ public sealed class SearchEmployeesQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_CallsServiceWithPageSizeMaxValue_WhenInvoked()
+    public async Task Handle_CallsServiceWithIncomingSearchDto_WhenInvoked()
     {
         var searchDto = new EmployeeSearchDtoBuilder().WithPage(2, 10).Build();
-        var paged = new PagedResult<EmployeeDto>([], 0, 1, int.MaxValue);
+        var paged = new PagedResult<EmployeeDto>([], 0, searchDto.PageNumber, searchDto.PageSize);
         EmployeeSearchDto? capturedDto = null;
         _employeeServiceMock
             .Setup(s => s.GetPagedAsync(It.IsAny<EmployeeSearchDto>(), It.IsAny<CancellationToken>()))
@@ -63,8 +63,8 @@ public sealed class SearchEmployeesQueryHandlerTests
         await _sut.Handle(query, CancellationToken.None);
 
         capturedDto.Should().NotBeNull();
-        capturedDto!.PageNumber.Should().Be(1);
-        capturedDto.PageSize.Should().Be(int.MaxValue);
+        capturedDto!.PageNumber.Should().Be(searchDto.PageNumber);
+        capturedDto.PageSize.Should().Be(searchDto.PageSize);
         capturedDto.SearchTerm.Should().Be(searchDto.SearchTerm);
         capturedDto.DepartmentId.Should().Be(searchDto.DepartmentId);
     }
