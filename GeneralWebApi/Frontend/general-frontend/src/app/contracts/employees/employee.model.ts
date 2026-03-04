@@ -104,6 +104,14 @@ export interface PaginatedResponse<T> {
   hasNextPage: boolean;
 }
 
+// Lightweight manager lookup DTO (for manager dropdowns)
+export interface ManagerLookup {
+  id: number;
+  firstName: string;
+  lastName: string;
+  employeeNumber?: string | null;
+}
+
 // Employee hierarchy for organization chart
 export interface EmployeeHierarchy {
   id: number;

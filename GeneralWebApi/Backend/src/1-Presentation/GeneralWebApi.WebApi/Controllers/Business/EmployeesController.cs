@@ -45,16 +45,16 @@ public class EmployeesController : BaseController
     /// Search employees with advanced filters
     /// </summary>
     /// <param name="searchDto">Search criteria including department, position, status, dates, and individual field filters</param>
-    /// <returns>List of employees matching the search criteria with complete employee data</returns>
+    /// <returns>Paged list of employees matching the search criteria with complete employee data</returns>
     [HttpGet("search")]
     [Authorize(Policy = "AllRoles")] // All authenticated users can search employees
-    public async Task<ActionResult<ApiResponse<List<EmployeeDto>>>> SearchEmployees([FromQuery] EmployeeSearchDto searchDto)
+    public async Task<ActionResult<ApiResponse<PagedResult<EmployeeDto>>>> SearchEmployees([FromQuery] EmployeeSearchDto searchDto)
     {
         return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
         {
             var query = new SearchEmployeesQuery { EmployeeSearchDto = validatedDto };
             var result = await _mediator.Send(query);
-            return Ok(ApiResponse<List<EmployeeDto>>.SuccessResult(result, "Employees retrieved successfully"));
+            return Ok(ApiResponse<PagedResult<EmployeeDto>>.SuccessResult(result, "Employees retrieved successfully"));
         });
     }
 
@@ -158,33 +158,22 @@ public class EmployeesController : BaseController
     /// </summary>
     /// <param name="searchTerm">Optional search term to filter managers by name</param>
     /// <param name="excludeEmployeeId">Optional employee ID to exclude from results (e.g., current employee being edited)</param>
-    /// <returns>List of managers</returns>
+    /// <returns>List of managers (lightweight lookup DTO)</returns>
     [HttpGet("managers")]
     [Authorize(Policy = "AllRoles")] // All authenticated users can view managers
-    public async Task<ActionResult<ApiResponse<List<EmployeeDto>>>> GetManagers([FromQuery] string? searchTerm = null, [FromQuery] int? excludeEmployeeId = null)
+    public async Task<ActionResult<ApiResponse<List<ManagerLookupDto>>>> GetManagers([FromQuery] string? searchTerm = null, [FromQuery] int? excludeEmployeeId = null)
     {
         return await ValidateAndExecuteAsync((searchTerm, excludeEmployeeId), async (validatedParams) =>
         {
-            var searchDto = new EmployeeSearchDto
+            var query = new GetManagersLookupQuery
             {
-                EmploymentStatus = "Active", // Only active employees
-                PageNumber = 1,
-                PageSize = 100, // Get up to 100 managers
                 SearchTerm = validatedParams.searchTerm,
-                IsManager = true
+                ExcludeEmployeeId = validatedParams.excludeEmployeeId,
+                MaxResults = 100
             };
+            var managers = await _mediator.Send(query);
             
-            var query = new GetEmployeesQuery { EmployeeSearchDto = searchDto };
-            var result = await _mediator.Send(query);
-            
-            // Exclude specified employee if provided and sort result
-            var managers = result.Items
-                .Where(e => validatedParams.excludeEmployeeId == null || e.Id != validatedParams.excludeEmployeeId)
-                .OrderBy(e => e.FirstName)
-                .ThenBy(e => e.LastName)
-                .ToList();
-            
-            return Ok(ApiResponse<List<EmployeeDto>>.SuccessResult(managers, "Managers retrieved successfully"));
+            return Ok(ApiResponse<List<ManagerLookupDto>>.SuccessResult(managers, "Managers retrieved successfully"));
         });
     }
 

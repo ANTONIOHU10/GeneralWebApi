@@ -11,7 +11,7 @@ namespace GeneralWebApi.UnitTests.Features.Employees;
 
 /// <summary>
 /// Unit tests for <see cref="SearchEmployeesQueryHandler"/>.
-/// Handler uses the incoming EmployeeSearchDto (including paging) and returns Items list.
+/// Handler uses the incoming EmployeeSearchDto (including paging) and returns a PagedResult.
 /// </summary>
 public sealed class SearchEmployeesQueryHandlerTests
 {
@@ -25,7 +25,7 @@ public sealed class SearchEmployeesQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ReturnsListOfEmployeeDto_WhenServiceReturnsPagedResult()
+    public async Task Handle_ReturnsPagedResult_WhenServiceReturnsPagedResult()
     {
         var searchDto = new EmployeeSearchDtoBuilder().WithSearchTerm("john").WithPage(1, 5).Build();
         var items = new List<EmployeeDto>
@@ -43,9 +43,9 @@ public sealed class SearchEmployeesQueryHandlerTests
         var result = await _sut.Handle(query, CancellationToken.None);
 
         result.Should().NotBeNull();
-        result.Should().HaveCount(2);
-        result[0].FirstName.Should().Be("John");
-        result[1].FirstName.Should().Be("Johnny");
+        result.Items.Should().HaveCount(2);
+        result.Items[0].FirstName.Should().Be("John");
+        result.Items[1].FirstName.Should().Be("Johnny");
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public sealed class SearchEmployeesQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ReturnsEmptyList_WhenServiceReturnsEmptyPagedResult()
+    public async Task Handle_ReturnsEmptyPagedResult_WhenServiceReturnsEmptyPagedResult()
     {
         var searchDto = new EmployeeSearchDtoBuilder().WithSearchTerm("nonexistent").Build();
         var emptyPaged = new PagedResult<EmployeeDto>([], 0, 1, int.MaxValue);
@@ -116,6 +116,6 @@ public sealed class SearchEmployeesQueryHandlerTests
         var result = await _sut.Handle(query, CancellationToken.None);
 
         result.Should().NotBeNull();
-        result.Should().BeEmpty();
+        result.Items.Should().BeEmpty();
     }
 }

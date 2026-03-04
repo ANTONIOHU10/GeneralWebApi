@@ -11,4 +11,5 @@ public interface IEmployeeService
     Task<EmployeeDto> UpdateAsync(int id, UpdateEmployeeDto updateDto, CancellationToken cancellationToken = default);
     Task<EmployeeDto> DeleteAsync(int id, CancellationToken cancellationToken = default);
     Task<EmployeeHierarchyDto?> GetHierarchyAsync(int employeeId, CancellationToken cancellationToken = default);
+    Task<List<ManagerLookupDto>> GetManagersAsync(string? searchTerm, int? excludeEmployeeId, int maxResults, CancellationToken cancellationToken = default);
 }

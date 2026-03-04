@@ -70,6 +70,34 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         return new PagedResult<Employee>(employees, totalCount, pageNumber, pageSize);
     }
 
+    public async Task<List<Employee>> GetManagersAsync(string? searchTerm, int? excludeEmployeeId, int maxResults, CancellationToken cancellationToken = default)
+    {
+        // Start from active & enabled employees only, no includes to keep query lightweight
+        var query = GetActiveAndEnabledEntities()
+            .AsNoTracking()
+            .Where(e => e.IsManager && e.EmploymentStatus == "Active");
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(e =>
+                e.FirstName.Contains(searchTerm) ||
+                e.LastName.Contains(searchTerm) ||
+                e.EmployeeNumber.Contains(searchTerm));
+        }
+
+        if (excludeEmployeeId.HasValue)
+        {
+            query = query.Where(e => e.Id != excludeEmployeeId.Value);
+        }
+
+        // Default ordering by indexed EmployeeNumber
+        query = query.OrderBy(e => e.EmployeeNumber);
+
+        return await query
+            .Take(maxResults)
+            .ToListAsync(cancellationToken);
+    }
+
 
     #region Private Helper Methods
 

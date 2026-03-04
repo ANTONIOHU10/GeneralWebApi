@@ -1,7 +1,7 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-detail/employee-detail.component.ts
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Employee } from 'app/contracts/employees/employee.model';
+import { Employee, ManagerLookup } from 'app/contracts/employees/employee.model';
 import { User } from 'app/users/user.model';
 import {
   BaseModalComponent,
@@ -1278,11 +1278,24 @@ export class EmployeeDetailComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Update manager field options
    */
-  private updateManagerOptions(managers: Employee[]): void {
-    const managerOptions: SelectOption[] = managers.map(manager => ({
-      value: parseInt(manager.id),
-      label: `${manager.firstName} ${manager.lastName}${manager.employeeNumber ? ` (${manager.employeeNumber})` : ''}`
-    }));
+  private updateManagerOptions(managers: Array<Employee | ManagerLookup>): void {
+    const managerOptions: SelectOption[] = managers.map(manager => {
+      // manager.id is string for Employee, number for ManagerLookup
+      const id =
+        typeof (manager as Employee).id === 'string'
+          ? parseInt((manager as Employee).id, 10)
+          : (manager as ManagerLookup).id;
+
+      const employeeNumber =
+        (manager as any).employeeNumber && (manager as any).employeeNumber !== ''
+          ? (manager as any).employeeNumber
+          : undefined;
+
+      return {
+        value: id,
+        label: `${manager.firstName} ${manager.lastName}${employeeNumber ? ` (${employeeNumber})` : ''}`,
+      } as SelectOption;
+    });
 
     const managerField = this.formConfig.fields.find(f => f.key === 'managerId');
     if (managerField) {

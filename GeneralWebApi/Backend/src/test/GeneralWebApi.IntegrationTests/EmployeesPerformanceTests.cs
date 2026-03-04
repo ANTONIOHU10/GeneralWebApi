@@ -175,12 +175,12 @@ public class EmployeesPerformanceTests : IClassFixture<CustomWebApplicationFacto
         _output.WriteLine($"Search employees request took {stopwatch.ElapsedMilliseconds} ms.");
 
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<ApiResponse<List<EmployeeDto>>>(content, new JsonSerializerOptions
+        var result = JsonSerializer.Deserialize<ApiResponse<PagedResult<EmployeeDto>>>(content, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
 
-        var count = result?.Data?.Count ?? 0;
+        var count = result?.Data?.Items?.Count ?? 0;
         _output.WriteLine($"Search request returned {count} employees.");
 
         // Assert
@@ -236,7 +236,7 @@ public class EmployeesPerformanceTests : IClassFixture<CustomWebApplicationFacto
             new AuthenticationHeaderValue("Bearer", token);
 
         var requestUrl = "/api/v1/Employees/managers?api-version=1.0&pageNumber=1&pageSize=100";
-        var thresholdMs = TIME_THREADSHOULD;
+        var thresholdMs = TREE_THREADSHOULD;
 
         // Act
         var stopwatch = Stopwatch.StartNew();

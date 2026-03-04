@@ -58,6 +58,9 @@ public class EmployeeMappingProfile : Profile
                 }
             });
 
+        // Lightweight lookup for managers
+        CreateMap<Employee, ManagerLookupDto>();
+
         // DTO to Entity mappings
         CreateMap<CreateEmployeeDto, Employee>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())

@@ -6,7 +6,7 @@ using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using Microsoft.Extensions.Logging;
 
 namespace GeneralWebApi.Application.Services;
-public class EmployeeService : IEmployeeService
+    public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IMapper _mapper;
@@ -233,6 +233,17 @@ public class EmployeeService : IEmployeeService
 
         var visited = new HashSet<int>(); // Prevent circular references
         return BuildHierarchyTree(employee, visited);
+    }
+
+    public async Task<List<ManagerLookupDto>> GetManagersAsync(string? searchTerm, int? excludeEmployeeId, int maxResults, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting managers with search term: {SearchTerm}", searchTerm);
+
+        var employees = await _employeeRepository.GetManagersAsync(searchTerm, excludeEmployeeId, maxResults, cancellationToken);
+        var managers = _mapper.Map<List<ManagerLookupDto>>(employees);
+
+        _logger.LogInformation("Found {Count} managers", managers.Count);
+        return managers;
     }
 
     /// <summary>

@@ -10,6 +10,7 @@ import {
   CreateEmployeeRequest,
   UpdateEmployeeRequest,
   EmployeeHierarchy,
+  ManagerLookup,
 } from 'app/contracts/employees/employee.model';
 import { ApiResponse } from 'app/contracts/common/api-response';
 
@@ -238,7 +239,7 @@ export class EmployeeService extends BaseHttpService {
   }
 
   // Get list of managers from backend
-  getManagers(searchTerm?: string, excludeEmployeeId?: string): Observable<Employee[]> {
+  getManagers(searchTerm?: string, excludeEmployeeId?: string): Observable<ManagerLookup[]> {
     const params: Record<string, string> = {};
     if (searchTerm) {
       params['searchTerm'] = searchTerm;
@@ -246,8 +247,17 @@ export class EmployeeService extends BaseHttpService {
     if (excludeEmployeeId) {
       params['excludeEmployeeId'] = excludeEmployeeId;
     }
-    return this.get<BackendEmployee[]>(`${this.endpoint}/managers`, params).pipe(
-      map(backendEmployees => backendEmployees.map(emp => this.transformBackendEmployee(emp)))
+    return this.get<ApiResponse<ManagerLookup[]>>(
+      `${this.endpoint}/managers`,
+      params,
+      { extractData: false }
+    ).pipe(
+      map(response => {
+        if (!response.data) {
+          return [];
+        }
+        return response.data;
+      })
     );
   }
 
