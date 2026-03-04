@@ -83,29 +83,29 @@
 ## 4. 实施计划（建议顺序）
 
 1. **UnitTests**
-    - [ ] 为现有 Application Handlers 补全单元测试（Mock 依赖，断言业务与异常）。
-     - [x] Employees: `GetEmployeeByIdQueryHandler`（查询单个员工）
-     - [x] Employees: `CreateEmployeeCommandHandler`（创建员工）
-     - [x] Employees: `UpdateEmployeeCommandHandler`（更新员工）
-     - [x] Employees: `DeleteEmployeeCommandHandler`（删除员工）
-     - [x] Employees: `GetEmployeesQueryHandler`（分页查询员工）
-     - [x] Employees: `SearchEmployeesQueryHandler`（搜索员工）
-     - [x] Employees: `GetEmployeesByDepartmentQueryHandler`（按部门查员工）
-     - [x] Employees: `GetEmployeeHierarchyQueryHandler`（员工层级）
-     - [x] Departments: `GetDepartmentByIdQueryHandler`、`CreateDepartmentCommandHandler`、`UpdateDepartmentCommandHandler`、`DeleteDepartmentCommandHandler`
-     - [x] Departments: `GetDepartmentsQueryHandler`（分页）、`GetDepartmentsByParentQueryHandler`（按父级）、`GetDepartmentHierarchyQueryHandler`（层级）
-     - [x] Positions: `GetPositionByIdQueryHandler`、`CreatePositionCommandHandler`、`UpdatePositionCommandHandler`、`DeletePositionCommandHandler`
-     - [x] Positions: `GetPositionsQueryHandler`（分页）、`GetPositionsByDepartmentQueryHandler`（按部门）
-     - [x] Permissions / Roles & Permissions: 所有 Role/Permission 相关 Handlers（`GetRolesQueryHandler`、`GetRoleByIdQueryHandler`、`GetRolesByEmployeeQueryHandler`、`GetEmployeeRolesQueryHandler`、`GetEmployeeRolesSearchQueryHandler`、`GetPermissionsQueryHandler`、`GetPermissionByIdQueryHandler`、`CreateRoleCommandHandler`、`UpdateRoleCommandHandler`、`DeleteRoleCommandHandler`、`AssignRoleToEmployeeCommandHandler`、`RemoveRoleFromEmployeeCommandHandler`、`CreatePermissionCommandHandler`、`UpdatePermissionCommandHandler`、`DeletePermissionCommandHandler`、`GetPermissionsByRoleQueryHandler` 等）。
-       - [x] 已实现单元测试（核心场景）：`GetRolesQueryHandler`、`GetRoleByIdQueryHandler`、`GetRolesByEmployeeQueryHandler`、`GetEmployeeRolesQueryHandler`、`GetEmployeeRolesSearchQueryHandler`、`AssignRoleToEmployeeCommandHandler`、`RemoveRoleFromEmployeeCommandHandler`、`GetPermissionsQueryHandler`、`GetPermissionsByRoleQueryHandler`、`GetPermissionByIdQueryHandler`、`CreatePermissionCommandHandler`、`UpdatePermissionCommandHandler`、`DeletePermissionCommandHandler`、`UpdateRoleCommandHandler`、`DeleteRoleCommandHandler` 等（见 `Features/Permissions` 目录）。
-     - [x] Notifications: 所有通知相关 Handlers（`CreateNotificationCommandHandler`、`DeleteNotificationCommandHandler`、`GetNotificationByIdQueryHandler`、`GetNotificationsQueryHandler`、`GetUnreadCountQueryHandler`、`MarkAllAsReadCommandHandler`、`ToggleReadStatusCommandHandler`、`MarkAsArchivedCommandHandler` 等）以及 `NotificationService` 的核心场景（创建通知、查询通知列表、已读状态、归档等）。
-       - [x] 已实现单元测试：`CreateNotificationCommandHandler`、`DeleteNotificationCommandHandler`、`GetNotificationByIdQueryHandler`、`GetNotificationsQueryHandler`、`GetUnreadCountQueryHandler`、`MarkAllAsReadCommandHandler`、`ToggleReadStatusCommandHandler`、`MarkAsArchivedCommandHandler`（见 `Features/Notifications` 目录）。
-     - [x] Contracts: `GetContractsQueryHandler`、`GetContractByIdQueryHandler`、`CreateContractCommandHandler`、`UpdateContractCommandHandler`、`DeleteContractCommandHandler`、`GetContractsByEmployeeQueryHandler`、`GetContractsByStatusQueryHandler`、`GetExpiredContractsQueryHandler`、`GetExpiringContractsQueryHandler` 等，以及 `ContractApprovalService` 的主要审批流程场景。
-       - [x] 已实现单元测试：`GetContractsQueryHandler`、`GetContractByIdQueryHandler`、`GetContractsByEmployeeQueryHandler`、`GetContractsByStatusQueryHandler`、`CreateContractCommandHandler`、`UpdateContractCommandHandler`、`DeleteContractCommandHandler` 以及 `ContractApprovalService.SubmitForApprovalAsync` 的核心路径（见 `Features/Contracts` 与 `Services/Contracts` 目录）。
-     - [x] Tasks: `GetTasksQueryHandler`、`GetTaskByIdQueryHandler`、`CreateTaskCommandHandler`、`UpdateTaskCommandHandler`、`DeleteTaskCommandHandler`，以及 `TaskService` 在任务分配、状态变更等核心场景。
-       - [x] 已实现单元测试：`GetTasksQueryHandler`、`GetTaskByIdQueryHandler`、`CreateTaskCommandHandler`、`UpdateTaskCommandHandler`、`DeleteTaskCommandHandler`（见 `Features/Tasks` 目录）。
-     - [x] Users: `CreateUserCommandHandler`、`UpdateUserCommandHandler`、`DeleteUserCommandHandler`、`GetUserWithEmployeeQueryHandler`、`GetUsersWithEmployeeQueryHandler`，以及 `UserService` 的关键逻辑（用户与员工关联、启用/禁用等）。
-       - [x] 已实现单元测试：`CreateUserCommandHandler`、`UpdateUserCommandHandler`、`DeleteUserCommandHandler`、`GetUserWithEmployeeQueryHandler`、`GetUsersWithEmployeeQueryHandler`（见 `Features/Users` 目录）。
+   - [ ] 为现有 Application Handlers 补全单元测试（Mock 依赖，断言业务与异常）。
+   - [x] Employees: `GetEmployeeByIdQueryHandler`（查询单个员工）
+   - [x] Employees: `CreateEmployeeCommandHandler`（创建员工）
+   - [x] Employees: `UpdateEmployeeCommandHandler`（更新员工）
+   - [x] Employees: `DeleteEmployeeCommandHandler`（删除员工）
+   - [x] Employees: `GetEmployeesQueryHandler`（分页查询员工）
+   - [x] Employees: `SearchEmployeesQueryHandler`（搜索员工）
+   - [x] Employees: `GetEmployeesByDepartmentQueryHandler`（按部门查员工）
+   - [x] Employees: `GetEmployeeHierarchyQueryHandler`（员工层级）
+   - [x] Departments: `GetDepartmentByIdQueryHandler`、`CreateDepartmentCommandHandler`、`UpdateDepartmentCommandHandler`、`DeleteDepartmentCommandHandler`
+   - [x] Departments: `GetDepartmentsQueryHandler`（分页）、`GetDepartmentsByParentQueryHandler`（按父级）、`GetDepartmentHierarchyQueryHandler`（层级）
+   - [x] Positions: `GetPositionByIdQueryHandler`、`CreatePositionCommandHandler`、`UpdatePositionCommandHandler`、`DeletePositionCommandHandler`
+   - [x] Positions: `GetPositionsQueryHandler`（分页）、`GetPositionsByDepartmentQueryHandler`（按部门）
+   - [x] Permissions / Roles & Permissions: 所有 Role/Permission 相关 Handlers（`GetRolesQueryHandler`、`GetRoleByIdQueryHandler`、`GetRolesByEmployeeQueryHandler`、`GetEmployeeRolesQueryHandler`、`GetEmployeeRolesSearchQueryHandler`、`GetPermissionsQueryHandler`、`GetPermissionByIdQueryHandler`、`CreateRoleCommandHandler`、`UpdateRoleCommandHandler`、`DeleteRoleCommandHandler`、`AssignRoleToEmployeeCommandHandler`、`RemoveRoleFromEmployeeCommandHandler`、`CreatePermissionCommandHandler`、`UpdatePermissionCommandHandler`、`DeletePermissionCommandHandler`、`GetPermissionsByRoleQueryHandler` 等）。
+     - [x] 已实现单元测试（核心场景）：`GetRolesQueryHandler`、`GetRoleByIdQueryHandler`、`GetRolesByEmployeeQueryHandler`、`GetEmployeeRolesQueryHandler`、`GetEmployeeRolesSearchQueryHandler`、`AssignRoleToEmployeeCommandHandler`、`RemoveRoleFromEmployeeCommandHandler`、`GetPermissionsQueryHandler`、`GetPermissionsByRoleQueryHandler`、`GetPermissionByIdQueryHandler`、`CreatePermissionCommandHandler`、`UpdatePermissionCommandHandler`、`DeletePermissionCommandHandler`、`UpdateRoleCommandHandler`、`DeleteRoleCommandHandler` 等（见 `Features/Permissions` 目录）。
+   - [x] Notifications: 所有通知相关 Handlers（`CreateNotificationCommandHandler`、`DeleteNotificationCommandHandler`、`GetNotificationByIdQueryHandler`、`GetNotificationsQueryHandler`、`GetUnreadCountQueryHandler`、`MarkAllAsReadCommandHandler`、`ToggleReadStatusCommandHandler`、`MarkAsArchivedCommandHandler` 等）以及 `NotificationService` 的核心场景（创建通知、查询通知列表、已读状态、归档等）。
+     - [x] 已实现单元测试：`CreateNotificationCommandHandler`、`DeleteNotificationCommandHandler`、`GetNotificationByIdQueryHandler`、`GetNotificationsQueryHandler`、`GetUnreadCountQueryHandler`、`MarkAllAsReadCommandHandler`、`ToggleReadStatusCommandHandler`、`MarkAsArchivedCommandHandler`（见 `Features/Notifications` 目录）。
+   - [x] Contracts: `GetContractsQueryHandler`、`GetContractByIdQueryHandler`、`CreateContractCommandHandler`、`UpdateContractCommandHandler`、`DeleteContractCommandHandler`、`GetContractsByEmployeeQueryHandler`、`GetContractsByStatusQueryHandler`、`GetExpiredContractsQueryHandler`、`GetExpiringContractsQueryHandler` 等，以及 `ContractApprovalService` 的主要审批流程场景。
+     - [x] 已实现单元测试：`GetContractsQueryHandler`、`GetContractByIdQueryHandler`、`GetContractsByEmployeeQueryHandler`、`GetContractsByStatusQueryHandler`、`CreateContractCommandHandler`、`UpdateContractCommandHandler`、`DeleteContractCommandHandler` 以及 `ContractApprovalService.SubmitForApprovalAsync` 的核心路径（见 `Features/Contracts` 与 `Services/Contracts` 目录）。
+   - [x] Tasks: `GetTasksQueryHandler`、`GetTaskByIdQueryHandler`、`CreateTaskCommandHandler`、`UpdateTaskCommandHandler`、`DeleteTaskCommandHandler`，以及 `TaskService` 在任务分配、状态变更等核心场景。
+     - [x] 已实现单元测试：`GetTasksQueryHandler`、`GetTaskByIdQueryHandler`、`CreateTaskCommandHandler`、`UpdateTaskCommandHandler`、`DeleteTaskCommandHandler`（见 `Features/Tasks` 目录）。
+   - [x] Users: `CreateUserCommandHandler`、`UpdateUserCommandHandler`、`DeleteUserCommandHandler`、`GetUserWithEmployeeQueryHandler`、`GetUsersWithEmployeeQueryHandler`，以及 `UserService` 的关键逻辑（用户与员工关联、启用/禁用等）。
+     - [x] 已实现单元测试：`CreateUserCommandHandler`、`UpdateUserCommandHandler`、`DeleteUserCommandHandler`、`GetUserWithEmployeeQueryHandler`、`GetUsersWithEmployeeQueryHandler`（见 `Features/Users` 目录）。
    - [ ] 为跨领域 Application Services 补充用例（例如 `AuditService`：审计日志 / 员工字段变更 / 权限变更 / 系统事件等场景；`CSVExportService`：不同实体导出；`EnumValueService`：枚举值查询聚合等）。
    - [ ] 为 Domain 关键逻辑补充用例（例如：Employee/Department/Position 层级关系、Contracts/Tasks 生命周期、Audit 相关实体的必填字段与默认值等）。
    - [ ] 配置并定期查看 Coverlet 覆盖率，向 70%/80% 目标靠拢。
@@ -113,7 +113,7 @@
    - [x] 引入 WebApplicationFactory，编写基础端到端用例（如健康检查、基础 CRUD API：Employees / Departments / Positions）。
      - [x] 已实现基础 WebApplicationFactory 集成测试：在 `GeneralWebApi.IntegrationTests` 项目中引入 `Microsoft.AspNetCore.Mvc.Testing` 并通过 `CustomWebApplicationFactory : WebApplicationFactory<Program>` 启动完整管道，编写 `TestControllerTests` 用例验证未知路由返回非 500（`Get_UnknownRoute_Should_Return_400`）以及基础业务路由 `/api/v1/Test/test` 正常返回非 500 状态（`Get_TestEndpoint_Should_Return_SomeStatus`）。
    - [ ] 按需引入 Testcontainers，为依赖数据库的关键业务流程（如员工层级查询、部门层级、职位按部门查询）编写集成用例，并验证数据持久化正确性。
-   - [ ] （可选）为关键接口与安全敏感操作（如权限变更）添加简单性能/耗时断言与基础审计链路验证。
+   - [x] （可选）为关键接口与安全敏感操作（如权限变更）添加简单性能/耗时断言与基础审计链路验证。
 3. **CI / 规范**
    - [ ] 在 CI 中执行 `dotnet test` 并收集覆盖率（Coverlet 输出）。
    - [ ] （可选）配置 ReportGenerator，将覆盖率报告发布为制品或注释到 PR。
