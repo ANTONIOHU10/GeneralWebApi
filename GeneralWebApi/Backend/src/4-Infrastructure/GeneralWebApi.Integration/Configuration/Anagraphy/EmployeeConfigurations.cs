@@ -96,6 +96,7 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
               builder.HasIndex(e => e.HireDate);
               builder.HasIndex(e => e.IsManager);
               builder.HasIndex(e => e.ManagerRole);
+              builder.HasIndex(e => e.Email);
               // Removed unique constraint: Allow multiple managers per department with different roles
               // builder.HasIndex(e => new { e.DepartmentId, e.IsManager })
               //        .HasFilter("IsManager = 1")

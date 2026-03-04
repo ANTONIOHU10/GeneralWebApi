@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using GeneralWebApi.Common.Helpers;
@@ -255,6 +256,40 @@ public class EmployeesPerformanceTests : IClassFixture<CustomWebApplicationFacto
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        stopwatch.ElapsedMilliseconds.Should().BeLessThan(thresholdMs);
+    }
+
+    [Fact]
+    public async Task Create_Employee_Should_Be_Fast_Enough()
+    {
+        var token = await TestAuthHelper.GetAccessTokenAsync(_client, "admin", "Admin@123456");
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
+        var requestUrl = "/api/v1/Employees?api-version=1.0";
+        var thresholdMs = TIME_THREADSHOULD; // 或稍微放宽一点，比如 1000
+
+        var newEmployee = new CreateEmployeeDto
+        {
+            FirstName = "Perf",
+            LastName = "Test",
+            Email = $"perftest_{Guid.NewGuid():N}@example.com",
+            TaxCode = Guid.NewGuid().ToString("N").Substring(0, 16),
+            EmploymentStatus = "Active",
+            EmploymentType = "FullTime",
+            HireDate = DateTime.UtcNow.Date,
+            // 其他必填字段补齐
+        };
+
+        var json = JsonSerializer.Serialize(newEmployee);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var stopwatch = Stopwatch.StartNew();
+        var response = await _client.PostAsync(requestUrl, content);
+        stopwatch.Stop();
+        _output.WriteLine($"Create employee request took {stopwatch.ElapsedMilliseconds} ms.");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
         stopwatch.ElapsedMilliseconds.Should().BeLessThan(thresholdMs);
     }
 }
