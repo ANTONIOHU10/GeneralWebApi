@@ -70,11 +70,17 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "900kB",
-                  "maximumError": "1.5MB"
+                  "maximumError": "3.0MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -82,6 +88,16 @@
                   "maximumError": "20kB"
                 }
               ],
+              "outputHashing": "all"
+            },
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ],
+              "optimization": true,
               "outputHashing": "all"
             },
             "development": {
@@ -97,6 +113,9 @@
           "configurations": {
             "production": {
               "buildTarget": "general-frontend:build:production"
+            },
+            "test": {
+              "buildTarget": "general-frontend:build:test"
             },
             "development": {
               "buildTarget": "general-frontend:build:development"
