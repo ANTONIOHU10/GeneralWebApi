@@ -1,0 +1,43 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+
+# Install Node
+- task: NodeTool@0
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '20.x'
+
+# Install Angular dependencies
+- script: npm install 
+  workingDirectory: frontend/general-frontend
+  displayName: Install Angular packages
+
+# Build Angular
+- script: npm run build -- --configuration test
+  displayName: Build Angular packages
+
+# Copy Angular dist to wwwwroot
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/GeneralWebApi/Frontend/general-frontend/dist/general-frontend'
+    Contents: '**'
+    TargetFolder: '$(Build.SourcesDirectory)/GeneralWebApi/Backend/src/1-Presentation/GeneralWebApi.WebApi/wwwroot'
+    OverWrite: true
+
+# Install .NET
+
