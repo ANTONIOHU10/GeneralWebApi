@@ -8,7 +8,8 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
-
+  
+# Unused variables
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
@@ -24,20 +25,32 @@ steps:
 
 # Install Angular dependencies
 - script: npm install 
-  workingDirectory: frontend/general-frontend
+  workingDirectory: Frontend/general-frontend
   displayName: Install Angular packages
 
 # Build Angular
 - script: npm run build -- --configuration test
+  workingDirectory: Frontend/general-frontend
   displayName: Build Angular packages
 
-# Copy Angular dist to wwwwroot
+# Copy Angular dist to wwwroot
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/GeneralWebApi/Frontend/general-frontend/dist/general-frontend'
+    SourceFolder: '$(Build.SourcesDirectory)/Frontend/general-frontend/dist/general-frontend'
     Contents: '**'
-    TargetFolder: '$(Build.SourcesDirectory)/GeneralWebApi/Backend/src/1-Presentation/GeneralWebApi.WebApi/wwwroot'
+    TargetFolder: '$(Build.SourcesDirectory)/Backend/src/1-Presentation/GeneralWebApi.WebApi/wwwroot'
     OverWrite: true
 
 # Install .NET
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '9.x'
 
+# Restore .NET dependencies
+- script: dotnet restore Backend/GeneralWebApi.sln
+  displayName: Restore .NET packages
+
+# Publish
+- script: dotnet publish Backend/src/1-Presentation/GeneralWebApi.WebApi/GeneralWebApi.csproj -c Release -o $(Build.ArtifactStagingDirectory)
+  displayName: Publish .NET
