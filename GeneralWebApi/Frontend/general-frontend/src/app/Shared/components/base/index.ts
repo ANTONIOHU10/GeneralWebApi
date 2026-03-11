@@ -5,6 +5,10 @@ export { BasePageHeaderComponent } from './base-page-header/base-page-header.com
 export { BaseCardComponent } from './base-card/base-card.component';
 export { BaseContainerComponent } from './base-container/base-container.component';
 export { BaseGridComponent } from './base-grid/base-grid.component';
+export {
+  BaseFilterContainerComponent,
+  type BaseFilterField,
+} from './base-filter-container/base-filter-container.component';
 
 // Form Components
 export { BaseButtonComponent } from './base-button/base-button.component';

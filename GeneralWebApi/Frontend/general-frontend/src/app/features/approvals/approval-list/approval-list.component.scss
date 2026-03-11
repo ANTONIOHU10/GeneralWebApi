@@ -1,30 +1,5 @@
 /* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/approvals/approval-list/approval-list.component.scss */
-
-.filter-buttons {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.filter-button {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border-primary);
-  border-radius: 4px;
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: var(--bg-tertiary);
-  }
-
-  &.active {
-    background: var(--color-primary-500);
-    color: white;
-    border-color: var(--color-primary-500);
-  }
-}
+/* Filter styles are unified in base-filter-container; no local overrides. */
 
 .statistics-grid {
   display: grid;

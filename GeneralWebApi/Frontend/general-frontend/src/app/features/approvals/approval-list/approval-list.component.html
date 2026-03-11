@@ -6,21 +6,15 @@
   [showTabs]="false"
   [showSearch]="false"
 >
-  <!-- Filter -->
-  <app-base-card [title]="'approvals.filter' | translate" [icon]="'filter_list'" [variant]="'elevated'">
-    <div class="filter-buttons">
-      <button
-        *ngFor="let filter of filterOptions"
-        [class.active]="activeFilter() === filter"
-        (click)="onFilterChange(filter)"
-        class="filter-button"
-        [class.active]="activeFilter() === filter"
-      >
-        {{ getFilterLabel(filter) }}
-        <span *ngIf="filter !== 'all'">({{ getFilterCount(filter) }})</span>
-      </button>
-    </div>
-  </app-base-card>
+  <!-- Filter - configuration-driven -->
+  <app-base-filter-container
+    [title]="'approvals.filter' | translate"
+    icon="filter_list"
+    variant="elevated"
+    [fields]="approvalFilterFields"
+    [value]="approvalFilterValue"
+    (valueChange)="onApprovalFilterChange($event)"
+  ></app-base-filter-container>
 
   <!-- Statistics -->
   <div class="statistics-grid" *ngIf="approvals().length > 0">

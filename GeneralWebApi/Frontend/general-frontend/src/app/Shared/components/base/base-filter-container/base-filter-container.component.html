@@ -1,0 +1,71 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-filter-container/base-filter-container.component.html -->
+<app-base-card
+  [title]="title"
+  [subtitle]="subtitle"
+  [icon]="icon"
+  [variant]="variant"
+  [customClass]="cardClass"
+  [showHeader]="true"
+>
+  <div class="base-filter-container__body" *ngIf="fields?.length">
+    <div
+      class="base-filter-field"
+      *ngFor="let field of fields; trackBy: trackByFieldKey"
+    >
+      <label
+        *ngIf="field.label"
+        class="base-filter-field__label"
+        [attr.for]="field.type === 'select' ? field.key : null"
+      >
+        {{ field.label }}
+      </label>
+
+      <ng-container [ngSwitch]="field.type">
+        <!-- Select field -->
+        <div
+          *ngSwitchCase="'select'"
+          class="base-filter-field__control base-filter-field__control--select"
+        >
+          <select
+            class="base-filter-select"
+            [id]="field.key"
+            [ngModel]="value[field.key]"
+            (ngModelChange)="onFieldChange(field.key, $event)"
+          >
+            <option
+              *ngFor="let option of field.options"
+              [ngValue]="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Segment buttons field -->
+        <div
+          *ngSwitchCase="'segment'"
+          class="base-filter-field__control base-filter-field__control--segment"
+        >
+          <button
+            type="button"
+            class="base-filter-segment-button"
+            *ngFor="let option of field.options"
+            [class.active]="value[field.key] === option.value"
+            (click)="onFieldChange(field.key, option.value)"
+          >
+            <span class="base-filter-segment-button__label">
+              {{ option.label }}
+            </span>
+            <span
+              *ngIf="option.count !== undefined && option.count !== null"
+              class="base-filter-segment-button__count"
+            >
+              ({{ option.count }})
+            </span>
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</app-base-card>
+

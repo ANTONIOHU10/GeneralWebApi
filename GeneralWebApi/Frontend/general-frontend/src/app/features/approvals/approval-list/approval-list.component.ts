@@ -10,6 +10,8 @@ import {
   BaseCardComponent,
   BaseBadgeComponent,
   BasePromptDialogComponent,
+  BaseFilterContainerComponent,
+  type BaseFilterField,
   TableColumn,
   TableAction,
   BadgeVariant,
@@ -47,6 +49,7 @@ interface Approval {
     BaseCardComponent,
     BaseBadgeComponent,
     BasePromptDialogComponent,
+    BaseFilterContainerComponent,
     TranslatePipe,
   ],
   templateUrl: './approval-list.component.html',
@@ -74,6 +77,10 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
   approvedCount = computed(() => this.allApprovals().filter(a => a.status === 'Approved').length);
   rejectedCount = computed(() => this.allApprovals().filter(a => a.status === 'Rejected').length);
 
+  // Filter configuration
+  approvalFilterFields: BaseFilterField[] = [];
+  approvalFilterValue: Record<string, unknown> = { status: 'pending' };
+
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
 
@@ -92,8 +99,10 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.initializeTable();
+      this.updateApprovalFilterFields();
     });
 
+    this.initializeFilter();
     this.loadApprovals();
   }
 
@@ -116,6 +125,47 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
       { label: this.translationService.translate('approvals.actions.view'), icon: 'visibility', variant: 'ghost', showLabel: false, onClick: (item) => this.onView(item as Approval) },
       { label: this.translationService.translate('approvals.actions.approve'), icon: 'check', variant: 'primary', showLabel: false, onClick: (item) => this.onApprove(item as Approval), visible: (item) => (item as Approval).status === 'Pending' },
       { label: this.translationService.translate('approvals.actions.reject'), icon: 'close', variant: 'danger', showLabel: false, onClick: (item) => this.onReject(item as Approval), visible: (item) => (item as Approval).status === 'Pending' },
+    ];
+  }
+
+  /**
+   * Initialize filter field configuration
+   */
+  private initializeFilter(): void {
+    this.updateApprovalFilterFields();
+    this.approvalFilterValue = { status: this.activeFilter() };
+  }
+
+  /**
+   * Update filter fields with latest counts
+   */
+  private updateApprovalFilterFields(): void {
+    this.approvalFilterFields = [
+      {
+        key: 'status',
+        type: 'segment',
+        options: [
+          {
+            value: 'all',
+            label: this.getFilterText('all'),
+          },
+          {
+            value: 'pending',
+            label: this.getFilterText('pending'),
+            count: this.pendingCount(),
+          },
+          {
+            value: 'approved',
+            label: this.getFilterText('approved'),
+            count: this.approvedCount(),
+          },
+          {
+            value: 'rejected',
+            label: this.getFilterText('rejected'),
+            count: this.rejectedCount(),
+          },
+        ],
+      },
     ];
   }
 
@@ -194,6 +244,8 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
 
           // Store all approvals for statistics and filtering
           this.allApprovals.set(transformedApprovals);
+          // Update filter counts based on latest data
+          this.updateApprovalFilterFields();
           
           // Apply filter
           const filter = this.activeFilter();
@@ -216,6 +268,7 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
 
   onFilterChange(filter: 'all' | 'pending' | 'approved' | 'rejected'): void {
     this.activeFilter.set(filter);
+    this.approvalFilterValue = { status: filter };
     this.loadApprovals();
   }
 
@@ -242,6 +295,15 @@ export class ApprovalListComponent implements OnInit, OnDestroy {
       'rejected': this.translationService.translate('approvals.filterOptions.rejected'),
     };
     return filterMap[filter] || filter;
+  }
+
+  /**
+   * Handle filter change from base filter container
+   */
+  onApprovalFilterChange(value: Record<string, unknown>): void {
+    const status = (value['status'] as 'all' | 'pending' | 'approved' | 'rejected') || 'pending';
+    this.approvalFilterValue = { status };
+    this.onFilterChange(status);
   }
 
   /**

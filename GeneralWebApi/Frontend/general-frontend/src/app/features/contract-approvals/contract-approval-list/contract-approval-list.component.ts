@@ -9,6 +9,8 @@ import {
   BaseTableComponent,
   BaseCardComponent,
   BaseBadgeComponent,
+  BaseFilterContainerComponent,
+  type BaseFilterField,
   TableColumn,
   TableAction,
   BadgeVariant,
@@ -31,6 +33,7 @@ import { ContractApprovalService } from '../../../core/services/contract-approva
     BaseTableComponent,
     BaseCardComponent,
     BaseBadgeComponent,
+    BaseFilterContainerComponent,
     ContractApprovalDetailComponent,
     BasePromptDialogComponent,
     TranslatePipe,
@@ -66,6 +69,10 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
   pendingCount = computed(() => this.allApprovals().filter(a => a.status === 'Pending').length);
   approvedCount = computed(() => this.allApprovals().filter(a => a.status === 'Approved').length);
   rejectedCount = computed(() => this.allApprovals().filter(a => a.status === 'Rejected').length);
+
+  // Filter configuration
+  approvalFilterFields: BaseFilterField[] = [];
+  approvalFilterValue: Record<string, unknown> = { status: 'pending' };
 
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
@@ -105,9 +112,46 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.initializeTableConfig();
+      this.updateApprovalFilterFields();
     });
 
+    this.initializeFilter();
     this.loadApprovals();
+  }
+
+  /**
+   * Initialize filter field configuration
+   */
+  private initializeFilter(): void {
+    this.updateApprovalFilterFields();
+    this.approvalFilterValue = { status: this.activeFilter() };
+  }
+
+  /**
+   * Update filter fields with latest counts
+   */
+  private updateApprovalFilterFields(): void {
+    this.approvalFilterFields = [
+      {
+        key: 'status',
+        type: 'segment',
+        options: [
+          { value: 'all', label: this.getFilterLabel('all') },
+          { value: 'pending', label: this.getFilterLabel('pending'), count: this.pendingCount() },
+          { value: 'approved', label: this.getFilterLabel('approved'), count: this.approvedCount() },
+          { value: 'rejected', label: this.getFilterLabel('rejected'), count: this.rejectedCount() },
+        ],
+      },
+    ];
+  }
+
+  /**
+   * Handle filter change from base filter container
+   */
+  onApprovalFilterChange(value: Record<string, unknown>): void {
+    const status = (value['status'] as 'all' | 'pending' | 'approved' | 'rejected') || 'pending';
+    this.approvalFilterValue = { status };
+    this.onFilterChange(status);
   }
 
   loadApprovals(): void {
@@ -138,7 +182,8 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
         if (response?.data) {
           // Store all approvals for statistics and filtering
           this.allApprovals.set(response.data);
-          
+          this.updateApprovalFilterFields();
+
           // Apply filter
           const filter = this.activeFilter();
           const filtered = filter === 'all' || filter === 'pending'
@@ -178,6 +223,7 @@ export class ContractApprovalListComponent implements OnInit, OnDestroy {
 
   onFilterChange(filter: 'all' | 'pending' | 'approved' | 'rejected'): void {
     this.activeFilter.set(filter);
+    this.approvalFilterValue = { status: filter };
     // Filter existing data (frontend filtering)
     // Note: Backend only supports pending approvals endpoint
     // For 'all', 'approved', 'rejected', we filter from loaded data

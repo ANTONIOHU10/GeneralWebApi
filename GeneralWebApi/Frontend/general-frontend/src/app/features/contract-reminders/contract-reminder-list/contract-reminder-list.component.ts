@@ -9,6 +9,8 @@ import {
   BaseTableComponent,
   BaseCardComponent,
   BaseBadgeComponent,
+  BaseFilterContainerComponent,
+  type BaseFilterField,
   TableColumn,
   TableAction,
   BadgeVariant,
@@ -36,6 +38,7 @@ interface ContractReminder extends Contract {
     BaseTableComponent,
     BaseCardComponent,
     BaseBadgeComponent,
+    BaseFilterContainerComponent,
     ContractDetailComponent,
     TranslatePipe,
   ],
@@ -54,6 +57,10 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
   remindersData$ = new BehaviorSubject<ContractReminder[] | null>(null);
   filterDays = signal<number>(30);
   error$ = new BehaviorSubject<string | null>(null);
+
+  // Filter configuration
+  reminderFilterFields: BaseFilterField[] = [];
+  reminderFilterValue: Record<string, unknown> = { days: 30 };
 
   selectedContract: Contract | null = null;
   isDetailModalOpen = false;
@@ -111,8 +118,40 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.initializeTableConfig();
+      this.initializeReminderFilter();
       this.loadReminders();
     });
+  }
+
+  /**
+   * Initialize filter field configuration
+   */
+  private initializeReminderFilter(): void {
+    this.reminderFilterFields = [
+      {
+        key: 'days',
+        type: 'select',
+        label: this.translationService.translate('contractReminders.filterLabel'),
+        options: [
+          { value: '7', label: this.translationService.translate('contractReminders.filterOptions.7days') },
+          { value: '30', label: this.translationService.translate('contractReminders.filterOptions.30days') },
+          { value: '60', label: this.translationService.translate('contractReminders.filterOptions.60days') },
+          { value: '90', label: this.translationService.translate('contractReminders.filterOptions.90days') },
+        ],
+      },
+    ];
+    this.reminderFilterValue = { days: this.filterDays().toString() };
+  }
+
+  /**
+   * Handle filter change from base filter container
+   */
+  onReminderFilterChange(value: Record<string, unknown>): void {
+    const days = parseInt(String(value['days'] || '30'), 10) || 30;
+    this.reminderFilterValue = { days: days.toString() };
+    this.filterDays.set(days);
+    this.currentPage$.next(1);
+    this.loadReminders();
   }
 
   ngOnDestroy(): void {
@@ -184,6 +223,7 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
 
   onFilterChange(days: number): void {
     this.filterDays.set(days);
+    this.reminderFilterValue = { days: days.toString() };
     this.currentPage$.next(1);
     this.loadReminders();
   }

@@ -1,28 +1,5 @@
 /* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-reminders/contract-reminder-list/contract-reminder-list.component.scss */
-
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-
-  label {
-    margin: 0;
-  }
-
-  select {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid var(--border-primary);
-    background: var(--bg-surface);
-    color: var(--text-primary);
-    cursor: pointer;
-
-    &:focus {
-      outline: 2px solid var(--color-primary-500);
-      outline-offset: 2px;
-    }
-  }
-}
+/* Filter styles are unified in base-filter-container; no local overrides. */
 
 .statistics-grid {
   display: grid;

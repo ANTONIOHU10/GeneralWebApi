@@ -1,7 +1,6 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/notifications/notification-center/notification-center.component.ts
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subject, interval, EMPTY } from 'rxjs';
 import { takeUntil, catchError, startWith, switchMap, filter, distinctUntilChanged } from 'rxjs/operators';
@@ -10,11 +9,12 @@ import {
   BaseCardComponent,
   BaseBadgeComponent,
   BaseButtonComponent,
-  BaseSelectComponent,
   BaseEmptyComponent,
   BaseLoadingComponent,
   BaseErrorComponent,
   BasePrivatePageContainerComponent,
+  BaseFilterContainerComponent,
+  type BaseFilterField,
   SelectOption,
 } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
@@ -39,15 +39,14 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     BasePrivatePageContainerComponent,
     BaseCardComponent,
     BaseBadgeComponent,
     BaseButtonComponent,
-    BaseSelectComponent,
     BaseEmptyComponent,
     BaseLoadingComponent,
     BaseErrorComponent,
+    BaseFilterContainerComponent,
     TranslatePipe,
   ],
   templateUrl: './notification-center.component.html',
@@ -84,6 +83,10 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   typeFilterOptions: SelectOption[] = [];
   statusFilterOptions: SelectOption[] = [];
   priorityFilterOptions: SelectOption[] = [];
+
+  // Base filter container - configuration-driven
+  notificationFilterFields: BaseFilterField[] = [];
+  notificationFilterValue: Record<string, unknown> = { type: 'all', status: 'all', priority: 'all' };
 
   // Computed values
   filteredNotifications = computed(() => {
@@ -179,6 +182,48 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       { value: 'medium', label: this.translationService.translate('notifications.priorities.medium') },
       { value: 'low', label: this.translationService.translate('notifications.priorities.low') },
     ];
+
+    // Build base filter container fields from select options
+    this.notificationFilterFields = [
+      {
+        key: 'type',
+        type: 'select',
+        label: this.translationService.translate('notifications.filters.type'),
+        options: this.typeFilterOptions.map(o => ({ value: String(o.value), label: o.label })),
+      },
+      {
+        key: 'status',
+        type: 'select',
+        label: this.translationService.translate('notifications.filters.status'),
+        options: this.statusFilterOptions.map(o => ({ value: String(o.value), label: o.label })),
+      },
+      {
+        key: 'priority',
+        type: 'select',
+        label: this.translationService.translate('notifications.filters.priority'),
+        options: this.priorityFilterOptions.map(o => ({ value: String(o.value), label: o.label })),
+      },
+    ];
+    this.notificationFilterValue = {
+      type: this.activeFilter().type || 'all',
+      status: this.activeFilter().status || 'all',
+      priority: this.activeFilter().priority || 'all',
+    };
+  }
+
+  /**
+   * Handle filter change from base filter container
+   */
+  onNotificationFilterChange(value: Record<string, unknown>): void {
+    const type = (value['type'] as string) || 'all';
+    const status = (value['status'] as string) || 'all';
+    const priority = (value['priority'] as string) || 'all';
+    this.notificationFilterValue = { type, status, priority };
+    this.activeFilter.set({
+      type: type as NotificationType,
+      status: status as NotificationStatus,
+      priority: priority as NotificationPriority,
+    });
   }
 
   ngOnDestroy(): void {
@@ -374,57 +419,6 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get type filter value for ngModel
-   */
-  getTypeFilterValue(): string {
-    return this.activeFilter().type || 'all';
-  }
-
-  /**
-   * Handle type filter value change
-   */
-  onTypeFilterValueChange(value: unknown): void {
-    this.activeFilter.set({
-      ...this.activeFilter(),
-      type: value === 'all' ? 'all' : (value as NotificationType),
-    });
-  }
-
-  /**
-   * Get status filter value for ngModel
-   */
-  getStatusFilterValue(): string {
-    return this.activeFilter().status || 'all';
-  }
-
-  /**
-   * Handle status filter value change
-   */
-  onStatusFilterValueChange(value: unknown): void {
-    this.activeFilter.set({
-      ...this.activeFilter(),
-      status: value === 'all' ? 'all' : (value as NotificationStatus),
-    });
-  }
-
-  /**
-   * Get priority filter value for ngModel
-   */
-  getPriorityFilterValue(): string {
-    return this.activeFilter().priority || 'all';
-  }
-
-  /**
-   * Handle priority filter value change
-   */
-  onPriorityFilterValueChange(value: unknown): void {
-    this.activeFilter.set({
-      ...this.activeFilter(),
-      priority: value === 'all' ? 'all' : (value as NotificationPriority),
-    });
-  }
-
-  /**
    * Clear all filters
    */
   clearFilters(): void {
@@ -433,6 +427,7 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       status: 'all',
       priority: 'all',
     });
+    this.notificationFilterValue = { type: 'all', status: 'all', priority: 'all' };
   }
 
   /**

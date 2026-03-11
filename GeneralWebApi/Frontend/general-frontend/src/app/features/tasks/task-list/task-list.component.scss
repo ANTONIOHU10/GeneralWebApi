@@ -9,49 +9,7 @@
   gap: $spacing-3;
 }
 
-// Filters
-.task-filters-card {
-  //margin-bottom: $spacing-4;
-}
-
-.filters {
-  display: flex;
-  gap: $spacing-4;
-  border-radius: $border-radius-md;
-
-  .filter-group {
-    display: flex;
-    align-items: center;
-    gap: $spacing-2;
-
-    label {
-      font-size: $font-size-sm;
-      font-weight: $font-weight-medium;
-      color: var(--text-secondary);
-    }
-
-    select {
-      padding: $spacing-2 $spacing-3;
-      border: 1px solid var(--border-primary);
-      border-radius: $border-radius-sm;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-size: $font-size-sm;
-      cursor: pointer;
-      transition: all $duration-200 $ease-in-out;
-
-      &:hover {
-        border-color: var(--color-primary-500);
-      }
-
-      &:focus {
-        outline: none;
-        border-color: var(--color-primary-500);
-        box-shadow: 0 0 0 2px rgba(var(--color-primary-500-rgb), 0.2);
-      }
-    }
-  }
-}
+// Filter styles are unified in base-filter-container; no local overrides.
 
 // Task Form Card
 .task-form-card {
@@ -215,11 +173,6 @@
 
 // Responsive
 @include mobile-only {
-  .filters {
-    flex-direction: column;
-    gap: $spacing-2;
-  }
-
   .task-form .form-row.form-row-2 {
     flex-direction: column;
   }

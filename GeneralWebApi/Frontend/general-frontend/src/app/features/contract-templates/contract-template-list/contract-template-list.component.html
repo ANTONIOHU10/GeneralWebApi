@@ -26,20 +26,15 @@
 
   <!-- Template List Tab -->
   <div *ngIf="activeTab() === 'list'">
-    <!-- Filter -->
-    <app-base-card [title]="'common.filter' | translate" [icon]="'filter_list'" [variant]="'elevated'">
-      <div class="filter-buttons">
-        <button
-          *ngFor="let filter of filterOptions"
-          [class.active]="activeFilter() === filter"
-          (click)="onFilterChange(filter)"
-          class="filter-button"
-        >
-          {{ getFilterLabel(filter) }}
-          <span>({{ getFilterCount(filter) }})</span>
-        </button>
-      </div>
-    </app-base-card>
+    <!-- Filter - configuration-driven -->
+    <app-base-filter-container
+      [title]="'common.filter' | translate"
+      icon="filter_list"
+      variant="elevated"
+      [fields]="templateFilterFields"
+      [value]="templateFilterValue"
+      (valueChange)="onTemplateFilterChange($event)"
+    ></app-base-filter-container>
 
     <!-- Statistics -->
     <div class="statistics-grid" *ngIf="templates().length > 0">

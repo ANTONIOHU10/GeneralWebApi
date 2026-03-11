@@ -17,25 +17,16 @@
     ></app-base-button>
   </div>
 
-  <!-- Filters - wrapped in card for clear separation -->
-  <app-base-card variant="flat" class="task-filters-card" [title]="'common.filter' | translate">
-    <div class="filters">
-      <div class="filter-group">
-        <label for="task-status-filter">{{ 'tasks.status' | translate }}:</label>
-        <select
-          id="task-status-filter"
-          [ngModel]="filterStatus()"
-          (ngModelChange)="filterStatus.set($event); loadTasks()"
-        >
-          <option value="all">{{ 'tasks.statusAll' | translate }}</option>
-          <option value="Pending">{{ 'tasks.statusPending' | translate }}</option>
-          <option value="InProgress">{{ 'tasks.statusInProgress' | translate }}</option>
-          <option value="Completed">{{ 'tasks.statusCompleted' | translate }}</option>
-          <option value="Cancelled">{{ 'tasks.statusCancelled' | translate }}</option>
-        </select>
-      </div>
-    </div>
-  </app-base-card>
+  <!-- Filters - configuration-driven filter container -->
+  <app-base-filter-container
+    variant="flat"
+    icon="filter_list"
+    customClass="task-filters-card"
+    [title]="'common.filter' | translate"
+    [fields]="taskFilterFields"
+    [value]="taskFilterValue"
+    (valueChange)="onTaskFilterChange($event)"
+  ></app-base-filter-container>
 
   <!-- Create/Edit Form - Simplified -->
     <app-base-card

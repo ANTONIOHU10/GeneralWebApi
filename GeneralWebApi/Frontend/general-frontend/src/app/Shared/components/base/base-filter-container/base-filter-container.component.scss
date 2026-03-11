@@ -1,0 +1,100 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/Shared/components/base/base-filter-container/base-filter-container.component.scss */
+/* Single source of truth for all filter UIs (Tasks status dropdown, Approvals segment buttons, etc.). */
+
+@use '../../../../../styles/core/variable' as *;
+@use '../../../../../styles/core/mixin' as *;
+
+.base-filter-container {
+  margin-bottom: $spacing-4;
+}
+
+.base-filter-container__body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-4;
+}
+
+.base-filter-field {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.base-filter-field__label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+}
+
+.base-filter-field__control--select .base-filter-select {
+  padding: $spacing-2 $spacing-3;
+  border: 1px solid var(--border-primary);
+  border-radius: $border-radius-sm;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: all $duration-200 $ease-in-out;
+
+  &:hover {
+    border-color: var(--color-primary-500);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-500-rgb), 0.2);
+  }
+}
+
+.base-filter-field__control--segment {
+  display: flex;
+  gap: $spacing-2;
+}
+
+.base-filter-segment-button {
+  padding: $spacing-2 $spacing-4;
+  border-radius: $border-radius-xl;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  transition: all $duration-200 $ease-out;
+
+  &:hover {
+    border-color: var(--border-primary);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-500);
+    color: var(--color-primary-700);
+  }
+}
+
+.base-filter-segment-button__count {
+  opacity: 0.8;
+}
+
+@include mobile-only {
+  .base-filter-container {
+    margin-bottom: $spacing-3;
+  }
+
+  .base-filter-container__body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .base-filter-field {
+    justify-content: space-between;
+  }
+}
+

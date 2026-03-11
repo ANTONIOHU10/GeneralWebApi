@@ -71,59 +71,26 @@
     </div>
   }
 
-  <!-- Filters Section -->
-  <div class="filters-card">
-    <div class="filters-header">
-      <span class="material-icons">filter_list</span>
-      <h3>{{ 'notifications.filters.title' | translate }}</h3>
+  <!-- Filters Section - configuration-driven -->
+  <app-base-filter-container
+    [title]="'notifications.filters.title' | translate"
+    icon="filter_list"
+    variant="elevated"
+    [fields]="notificationFilterFields"
+    [value]="notificationFilterValue"
+    (valueChange)="onNotificationFilterChange($event)"
+  ></app-base-filter-container>
+  @if (hasActiveFilters()) {
+    <div class="filter-clear-wrap">
+      <app-base-button
+        [text]="'notifications.filters.clearFilters' | translate"
+        icon="clear"
+        variant="ghost"
+        size="small"
+        (buttonClick)="clearFilters()"
+      ></app-base-button>
     </div>
-    <div class="filters-content">
-      <div class="filter-groups">
-        <div class="filter-group">
-          <label for="type-filter">{{ 'notifications.filters.type' | translate }}</label>
-          <app-base-select
-            selectId="type-filter"
-            [options]="typeFilterOptions"
-            [ngModel]="getTypeFilterValue()"
-            (ngModelChange)="onTypeFilterValueChange($event)"
-            size="small"
-          ></app-base-select>
-        </div>
-
-        <div class="filter-group">
-          <label for="status-filter">{{ 'notifications.filters.status' | translate }}</label>
-          <app-base-select
-            selectId="status-filter"
-            [options]="statusFilterOptions"
-            [ngModel]="getStatusFilterValue()"
-            (ngModelChange)="onStatusFilterValueChange($event)"
-            size="small"
-          ></app-base-select>
-        </div>
-
-        <div class="filter-group">
-          <label for="priority-filter">{{ 'notifications.filters.priority' | translate }}</label>
-          <app-base-select
-            selectId="priority-filter"
-            [options]="priorityFilterOptions"
-            [ngModel]="getPriorityFilterValue()"
-            (ngModelChange)="onPriorityFilterValueChange($event)"
-            size="small"
-          ></app-base-select>
-        </div>
-
-        @if (hasActiveFilters()) {
-          <app-base-button
-            [text]="'notifications.filters.clearFilters' | translate"
-            icon="clear"
-            variant="ghost"
-            size="small"
-            (buttonClick)="clearFilters()"
-          ></app-base-button>
-        }
-      </div>
-    </div>
-  </div>
+  }
 
   <!-- Notifications List -->
   <div class="notifications-section">

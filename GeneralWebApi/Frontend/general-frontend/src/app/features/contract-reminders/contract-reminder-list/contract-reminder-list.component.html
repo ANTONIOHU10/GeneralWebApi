@@ -6,18 +6,15 @@
   [showTabs]="false"
   [showSearch]="false"
 >
-  <!-- Filter -->
-  <app-base-card [title]="'common.filter' | translate" [icon]="'filter_list'" [variant]="'elevated'">
-    <div class="filter-container">
-      <label>{{ 'contractReminders.filterLabel' | translate }}</label>
-      <select [value]="filterDays()" (change)="onFilterChange(+$any($event.target).value)">
-        <option [value]="7">{{ 'contractReminders.filterOptions.7days' | translate }}</option>
-        <option [value]="30">{{ 'contractReminders.filterOptions.30days' | translate }}</option>
-        <option [value]="60">{{ 'contractReminders.filterOptions.60days' | translate }}</option>
-        <option [value]="90">{{ 'contractReminders.filterOptions.90days' | translate }}</option>
-      </select>
-    </div>
-  </app-base-card>
+  <!-- Filter - configuration-driven -->
+  <app-base-filter-container
+    [title]="'common.filter' | translate"
+    icon="filter_list"
+    variant="elevated"
+    [fields]="reminderFilterFields"
+    [value]="reminderFilterValue"
+    (valueChange)="onReminderFilterChange($event)"
+  ></app-base-filter-container>
 
   <!-- Statistics -->
   <div class="statistics-grid" *ngIf="reminders().length > 0">

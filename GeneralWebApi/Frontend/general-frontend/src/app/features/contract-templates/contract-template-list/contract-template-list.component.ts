@@ -10,6 +10,8 @@ import {
   BaseCardComponent,
   BaseBadgeComponent,
   BaseSearchComponent,
+  BaseFilterContainerComponent,
+  type BaseFilterField,
   TabItem,
   TableColumn,
   TableAction,
@@ -33,6 +35,7 @@ import { AddContractTemplateComponent } from '../add-contract-template/add-contr
     BaseCardComponent,
     BaseBadgeComponent,
     BaseSearchComponent,
+    BaseFilterContainerComponent,
     ContractTemplateDetailComponent,
     AddContractTemplateComponent,
     TranslatePipe,
@@ -61,6 +64,10 @@ export class ContractTemplateListComponent implements OnInit, OnDestroy {
   tabs: TabItem[] = [];
   tableColumns: TableColumn[] = [];
   tableActions: TableAction[] = [];
+
+  // Filter configuration
+  templateFilterFields: BaseFilterField[] = [];
+  templateFilterValue: Record<string, unknown> = { status: 'all' };
 
   /**
    * Get translated filter label
@@ -217,9 +224,46 @@ export class ContractTemplateListComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.initializeTabs();
       this.initializeTableConfig();
+      this.updateTemplateFilterFields();
     });
 
+    this.initializeFilter();
     this.loadTemplates();
+  }
+
+  /**
+   * Initialize filter field configuration
+   */
+  private initializeFilter(): void {
+    this.updateTemplateFilterFields();
+    this.templateFilterValue = { status: this.activeFilter() };
+  }
+
+  /**
+   * Update filter fields with latest counts
+   */
+  private updateTemplateFilterFields(): void {
+    this.templateFilterFields = [
+      {
+        key: 'status',
+        type: 'segment',
+        options: [
+          { value: 'all', label: this.getFilterLabel('all'), count: this.allTemplates.length },
+          { value: 'active', label: this.getFilterLabel('active'), count: this.activeCount() },
+          { value: 'inactive', label: this.getFilterLabel('inactive'), count: this.inactiveCount() },
+          { value: 'default', label: this.getFilterLabel('default'), count: this.defaultCount() },
+        ],
+      },
+    ];
+  }
+
+  /**
+   * Handle filter change from base filter container
+   */
+  onTemplateFilterChange(value: Record<string, unknown>): void {
+    const status = (value['status'] as 'all' | 'active' | 'inactive' | 'default') || 'all';
+    this.templateFilterValue = { status };
+    this.onFilterChange(status);
   }
 
   loadTemplates(): void {
@@ -255,6 +299,7 @@ export class ContractTemplateListComponent implements OnInit, OnDestroy {
       this.templates.set(filtered);
       this.templatesData$.next(filtered);
       this.loading$.next(false);
+      this.updateTemplateFilterFields();
     });
   }
 

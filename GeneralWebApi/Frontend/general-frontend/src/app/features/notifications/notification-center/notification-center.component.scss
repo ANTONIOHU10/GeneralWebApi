@@ -69,69 +69,10 @@
   }
 }
 
-// Filters Section - Custom card without position:relative to avoid z-index issues
-.filters-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-secondary);
-  border-radius: $border-radius-xl;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.12);
+// Filter clear button below base filter container
+.filter-clear-wrap {
+  margin-top: $spacing-2;
   margin-bottom: $spacing-5;
-  overflow: visible;
-
-  .filters-header {
-    display: flex;
-    align-items: center;
-    gap: $spacing-3;
-    padding: $spacing-5 $spacing-6;
-    border-bottom: 1px solid var(--border-secondary);
-    background: var(--bg-surface);
-    border-radius: $border-radius-xl $border-radius-xl 0 0;
-
-    .material-icons {
-      font-size: 1.375rem;
-      color: $primary-500;
-    }
-
-    h3 {
-      margin: 0;
-      font-size: $font-size-lg;
-      font-weight: $font-weight-bold;
-      color: var(--text-primary);
-    }
-  }
-
-  .filters-content {
-    padding: $spacing-6;
-  }
-
-  .filter-groups {
-    display: flex;
-    gap: $spacing-4;
-    flex-wrap: wrap;
-    align-items: flex-end;
-
-    @include mobile-only {
-      flex-direction: column;
-      gap: $spacing-3;
-      align-items: stretch;
-    }
-  }
-
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-2;
-    flex: 1;
-    min-width: 150px;
-
-    label {
-      font-size: $font-size-sm;
-      font-weight: $font-weight-semibold;
-      color: var(--text-primary);
-      white-space: nowrap;
-      margin-bottom: $spacing-1;
-    }
-  }
 }
 
 // Notifications Section
@@ -522,7 +463,7 @@
     margin-bottom: $spacing-4;
   }
 
-  .filters-card {
+  .filter-clear-wrap {
     margin-bottom: $spacing-4;
   }
 

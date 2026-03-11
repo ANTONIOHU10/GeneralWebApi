@@ -16,6 +16,8 @@ import {
   BaseCardComponent,
   BaseBadgeComponent,
   BaseAsyncStateComponent,
+  BaseFilterContainerComponent,
+  BaseFilterField,
 } from '../../../Shared/components/base';
 import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { TranslationService } from '@core/services/translation.service';
@@ -32,6 +34,7 @@ import { TranslationService } from '@core/services/translation.service';
     BaseCardComponent,
     BaseBadgeComponent,
     BaseAsyncStateComponent,
+    BaseFilterContainerComponent,
     TranslatePipe,
   ],
   templateUrl: './task-list.component.html',
@@ -54,6 +57,10 @@ export class TaskListComponent implements OnInit, OnDestroy {
   showCreateForm = signal<boolean>(false);
   editingTask: Task | null = null;
   filterStatus = signal<string>('all'); // 'all', 'Pending', 'InProgress', 'Completed', 'Cancelled'
+
+  // Filter configuration
+  taskFilterFields: BaseFilterField[] = [];
+  taskFilterValue: Record<string, unknown> = { status: 'all' };
 
   // Filtered tasks Observable - initialized in constructor using toObservable
   filteredTasks$ = combineLatest([
@@ -78,12 +85,45 @@ export class TaskListComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
+    this.initializeFilter();
     this.loadTasks();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Initialize filter configuration
+   */
+  private initializeFilter(): void {
+    this.taskFilterFields = [
+      {
+        key: 'status',
+        type: 'select',
+        label: this.translationService.translate('tasks.status'),
+        options: [
+          { value: 'all', label: this.translationService.translate('tasks.statusAll') },
+          { value: 'Pending', label: this.translationService.translate('tasks.statusPending') },
+          { value: 'InProgress', label: this.translationService.translate('tasks.statusInProgress') },
+          { value: 'Completed', label: this.translationService.translate('tasks.statusCompleted') },
+          { value: 'Cancelled', label: this.translationService.translate('tasks.statusCancelled') },
+        ],
+      },
+    ];
+
+    this.taskFilterValue = { status: this.filterStatus() };
+  }
+
+  /**
+   * Handle filter value change from base filter container
+   */
+  onTaskFilterChange(value: Record<string, unknown>): void {
+    const status = (value['status'] as string) || 'all';
+    this.taskFilterValue = { status };
+    this.filterStatus.set(status);
+    this.loadTasks();
   }
 
   /**
