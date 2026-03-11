@@ -2,18 +2,25 @@
 @use '../../../../../styles/core/variable' as *;
 @use '../../../../../styles/core/mixin' as *;
 
+$card-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+$card-hover-box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07), 0 3px 6px rgba(0, 0, 0, 0.1);
+
 .base-card {
+  --card-box-shadow: $card-box-shadow;
+  --card-hover-box-shadow: $card-hover-box-shadow;
+  
   background: var(--bg-surface);
   border: 1px solid var(--border-secondary);
   border-radius: $border-radius-xl;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--card-box-shadow);
   overflow: visible;
   transition: all $duration-300 $ease-out;
   position: relative;
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.12);
-    transform: translateY(-2px);
+    border-color: $primary-500;
+    //box-shadow: var(--card-hover-box-shadow);
+    //transform: translateY(-1px);
   }
 }
 
@@ -74,11 +81,12 @@
 
 /* Card variants */
 .base-card.elevated {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.12);
+  --card-box-shadow: $card-box-shadow;
+  box-shadow: var(--card-box-shadow);
 
   &:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.16);
-    transform: translateY(-4px);
+    //box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 3px 10px rgba(0, 0, 0, 0.14);
+    //transform: translateY(-2px);
   }
 }
 

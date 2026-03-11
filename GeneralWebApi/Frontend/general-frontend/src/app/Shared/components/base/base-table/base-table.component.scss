@@ -467,7 +467,24 @@
   }
 
   .base-table {
-    min-width: 600px;
+    min-width: 520px;
+
+    th,
+    td {
+      padding: $spacing-3 $spacing-3;
+    }
+  }
+
+  .table-body {
+    td {
+      font-size: $font-size-xs;
+      line-height: 1.4;
+    }
+
+    td.actions-cell {
+      min-width: 110px;
+      padding: $spacing-2 $spacing-2;
+    }
   }
 
   .actions-container {
