@@ -4,6 +4,9 @@
 
 // Modern Private Layout Styles
 .app-private-layout {
+  // Layout-level header height that can be customized or toggled
+  --app-header-height: 68px;
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;

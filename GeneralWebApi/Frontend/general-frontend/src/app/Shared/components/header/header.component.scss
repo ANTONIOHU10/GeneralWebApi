@@ -3,10 +3,25 @@
 @use '../../../../styles/core/mixin' as *;
 
 // Modern Header Component Styles
+// Default header tokens
+$header-default-height: 50px;
+$header-action-size: 40px;
+$header-action-size-mobile: 38px;
+$header-action-size-xs: 36px;
+
 .app-header {
+  // CSS variable allows runtime overrides from parent layouts
+  --app-header-height: #{$header-default-height};
+  --header-action-size: #{$header-action-size};
+  --header-action-size-mobile: #{$header-action-size-mobile};
+  --header-action-size-xs: #{$header-action-size-xs};
+
   background: var(--background-primary);
   border-bottom: 1px solid var(--border-secondary);
-  padding: $spacing-3 $spacing-6;
+  // Use CSS variable for fixed vertical height, padding only horizontal
+  height: var(--app-header-height);
+  min-height: var(--app-header-height);
+  padding: 0 $spacing-6;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,7 +31,6 @@
   // Removed backdrop-filter to avoid creating stacking context
   // backdrop-filter creates a new stacking context which can interfere with z-index
   transition: all $duration-300 $ease-out;
-  min-height: 68px;
 
   // Subtle shadow on scroll
   &.scrolled {
@@ -40,11 +54,11 @@
       margin: 0 $spacing-2;
     }
 
-    // Mobile Menu Toggle Button
+    // Header icon buttons (including mobile menu toggle)
     .action-button {
       position: relative;
-      width: 40px;
-      height: 40px;
+      width: var(--header-action-size);
+      height: var(--header-action-size);
       background: transparent;
       border: none;
       border-radius: $border-radius-lg;
@@ -108,7 +122,7 @@
 @media (max-width: 768px) {
   .app-header {
     padding: $spacing-3 $spacing-4;
-    min-height: 60px;
+    min-height: var(--app-header-height);
 
     .header-actions {
       gap: $spacing-2;
@@ -119,8 +133,8 @@
 
       .action-button.mobile-menu-toggle {
         display: flex;
-        width: 38px;
-        height: 38px;
+        width: var(--header-action-size-mobile);
+        height: var(--header-action-size-mobile);
       }
     }
   }
@@ -131,8 +145,8 @@
   .app-header {
     .header-actions {
       .action-button.mobile-menu-toggle {
-        width: 36px;
-        height: 36px;
+        width: var(--header-action-size-xs);
+        height: var(--header-action-size-xs);
 
         .action-icon {
           font-size: 1.25rem;

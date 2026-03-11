@@ -2,14 +2,21 @@
 @use '../../../../../../styles/core/variable' as *;
 @use '../../../../../../styles/core/mixin' as *;
 
+// Header brand tokens
+$header-logo-size: 40px;
+$header-title-font-size: $font-size-xl;
+
 .header-brand {
   display: flex;
   align-items: center;
   gap: $spacing-3;
 
   .brand-logo {
-    width: 42px;
-    height: 42px;
+    // CSS variable to allow runtime overrides from parent layouts
+    --header-logo-size: #{$header-logo-size};
+
+    width: var(--header-logo-size);
+    height: var(--header-logo-size);
     background: linear-gradient(135deg, $primary-500 0%, $primary-600 100%);
     border-radius: $border-radius-xl;
     display: flex;
@@ -33,7 +40,10 @@
   }
 
   .brand-title {
-    font-size: $font-size-xl;
+    // CSS variable for title font size
+    --header-title-font-size: #{$header-title-font-size};
+
+    font-size: var(--header-title-font-size);
     font-weight: $font-weight-bold;
     color: var(--text-primary);
     letter-spacing: -0.03em;
