@@ -9,6 +9,7 @@
   overflow: hidden;
   box-shadow: none;
   transition: all $duration-300 $ease-out;
+  margin-top: 1rem;
 
   &:hover {
     box-shadow: none;
