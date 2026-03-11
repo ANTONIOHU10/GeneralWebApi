@@ -361,6 +361,13 @@ body.dark-theme .login-container {
   }
 }
 
+// On small screens, hide feature list to prioritize logo, title and form
+@include mobile-only {
+  .features-list {
+    display: none;
+  }
+}
+
 // Dark theme features list - unified dark colors
 .dark-theme .features-list {
   .feature-item {

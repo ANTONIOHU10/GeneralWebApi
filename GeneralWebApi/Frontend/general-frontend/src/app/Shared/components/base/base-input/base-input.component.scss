@@ -271,8 +271,16 @@ input {
 @include mobile-only {
   .input-wrapper {
     input {
-      padding: $spacing-3;
+      padding: $spacing-3 $spacing-3;
       font-size: $font-size-sm;
+
+      &.with-prefix {
+        padding-left: 2.5rem;
+      }
+
+      &.with-suffix {
+        padding-right: 2.5rem;
+      }
     }
   }
 }

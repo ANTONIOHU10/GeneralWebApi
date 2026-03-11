@@ -91,7 +91,7 @@
           {{ 'settings.appearance' | translate }}
         </h3>
         <div class="settings-item">
-          <label class="settings-label">
+          <label for="darkMode" class="settings-label">
             <span>{{ 'settings.darkMode' | translate }}</span>
             <span class="settings-description">{{ 'settings.darkModeDescription' | translate }}</span>
           </label>
@@ -113,14 +113,14 @@
           {{ 'settings.notifications' | translate }}
         </h3>
         <div class="settings-item">
-          <label class="settings-label">
+          <label for="emailNotifications" class="settings-label">
             <span>{{ 'settings.emailNotifications' | translate }}</span>
             <span class="settings-description">{{ 'settings.emailNotificationsDescription' | translate }}</span>
           </label>
           <input type="checkbox" checked class="settings-checkbox" />
         </div>
         <div class="settings-item">
-          <label class="settings-label">
+          <label for="pushNotifications" class="settings-label">
             <span>{{ 'settings.pushNotifications' | translate }}</span>
             <span class="settings-description">{{ 'settings.pushNotificationsDescription' | translate }}</span>
           </label>
@@ -134,7 +134,7 @@
           {{ 'settings.languageRegion' | translate }}
         </h3>
         <div class="settings-item">
-          <label class="settings-label">
+          <label for="language" class="settings-label">
             <span>{{ 'settings.language' | translate }}</span>
             <span class="settings-description">{{ 'settings.languageDescription' | translate }}</span>
           </label>
@@ -147,7 +147,7 @@
           ></app-base-select>
         </div>
         <div class="settings-item">
-          <label class="settings-label">
+          <label for="timeZone" class="settings-label">
             <span>{{ 'settings.timeZone' | translate }}</span>
             <span class="settings-description">{{ 'settings.timeZoneDescription' | translate }}</span>
           </label>
@@ -167,14 +167,14 @@
           {{ 'settings.security' | translate }}
         </h3>
         <div class="settings-item">
-          <label class="settings-label">
+          <label for="twoFactorAuth" class="settings-label">
             <span>{{ 'settings.twoFactorAuth' | translate }}</span>
             <span class="settings-description">{{ 'settings.twoFactorAuthDescription' | translate }}</span>
           </label>
           <button class="settings-button" type="button">{{ 'settings.enable2FA' | translate }}</button>
         </div>
         <div class="settings-item">
-          <label class="settings-label">
+          <label for="changePassword" class="settings-label">
             <span>{{ 'settings.changePassword' | translate }}</span>
             <span class="settings-description">{{ 'settings.changePasswordDescription' | translate }}</span>
           </label>
