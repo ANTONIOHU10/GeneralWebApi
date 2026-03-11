@@ -3,7 +3,6 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
-import { HeaderComponent } from '../../Shared/components/header/header.component';
 import { FooterComponent } from '../../Shared/components/footer/footer.component';
 
 @Component({
@@ -11,7 +10,7 @@ import { FooterComponent } from '../../Shared/components/footer/footer.component
   selector: 'app-public-layout',
   templateUrl: './public-layout.component.html',
   styleUrls: ['./public-layout.component.scss'],
-  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, FooterComponent],
 })
 export class PublicLayoutComponent {
   private router = inject(Router);

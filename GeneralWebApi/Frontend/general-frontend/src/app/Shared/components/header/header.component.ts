@@ -1,7 +1,6 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/shared/components/header/header.component.ts
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { NotificationCenterService } from '@core/services/notification-center.service';
@@ -22,7 +21,6 @@ import { TranslatePipe } from '@core/pipes/translate.pipe';
   styleUrls: ['./header.component.scss'],
   imports: [
     CommonModule,
-    RouterLink,
     HeaderBrandComponent,
     NotificationDropdownComponent,
     QuickActionsComponent,

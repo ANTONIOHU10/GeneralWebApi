@@ -1,0 +1,100 @@
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/dashboard/dashboard.component.scss */
+@use '../../../styles/core/variable' as *;
+@use '../../../styles/core/mixin' as *;
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: $spacing-4;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: $font-weight-bold;
+  color: var(--color-primary-500);
+  margin: $spacing-4 0;
+  text-align: center;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-4;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-primary);
+  border-top-color: var(--color-primary-500);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  background: var(--bg-secondary);
+  border-radius: $border-radius-md;
+  transition: background-color $duration-200 $ease-in-out;
+}
+
+.activity-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.activity-icon {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+}
+
+.activity-text {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.activity-time {
+  color: var(--text-secondary);
+  font-size: $font-size-xs;
+}
+
+.no-activities {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+@include mobile-only {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-3;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+}
+

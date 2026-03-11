@@ -1,0 +1,122 @@
+<!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/dashboard/dashboard.component.html -->
+<app-base-private-page-container
+  [title]="'dashboard.title' | translate"
+  [subtitle]="'dashboard.subtitle' | translate"
+  icon="dashboard"
+  [showTabs]="false"
+  [showSearch]="false"
+>
+  <div slot="actions" class="header-actions">
+    <app-base-button
+      [text]="'dashboard.refresh' | translate"
+      icon="refresh"
+      variant="outline"
+      size="small"
+      (buttonClick)="loadDashboardData()"
+      [disabled]="isLoading()"
+    ></app-base-button>
+  </div>
+
+  <ng-container *ngIf="!isLoading(); else loadingTemplate">
+    <div class="stats-grid">
+      <app-base-card
+        [title]="'dashboard.stats.totalEmployees' | translate"
+        icon="people"
+        variant="elevated"
+      >
+        <div class="stat-number">{{ totalEmployees() }}</div>
+        <app-base-button
+          [text]="'dashboard.actions.viewDetails' | translate"
+          variant="primary"
+          size="small"
+          (buttonClick)="navigateToEmployees()"
+        ></app-base-button>
+      </app-base-card>
+
+      <app-base-card
+        [title]="'dashboard.stats.activeContracts' | translate"
+        icon="description"
+        variant="elevated"
+      >
+        <div class="stat-number">{{ activeContracts() }}</div>
+        <app-base-button
+          [text]="'dashboard.actions.manage' | translate"
+          variant="primary"
+          size="small"
+          (buttonClick)="navigateToContracts()"
+        ></app-base-button>
+      </app-base-card>
+
+      <app-base-card
+        [title]="'dashboard.stats.departments' | translate"
+        icon="business"
+        variant="elevated"
+      >
+        <div class="stat-number">{{ totalDepartments() }}</div>
+        <app-base-button
+          [text]="'dashboard.actions.viewAll' | translate"
+          variant="primary"
+          size="small"
+          (buttonClick)="navigateToDepartments()"
+        ></app-base-button>
+      </app-base-card>
+
+      <app-base-card
+        [title]="'dashboard.stats.pendingApprovals' | translate"
+        icon="pending_actions"
+        variant="elevated"
+      >
+        <div class="stat-number">{{ pendingApprovals() }}</div>
+        <app-base-button
+          [text]="'dashboard.actions.review' | translate"
+          variant="primary"
+          size="small"
+          (buttonClick)="navigateToApprovals()"
+        ></app-base-button>
+      </app-base-card>
+    </div>
+
+    <app-base-card
+      [title]="'dashboard.recentActivities.title' | translate"
+      [subtitle]="'dashboard.recentActivities.subtitle' | translate"
+      icon="history"
+      variant="elevated"
+    >
+      <div class="activity-list">
+        <div
+          class="activity-item"
+          *ngFor="let activity of recentActivities()"
+        >
+          <span class="activity-icon material-icons">
+            {{ activity.icon }}
+          </span>
+          <span class="activity-text">{{ activity.text }}</span>
+          <span class="activity-time">{{ activity.time }}</span>
+        </div>
+        <div
+          *ngIf="recentActivities().length === 0"
+          class="no-activities"
+        >
+          {{ 'dashboard.recentActivities.noActivities' | translate }}
+        </div>
+      </div>
+      <div slot="footer">
+        <app-base-button
+          [text]="'dashboard.recentActivities.viewAll' | translate"
+          icon="arrow_forward"
+          variant="outline"
+          size="small"
+          (buttonClick)="navigateToAuditLogs()"
+        ></app-base-button>
+      </div>
+    </app-base-card>
+  </ng-container>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>{{ 'dashboard.loading' | translate }}</p>
+    </div>
+  </ng-template>
+</app-base-private-page-container>
+
