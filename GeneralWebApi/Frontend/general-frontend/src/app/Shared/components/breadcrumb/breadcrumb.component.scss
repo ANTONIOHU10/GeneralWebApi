@@ -4,7 +4,8 @@
 
 // Modern Breadcrumb Component Styles
 .breadcrumb-nav {
-  padding: $spacing-4 $spacing-8;
+  padding: $spacing-1 0;
+  margin-bottom: $spacing-3;
   background: transparent;
   border-bottom: none;
 
@@ -96,7 +97,7 @@
 // Mobile responsive
 @include mobile-only {
   .breadcrumb-nav {
-    padding: $spacing-3 $spacing-4;
+    padding: $spacing-1 0;
 
     .breadcrumb-list {
       .breadcrumb-item {

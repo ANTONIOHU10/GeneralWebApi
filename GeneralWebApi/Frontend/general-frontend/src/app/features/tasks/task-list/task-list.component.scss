@@ -10,14 +10,14 @@
 }
 
 // Filters
+.task-filters-card {
+  //margin-bottom: $spacing-4;
+}
+
 .filters {
   display: flex;
   gap: $spacing-4;
-  margin-bottom: $spacing-4;
-  padding: $spacing-3;
-  background: var(--bg-surface);
   border-radius: $border-radius-md;
-  border: 1px solid var(--border-primary);
 
   .filter-group {
     display: flex;
@@ -55,7 +55,7 @@
 
 // Task Form Card
 .task-form-card {
-  margin-bottom: $spacing-4;
+  //margin-bottom: $spacing-4;
 }
 
 .task-form {

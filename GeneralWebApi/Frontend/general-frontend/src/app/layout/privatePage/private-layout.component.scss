@@ -33,6 +33,7 @@
     overflow: hidden;
     background: var(--background-secondary);
     position: relative;
+    padding: $spacing-4 $spacing-6 $spacing-5;
 
     // Subtle pattern overlay for depth
     &::before {
@@ -54,7 +55,7 @@
     // Page Content Container
     .page-content {
       flex: 1;
-      padding: $spacing-6 $spacing-8;
+      padding: 0;
       overflow-y: auto;
       overflow-x: hidden;
       position: relative;
@@ -119,9 +120,7 @@
 @media (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg - 1px}) {
   .app-private-layout {
     &__content {
-      .page-content {
-        padding: $spacing-5 $spacing-6;
-      }
+      padding: $spacing-3 $spacing-5 $spacing-4;
     }
   }
 }
@@ -130,9 +129,7 @@
 @include mobile-only {
   .app-private-layout {
     &__content {
-      .page-content {
-        padding: $spacing-4;
-      }
+      padding: $spacing-2 $spacing-3 $spacing-3;
     }
   }
 }

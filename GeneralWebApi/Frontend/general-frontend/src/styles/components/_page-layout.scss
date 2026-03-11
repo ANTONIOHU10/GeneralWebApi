@@ -75,8 +75,10 @@
 // Page Content - Used by base-private-page-container component
 .layout-page-content {
   flex: 1;
-  background: var(--bg-surface);
+  //background: var(--bg-surface);
   overflow: hidden;
+  // here to set the private -> content -> background color
+  background: var(--background-secondary);
 }
 
 // Content Area - Used by base-private-page-container component

@@ -7,11 +7,11 @@
   border: 1px solid var(--border-secondary);
   border-radius: $border-radius-xl;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
   transition: all $duration-300 $ease-out;
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: none;
   }
 }
 
@@ -87,7 +87,7 @@
   &.hoverable {
     tbody tr:hover {
       background: var(--bg-hover);
-      transform: scale(1.01);
+      transform: none;
     }
   }
 
@@ -332,8 +332,8 @@
   &:hover:not(:disabled) {
     background: var(--bg-hover);
     color: var(--text-primary);
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: none;
+    box-shadow: none;
   }
 
   &:active:not(:disabled) {

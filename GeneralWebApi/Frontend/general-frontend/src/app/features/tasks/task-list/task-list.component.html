@@ -17,162 +17,170 @@
     ></app-base-button>
   </div>
 
-  <!-- Filters - Simplified: Only Status -->
-  <div class="filters">
-    <div class="filter-group">
-      <label for="task-status-filter">{{ 'tasks.status' | translate }}:</label>
-      <select id="task-status-filter" [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event); loadTasks()">
-        <option value="all">{{ 'tasks.statusAll' | translate }}</option>
-        <option value="Pending">{{ 'tasks.statusPending' | translate }}</option>
-        <option value="InProgress">{{ 'tasks.statusInProgress' | translate }}</option>
-        <option value="Completed">{{ 'tasks.statusCompleted' | translate }}</option>
-        <option value="Cancelled">{{ 'tasks.statusCancelled' | translate }}</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Create/Edit Form - Simplified -->
-  <app-base-card
-    *ngIf="showCreateForm()"
-    [title]="editingTask ? ('tasks.editTask' | translate) : ('tasks.createNewTask' | translate)"
-    variant="elevated"
-    class="task-form-card"
-  >
-    <div class="task-form">
-      <div class="form-row">
-        <app-base-input
-          [label]="'tasks.titleLabel' | translate"
-          [(ngModel)]="taskForm.title"
-          [placeholder]="'tasks.titlePlaceholder' | translate"
-          [required]="true"
-          inputId="task-title"
-        ></app-base-input>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="task-description">{{ 'tasks.descriptionLabel' | translate }}</label>
-          <textarea
-            id="task-description"
-            [(ngModel)]="taskForm.description"
-            [placeholder]="'tasks.descriptionPlaceholder' | translate"
-            class="form-control textarea"
-            rows="3"
-          ></textarea>
-        </div>
-      </div>
-
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label for="task-status">{{ 'tasks.status' | translate }}</label>
-          <select id="task-status" [(ngModel)]="taskForm.status">
-            <option value="Pending">{{ 'tasks.statusPending' | translate }}</option>
-            <option value="InProgress">{{ 'tasks.statusInProgress' | translate }}</option>
-            <option value="Completed">{{ 'tasks.statusCompleted' | translate }}</option>
-            <option value="Cancelled">{{ 'tasks.statusCancelled' | translate }}</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="task-priority">{{ 'tasks.priority' | translate }}</label>
-          <select id="task-priority" [(ngModel)]="taskForm.priority">
-            <option value="Low">{{ 'tasks.priorityLow' | translate }}</option>
-            <option value="Medium">{{ 'tasks.priorityMedium' | translate }}</option>
-            <option value="High">{{ 'tasks.priorityHigh' | translate }}</option>
-            <option value="Urgent">{{ 'tasks.priorityUrgent' | translate }}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <app-base-button
-          [text]="editingTask ? ('tasks.updateTask' | translate) : ('tasks.createTask' | translate)"
-          [icon]="editingTask ? 'save' : 'add'"
-          variant="primary"
-          (buttonClick)="editingTask ? onSaveTask() : onCreateTask()"
-          [disabled]="(loading$ | async) ?? false"
-        ></app-base-button>
-        <app-base-button
-          [text]="'common.cancel' | translate"
-          icon="close"
-          variant="outline"
-          (buttonClick)="onCancelEdit()"
-        ></app-base-button>
+  <!-- Filters - wrapped in card for clear separation -->
+  <app-base-card variant="flat" class="task-filters-card" [title]="'common.filter' | translate">
+    <div class="filters">
+      <div class="filter-group">
+        <label for="task-status-filter">{{ 'tasks.status' | translate }}:</label>
+        <select
+          id="task-status-filter"
+          [ngModel]="filterStatus()"
+          (ngModelChange)="filterStatus.set($event); loadTasks()"
+        >
+          <option value="all">{{ 'tasks.statusAll' | translate }}</option>
+          <option value="Pending">{{ 'tasks.statusPending' | translate }}</option>
+          <option value="InProgress">{{ 'tasks.statusInProgress' | translate }}</option>
+          <option value="Completed">{{ 'tasks.statusCompleted' | translate }}</option>
+          <option value="Cancelled">{{ 'tasks.statusCancelled' | translate }}</option>
+        </select>
       </div>
     </div>
   </app-base-card>
 
-  <!-- Task List - Simplified -->
-  <app-base-async-state
-    [loading$]="loading$"
-    [error$]="error$"
-    [data$]="filteredTasks$"
-    [loadingMessage]="'tasks.loading' | translate"
-    [emptyTitle]="'tasks.emptyTitle' | translate"
-    [emptyDescription]="'tasks.emptyDescription' | translate"
-    [emptyActionText]="'tasks.emptyActionText' | translate"
-    [onRetry]="onRetryLoad"
-    [onEmptyAction]="onEmptyAction"
-  >
-    <div class="task-list">
-      <div
-        *ngFor="let task of filteredTasks$ | async"
-        class="task-item"
-        [class.completed]="task.status === 'Completed'"
-      >
-        <div class="task-content">
-          <div class="task-header">
-            <div class="task-title-row">
-              <input
-                type="checkbox"
-                [checked]="task.status === 'Completed'"
-                (change)="
-                  onUpdateTaskStatus(
-                    task,
-                    task.status === 'Completed' ? 'Pending' : 'Completed'
-                  )
-                "
-                class="task-checkbox"
-              />
-              <h3 class="task-title">{{ task.title }}</h3>
-            </div>
-            <div class="task-badges">
-              <app-base-badge
-                [text]="getStatusText(task.status)"
-                [variant]="getStatusVariant(task.status)"
-                size="small"
-              ></app-base-badge>
-              <app-base-badge
-                [text]="getPriorityText(task.priority)"
-                [variant]="getPriorityVariant(task.priority)"
-                size="small"
-              ></app-base-badge>
-            </div>
-          </div>
-
-          <p *ngIf="task.description" class="task-description">
-            {{ task.description }}
-          </p>
+  <!-- Create/Edit Form - Simplified -->
+    <app-base-card
+      *ngIf="showCreateForm()"
+      [title]="editingTask ? ('tasks.editTask' | translate) : ('tasks.createNewTask' | translate)"
+      variant="elevated"
+      class="task-form-card"
+    >
+      <div class="task-form">
+        <div class="form-row">
+          <app-base-input
+            [label]="'tasks.titleLabel' | translate"
+            [(ngModel)]="taskForm.title"
+            [placeholder]="'tasks.titlePlaceholder' | translate"
+            [required]="true"
+            inputId="task-title"
+          ></app-base-input>
         </div>
 
-        <div class="task-actions">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-description">{{ 'tasks.descriptionLabel' | translate }}</label>
+            <textarea
+              id="task-description"
+              [(ngModel)]="taskForm.description"
+              [placeholder]="'tasks.descriptionPlaceholder' | translate"
+              class="form-control textarea"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-row form-row-2">
+          <div class="form-group">
+            <label for="task-status">{{ 'tasks.status' | translate }}</label>
+            <select id="task-status" [(ngModel)]="taskForm.status">
+              <option value="Pending">{{ 'tasks.statusPending' | translate }}</option>
+              <option value="InProgress">{{ 'tasks.statusInProgress' | translate }}</option>
+              <option value="Completed">{{ 'tasks.statusCompleted' | translate }}</option>
+              <option value="Cancelled">{{ 'tasks.statusCancelled' | translate }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="task-priority">{{ 'tasks.priority' | translate }}</label>
+            <select id="task-priority" [(ngModel)]="taskForm.priority">
+              <option value="Low">{{ 'tasks.priorityLow' | translate }}</option>
+              <option value="Medium">{{ 'tasks.priorityMedium' | translate }}</option>
+              <option value="High">{{ 'tasks.priorityHigh' | translate }}</option>
+              <option value="Urgent">{{ 'tasks.priorityUrgent' | translate }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
           <app-base-button
-            icon="edit"
-            variant="outline"
-            size="small"
-            (buttonClick)="onEditTask(task)"
-            [title]="'common.edit' | translate"
+            [text]="editingTask ? ('tasks.updateTask' | translate) : ('tasks.createTask' | translate)"
+            [icon]="editingTask ? 'save' : 'add'"
+            variant="primary"
+            (buttonClick)="editingTask ? onSaveTask() : onCreateTask()"
+            [disabled]="(loading$ | async) ?? false"
           ></app-base-button>
           <app-base-button
-            icon="delete"
-            variant="danger"
-            size="small"
-            (buttonClick)="onDeleteTask(task)"
-            [title]="'tasks.deleteTask' | translate"
+            [text]="'common.cancel' | translate"
+            icon="close"
+            variant="outline"
+            (buttonClick)="onCancelEdit()"
           ></app-base-button>
         </div>
       </div>
-    </div>
-  </app-base-async-state>
+    </app-base-card>
+
+  <!-- Task List - wrapped in card for clear separation -->
+  <app-base-card variant="flat" class="task-list-card">
+    <app-base-async-state
+      [loading$]="loading$"
+      [error$]="error$"
+      [data$]="filteredTasks$"
+      [loadingMessage]="'tasks.loading' | translate"
+      [emptyTitle]="'tasks.emptyTitle' | translate"
+      [emptyDescription]="'tasks.emptyDescription' | translate"
+      [emptyActionText]="'tasks.emptyActionText' | translate"
+      [onRetry]="onRetryLoad"
+      [onEmptyAction]="onEmptyAction"
+    >
+      <div class="task-list">
+        <div
+          *ngFor="let task of filteredTasks$ | async"
+          class="task-item"
+          [class.completed]="task.status === 'Completed'"
+        >
+          <div class="task-content">
+            <div class="task-header">
+              <div class="task-title-row">
+                <input
+                  type="checkbox"
+                  [checked]="task.status === 'Completed'"
+                  (change)="
+                    onUpdateTaskStatus(
+                      task,
+                      task.status === 'Completed' ? 'Pending' : 'Completed'
+                    )
+                  "
+                  class="task-checkbox"
+                />
+                <h3 class="task-title">{{ task.title }}</h3>
+              </div>
+              <div class="task-badges">
+                <app-base-badge
+                  [text]="getStatusText(task.status)"
+                  [variant]="getStatusVariant(task.status)"
+                  size="small"
+                ></app-base-badge>
+                <app-base-badge
+                  [text]="getPriorityText(task.priority)"
+                  [variant]="getPriorityVariant(task.priority)"
+                  size="small"
+                ></app-base-badge>
+              </div>
+            </div>
+
+            <p *ngIf="task.description" class="task-description">
+              {{ task.description }}
+            </p>
+          </div>
+
+          <div class="task-actions">
+            <app-base-button
+              icon="edit"
+              variant="outline"
+              size="small"
+              (buttonClick)="onEditTask(task)"
+              [title]="'common.edit' | translate"
+            ></app-base-button>
+            <app-base-button
+              icon="delete"
+              variant="danger"
+              size="small"
+              (buttonClick)="onDeleteTask(task)"
+              [title]="'tasks.deleteTask' | translate"
+            ></app-base-button>
+          </div>
+        </div>
+      </div>
+    </app-base-async-state>
+  </app-base-card>
 </app-base-private-page-container>
 

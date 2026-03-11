@@ -45,27 +45,28 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
   ],
   template: `
     <div class="dashboard-container">
-      <app-base-page-header
-        [title]="'dashboard.title' | translate"
-        [subtitle]="'dashboard.subtitle' | translate"
-        icon="dashboard"
-        iconColor="var(--color-primary-500)"
-        [showActions]="true"
-      >
-        <div slot="actions">
-          <app-base-button
-            [text]="'dashboard.refresh' | translate"
-            icon="refresh"
-            variant="outline"
-            size="small"
-            (buttonClick)="loadDashboardData()"
-            [disabled]="isLoading()"
-          >
-          </app-base-button>
-        </div>
-      </app-base-page-header>
+      <div class="dashboard-content">
+        <app-base-page-header
+          [title]="'dashboard.title' | translate"
+          [subtitle]="'dashboard.subtitle' | translate"
+          icon="dashboard"
+          iconColor="var(--color-primary-500)"
+          [showActions]="true"
+        >
+          <div slot="actions">
+            <app-base-button
+              [text]="'dashboard.refresh' | translate"
+              icon="refresh"
+              variant="outline"
+              size="small"
+              (buttonClick)="loadDashboardData()"
+              [disabled]="isLoading()"
+            >
+            </app-base-button>
+          </div>
+        </app-base-page-header>
 
-      <div class="stats-grid" *ngIf="!isLoading(); else loadingTemplate">
+        <div class="stats-grid" *ngIf="!isLoading(); else loadingTemplate">
         <app-base-card [title]="'dashboard.stats.totalEmployees' | translate" icon="people" variant="elevated">
           <div class="stat-number">{{ totalEmployees() }}</div>
           <app-base-button
@@ -117,7 +118,7 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
           >
           </app-base-button>
         </app-base-card>
-      </div>
+      </div> <!-- dashboard-content -->
 
       <ng-template #loadingTemplate>
         <div class="loading-container">
@@ -167,15 +168,30 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
         height: 100%;
         display: flex;
         flex-direction: column;
-        background: var(--bg-primary);
+        background: var(--background-secondary);
+      }
+
+      .dashboard-content {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
       }
 
       .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 1.5rem;
-        margin: 2rem;
+        margin: 1.5rem auto 2rem;
         flex: 1;
+        max-width: 1200px;
+        width: 100%;
+      }
+
+      /* Recent activities card */
+      .dashboard-container > app-base-card {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto 1.5rem;
       }
 
       .stat-number {
@@ -257,7 +273,7 @@ interface ApiResponseWithPagination<T> extends ApiResponse<T> {
       @media (max-width: 768px) {
         .stats-grid {
           grid-template-columns: 1fr;
-          margin: 1rem;
+          margin: 1rem auto 1.5rem;
           gap: 1rem;
         }
 
