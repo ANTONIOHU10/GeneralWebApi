@@ -6,7 +6,7 @@ import { PublicLayoutComponent } from '@layout/publicPage';
 
 // Import placeholder components (to be created)
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { TaskListComponent } from './features/tasks/task-list/task-list.component';
+import { TaskListComponent } from './features/tasks/task-list.component';
 import { NotificationCenterComponent } from './features/notifications/notification-center/notification-center.component';
 import { NotificationDetailComponent } from './features/notifications/notification-detail/notification-detail.component';
 import { ApprovalListComponent } from './features/approvals/approval-list/approval-list.component';

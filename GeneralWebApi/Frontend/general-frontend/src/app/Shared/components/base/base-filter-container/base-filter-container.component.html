@@ -7,7 +7,7 @@
   [customClass]="cardClass"
   [showHeader]="true"
 >
-  <div class="base-filter-container__body" *ngIf="fields?.length">
+  <div class="base-filter-container__body" *ngIf="fields.length">
     <div
       class="base-filter-field"
       *ngFor="let field of fields; trackBy: trackByFieldKey"

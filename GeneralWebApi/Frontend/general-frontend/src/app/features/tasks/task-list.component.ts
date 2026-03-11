@@ -8,7 +8,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Task, CreateTaskRequest, UpdateTaskRequest, TaskSearchParams } from 'app/contracts/tasks/task.model';
 import { TaskService } from '@core/services/task.service';
-import { DialogService, NotificationService } from '../../../Shared/services';
+import { DialogService, NotificationService } from '../../Shared/services';
 import {
   BasePrivatePageContainerComponent,
   BaseButtonComponent,
@@ -18,7 +18,7 @@ import {
   BaseAsyncStateComponent,
   BaseFilterContainerComponent,
   BaseFilterField,
-} from '../../../Shared/components/base';
+} from '../../Shared/components/base';
 import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { TranslationService } from '@core/services/translation.service';
 
