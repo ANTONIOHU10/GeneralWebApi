@@ -1,5 +1,5 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/layout/private-layout.component.ts
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +19,8 @@ import { AuthService } from '@core/services/auth.service';
 import { UserService } from '@core/services/user.service';
 import { EmployeeService } from '@core/services/employee.service';
 import { LocaleService } from '@core/services/locale.service';
-import { catchError, of, Observable } from 'rxjs';
+import { catchError, of, Observable, fromEvent, Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 
 @Component({
   standalone: true,
@@ -42,13 +43,16 @@ import { catchError, of, Observable } from 'rxjs';
     TranslatePipe,
   ],
 })
-export class PrivateLayoutComponent implements OnInit {
+export class PrivateLayoutComponent implements OnInit, OnDestroy {
   // Services
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private employeeService = inject(EmployeeService);
   private router = inject(Router);
   private localeService = inject(LocaleService);
+
+  // Teardown subject for subscriptions
+  private destroy$ = new Subject<void>();
 
   // User profile modal state
   isUserProfileModalOpen = false;
@@ -86,7 +90,31 @@ export class PrivateLayoutComponent implements OnInit {
    * Initialize component - load current user and employee data
    */
   ngOnInit(): void {
+    // Ensure initial sidebar state is correct based on current viewport
+    this.isSidebarOpen = this.getInitialSidebarState();
+
+    // Listen to window resize events and update sidebar state responsively
+    fromEvent(window, 'resize')
+      .pipe(
+        //debounceTime(150),
+        // the size in css trigger is about 768px, here we use 800 to be safe
+        // to prevet flashing of the sidebar when the window is resized
+        map(() => window.innerWidth > 800),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(isDesktop => {
+        this.isSidebarOpen = isDesktop;
+      });
+
     this.loadCurrentUserData();
+  }
+
+  /**
+   * Cleanup subscriptions on destroy
+   */
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
