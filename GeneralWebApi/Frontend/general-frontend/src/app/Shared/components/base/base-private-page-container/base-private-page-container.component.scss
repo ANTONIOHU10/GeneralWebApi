@@ -70,8 +70,9 @@
   display: flex;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border-primary);
-  padding: 0 2rem;
+  padding: 0 0rem;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 // Content Area - use global layout class

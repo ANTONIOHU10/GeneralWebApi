@@ -4,7 +4,8 @@
 
 .tabs-container {
   width: 100%;
-  padding-bottom: 1rem;
+  padding-bottom: 0rem;
+  //background-color: blue;
 
   &.centered {
     .tabs-nav {
@@ -45,13 +46,14 @@
 .tabs-nav {
   display: flex;
   gap: $spacing-1;
-  border-bottom: 2px solid var(--border-secondary);
+  border-bottom: 0px solid var(--border-secondary);
   padding: 0;
   margin: 0;
   list-style: none;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  //background-color: red;
 
   &::-webkit-scrollbar {
     display: none;
