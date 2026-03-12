@@ -111,7 +111,8 @@ public class DepartmentRepository : BaseRepository<Department>, IDepartmentRepos
             "code" => sortDescending ? query.OrderByDescending(d => d.Code) : query.OrderBy(d => d.Code),
             "level" => sortDescending ? query.OrderByDescending(d => d.Level) : query.OrderBy(d => d.Level),
             "createdat" => sortDescending ? query.OrderByDescending(d => d.CreatedAt) : query.OrderBy(d => d.CreatedAt),
-            _ => query.OrderBy(d => d.Name)
+            // Default: use primary key (Id), which is clustered and indexed
+            _ => sortDescending ? query.OrderByDescending(d => d.Id) : query.OrderBy(d => d.Id)
         };
     }
 
