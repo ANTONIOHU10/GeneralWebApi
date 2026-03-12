@@ -33,15 +33,15 @@ public class PositionsController : BaseController
     /// Search positions with advanced filters
     /// </summary>
     /// <param name="searchDto">Search criteria including title, code, description, department, level, and management status</param>
-    /// <returns>List of positions matching the search criteria</returns>
+    /// <returns>Paged list of positions matching the search criteria</returns>
     [HttpGet("search")]
-    public async Task<ActionResult<ApiResponse<List<PositionDto>>>> SearchPositions([FromQuery] PositionSearchDto searchDto)
+    public async Task<ActionResult<ApiResponse<PagedResult<PositionDto>>>> SearchPositions([FromQuery] PositionSearchDto searchDto)
     {
         return await ValidateAndExecuteAsync(searchDto, async (validatedDto) =>
         {
             var query = new SearchPositionsQuery { PositionSearchDto = validatedDto };
             var result = await _mediator.Send(query);
-            return Ok(ApiResponse<List<PositionDto>>.SuccessResult(result, "Positions retrieved successfully"));
+            return Ok(ApiResponse<PagedResult<PositionDto>>.SuccessResult(result, "Positions retrieved successfully"));
         });
     }
 

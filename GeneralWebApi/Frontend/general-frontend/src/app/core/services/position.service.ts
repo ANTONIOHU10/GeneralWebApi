@@ -153,10 +153,23 @@ export class PositionService extends BaseHttpService {
       params['isManagement'] = searchParams.isManagement.toString();
     }
 
-    return this.get<BackendPosition[]>(`${this.endpoint}/search`, params).pipe(
-      map(backendPositions =>
-        backendPositions.map(item => this.transformBackendPosition(item))
-      )
+    // Use the paginated search endpoint (PagedResult<BackendPosition>)
+    // Request only the first page with a reasonable page size
+    params['pageNumber'] = '1';
+    params['pageSize'] = '50';
+
+    return this.get<ApiResponse<{ items: BackendPosition[]; totalCount: number; pageNumber: number; pageSize: number; totalPages: number }>>(
+      `${this.endpoint}/search`,
+      params,
+      { extractData: false }
+    ).pipe(
+      map(response => {
+        if (!response.data) {
+          throw new Error(response.message || 'Response data is missing');
+        }
+
+        return response.data.items.map(item => this.transformBackendPosition(item));
+      })
     );
   }
 }

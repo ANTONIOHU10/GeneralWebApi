@@ -1,12 +1,13 @@
 using AutoMapper;
 using GeneralWebApi.Application.Features.Positions.Queries;
+using GeneralWebApi.Domain.Entities;
 using GeneralWebApi.DTOs.Position;
 using GeneralWebApi.Integration.Repository.AnagraphyRepository;
 using MediatR;
 
 namespace GeneralWebApi.Application.Features.Positions.Handlers;
 
-public class SearchPositionsQueryHandler : IRequestHandler<SearchPositionsQuery, List<PositionDto>>
+public class SearchPositionsQueryHandler : IRequestHandler<SearchPositionsQuery, PagedResult<PositionDto>>
 {
     private readonly IPositionRepository _positionRepository;
     private readonly IMapper _mapper;
@@ -17,12 +18,11 @@ public class SearchPositionsQueryHandler : IRequestHandler<SearchPositionsQuery,
         _mapper = mapper;
     }
 
-    public async Task<List<PositionDto>> Handle(SearchPositionsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<PositionDto>> Handle(SearchPositionsQuery request, CancellationToken cancellationToken)
     {
-        // Set PageSize to max to get all matching positions (no pagination for search)
         var result = await _positionRepository.GetPagedAsync(
-            pageNumber: 1,
-            pageSize: int.MaxValue, // Get all matching positions
+            pageNumber: request.PositionSearchDto.PageNumber,
+            pageSize: request.PositionSearchDto.PageSize,
             searchTerm: request.PositionSearchDto.SearchTerm,
             departmentId: request.PositionSearchDto.DepartmentId,
             level: request.PositionSearchDto.Level,
@@ -34,7 +34,8 @@ public class SearchPositionsQueryHandler : IRequestHandler<SearchPositionsQuery,
             sortDescending: request.PositionSearchDto.SortDescending,
             cancellationToken: cancellationToken);
 
-        return _mapper.Map<List<PositionDto>>(result.Items);
+        var mappedItems = _mapper.Map<List<PositionDto>>(result.Items);
+        return new PagedResult<PositionDto>(mappedItems, result.TotalCount, result.PageNumber, result.PageSize);
     }
 }
 
