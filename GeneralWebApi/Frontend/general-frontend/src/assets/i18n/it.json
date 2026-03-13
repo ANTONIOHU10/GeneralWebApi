@@ -1142,6 +1142,14 @@
       "submitButton": "Crea Modello",
       "confirmTitle": "Conferma Aggiunta",
       "confirmMessage": "Sei sicuro di voler aggiungere il modello \"{{name}}\"?"
+    },
+    "delete": {
+      "confirmTitle": "Elimina Modello",
+      "confirmMessage": "Eliminare il modello \"{{name}}\"? Questa azione non può essere annullata.",
+      "confirmText": "Elimina",
+      "cancelText": "Annulla",
+      "notSupportedTitle": "Eliminazione non disponibile",
+      "notSupportedMessage": "L'eliminazione dei modelli non è ancora supportata dall'API."
     }
   },
   "contractReminders": {

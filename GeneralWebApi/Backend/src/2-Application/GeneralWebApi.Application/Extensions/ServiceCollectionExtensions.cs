@@ -106,6 +106,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<CreateContractDto>, CreateContractDtoValidator>();
         services.AddScoped<IValidator<UpdateContractDto>, UpdateContractDtoValidator>();
         services.AddScoped<IContractService, ContractService>();
+        services.AddScoped<IContractTemplateService, ContractTemplateService>();
 
         // Contract Approvals
         services.AddScoped<IContractApprovalService, ContractApprovalService>();

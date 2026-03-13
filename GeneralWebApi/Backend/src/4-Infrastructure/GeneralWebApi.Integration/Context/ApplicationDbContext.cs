@@ -45,6 +45,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<IdentityDocument> IdentityDocuments { get; set; }
     public DbSet<ContractApproval> ContractApprovals { get; set; }
     public DbSet<ContractApprovalStep> ContractApprovalSteps { get; set; }
+    public DbSet<ContractTemplate> ContractTemplates { get; set; }
     #endregion
 
     #region Tasks entities

@@ -1169,7 +1169,9 @@
       "confirmTitle": "Delete Template",
       "confirmMessage": "Delete template \"{{name}}\"? This action cannot be undone.",
       "confirmText": "Delete",
-      "cancelText": "Cancel"
+      "cancelText": "Cancel",
+      "notSupportedTitle": "Delete not available",
+      "notSupportedMessage": "Deleting templates is not supported by the API yet."
     },
     "detail": {
       "title": {

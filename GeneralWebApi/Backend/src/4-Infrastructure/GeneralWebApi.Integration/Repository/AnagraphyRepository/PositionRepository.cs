@@ -21,21 +21,20 @@ public class PositionRepository : BaseRepository<Position>, IPositionRepository
 
     public async Task<PagedResult<Position>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? level = null, bool? isManagement = null, string? title = null, string? code = null, string? description = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
-        var query = GetActiveAndEnabledEntities()
+        // Count on base query without includes for faster execution (no JOINs)
+        var countQuery = GetActiveAndEnabledEntities();
+        countQuery = ApplySearchFilters(countQuery, searchTerm, departmentId, level, isManagement, title, code, description);
+        var totalCount = await countQuery.CountAsync(cancellationToken);
+
+        // Data query with includes, read-only so use AsNoTracking (IQueryable so ApplySearchFilters/ApplySorting assign back correctly)
+        IQueryable<Position> query = GetActiveAndEnabledEntities()
+            .AsNoTracking()
             .Include(p => p.Department)
-            .Include(p => p.ParentPosition)
-            .AsQueryable();
+            .Include(p => p.ParentPosition);
 
-        // Apply search filters
         query = ApplySearchFilters(query, searchTerm, departmentId, level, isManagement, title, code, description);
-
-        // Apply sorting
         query = ApplySorting(query, sortBy, sortDescending);
 
-        // Get total count
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        // Apply pagination
         var positions = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)

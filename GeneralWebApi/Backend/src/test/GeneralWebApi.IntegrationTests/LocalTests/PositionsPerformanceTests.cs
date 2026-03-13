@@ -22,7 +22,7 @@ public class PositionsPerformanceTests : IClassFixture<CustomWebApplicationFacto
     private readonly System.Net.Http.HttpClient _client;
     private readonly ITestOutputHelper _output;
     private const int TIME_THREADSHOULD = 500; // ms
-    private const int TREE_THREADSHOULD = 1000; // ms
+    private const int TREE_THREADSHOULD = 1200; // ms (search/list with 900+ positions; buffer for CI variance)
 
     public PositionsPerformanceTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
     {

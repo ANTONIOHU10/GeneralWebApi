@@ -1,14 +1,15 @@
 // Path: GeneralWebApi/Frontend/general-frontend/src/app/features/contract-templates/add-contract-template/add-contract-template.component.ts
 import { Component, inject, OnDestroy, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, delay, of } from 'rxjs';
-import { takeUntil, filter, take, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, EMPTY } from 'rxjs';
+import { takeUntil, filter, take, distinctUntilChanged, catchError } from 'rxjs/operators';
 import {
   BaseFormComponent,
   FormConfig,
   SelectOption,
 } from '../../../Shared/components/base';
 import { DialogService, NotificationService } from '../../../Shared/services';
+import { ContractTemplateService } from '@core/services/contract-template.service';
 import { CONTRACT_TEMPLATE_CATEGORIES } from 'app/contracts/contract-templates/contract-template.model';
 import { CONTRACT_TYPES as CONTRACT_TYPE_OPTIONS } from 'app/contracts/contracts/contract.model';
 import { TranslationService } from '@core/services/translation.service';
@@ -29,6 +30,7 @@ export class AddContractTemplateComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslationService);
+  private contractTemplateService = inject(ContractTemplateService);
   private destroy$ = new Subject<void>();
 
   @Output() templateCreated = new EventEmitter<void>();
@@ -126,30 +128,39 @@ export class AddContractTemplateComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.loading.set(true);
-
-      // Simulate API call
-      of(true).pipe(
-        delay(1000),
-        takeUntil(this.destroy$)
-      ).subscribe({
-        next: () => {
-          this.loading.set(false);
-          this.notificationService.success(
-            this.translationService.translate('contractTemplates.add.notifications.createSuccess'),
-            this.translationService.translate('contractTemplates.add.notifications.createSuccessMessage', { name: data['name'] as string }),
-            { duration: 3000, autoClose: true }
-          );
-          this.templateCreated.emit();
-          this.onFormCancel();
-        },
-        error: (err) => {
+      const request = {
+        name: (data['name'] as string) ?? '',
+        description: (data['description'] as string) ?? '',
+        contractType: (data['contractType'] as string) ?? 'Indefinite',
+        templateContent: (data['templateContent'] as string) ?? '',
+        variables: (data['variables'] as string) || undefined,
+        category: (data['category'] as string) || undefined,
+        isActive: (data['isActive'] as boolean) ?? true,
+        isDefault: (data['isDefault'] as boolean) ?? false,
+        tags: (data['tags'] as string) || undefined,
+        legalRequirements: (data['legalRequirements'] as string) || undefined,
+        approvalWorkflow: (data['approvalWorkflow'] as string) || undefined,
+      };
+      this.contractTemplateService.createContractTemplate(request).pipe(
+        takeUntil(this.destroy$),
+        catchError(err => {
           this.loading.set(false);
           this.notificationService.error(
             this.translationService.translate('contractTemplates.add.notifications.createFailed'),
             err.message || this.translationService.translate('contractTemplates.add.notifications.createFailedMessage'),
             { duration: 5000, persistent: false, autoClose: true }
           );
-        }
+          return EMPTY;
+        })
+      ).subscribe(() => {
+        this.loading.set(false);
+        this.notificationService.success(
+          this.translationService.translate('contractTemplates.add.notifications.createSuccess'),
+          this.translationService.translate('contractTemplates.add.notifications.createSuccessMessage', { name: data['name'] as string }),
+          { duration: 3000, autoClose: true }
+        );
+        this.templateCreated.emit();
+        this.onFormCancel();
       });
     });
   }

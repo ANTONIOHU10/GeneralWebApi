@@ -45,23 +45,23 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 
     public async Task<PagedResult<Employee>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? departmentId = null, int? positionId = null, string? employmentStatus = null, DateTime? hireDateFrom = null, DateTime? hireDateTo = null, string? firstName = null, string? lastName = null, string? email = null, string? employeeNumber = null, string? phone = null, bool? isManager = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
+        // Count on base query without includes to avoid heavy JOINs and timeout (same filters, no cartesian explosion)
+        var countQuery = GetActiveAndEnabledEntities();
+        countQuery = ApplySearchFilters(countQuery, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo, firstName, lastName, email, employeeNumber, phone, isManager);
+        var totalCount = await countQuery.CountAsync(cancellationToken);
+
+        // Data query: use AsSplitQuery() to avoid cartesian explosion from Include(Contracts), and AsNoTracking() for read-only list
         var query = GetActiveAndEnabledEntities()
+            .AsNoTracking()
             .Include(e => e.Department)
             .Include(e => e.Position)
             .Include(e => e.Manager)
             .Include(e => e.Contracts)
-            .AsQueryable();
+            .AsSplitQuery();
 
-        // Apply search filters
         query = ApplySearchFilters(query, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo, firstName, lastName, email, employeeNumber, phone, isManager);
-
-        // Apply sorting
         query = ApplySorting(query, sortBy, sortDescending);
 
-        // Get total count
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        // Apply pagination
         var employees = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)

@@ -20,6 +20,65 @@ export interface ContractTemplate {
   updatedAt: string | null;
 }
 
+/** Backend list item DTO (ContractTemplateListDto) - camelCase from API */
+export interface BackendContractTemplateListDto {
+  id: number;
+  name: string;
+  description: string;
+  contractType: string;
+  category: string | null;
+  isActive: boolean;
+  isDefault: boolean;
+  usageCount: number;
+  version: number;
+  createdAt: string;
+}
+
+/** Backend full DTO (ContractTemplateDto) - for get-by-id and create response */
+export interface BackendContractTemplateDto {
+  id: number;
+  name: string;
+  description: string;
+  contractType: string;
+  templateContent: string;
+  variables: string | null;
+  category: string | null;
+  isActive: boolean;
+  isDefault: boolean;
+  usageCount: number;
+  tags: string | null;
+  legalRequirements: string | null;
+  approvalWorkflow: string | null;
+  version: number;
+  parentTemplateId: number | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+/** Search params for paged list - matches backend ContractTemplateSearchDto */
+export interface ContractTemplateSearchParams {
+  pageNumber?: number;
+  pageSize?: number;
+  searchTerm?: string;
+  contractType?: string;
+  category?: string;
+  isActive?: boolean;
+  isDefault?: boolean;
+  sortBy?: string;
+  sortDescending?: boolean;
+}
+
+/** Paged result from API - matches backend PagedResult<T> */
+export interface ContractTemplatePagedResult {
+  items: BackendContractTemplateListDto[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 export interface CreateContractTemplateRequest {
   name: string;
   description: string;

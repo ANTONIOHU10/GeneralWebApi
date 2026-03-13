@@ -1126,6 +1126,8 @@
       }
     },
     "delete": {
+      "notSupportedTitle": "暂不支持删除",
+      "notSupportedMessage": "接口暂不支持删除模板。",
       "confirmTitle": "删除模板",
       "confirmMessage": "删除模板 \"{{name}}\" 吗？此操作无法撤销。",
       "confirmText": "删除",
