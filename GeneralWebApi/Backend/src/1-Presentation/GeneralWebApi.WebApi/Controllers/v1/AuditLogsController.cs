@@ -166,20 +166,17 @@ public class AuditLogsController : BaseController
     {
         try
         {
-            var allLogs = await _auditLogRepository.GetAllAsync();
+            var stats = await _auditLogRepository.GetStatisticsAsync();
 
             var statistics = new
             {
-                TotalLogs = allLogs.Count(),
-                SuccessfulLogs = allLogs.Count(l => l.IsSuccess),
-                FailedLogs = allLogs.Count(l => !l.IsSuccess),
-                LogsByAction = allLogs.GroupBy(l => l.Action)
-                    .ToDictionary(g => g.Key, g => g.Count()),
-                LogsBySeverity = allLogs.GroupBy(l => l.Severity)
-                    .ToDictionary(g => g.Key, g => g.Count()),
-                LogsByCategory = allLogs.GroupBy(l => l.Category)
-                    .ToDictionary(g => g.Key, g => g.Count()),
-                RecentLogs = allLogs.OrderByDescending(l => l.CreatedAt).Take(10).Select(MapToDto).ToList()
+                stats.TotalLogs,
+                stats.SuccessfulLogs,
+                stats.FailedLogs,
+                stats.LogsByAction,
+                stats.LogsBySeverity,
+                stats.LogsByCategory,
+                RecentLogs = stats.RecentLogs.OrderByDescending(l => l.CreatedAt).Take(10).Select(MapToDto).ToList()
             };
 
             return Ok(ApiResponse<object>.SuccessResult(statistics, "Audit log statistics retrieved successfully"));

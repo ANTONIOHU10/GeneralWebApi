@@ -74,4 +74,25 @@ public interface IAuditLogRepository : IBaseRepository<AuditLog>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated and filtered audit logs</returns>
     Task<(IEnumerable<AuditLog> Items, int TotalCount)> GetPaginatedAsync(AuditLogSearchDto searchDto, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get aggregated statistics for audit logs.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Aggregated audit log statistics</returns>
+    Task<AuditLogStatisticsResult> GetStatisticsAsync(CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// Aggregated statistics result for audit logs.
+/// </summary>
+public class AuditLogStatisticsResult
+{
+    public int TotalLogs { get; set; }
+    public int SuccessfulLogs { get; set; }
+    public int FailedLogs { get; set; }
+    public Dictionary<string, int> LogsByAction { get; set; } = new();
+    public Dictionary<string, int> LogsBySeverity { get; set; } = new();
+    public Dictionary<string, int> LogsByCategory { get; set; } = new();
+    public List<AuditLog> RecentLogs { get; set; } = new();
 }

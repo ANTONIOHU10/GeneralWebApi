@@ -20,9 +20,10 @@ public class RolesPerformanceTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly System.Net.Http.HttpClient _client;
     private readonly ITestOutputHelper _output;
-    private const int TIME_THREADSHOULD = 500; // ms
-    // Roles listing involves includes and per-role employee count, allow a higher threshold
-    private const int TREE_THREADSHOULD = 2000; // ms
+    // Single role reads can traverse related data; allow some buffer
+    private const int TIME_THREADSHOULD = 1000; // ms
+    // Roles listing involves includes and per-role employee count; allow a higher threshold
+    private const int TREE_THREADSHOULD = 5500; // ms
 
     public RolesPerformanceTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
     {

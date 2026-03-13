@@ -235,4 +235,58 @@ public class AuditLogRepository : BaseRepository<AuditLog>, IAuditLogRepository
             throw;
         }
     }
+
+    public async Task<AuditLogStatisticsResult> GetStatisticsAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var query = GetActiveEntities();
+
+            // Total and success/failure counts
+            var totalLogs = await query.CountAsync(cancellationToken);
+            var successfulLogs = await query.Where(a => a.IsSuccess).CountAsync(cancellationToken);
+            var failedLogs = totalLogs - successfulLogs;
+
+            // Grouped counts by action, severity, category
+            var logsByAction = await query
+                .GroupBy(a => a.Action)
+                .Select(g => new { g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Key, x => x.Count, cancellationToken);
+
+            var logsBySeverity = await query
+                .GroupBy(a => a.Severity)
+                .Select(g => new { g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Key, x => x.Count, cancellationToken);
+
+            var logsByCategory = await query
+                .GroupBy(a => a.Category)
+                .Select(g => new { g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Key, x => x.Count, cancellationToken);
+
+            // Recent logs (for preview)
+            var recentLogs = await query
+                .OrderByDescending(a => a.CreatedAt)
+                .Take(10)
+                .ToListAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved audit log statistics. Total: {Total}, Success: {Success}, Failed: {Failed}",
+                totalLogs, successfulLogs, failedLogs);
+
+            return new AuditLogStatisticsResult
+            {
+                TotalLogs = totalLogs,
+                SuccessfulLogs = successfulLogs,
+                FailedLogs = failedLogs,
+                LogsByAction = logsByAction,
+                LogsBySeverity = logsBySeverity,
+                LogsByCategory = logsByCategory,
+                RecentLogs = recentLogs
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to retrieve audit log statistics");
+            throw;
+        }
+    }
 }

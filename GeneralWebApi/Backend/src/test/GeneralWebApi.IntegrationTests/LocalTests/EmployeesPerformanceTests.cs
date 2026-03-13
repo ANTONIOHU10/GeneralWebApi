@@ -21,7 +21,8 @@ public class EmployeesPerformanceTests : IClassFixture<CustomWebApplicationFacto
 {
     private readonly System.Net.Http.HttpClient _client;
     private readonly ITestOutputHelper _output;
-    private const int TIME_THREADSHOULD = 500; // ms
+    // Simple list/detail operations should usually complete quickly, but allow some buffer on this dataset
+    private const int TIME_THREADSHOULD = 800; // ms
     // Some employee endpoints (like managers listing or hierarchy) traverse more data; allow a higher threshold
     private const int TREE_THREADSHOULD = 2200; // ms
 

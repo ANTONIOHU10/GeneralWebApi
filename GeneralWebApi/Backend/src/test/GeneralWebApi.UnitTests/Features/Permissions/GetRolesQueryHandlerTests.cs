@@ -51,12 +51,13 @@ public sealed class GetRolesQueryHandlerTests
             .Returns(mappedDtos);
 
         _roleRepositoryMock
-            .Setup(r => r.GetEmployeeCountAsync(1))
-            .ReturnsAsync(5);
-
-        _roleRepositoryMock
-            .Setup(r => r.GetEmployeeCountAsync(2))
-            .ReturnsAsync(3);
+            .Setup(r => r.GetEmployeeCountsAsync(It.Is<IEnumerable<int>>(ids =>
+                ids.SequenceEqual(new[] { 1, 2 }))))
+            .ReturnsAsync(new Dictionary<int, int>
+            {
+                { 1, 5 },
+                { 2, 3 }
+            });
 
         var query = new GetRolesQuery { SearchDto = null };
 
@@ -123,8 +124,12 @@ public sealed class GetRolesQueryHandlerTests
             .Returns(mappedDtos);
 
         _roleRepositoryMock
-            .Setup(r => r.GetEmployeeCountAsync(1))
-            .ReturnsAsync(10);
+            .Setup(r => r.GetEmployeeCountsAsync(It.Is<IEnumerable<int>>(ids =>
+                ids.SequenceEqual(new[] { 1 }))))
+            .ReturnsAsync(new Dictionary<int, int>
+            {
+                { 1, 10 }
+            });
 
         var query = new GetRolesQuery { SearchDto = searchDto };
 
