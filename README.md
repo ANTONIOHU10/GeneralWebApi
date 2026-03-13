@@ -149,7 +149,7 @@ npm install
 ng serve
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 GeneralWebApi/
@@ -179,7 +179,7 @@ GeneralWebApi/
 - [API Documentation](./GeneralWebApi/Backend/docs/API_Documentation.md)
 - [Deployment Guide](./GeneralWebApi/Backend/docs/Deployment_Guide.md)
 
-## 🔧 Development
+## Development
 
 ### Backend Development
 - Clean Architecture pattern
