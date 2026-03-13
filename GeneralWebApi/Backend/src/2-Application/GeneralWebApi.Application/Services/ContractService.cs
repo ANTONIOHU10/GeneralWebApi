@@ -49,15 +49,12 @@ public class ContractService : IContractService
             throw new KeyNotFoundException($"Contract with ID {id} not found");
         }
 
-        // Delete all related contract approvals before deleting the contract
+        // Soft-delete all related contract approvals in one round-trip to avoid N+1
         var approvals = await _approvalRepository.GetByContractIdAsync(id, cancellationToken);
         if (approvals.Any())
         {
             _logger.LogInformation("Deleting {Count} contract approvals for contract {ContractId}", approvals.Count, id);
-            foreach (var approval in approvals)
-            {
-                await _approvalRepository.DeleteAsync(approval.Id, cancellationToken);
-            }
+            await _approvalRepository.DeleteRangeAsync(approvals, cancellationToken);
             _logger.LogInformation("Successfully deleted {Count} contract approvals for contract {ContractId}", approvals.Count, id);
         }
 

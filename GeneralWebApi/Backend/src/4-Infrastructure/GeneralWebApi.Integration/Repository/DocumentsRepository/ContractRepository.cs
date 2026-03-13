@@ -36,48 +36,43 @@ public class ContractRepository : BaseRepository<Contract>, IContractRepository
 
     public async Task<PagedResult<Contract>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? employeeId = null, string? contractType = null, string? status = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
-        var query = GetActiveAndEnabledEntities()
+        // Count without Include to avoid unnecessary JOIN and reduce query cost
+        var countQuery = ApplyPagedFilters(GetActiveAndEnabledEntities(), searchTerm, employeeId, contractType, status);
+        var totalCount = await countQuery.CountAsync(cancellationToken);
+
+        var dataQuery = GetActiveAndEnabledEntities()
             .Include(c => c.Employee)
             .AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        dataQuery = ApplyPagedFilters(dataQuery, searchTerm, employeeId, contractType, status);
+        dataQuery = sortBy?.ToLower() switch
         {
-            query = query.Where(c => c.ContractType.Contains(searchTerm) ||
-                                   c.Notes.Contains(searchTerm));
-        }
-
-        if (employeeId.HasValue)
-        {
-            query = query.Where(c => c.EmployeeId == employeeId.Value);
-        }
-
-        if (!string.IsNullOrWhiteSpace(contractType))
-        {
-            query = query.Where(c => c.ContractType == contractType);
-        }
-
-        if (!string.IsNullOrWhiteSpace(status))
-        {
-            query = query.Where(c => c.Status == status);
-        }
-
-        query = sortBy?.ToLower() switch
-        {
-            "contracttype" => sortDescending ? query.OrderByDescending(c => c.ContractType) : query.OrderBy(c => c.ContractType),
-            "startdate" => sortDescending ? query.OrderByDescending(c => c.StartDate) : query.OrderBy(c => c.StartDate),
-            "enddate" => sortDescending ? query.OrderByDescending(c => c.EndDate) : query.OrderBy(c => c.EndDate),
-            "status" => sortDescending ? query.OrderByDescending(c => c.Status) : query.OrderBy(c => c.Status),
-            "createdat" => sortDescending ? query.OrderByDescending(c => c.CreatedAt) : query.OrderBy(c => c.CreatedAt),
-            _ => query.OrderByDescending(c => c.CreatedAt)
+            "contracttype" => sortDescending ? dataQuery.OrderByDescending(c => c.ContractType) : dataQuery.OrderBy(c => c.ContractType),
+            "startdate" => sortDescending ? dataQuery.OrderByDescending(c => c.StartDate) : dataQuery.OrderBy(c => c.StartDate),
+            "enddate" => sortDescending ? dataQuery.OrderByDescending(c => c.EndDate) : dataQuery.OrderBy(c => c.EndDate),
+            "status" => sortDescending ? dataQuery.OrderByDescending(c => c.Status) : dataQuery.OrderBy(c => c.Status),
+            "createdat" => sortDescending ? dataQuery.OrderByDescending(c => c.CreatedAt) : dataQuery.OrderBy(c => c.CreatedAt),
+            _ => dataQuery.OrderByDescending(c => c.CreatedAt)
         };
 
-        var totalCount = await query.CountAsync(cancellationToken);
-        var items = await query
+        var items = await dataQuery
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<Contract>(items, totalCount, pageNumber, pageSize);
+    }
+
+    private static IQueryable<Contract> ApplyPagedFilters(IQueryable<Contract> query, string? searchTerm, int? employeeId, string? contractType, string? status)
+    {
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+            query = query.Where(c => c.ContractType.Contains(searchTerm) || c.Notes != null && c.Notes.Contains(searchTerm));
+        if (employeeId.HasValue)
+            query = query.Where(c => c.EmployeeId == employeeId.Value);
+        if (!string.IsNullOrWhiteSpace(contractType))
+            query = query.Where(c => c.ContractType == contractType);
+        if (!string.IsNullOrWhiteSpace(status))
+            query = query.Where(c => c.Status == status);
+        return query;
     }
 
     public async Task<List<Contract>> GetByEmployeeIdAsync(int employeeId, CancellationToken cancellationToken = default)

@@ -15,21 +15,17 @@ public class EducationRepository : BaseRepository<Education>, IEducationReposito
 
     public async Task<PagedResult<Education>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? employeeId = null, string? institution = null, string? degree = null, string? fieldOfStudy = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
-        var query = GetActiveAndEnabledEntities()
+        // Count without Include to avoid unnecessary JOIN and reduce query cost
+        var countQuery = ApplySearchFilters(GetActiveAndEnabledEntities(), searchTerm, employeeId, institution, degree, fieldOfStudy);
+        var totalCount = await countQuery.CountAsync(cancellationToken);
+
+        var dataQuery = GetActiveAndEnabledEntities()
             .Include(e => e.Employee)
             .AsQueryable();
+        dataQuery = ApplySearchFilters(dataQuery, searchTerm, employeeId, institution, degree, fieldOfStudy);
+        dataQuery = ApplySorting(dataQuery, sortBy, sortDescending);
 
-        // Apply search filters
-        query = ApplySearchFilters(query, searchTerm, employeeId, institution, degree, fieldOfStudy);
-
-        // Apply sorting
-        query = ApplySorting(query, sortBy, sortDescending);
-
-        // Get total count
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        // Apply pagination
-        var educations = await query
+        var educations = await dataQuery
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

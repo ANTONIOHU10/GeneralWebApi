@@ -15,21 +15,17 @@ public class IdentityDocumentRepository : BaseRepository<IdentityDocument>, IIde
 
     public async Task<PagedResult<IdentityDocument>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? employeeId = null, string? documentType = null, string? issuingAuthority = null, string? issuingCountry = null, DateTime? expirationDateFrom = null, DateTime? expirationDateTo = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
-        var query = GetActiveAndEnabledEntities()
+        // Count without Include to avoid unnecessary JOIN and reduce query cost
+        var countQuery = ApplySearchFilters(GetActiveAndEnabledEntities(), searchTerm, employeeId, documentType, issuingAuthority, issuingCountry, expirationDateFrom, expirationDateTo);
+        var totalCount = await countQuery.CountAsync(cancellationToken);
+
+        var dataQuery = GetActiveAndEnabledEntities()
             .Include(e => e.Employee)
             .AsQueryable();
+        dataQuery = ApplySearchFilters(dataQuery, searchTerm, employeeId, documentType, issuingAuthority, issuingCountry, expirationDateFrom, expirationDateTo);
+        dataQuery = ApplySorting(dataQuery, sortBy, sortDescending);
 
-        // Apply search filters
-        query = ApplySearchFilters(query, searchTerm, employeeId, documentType, issuingAuthority, issuingCountry, expirationDateFrom, expirationDateTo);
-
-        // Apply sorting
-        query = ApplySorting(query, sortBy, sortDescending);
-
-        // Get total count
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        // Apply pagination
-        var documents = await query
+        var documents = await dataQuery
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

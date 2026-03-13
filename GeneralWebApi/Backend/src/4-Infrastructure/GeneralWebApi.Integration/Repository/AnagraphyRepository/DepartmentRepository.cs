@@ -21,21 +21,17 @@ public class DepartmentRepository : BaseRepository<Department>, IDepartmentRepos
 
     public async Task<PagedResult<Department>> GetPagedAsync(int pageNumber, int pageSize, string? searchTerm = null, int? parentDepartmentId = null, int? level = null, string? name = null, string? code = null, string? description = null, string? sortBy = null, bool sortDescending = false, CancellationToken cancellationToken = default)
     {
-        var query = GetActiveAndEnabledEntities()
+        // Count without Include to avoid unnecessary JOIN and reduce query cost
+        var countQuery = ApplySearchFilters(GetActiveAndEnabledEntities(), searchTerm, parentDepartmentId, level, name, code, description);
+        var totalCount = await countQuery.CountAsync(cancellationToken);
+
+        var dataQuery = GetActiveAndEnabledEntities()
             .Include(d => d.ParentDepartment)
             .AsQueryable();
+        dataQuery = ApplySearchFilters(dataQuery, searchTerm, parentDepartmentId, level, name, code, description);
+        dataQuery = ApplySorting(dataQuery, sortBy, sortDescending);
 
-        // Apply search filters
-        query = ApplySearchFilters(query, searchTerm, parentDepartmentId, level, name, code, description);
-
-        // Apply sorting
-        query = ApplySorting(query, sortBy, sortDescending);
-
-        // Get total count
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        // Apply pagination
-        var departments = await query
+        var departments = await dataQuery
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

@@ -40,6 +40,7 @@ public class ContractConfiguration : IEntityTypeConfiguration<Contract>
         builder.HasIndex(c => c.Status);
         builder.HasIndex(c => c.StartDate);
         builder.HasIndex(c => c.EndDate);
+        builder.HasIndex(c => c.RenewalReminderDate); // For reminder/dashboard queries (e.g. contracts due for renewal)
         #endregion
     }
 }
