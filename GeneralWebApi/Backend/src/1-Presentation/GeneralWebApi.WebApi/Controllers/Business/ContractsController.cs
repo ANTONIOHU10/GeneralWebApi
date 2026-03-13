@@ -169,11 +169,28 @@ public class ContractsController : BaseController
     [Authorize(Policy = "AllRoles")] // All authenticated users can view contracts by status
     public async Task<ActionResult<ApiResponse<List<ContractDto>>>> GetContractsByStatus(string status)
     {
-        return await ValidateAndExecuteAsync(status, async (validatedStatus) =>
+        return await ValidateAndExecuteAsync(status, async validatedStatus =>
         {
             var query = new GetContractsByStatusQuery { Status = validatedStatus };
             var result = await _mediator.Send(query);
             return Ok(ApiResponse<List<ContractDto>>.SuccessResult(result, "Contracts by status retrieved successfully"));
+        });
+    }
+
+    /// <summary>
+    /// Renew contract by extending its end date and updating reminder
+    /// </summary>
+    /// <param name="id">Contract ID</param>
+    /// <returns>Renewed contract</returns>
+    [HttpPost("{id}/renew")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can renew contracts
+    public async Task<ActionResult<ApiResponse<ContractDto>>> RenewContract(int id)
+    {
+        return await ValidateAndExecuteAsync(id, async validatedId =>
+        {
+            var command = new RenewContractCommand { Id = validatedId };
+            var result = await _mediator.Send(command);
+            return Ok(ApiResponse<ContractDto>.SuccessResult(result, "Contract renewed successfully"));
         });
     }
 }

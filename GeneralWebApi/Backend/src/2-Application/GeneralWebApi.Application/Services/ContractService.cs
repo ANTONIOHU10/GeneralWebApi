@@ -107,12 +107,6 @@ public class ContractService : IContractService
         _logger.LogInformation("Updating contract with ID: {ContractId}", id);
 
         var contract = await _contractRepository.GetByIdAsync(id, cancellationToken);
-        if (contract == null)
-        {
-            _logger.LogWarning("Contract with ID {ContractId} not found", id);
-            throw new KeyNotFoundException($"Contract with ID {id} not found");
-        }
-
         _mapper.Map(updateDto, contract);
         var updatedContract = await _contractRepository.UpdateAsync(contract, cancellationToken);
 
@@ -158,6 +152,29 @@ public class ContractService : IContractService
 
         var contracts = await _contractRepository.GetContractsByStatusAsync(status, cancellationToken);
         return _mapper.Map<List<ContractDto>>(contracts);
+    }
+
+    public async Task<ContractDto> RenewAsync(int id, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Renewing contract with ID: {ContractId}", id);
+
+        var contract = await _contractRepository.GetByIdAsync(id, cancellationToken);
+
+        var today = DateTime.Today;
+        var baseDate = contract.EndDate.HasValue && contract.EndDate.Value > today
+            ? contract.EndDate.Value
+            : today;
+
+        var newEndDate = baseDate.AddYears(1);
+
+        contract.EndDate = newEndDate;
+        contract.Status = "Active";
+        contract.RenewalReminderDate = newEndDate.AddDays(-30);
+
+        var updatedContract = await _contractRepository.UpdateAsync(contract, cancellationToken);
+
+        _logger.LogInformation("Successfully renewed contract with ID: {ContractId}. New end date: {EndDate}", id, newEndDate);
+        return _mapper.Map<ContractDto>(updatedContract);
     }
 }
 

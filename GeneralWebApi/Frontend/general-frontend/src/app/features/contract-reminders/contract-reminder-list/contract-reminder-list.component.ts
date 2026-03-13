@@ -257,11 +257,33 @@ export class ContractReminderListComponent implements OnInit, OnDestroy {
       confirmVariant: 'primary',
       icon: 'refresh',
     }).pipe(first(), filter(c => c)).subscribe(() => {
-      this.notificationService.success(
-        this.translationService.translate('contractReminders.renew.successTitle'),
-        this.translationService.translate('contractReminders.renew.successMessage', { name: employeeName }),
-        { duration: 3000 }
-      );
+      this.loading$.next(true);
+      this.contractService.renewContract(reminder.id)
+        .pipe(
+          first(),
+          catchError(err => {
+            this.loading$.next(false);
+            this.notificationService.error(
+              this.translationService.translate('common.error'),
+              err.message || this.translationService.translate('contractReminders.renew.failed'),
+              { duration: 5000 }
+            );
+            return of(null);
+          })
+        )
+        .subscribe(result => {
+          if (!result) {
+            return;
+          }
+
+          this.notificationService.success(
+            this.translationService.translate('contractReminders.renew.successTitle'),
+            this.translationService.translate('contractReminders.renew.successMessage', { name: employeeName }),
+            { duration: 3000 }
+          );
+
+          this.loadReminders();
+        });
     });
   }
 

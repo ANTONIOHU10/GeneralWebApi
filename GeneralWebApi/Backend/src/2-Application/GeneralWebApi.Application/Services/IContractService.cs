@@ -15,6 +15,7 @@ public interface IContractService
     Task<List<ContractDto>> GetExpiringContractsAsync(int daysFromNow, CancellationToken cancellationToken = default);
     Task<List<ContractDto>> GetExpiredContractsAsync(CancellationToken cancellationToken = default);
     Task<List<ContractDto>> GetContractsByStatusAsync(string status, CancellationToken cancellationToken = default);
+    Task<ContractDto> RenewAsync(int id, CancellationToken cancellationToken = default);
 }
 
 

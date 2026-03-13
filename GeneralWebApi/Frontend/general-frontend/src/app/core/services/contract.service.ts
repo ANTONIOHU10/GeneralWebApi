@@ -125,5 +125,12 @@ export class ContractService extends BaseHttpService {
       map(backendContracts => backendContracts.map(contract => this.transformBackendContract(contract)))
     );
   }
+
+  // Renew contract by ID
+  renewContract(id: string): Observable<Contract> {
+    return this.post<BackendContract>(`${this.endpoint}/${id}/renew`, {}).pipe(
+      map(backendContract => this.transformBackendContract(backendContract))
+    );
+  }
 }
 

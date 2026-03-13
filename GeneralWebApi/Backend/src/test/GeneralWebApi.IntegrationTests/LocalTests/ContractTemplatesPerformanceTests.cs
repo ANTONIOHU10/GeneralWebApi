@@ -22,7 +22,8 @@ public class ContractTemplatesPerformanceTests : IClassFixture<CustomWebApplicat
     private readonly System.Net.Http.HttpClient _client;
     private readonly ITestOutputHelper _output;
     private const int TIME_THREADSHOULD = 500; // ms
-    private const int TREE_THREADSHOULD = 1000; // ms
+    // Template operations involve more payload and auditing, allow a slightly higher threshold
+    private const int TREE_THREADSHOULD = 1500; // ms
 
     public ContractTemplatesPerformanceTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
     {

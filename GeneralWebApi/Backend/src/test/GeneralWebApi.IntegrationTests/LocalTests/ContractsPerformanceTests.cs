@@ -284,5 +284,38 @@ public class ContractsPerformanceTests : IClassFixture<CustomWebApplicationFacto
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         stopwatch.ElapsedMilliseconds.Should().BeLessThan(thresholdMs);
     }
+
+    [Fact]
+    public async Task Renew_Contract_Should_Be_Fast_Enough()
+    {
+        // Arrange
+        var token = await TestAuthHelper.GetAccessTokenAsync(_client, "admin", "Admin@123456");
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
+        // First, get an existing contract id (not measured)
+        var listResponse = await _client.GetAsync("/api/v1/Contracts?api-version=1.0&pageNumber=1&pageSize=1&sortBy=CreatedAt&sortDescending=true");
+        listResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var listContent = await listResponse.Content.ReadAsStringAsync();
+        var listResult = JsonSerializer.Deserialize<ApiResponse<PagedResult<ContractListDto>>>(listContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        var contractId = listResult?.Data?.Items?.FirstOrDefault()?.Id
+                        ?? throw new InvalidOperationException("No contracts found for renew performance test.");
+
+        var requestUrl = $"/api/v1/Contracts/{contractId}/renew?api-version=1.0";
+        var thresholdMs = TREE_THREADSHOULD;
+
+        // Act
+        var stopwatch = Stopwatch.StartNew();
+        var response = await _client.PostAsync(requestUrl, content: null);
+        stopwatch.Stop();
+        _output.WriteLine($"Renew contract request took {stopwatch.ElapsedMilliseconds} ms.");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        stopwatch.ElapsedMilliseconds.Should().BeLessThan(thresholdMs);
+    }
 }
 
