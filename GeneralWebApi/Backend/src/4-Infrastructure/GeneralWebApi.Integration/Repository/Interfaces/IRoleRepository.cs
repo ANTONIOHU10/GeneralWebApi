@@ -18,4 +18,5 @@ public interface IRoleRepository
     Task<bool> ExistsByNameAsync(string name);
     Task<List<Role>> SearchAsync(string? name, string? description, int? minEmployeeCount, int? maxEmployeeCount, DateTime? createdFrom, DateTime? createdTo, string? sortBy, bool sortDescending, int pageNumber, int pageSize);
     Task<int> GetEmployeeCountAsync(int roleId);
+    Task<Dictionary<int, int>> GetEmployeeCountsAsync(IEnumerable<int> roleIds);
 }

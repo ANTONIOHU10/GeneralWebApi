@@ -45,10 +45,19 @@ public class GetRolesQueryHandler : IRequestHandler<GetRolesQuery, List<RoleList
 
         var roleListDtos = _mapper.Map<List<RoleListDto>>(roles);
 
-        // Set employee count for each role
+        // Set employee count for each role using a single aggregated query to avoid N+1
+        var roleIds = roleListDtos.Select(r => r.Id).ToList();
+        var employeeCounts = await _roleRepository.GetEmployeeCountsAsync(roleIds);
         foreach (var roleDto in roleListDtos)
         {
-            roleDto.EmployeeCount = await _roleRepository.GetEmployeeCountAsync(roleDto.Id);
+            if (employeeCounts.TryGetValue(roleDto.Id, out var count))
+            {
+                roleDto.EmployeeCount = count;
+            }
+            else
+            {
+                roleDto.EmployeeCount = 0;
+            }
         }
 
         return roleListDtos;

@@ -130,4 +130,19 @@ public class RoleRepository : IRoleRepository
         return await _context.EmployeeRoles
             .CountAsync(er => er.RoleId == roleId);
     }
+
+    public async Task<Dictionary<int, int>> GetEmployeeCountsAsync(IEnumerable<int> roleIds)
+    {
+        var ids = roleIds.Distinct().ToList();
+        if (ids.Count == 0)
+        {
+            return new Dictionary<int, int>();
+        }
+
+        return await _context.EmployeeRoles
+            .Where(er => ids.Contains(er.RoleId))
+            .GroupBy(er => er.RoleId)
+            .Select(g => new { RoleId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.RoleId, x => x.Count);
+    }
 }
