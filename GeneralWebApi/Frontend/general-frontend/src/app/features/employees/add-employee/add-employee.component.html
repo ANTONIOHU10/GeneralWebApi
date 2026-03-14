@@ -1,23 +1,23 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/add-employee/add-employee.component.html -->
-<div class="page-container">
-  <div class="page-header">
-    <h2>
-      <span class="material-icons">person_add</span>
-      {{ 'employees.add.title' | translate }}
-    </h2>
-    <p>{{ 'employees.add.subtitle' | translate }}</p>
-  </div>
-
-  <div class="page-content">
-    <app-base-form
-      [config]="formConfig"
-      [formData]="formData"
-      [loading]="loading()"
-      [fieldLoading]="fieldLoading()"
-      (formSubmit)="onFormSubmit($event)"
-      (formCancel)="onFormCancel()"
-      (fieldDropdownOpen)="onFieldDropdownOpen($event.key)"
+<div class="add-employee-container">
+  <div class="form-section">
+    <app-base-card
+      [title]="'employees.add.cardTitle' | translate"
+      [icon]="'person_add'"
+      [variant]="'elevated'"
     >
-    </app-base-form>
+      <div class="form-container">
+        <app-base-form
+          [config]="formConfig"
+          [formData]="formData"
+          [loading]="loading()"
+          [fieldLoading]="fieldLoading()"
+          (formSubmit)="onFormSubmit($event)"
+          (formCancel)="onFormCancel()"
+          (fieldDropdownOpen)="onFieldDropdownOpen($event.key)"
+        >
+        </app-base-form>
+      </div>
+    </app-base-card>
   </div>
 </div>

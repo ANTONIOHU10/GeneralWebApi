@@ -451,6 +451,7 @@
     "add": {
       "title": "添加新员工",
       "subtitle": "在系统中创建新的员工记录",
+      "cardTitle": "员工信息",
       "sections": {
         "personalInformation": "个人信息",
         "personalInformationDescription": "输入员工的个人详细信息",
@@ -814,6 +815,7 @@
       }
     },
     "add": {
+      "cardTitle": "合同信息",
       "sections": {
         "contractInfo": "合同信息",
         "contractInfoDescription": "输入合同详情",
@@ -860,6 +862,7 @@
       }
     },
     "submitApproval": {
+      "cardTitle": "提交审批",
       "sections": {
         "contractSelection": "选择合同",
         "approvalSettings": "审批设置"
@@ -1089,6 +1092,7 @@
     "add": {
       "title": "添加合同模板",
       "subtitle": "创建新的合同模板",
+      "cardTitle": "模板信息",
       "sections": {
         "templateInfo": "模板信息",
         "templateInfoDescription": "输入模板基本信息",
@@ -1217,7 +1221,8 @@
   "users": {
     "add": {
       "title": "添加新用户",
-      "subtitle": "在系统中创建新用户账户"
+      "subtitle": "在系统中创建新用户账户",
+      "cardTitle": "用户信息"
     },
     "delete": {
       "confirmMessage": "删除用户 \"{{name}}\" 吗？此操作无法撤销。"
@@ -1229,7 +1234,8 @@
     "list": "角色列表",
     "add": {
       "title": "添加新角色",
-      "subtitle": "创建新角色并分配权限"
+      "subtitle": "创建新角色并分配权限",
+      "cardTitle": "角色信息"
     },
     "edit": "编辑角色",
     "details": "角色详情",
@@ -1390,6 +1396,7 @@
     "add": {
       "title": "添加新权限",
       "subtitle": "创建新的系统权限",
+      "cardTitle": "权限信息",
       "sections": {
         "permissionInfo": "权限信息",
         "permissionInfoDescription": "输入权限基本信息"
@@ -1462,6 +1469,7 @@
       }
     },
     "add": {
+      "cardTitle": "部门信息",
       "sectionTitle": "部门信息",
       "sectionDescription": "输入部门详情",
       "fields": {
@@ -1575,6 +1583,7 @@
       }
     },
     "add": {
+      "cardTitle": "职位信息",
       "sections": {
         "positionInfo": "职位信息",
         "positionInfoDescription": "输入职位详情",
@@ -1668,6 +1677,7 @@
       "inactive": "非活跃"
     },
     "add": {
+      "cardTitle": "用户信息",
       "sections": {
         "userInfo": "用户信息",
         "userInfoDescription": "输入用户基本信息",

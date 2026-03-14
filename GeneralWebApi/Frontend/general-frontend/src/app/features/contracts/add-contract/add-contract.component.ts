@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject, of } from 'rxjs';
 import { takeUntil, catchError, filter, distinctUntilChanged } from 'rxjs/operators';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -15,13 +16,16 @@ import { EmployeeService } from '../../../core/services/employee.service';
 import { Employee } from 'app/contracts/employees/employee.model';
 import { UserService, UserWithEmployee } from '../../../core/services/user.service';
 import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-add-contract',
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './add-contract.component.html',
   styleUrls: ['./add-contract.component.scss'],
@@ -91,24 +95,25 @@ export class AddContractComponent implements OnInit, OnDestroy {
    * Initialize form config with translations
    */
   private initializeFormConfig(): void {
-    const contractInfoSection = this.translationService.translate('contracts.add.sections.contractInfo');
+    // First section title/description omitted to avoid duplication with card header
+    const contractFieldsSectionKey = '_main';
     const approvalSection = this.translationService.translate('contracts.add.sections.approvalSettings');
 
     this.formConfig = {
       sections: [
-        { title: contractInfoSection, description: this.translationService.translate('contracts.add.sections.contractInfoDescription'), order: 0 },
+        { key: contractFieldsSectionKey, title: '', description: '', order: 0 },
         { title: approvalSection, description: this.translationService.translate('contracts.add.sections.approvalSettingsDescription'), order: 1 },
       ],
       layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
       fields: [
-        { key: 'employeeId', type: 'select', label: this.translationService.translate('contracts.add.fields.employee'), placeholder: this.translationService.translate('contracts.add.fields.employeePlaceholder'), required: true, section: contractInfoSection, order: 0, colSpan: 2, searchable: true, options: this.employeeOptions },
-        { key: 'contractType', type: 'select', label: this.translationService.translate('contracts.add.fields.contractType'), placeholder: this.translationService.translate('contracts.add.fields.contractTypePlaceholder'), required: true, section: contractInfoSection, order: 1, colSpan: 1, options: CONTRACT_TYPES.map(type => ({ value: type.value, label: type.label })) as SelectOption[] },
-        { key: 'status', type: 'select', label: this.translationService.translate('contracts.add.fields.status'), placeholder: this.translationService.translate('contracts.add.fields.statusPlaceholder'), required: true, section: contractInfoSection, order: 2, colSpan: 1, options: CONTRACT_STATUSES.map(status => ({ value: status.value, label: status.label })) as SelectOption[] },
-        { key: 'startDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.startDate'), placeholder: this.translationService.translate('contracts.add.fields.startDatePlaceholder'), required: true, section: contractInfoSection, order: 3, colSpan: 1 },
-        { key: 'endDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.endDate'), placeholder: this.translationService.translate('contracts.add.fields.endDatePlaceholder'), required: false, section: contractInfoSection, order: 4, colSpan: 1 },
-        { key: 'salary', type: 'number', label: this.translationService.translate('contracts.add.fields.salary'), placeholder: this.translationService.translate('contracts.add.fields.salaryPlaceholder'), required: false, section: contractInfoSection, order: 5, colSpan: 1, min: 0 },
-        { key: 'renewalReminderDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.renewalReminder'), placeholder: this.translationService.translate('contracts.add.fields.renewalReminderPlaceholder'), required: false, section: contractInfoSection, order: 6, colSpan: 1 },
-        { key: 'notes', type: 'textarea', label: this.translationService.translate('contracts.add.fields.notes'), placeholder: this.translationService.translate('contracts.add.fields.notesPlaceholder'), required: false, section: contractInfoSection, order: 7, colSpan: 2, rows: 4 },
+        { key: 'employeeId', type: 'select', label: this.translationService.translate('contracts.add.fields.employee'), placeholder: this.translationService.translate('contracts.add.fields.employeePlaceholder'), required: true, section: contractFieldsSectionKey, order: 0, colSpan: 2, searchable: true, options: this.employeeOptions },
+        { key: 'contractType', type: 'select', label: this.translationService.translate('contracts.add.fields.contractType'), placeholder: this.translationService.translate('contracts.add.fields.contractTypePlaceholder'), required: true, section: contractFieldsSectionKey, order: 1, colSpan: 1, options: CONTRACT_TYPES.map(type => ({ value: type.value, label: type.label })) as SelectOption[] },
+        { key: 'status', type: 'select', label: this.translationService.translate('contracts.add.fields.status'), placeholder: this.translationService.translate('contracts.add.fields.statusPlaceholder'), required: true, section: contractFieldsSectionKey, order: 2, colSpan: 1, options: CONTRACT_STATUSES.map(status => ({ value: status.value, label: status.label })) as SelectOption[] },
+        { key: 'startDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.startDate'), placeholder: this.translationService.translate('contracts.add.fields.startDatePlaceholder'), required: true, section: contractFieldsSectionKey, order: 3, colSpan: 1 },
+        { key: 'endDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.endDate'), placeholder: this.translationService.translate('contracts.add.fields.endDatePlaceholder'), required: false, section: contractFieldsSectionKey, order: 4, colSpan: 1 },
+        { key: 'salary', type: 'number', label: this.translationService.translate('contracts.add.fields.salary'), placeholder: this.translationService.translate('contracts.add.fields.salaryPlaceholder'), required: false, section: contractFieldsSectionKey, order: 5, colSpan: 1, min: 0 },
+        { key: 'renewalReminderDate', type: 'datepicker', label: this.translationService.translate('contracts.add.fields.renewalReminder'), placeholder: this.translationService.translate('contracts.add.fields.renewalReminderPlaceholder'), required: false, section: contractFieldsSectionKey, order: 6, colSpan: 1 },
+        { key: 'notes', type: 'textarea', label: this.translationService.translate('contracts.add.fields.notes'), placeholder: this.translationService.translate('contracts.add.fields.notesPlaceholder'), required: false, section: contractFieldsSectionKey, order: 7, colSpan: 2, rows: 4 },
         { key: 'submitForApproval', type: 'checkbox', label: this.translationService.translate('contracts.add.fields.submitForApproval'), placeholder: this.translationService.translate('contracts.add.fields.submitForApprovalPlaceholder'), required: false, section: approvalSection, order: 0, colSpan: 2 },
         { key: 'approvers', type: 'select', label: this.translationService.translate('contracts.add.fields.approvers'), placeholder: this.translationService.translate('contracts.add.fields.approversPlaceholder'), hint: this.translationService.translate('contracts.add.fields.approversHint'), required: false, section: approvalSection, order: 1, colSpan: 2, searchable: true, multiple: true, options: this.approverOptions },
         { key: 'approvalComments', type: 'textarea', label: this.translationService.translate('contracts.add.fields.approvalComments'), placeholder: this.translationService.translate('contracts.add.fields.approvalCommentsPlaceholder'), required: false, section: approvalSection, order: 2, colSpan: 2, rows: 3 },

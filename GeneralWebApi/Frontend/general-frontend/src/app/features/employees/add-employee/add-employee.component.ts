@@ -5,6 +5,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { filter, first, pairwise, debounceTime, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -24,6 +25,7 @@ import { Position } from 'app/contracts/positions/position.model';
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
     TranslatePipe,
   ],

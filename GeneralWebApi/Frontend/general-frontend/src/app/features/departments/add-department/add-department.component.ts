@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { takeUntil, filter, take, pairwise, debounceTime, startWith, distinctUntilChanged } from 'rxjs/operators';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -11,6 +12,7 @@ import {
 import { DialogService, OperationNotificationService } from '../../../Shared/services';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Department } from 'app/contracts/departments/department.model';
 
 @Component({
@@ -18,7 +20,9 @@ import { Department } from 'app/contracts/departments/department.model';
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './add-department.component.html',
   styleUrls: ['./add-department.component.scss'],
@@ -62,15 +66,12 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
    * Initialize form config with translations
    */
   private initializeFormConfig(): void {
-    const sectionTitle = this.translationService.translate('departments.add.sectionTitle');
+    // Section title/description omitted to avoid duplication with card header
+    const sectionKey = '_main';
 
     this.formConfig = {
       sections: [
-        {
-          title: sectionTitle,
-          description: this.translationService.translate('departments.add.sectionDescription'),
-          order: 0,
-        },
+        { key: sectionKey, title: '', description: '', order: 0 },
       ],
       layout: {
         columns: 2,
@@ -86,7 +87,7 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
           label: this.translationService.translate('departments.add.fields.name'),
           placeholder: this.translationService.translate('departments.add.fields.namePlaceholder'),
           required: true,
-          section: sectionTitle,
+          section: sectionKey,
           order: 0,
           colSpan: 2,
         },
@@ -96,7 +97,7 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
           label: this.translationService.translate('departments.add.fields.code'),
           placeholder: this.translationService.translate('departments.add.fields.codePlaceholder'),
           required: true,
-          section: sectionTitle,
+          section: sectionKey,
           order: 1,
           colSpan: 1,
         },
@@ -106,7 +107,7 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
           label: this.translationService.translate('departments.add.fields.level'),
           placeholder: this.translationService.translate('departments.add.fields.levelPlaceholder'),
           required: true,
-          section: sectionTitle,
+          section: sectionKey,
           order: 2,
           colSpan: 1,
           min: 1,
@@ -116,7 +117,7 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
           type: 'select',
           label: this.translationService.translate('departments.add.fields.parentDepartment'),
           placeholder: this.translationService.translate('departments.add.fields.parentDepartmentPlaceholder'),
-          section: sectionTitle,
+          section: sectionKey,
           order: 3,
           colSpan: 2,
           searchable: true,
@@ -127,7 +128,7 @@ export class AddDepartmentComponent implements OnInit, OnDestroy {
           type: 'textarea',
           label: this.translationService.translate('departments.add.fields.description'),
           placeholder: this.translationService.translate('departments.add.fields.descriptionPlaceholder'),
-          section: sectionTitle,
+          section: sectionKey,
           order: 4,
           colSpan: 2,
           rows: 4,

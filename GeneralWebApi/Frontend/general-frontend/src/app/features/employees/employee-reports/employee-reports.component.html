@@ -1,13 +1,5 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/employees/employee-reports/employee-reports.component.html -->
-<div class="page-container">
-  <div class="page-header">
-    <h2>
-      <span class="material-icons">assessment</span>
-      {{ 'employees.reports.title' | translate }}
-    </h2>
-    <p>{{ 'employees.reports.subtitle' | translate }}</p>
-  </div>
-
+<div class="reports-container">
   <div class="page-content">
     <app-base-async-state
       [loading$]="loading$"

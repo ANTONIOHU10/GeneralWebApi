@@ -1,13 +1,15 @@
-// Path: GeneralWebApi/Frontend/general-frontend/src/app/features/permissions/add-permission/add-permission.component.scss
+/* Path: GeneralWebApi/Frontend/general-frontend/src/app/features/permissions/add-permission/add-permission.component.scss */
+@use '../../../../styles/core/variable' as *;
 
-// Custom icon color for permission management
-.page-container {
-  .page-header {
-    h2 {
-      .material-icons {
-        color: var(--color-error);
-      }
-    }
+.add-permission-container {
+  padding: $spacing-4 0;
+}
+
+.form-section {
+  margin-bottom: $spacing-6;
+
+  .form-container {
+    padding-top: $spacing-4;
   }
 }
 

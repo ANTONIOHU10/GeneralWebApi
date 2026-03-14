@@ -2,16 +2,7 @@
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
 
-// 使用全局样式类作为基础，添加自定义样式
-.page-container {
-  .page-header {
-    h2 {
-      .material-icons {
-        color: var(--color-warning); // 使用CSS变量
-      }
-    }
-  }
-
+.settings-container {
   .page-content {
     .settings-sections {
       flex: 1;

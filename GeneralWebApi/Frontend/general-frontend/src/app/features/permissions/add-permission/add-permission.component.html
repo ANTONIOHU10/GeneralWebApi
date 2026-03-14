@@ -1,21 +1,21 @@
 <!-- Path: GeneralWebApi/Frontend/general-frontend/src/app/features/permissions/add-permission/add-permission.component.html -->
-<div class="page-container">
-  <div class="page-header">
-    <h2>
-      <span class="material-icons">lock</span>
-      {{ 'permissions.add.title' | translate }}
-    </h2>
-    <p>{{ 'permissions.add.subtitle' | translate }}</p>
-  </div>
-
-  <div class="page-content">
-    <app-base-form
-      [config]="formConfig"
-      [formData]="formData"
-      [loading]="loading()"
-      (formSubmit)="onFormSubmit($event)"
-      (formCancel)="onFormCancel()"
-    ></app-base-form>
+<div class="add-permission-container">
+  <div class="form-section">
+    <app-base-card
+      [title]="'permissions.add.cardTitle' | translate"
+      [icon]="'lock'"
+      [variant]="'elevated'"
+    >
+      <div class="form-container">
+        <app-base-form
+          [config]="formConfig"
+          [formData]="formData"
+          [loading]="loading()"
+          (formSubmit)="onFormSubmit($event)"
+          (formCancel)="onFormCancel()"
+        ></app-base-form>
+      </div>
+    </app-base-card>
   </div>
 </div>
 

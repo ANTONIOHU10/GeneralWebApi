@@ -491,6 +491,7 @@
     "add": {
       "title": "Add New Employee",
       "subtitle": "Create a new employee record in the system",
+      "cardTitle": "Employee Information",
       "sections": {
         "personalInformation": "Personal Information",
         "personalInformationDescription": "Enter the employee's personal details",
@@ -854,6 +855,7 @@
       }
     },
     "add": {
+      "cardTitle": "Contract Information",
       "sections": {
         "contractInfo": "Contract Information",
         "contractInfoDescription": "Enter contract details",
@@ -900,6 +902,7 @@
       }
     },
     "submitApproval": {
+      "cardTitle": "Submit for Approval",
       "sections": {
         "contractSelection": "Contract Selection",
         "approvalSettings": "Approval Settings"
@@ -1129,6 +1132,7 @@
     "add": {
       "title": "Add Contract Template",
       "subtitle": "Create a new contract template",
+      "cardTitle": "Template Information",
       "sections": {
         "templateInfo": "Template Information",
         "templateInfoDescription": "Enter template basic information",
@@ -1257,7 +1261,8 @@
   "users": {
     "add": {
       "title": "Add New User",
-      "subtitle": "Create a new user account in the system"
+      "subtitle": "Create a new user account in the system",
+      "cardTitle": "User Information"
     },
     "delete": {
       "confirmMessage": "Delete user \"{{name}}\"? This action cannot be undone."
@@ -1269,7 +1274,8 @@
     "list": "Role List",
     "add": {
       "title": "Add New Role",
-      "subtitle": "Create a new role and assign permissions"
+      "subtitle": "Create a new role and assign permissions",
+      "cardTitle": "Role Information"
     },
     "edit": "Edit Role",
     "details": "Role Details",
@@ -1430,6 +1436,7 @@
     "add": {
       "title": "Add New Permission",
       "subtitle": "Create a new system permission",
+      "cardTitle": "Permission Information",
       "sections": {
         "permissionInfo": "Permission Information",
         "permissionInfoDescription": "Enter permission basic information"
@@ -1502,6 +1509,7 @@
       }
     },
     "add": {
+      "cardTitle": "Department Information",
       "sectionTitle": "Department Information",
       "sectionDescription": "Enter department details",
       "fields": {
@@ -1615,6 +1623,7 @@
       }
     },
     "add": {
+      "cardTitle": "Position Information",
       "sections": {
         "positionInfo": "Position Information",
         "positionInfoDescription": "Enter position details",
@@ -1708,6 +1717,7 @@
       "inactive": "Inactive"
     },
     "add": {
+      "cardTitle": "User Information",
       "sections": {
         "userInfo": "User Information",
         "userInfoDescription": "Enter user basic information",

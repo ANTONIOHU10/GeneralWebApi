@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, take, distinctUntilChanged } from 'rxjs/operators';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -18,6 +19,7 @@ import { TranslatePipe } from '@core/pipes/translate.pipe';
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
     TranslatePipe,
   ],
@@ -94,17 +96,18 @@ export class AddPermissionComponent implements OnInit, OnDestroy {
    * Initialize form config with translations
    */
   private initializeFormConfig(): void {
-    const sectionTitle = this.translationService.translate('permissions.add.sections.permissionInfo');
+    // Section title/description omitted to avoid duplication with card header
+    const sectionKey = '_main';
 
     this.formConfig = {
-      sections: [{ title: sectionTitle, description: this.translationService.translate('permissions.add.sections.permissionInfoDescription'), order: 0 }],
+      sections: [{ key: sectionKey, title: '', description: '', order: 0 }],
       layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
       fields: [
-        { key: 'name', type: 'input', label: this.translationService.translate('permissions.add.fields.name'), placeholder: this.translationService.translate('permissions.add.fields.namePlaceholder'), required: false, section: sectionTitle, order: 0, colSpan: 2, hint: this.translationService.translate('permissions.add.fields.nameHint'), readonly: true },
-        { key: 'description', type: 'textarea', label: this.translationService.translate('permissions.add.fields.description'), placeholder: this.translationService.translate('permissions.add.fields.descriptionPlaceholder'), required: false, section: sectionTitle, order: 1, colSpan: 2, rows: 3 },
-        { key: 'resource', type: 'select', label: this.translationService.translate('permissions.add.fields.resource'), placeholder: this.translationService.translate('permissions.add.fields.resourcePlaceholder'), required: true, section: sectionTitle, order: 2, colSpan: 1, options: this.resourceOptions },
-        { key: 'action', type: 'select', label: this.translationService.translate('permissions.add.fields.action'), placeholder: this.translationService.translate('permissions.add.fields.actionPlaceholder'), required: true, section: sectionTitle, order: 3, colSpan: 1, options: this.actionOptions },
-        { key: 'category', type: 'select', label: this.translationService.translate('permissions.add.fields.category'), placeholder: this.translationService.translate('permissions.add.fields.categoryPlaceholder'), required: true, section: sectionTitle, order: 4, colSpan: 1, options: this.categoryOptions },
+        { key: 'name', type: 'input', label: this.translationService.translate('permissions.add.fields.name'), placeholder: this.translationService.translate('permissions.add.fields.namePlaceholder'), required: false, section: sectionKey, order: 0, colSpan: 2, hint: this.translationService.translate('permissions.add.fields.nameHint'), readonly: true },
+        { key: 'description', type: 'textarea', label: this.translationService.translate('permissions.add.fields.description'), placeholder: this.translationService.translate('permissions.add.fields.descriptionPlaceholder'), required: false, section: sectionKey, order: 1, colSpan: 2, rows: 3 },
+        { key: 'resource', type: 'select', label: this.translationService.translate('permissions.add.fields.resource'), placeholder: this.translationService.translate('permissions.add.fields.resourcePlaceholder'), required: true, section: sectionKey, order: 2, colSpan: 1, options: this.resourceOptions },
+        { key: 'action', type: 'select', label: this.translationService.translate('permissions.add.fields.action'), placeholder: this.translationService.translate('permissions.add.fields.actionPlaceholder'), required: true, section: sectionKey, order: 3, colSpan: 1, options: this.actionOptions },
+        { key: 'category', type: 'select', label: this.translationService.translate('permissions.add.fields.category'), placeholder: this.translationService.translate('permissions.add.fields.categoryPlaceholder'), required: true, section: sectionKey, order: 4, colSpan: 1, options: this.categoryOptions },
       ],
       submitButtonText: this.translationService.translate('common.add'),
       cancelButtonText: this.translationService.translate('common.cancel'),

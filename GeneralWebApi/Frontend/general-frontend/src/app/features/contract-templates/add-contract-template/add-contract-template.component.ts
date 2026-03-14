@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject, EMPTY } from 'rxjs';
 import { takeUntil, filter, take, distinctUntilChanged, catchError } from 'rxjs/operators';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -20,6 +21,7 @@ import { TranslatePipe } from '@core/pipes/translate.pipe';
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
     TranslatePipe,
   ],

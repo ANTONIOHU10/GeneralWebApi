@@ -2,14 +2,15 @@
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
 
-// 使用全局样式类作为基础，添加自定义样式
-.page-container {
-  .page-header {
-    h2 {
-      .material-icons {
-        color: var(--color-success); // Custom icon color
-      }
-    }
+.add-employee-container {
+  padding: $spacing-4 0;
+}
+
+.form-section {
+  margin-bottom: $spacing-6;
+
+  .form-container {
+    padding-top: $spacing-4;
   }
 }
 

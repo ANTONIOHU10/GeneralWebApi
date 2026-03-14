@@ -50,7 +50,7 @@
         [style.gap]="layout.gap"
       >
         <ng-container
-          *ngFor="let field of getFieldsForSection(section.title)"
+          *ngFor="let field of getFieldsForSection(section.key ?? section.title)"
         >
           <!-- Input Field -->
           <div

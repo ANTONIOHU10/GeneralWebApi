@@ -107,6 +107,8 @@ export interface FormField {
  * Form section configuration
  */
 export interface FormSection {
+  /** Optional key to match fields when title is empty (avoids duplicate header with card) */
+  key?: string;
   title: string;
   description?: string;
   collapsible?: boolean;

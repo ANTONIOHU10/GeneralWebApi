@@ -2,6 +2,14 @@
 @use '../../../../styles/core/variable' as *;
 
 .add-department-container {
-  padding: $spacing-4;
+  padding: $spacing-4 0;
+}
+
+.form-section {
+  margin-bottom: $spacing-6;
+
+  .form-container {
+    padding-top: $spacing-4;
+  }
 }
 

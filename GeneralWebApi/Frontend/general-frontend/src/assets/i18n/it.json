@@ -491,6 +491,7 @@
     "add": {
       "title": "Aggiungi Nuovo Dipendente",
       "subtitle": "Crea un nuovo record dipendente nel sistema",
+      "cardTitle": "Informazioni Dipendente",
       "sections": {
         "personalInformation": "Informazioni Personali",
         "personalInformationDescription": "Inserisci i dettagli personali del dipendente",
@@ -854,6 +855,7 @@
       }
     },
     "add": {
+      "cardTitle": "Informazioni Contratto",
       "sections": {
         "contractInfo": "Informazioni Contratto",
         "contractInfoDescription": "Inserisci i dettagli del contratto",
@@ -888,6 +890,7 @@
       "submitButton": "Crea Contratto"
     },
     "submitApproval": {
+      "cardTitle": "Invia per Approvazione",
       "sections": {
         "contractSelection": "Selezione Contratto",
         "approvalSettings": "Impostazioni Approvazione"
@@ -1113,6 +1116,7 @@
     "add": {
       "title": "Aggiungi Modello Contratto",
       "subtitle": "Crea un nuovo modello di contratto",
+      "cardTitle": "Informazioni Modello",
       "sections": {
         "templateInfo": "Informazioni Modello",
         "templateInfoDescription": "Inserisci informazioni di base del modello",
@@ -1217,6 +1221,7 @@
       "inactive": "Inattivo"
     },
     "add": {
+      "cardTitle": "Informazioni Utente",
       "sections": {
         "userInfo": "Informazioni Utente",
         "userInfoDescription": "Inserisci informazioni di base dell'utente",
@@ -1314,7 +1319,8 @@
     "list": "Elenco Ruoli",
     "add": {
       "title": "Aggiungi Nuovo Ruolo",
-      "subtitle": "Crea un nuovo ruolo e assegna permessi"
+      "subtitle": "Crea un nuovo ruolo e assegna permessi",
+      "cardTitle": "Informazioni Ruolo"
     },
     "edit": "Modifica Ruolo",
     "details": "Dettagli Ruolo",
@@ -1475,6 +1481,7 @@
     "add": {
       "title": "Aggiungi Nuovo Permesso",
       "subtitle": "Crea un nuovo permesso di sistema",
+      "cardTitle": "Informazioni Permesso",
       "sections": {
         "permissionInfo": "Informazioni Permesso",
         "permissionInfoDescription": "Inserisci informazioni di base del permesso"
@@ -1547,6 +1554,7 @@
       }
     },
     "add": {
+      "cardTitle": "Informazioni Dipartimento",
       "sectionTitle": "Informazioni Dipartimento",
       "sectionDescription": "Inserisci i dettagli del dipartimento",
       "fields": {
@@ -1660,6 +1668,7 @@
       }
     },
     "add": {
+      "cardTitle": "Informazioni Posizione",
       "sections": {
         "positionInfo": "Informazioni Posizione",
         "positionInfoDescription": "Inserisci i dettagli della posizione",

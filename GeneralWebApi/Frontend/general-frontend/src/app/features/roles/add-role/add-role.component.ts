@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, take, distinctUntilChanged } from 'rxjs/operators';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -20,6 +21,7 @@ import { PermissionService, PermissionList } from '../../../core/services/permis
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
     TranslatePipe,
   ],
@@ -64,18 +66,19 @@ export class AddRoleComponent implements OnInit, OnDestroy {
    * Initialize form config with translations
    */
   private initializeFormConfig(): void {
-    const roleInfoSection = this.translationService.translate('roles.form.roleInformation');
+    // First section title/description omitted to avoid duplication with card header
+    const roleFieldsSectionKey = '_main';
     const permissionsSection = this.translationService.translate('roles.form.permissions');
 
     this.formConfig = {
       sections: [
-        { title: roleInfoSection, description: this.translationService.translate('roles.form.roleInformationDescription'), order: 0 },
+        { key: roleFieldsSectionKey, title: '', description: '', order: 0 },
         { title: permissionsSection, description: this.translationService.translate('roles.form.permissionsDescription'), order: 1 },
       ],
       layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
       fields: [
-        { key: 'name', type: 'input', label: this.translationService.translate('roles.form.name'), placeholder: this.translationService.translate('roles.form.namePlaceholder'), required: true, section: roleInfoSection, order: 0, colSpan: 2 },
-        { key: 'description', type: 'textarea', label: this.translationService.translate('roles.form.description'), placeholder: this.translationService.translate('roles.form.descriptionPlaceholder'), required: false, section: roleInfoSection, order: 1, colSpan: 2, rows: 3 },
+        { key: 'name', type: 'input', label: this.translationService.translate('roles.form.name'), placeholder: this.translationService.translate('roles.form.namePlaceholder'), required: true, section: roleFieldsSectionKey, order: 0, colSpan: 2 },
+        { key: 'description', type: 'textarea', label: this.translationService.translate('roles.form.description'), placeholder: this.translationService.translate('roles.form.descriptionPlaceholder'), required: false, section: roleFieldsSectionKey, order: 1, colSpan: 2, rows: 3 },
         { key: 'permissions', type: 'select', label: this.translationService.translate('roles.form.permissions'), placeholder: this.translationService.translate('roles.form.permissionsPlaceholder'), required: false, section: permissionsSection, order: 0, colSpan: 2, multiple: true, searchable: true, options: this.permissionOptions },
       ],
       submitButtonText: this.translationService.translate('roles.form.submitButton'),

@@ -3,12 +3,13 @@ import { Component, OnInit, OnDestroy, Output, EventEmitter, inject, signal, Cha
 import { CommonModule } from '@angular/common';
 import { Subject, of } from 'rxjs';
 import { takeUntil, catchError, filter, distinctUntilChanged } from 'rxjs/operators';
-import { BaseFormComponent, FormConfig } from '../../../Shared/components/base/base-form/base-form.component';
+import { BaseCardComponent, BaseFormComponent, FormConfig } from '../../../Shared/components/base';
 import { NotificationService } from '../../../Shared/services';
 import { ContractService } from '../../../core/services/contract.service';
 import { ContractApprovalService } from '../../../core/services/contract-approval.service';
 import { UserService, UserWithEmployee } from '../../../core/services/user.service';
 import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Contract } from 'app/contracts/contracts/contract.model';
 import { SubmitApprovalRequest, ApprovalStepRequest } from 'app/contracts/contract-approvals/contract-approval.model';
 import type { SelectOption } from '../../../Shared/components/base/base-select/base-select.component';
@@ -18,7 +19,9 @@ import type { SelectOption } from '../../../Shared/components/base/base-select/b
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './submit-contract-approval.component.html',
   styleUrls: ['./submit-contract-approval.component.scss'],

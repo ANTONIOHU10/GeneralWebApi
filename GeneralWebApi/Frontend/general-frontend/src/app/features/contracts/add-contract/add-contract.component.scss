@@ -2,9 +2,14 @@
 @use '../../../../styles/core/variable' as *;
 
 .add-contract-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: $spacing-4;
+  padding: $spacing-4 0;
+}
+
+.form-section {
+  margin-bottom: $spacing-6;
+
+  .form-container {
+    padding-top: $spacing-4;
+  }
 }
 

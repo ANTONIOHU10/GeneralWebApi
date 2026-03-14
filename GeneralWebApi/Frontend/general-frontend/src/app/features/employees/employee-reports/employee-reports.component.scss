@@ -2,15 +2,7 @@
 @use '../../../../styles/core/variable' as *;
 @use '../../../../styles/core/mixin' as *;
 
-.page-container {
-  .page-header {
-    h2 {
-      .material-icons {
-        color: var(--color-primary-500);
-      }
-    }
-  }
-
+.reports-container {
   .page-content {
     // Statistics Grid
     .statistics-grid {

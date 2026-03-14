@@ -468,6 +468,7 @@
     "add": {
       "title": "Agregar Nuevo Empleado",
       "subtitle": "Crear un nuevo registro de empleado en el sistema",
+      "cardTitle": "Información del Empleado",
       "sections": {
         "personalInformation": "Información Personal",
         "personalInformationDescription": "Ingrese los detalles personales del empleado",
@@ -800,6 +801,7 @@
       "createdAt": "Fecha de Creación"
     },
     "add": {
+      "cardTitle": "Información del Departamento",
       "sectionTitle": "Información del Departamento",
       "sectionDescription": "Ingrese los detalles del nuevo departamento",
       "fields": {
@@ -945,6 +947,7 @@
       "submitButton": "Crear Contrato"
     },
     "submitApproval": {
+      "cardTitle": "Enviar para Aprobación",
       "sections": {
         "contractSelection": "Selección de Contrato",
         "approvalSettings": "Configuración de Aprobación"
@@ -1202,7 +1205,11 @@
     "title": "Gestión de Roles",
     "subtitle": "Gestionar roles de usuario y sus permisos",
     "list": "Lista de Roles",
-    "add": "Agregar Rol",
+    "add": {
+      "cardTitle": "Información del Rol",
+      "title": "Agregar Nuevo Rol",
+      "subtitle": "Crear un nuevo rol y asignar permisos"
+    },
     "edit": "Editar Rol",
     "details": "Detalles del Rol",
     "searchPlaceholder": "Buscar roles...",
@@ -1310,6 +1317,9 @@
       "list": "Lista de Permisos",
       "add": "Agregar Permiso"
     },
+    "add": {
+      "cardTitle": "Información del Permiso"
+    },
     "stats": {
       "totalPermissions": "Total de Permisos"
     },
@@ -1375,6 +1385,9 @@
     },
     "delete": {
       "confirmMessage": "¿Está seguro de que desea eliminar {{name}}? Esta acción no se puede deshacer."
+    },
+    "add": {
+      "cardTitle": "Información de la Posición"
     },
     "detail": {
       "title": {
@@ -1455,6 +1468,7 @@
       "inactive": "Inactivo"
     },
     "add": {
+      "cardTitle": "Información del Usuario",
       "sections": {
         "userInfo": "Información del Usuario",
         "userInfoDescription": "Ingrese la información básica del usuario",
@@ -1820,6 +1834,9 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "duplicate": "Duplicar"
+    },
+    "add": {
+      "cardTitle": "Información de Plantilla"
     },
     "delete": {
       "confirmTitle": "Eliminar Plantilla",

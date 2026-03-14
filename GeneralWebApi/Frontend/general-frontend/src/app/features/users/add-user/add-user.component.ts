@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, take, distinctUntilChanged } from 'rxjs/operators';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -20,6 +21,7 @@ import { RoleService, RoleList } from '../../../core/services/role.service';
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
     TranslatePipe,
   ],
@@ -70,21 +72,22 @@ export class AddUserComponent implements OnInit, OnDestroy {
    * Initialize form config with translations
    */
   private initializeFormConfig(): void {
-    const userInfoSection = this.translationService.translate('users.add.sections.userInfo');
+    // First section title/description omitted to avoid duplication with card header
+    const userFieldsSectionKey = '_main';
     const accountSettingsSection = this.translationService.translate('users.add.sections.accountSettings');
 
     this.formConfig = {
       sections: [
-        { title: userInfoSection, description: this.translationService.translate('users.add.sections.userInfoDescription'), order: 0 },
+        { key: userFieldsSectionKey, title: '', description: '', order: 0 },
         { title: accountSettingsSection, description: this.translationService.translate('users.add.sections.accountSettingsDescription'), order: 1 },
       ],
       layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
       fields: [
-        { key: 'userName', type: 'input', label: this.translationService.translate('users.add.fields.username'), placeholder: this.translationService.translate('users.add.fields.usernamePlaceholder'), required: true, section: userInfoSection, order: 0, colSpan: 1 },
-        { key: 'email', type: 'input', label: this.translationService.translate('users.add.fields.email'), placeholder: this.translationService.translate('users.add.fields.emailPlaceholder'), required: true, section: userInfoSection, order: 1, colSpan: 1, inputType: 'email' },
-        { key: 'firstName', type: 'input', label: this.translationService.translate('users.add.fields.firstName'), placeholder: this.translationService.translate('users.add.fields.firstNamePlaceholder'), required: true, section: userInfoSection, order: 2, colSpan: 1 },
-        { key: 'lastName', type: 'input', label: this.translationService.translate('users.add.fields.lastName'), placeholder: this.translationService.translate('users.add.fields.lastNamePlaceholder'), required: true, section: userInfoSection, order: 3, colSpan: 1 },
-        { key: 'phoneNumber', type: 'input', label: this.translationService.translate('users.add.fields.phone'), placeholder: this.translationService.translate('users.add.fields.phonePlaceholder'), required: false, section: userInfoSection, order: 4, colSpan: 1, inputType: 'tel' },
+        { key: 'userName', type: 'input', label: this.translationService.translate('users.add.fields.username'), placeholder: this.translationService.translate('users.add.fields.usernamePlaceholder'), required: true, section: userFieldsSectionKey, order: 0, colSpan: 1 },
+        { key: 'email', type: 'input', label: this.translationService.translate('users.add.fields.email'), placeholder: this.translationService.translate('users.add.fields.emailPlaceholder'), required: true, section: userFieldsSectionKey, order: 1, colSpan: 1, inputType: 'email' },
+        { key: 'firstName', type: 'input', label: this.translationService.translate('users.add.fields.firstName'), placeholder: this.translationService.translate('users.add.fields.firstNamePlaceholder'), required: true, section: userFieldsSectionKey, order: 2, colSpan: 1 },
+        { key: 'lastName', type: 'input', label: this.translationService.translate('users.add.fields.lastName'), placeholder: this.translationService.translate('users.add.fields.lastNamePlaceholder'), required: true, section: userFieldsSectionKey, order: 3, colSpan: 1 },
+        { key: 'phoneNumber', type: 'input', label: this.translationService.translate('users.add.fields.phone'), placeholder: this.translationService.translate('users.add.fields.phonePlaceholder'), required: false, section: userFieldsSectionKey, order: 4, colSpan: 1, inputType: 'tel' },
         { key: 'password', type: 'input', label: this.translationService.translate('users.add.fields.password'), placeholder: this.translationService.translate('users.add.fields.passwordPlaceholder'), required: true, section: accountSettingsSection, order: 0, colSpan: 1, inputType: 'password' },
         { key: 'confirmPassword', type: 'input', label: this.translationService.translate('users.add.fields.confirmPassword'), placeholder: this.translationService.translate('users.add.fields.confirmPasswordPlaceholder'), required: true, section: accountSettingsSection, order: 1, colSpan: 1, inputType: 'password' },
         { key: 'roles', type: 'select', label: this.translationService.translate('users.add.fields.roles'), placeholder: this.translationService.translate('users.add.fields.rolesPlaceholder'), required: false, section: accountSettingsSection, order: 2, colSpan: 2, multiple: true, options: this.roleOptions },

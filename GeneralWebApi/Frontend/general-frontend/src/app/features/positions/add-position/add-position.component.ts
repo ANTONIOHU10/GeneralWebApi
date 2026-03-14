@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { takeUntil, filter, take, pairwise, debounceTime, startWith, distinctUntilChanged } from 'rxjs/operators';
 import {
+  BaseCardComponent,
   BaseFormComponent,
   FormConfig,
   SelectOption,
@@ -12,6 +13,7 @@ import { DialogService, OperationNotificationService } from '../../../Shared/ser
 import { PositionFacade } from '@store/position/position.facade';
 import { DepartmentFacade } from '@store/department/department.facade';
 import { TranslationService } from '@core/services/translation.service';
+import { TranslatePipe } from '@core/pipes/translate.pipe';
 import { Position } from 'app/contracts/positions/position.model';
 
 @Component({
@@ -19,7 +21,9 @@ import { Position } from 'app/contracts/positions/position.model';
   standalone: true,
   imports: [
     CommonModule,
+    BaseCardComponent,
     BaseFormComponent,
+    TranslatePipe,
   ],
   templateUrl: './add-position.component.html',
   styleUrls: ['./add-position.component.scss'],
@@ -62,23 +66,24 @@ export class AddPositionComponent implements OnInit, OnDestroy {
    * Initialize form config with translations
    */
   private initializeFormConfig(): void {
-    const posInfoSection = this.translationService.translate('positions.add.sections.positionInfo');
+    // First section title/description omitted to avoid duplication with card header
+    const positionFieldsSectionKey = '_main';
     const salarySection = this.translationService.translate('positions.add.sections.salaryInfo');
 
     this.formConfig = {
       sections: [
-        { title: posInfoSection, description: this.translationService.translate('positions.add.sections.positionInfoDescription'), order: 0 },
+        { key: positionFieldsSectionKey, title: '', description: '', order: 0 },
         { title: salarySection, description: this.translationService.translate('positions.add.sections.salaryInfoDescription'), order: 1, collapsible: true, collapsed: true },
       ],
       layout: { columns: 2, gap: '1.5rem', sectionGap: '2rem', labelPosition: 'top', showSectionDividers: true },
       fields: [
-        { key: 'title', type: 'input', label: this.translationService.translate('positions.add.fields.title'), placeholder: this.translationService.translate('positions.add.fields.titlePlaceholder'), required: true, section: posInfoSection, order: 0, colSpan: 2 },
-        { key: 'code', type: 'input', label: this.translationService.translate('positions.add.fields.code'), placeholder: this.translationService.translate('positions.add.fields.codePlaceholder'), required: true, section: posInfoSection, order: 1, colSpan: 1 },
-        { key: 'level', type: 'number', label: this.translationService.translate('positions.add.fields.level'), placeholder: this.translationService.translate('positions.add.fields.levelPlaceholder'), required: true, section: posInfoSection, order: 2, colSpan: 1, min: 1 },
-        { key: 'departmentId', type: 'select', label: this.translationService.translate('positions.add.fields.department'), placeholder: this.translationService.translate('positions.add.fields.departmentPlaceholder'), required: true, section: posInfoSection, order: 3, colSpan: 1, searchable: true, options: [] as SelectOption[] },
-        { key: 'parentPositionId', type: 'select', label: this.translationService.translate('positions.add.fields.parentPosition'), placeholder: this.translationService.translate('positions.add.fields.parentPositionPlaceholder'), section: posInfoSection, order: 4, colSpan: 1, searchable: true, options: [] as SelectOption[] },
-        { key: 'isManagement', type: 'checkbox', label: this.translationService.translate('positions.add.fields.isManagement'), section: posInfoSection, order: 5, colSpan: 2 },
-        { key: 'description', type: 'textarea', label: this.translationService.translate('positions.add.fields.description'), placeholder: this.translationService.translate('positions.add.fields.descriptionPlaceholder'), section: posInfoSection, order: 6, colSpan: 2, rows: 4 },
+        { key: 'title', type: 'input', label: this.translationService.translate('positions.add.fields.title'), placeholder: this.translationService.translate('positions.add.fields.titlePlaceholder'), required: true, section: positionFieldsSectionKey, order: 0, colSpan: 2 },
+        { key: 'code', type: 'input', label: this.translationService.translate('positions.add.fields.code'), placeholder: this.translationService.translate('positions.add.fields.codePlaceholder'), required: true, section: positionFieldsSectionKey, order: 1, colSpan: 1 },
+        { key: 'level', type: 'number', label: this.translationService.translate('positions.add.fields.level'), placeholder: this.translationService.translate('positions.add.fields.levelPlaceholder'), required: true, section: positionFieldsSectionKey, order: 2, colSpan: 1, min: 1 },
+        { key: 'departmentId', type: 'select', label: this.translationService.translate('positions.add.fields.department'), placeholder: this.translationService.translate('positions.add.fields.departmentPlaceholder'), required: true, section: positionFieldsSectionKey, order: 3, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'parentPositionId', type: 'select', label: this.translationService.translate('positions.add.fields.parentPosition'), placeholder: this.translationService.translate('positions.add.fields.parentPositionPlaceholder'), section: positionFieldsSectionKey, order: 4, colSpan: 1, searchable: true, options: [] as SelectOption[] },
+        { key: 'isManagement', type: 'checkbox', label: this.translationService.translate('positions.add.fields.isManagement'), section: positionFieldsSectionKey, order: 5, colSpan: 2 },
+        { key: 'description', type: 'textarea', label: this.translationService.translate('positions.add.fields.description'), placeholder: this.translationService.translate('positions.add.fields.descriptionPlaceholder'), section: positionFieldsSectionKey, order: 6, colSpan: 2, rows: 4 },
         { key: 'minSalary', type: 'number', label: this.translationService.translate('positions.add.fields.minSalary'), placeholder: this.translationService.translate('positions.add.fields.minSalaryPlaceholder'), section: salarySection, order: 0, colSpan: 1, min: 0 },
         { key: 'maxSalary', type: 'number', label: this.translationService.translate('positions.add.fields.maxSalary'), placeholder: this.translationService.translate('positions.add.fields.maxSalaryPlaceholder'), section: salarySection, order: 1, colSpan: 1, min: 0 },
       ],
