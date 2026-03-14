@@ -113,8 +113,10 @@
   border-radius: $border-radius-xl;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
   z-index: 10000;
-  max-height: 300px;
+  /* Cap height to viewport so dropdown never overflows screen; single scroll area */
+  max-height: min(400px, 75vh);
   overflow-y: auto;
+  overflow-x: hidden;
   animation: dropdown-enter 0.2s $ease-out;
 
   &::-webkit-scrollbar {
@@ -165,8 +167,8 @@
 }
 
 .dropdown-content {
-  max-height: 200px;
-  overflow-y: auto;
+  /* No extra max-height; parent .select-dropdown controls height and scroll */
+  overflow-y: visible;
 }
 
 .dropdown-loading {
@@ -293,9 +295,9 @@
   }
 }
 
-// Responsive design
+// Responsive: ensure dropdown fits viewport on small screens
 @include mobile-only {
   .select-dropdown {
-    max-height: 250px;
+    max-height: min(280px, 60vh);
   }
 }

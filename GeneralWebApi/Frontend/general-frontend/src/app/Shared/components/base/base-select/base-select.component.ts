@@ -7,7 +7,11 @@ import {
   forwardRef,
   OnInit,
   OnChanges,
-} from '@angular/core';
+  HostListener,
+  ElementRef,
+  ViewChild,
+  inject,
+  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ControlValueAccessor,
@@ -40,6 +44,10 @@ export interface SelectOption {
   ],
 })
 export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
+  private readonly elementRef = inject(ElementRef);
+
+  @ViewChild('selectWrapper') selectWrapper!: ElementRef<HTMLElement>;
+
   @Input() label = '';
   @Input() placeholder = 'Select an option';
   @Input() options: SelectOption[] = [];
@@ -64,6 +72,9 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
   searchQuery = '';
   filteredOptions: SelectOption[] = [];
   groupedOptions: { name: string; options: SelectOption[] }[] = [];
+
+  /** Fixed position for dropdown to escape overflow containers (e.g. layout-content-area) */
+  dropdownPosition: Record<string, string> | null = null;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onChange = (_value: unknown) => {
@@ -104,6 +115,31 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
     return classes.join(' ');
   }
 
+  /** Close dropdown when clicking outside the component */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.isOpen) return;
+    const target = event.target as Node;
+    const host = this.elementRef.nativeElement as Node;
+    if (host.contains(target)) return;
+    this.closeDropdown();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.isOpen) this.closeDropdown();
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (this.isOpen && this.dropdownPosition) this.updateDropdownPosition();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (this.isOpen && this.dropdownPosition) this.updateDropdownPosition();
+  }
+
   ngOnInit(): void {
     this.updateFilteredOptions();
   }
@@ -118,11 +154,37 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
 
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
-      console.log('🎯 BaseSelectComponent: dropdown opened');
       this.dropdownOpen.emit();
+      setTimeout(() => this.updateDropdownPosition(), 0);
     } else {
+      this.dropdownPosition = null;
       this.dropdownClose.emit();
     }
+  }
+
+  private updateDropdownPosition(): void {
+    if (!this.selectWrapper?.nativeElement || !this.isOpen) return;
+    const rect = this.selectWrapper.nativeElement.getBoundingClientRect();
+    const gap = 4;
+    const bottomMargin = 12;
+    const spaceBelow = window.innerHeight - rect.bottom - gap - bottomMargin;
+    const maxHeightPx = Math.min(320, Math.max(180, spaceBelow));
+    this.dropdownPosition = {
+      position: 'fixed',
+      top: `${rect.bottom + gap}px`,
+      left: `${rect.left}px`,
+      width: `${rect.width}px`,
+      minWidth: `${rect.width}px`,
+      maxHeight: `${maxHeightPx}px`,
+      overflowY: 'auto',
+    };
+  }
+
+  private closeDropdown(): void {
+    if (!this.isOpen) return;
+    this.isOpen = false;
+    this.dropdownPosition = null;
+    this.dropdownClose.emit();
   }
 
   selectOption(option: SelectOption): void {
@@ -149,8 +211,7 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
       this.selectedOption = option;
       this.onChange(option.value);
       this.selectionChange.emit(option);
-      this.isOpen = false;
-      this.dropdownClose.emit();
+      this.closeDropdown();
     }
     
     this.onTouched();
