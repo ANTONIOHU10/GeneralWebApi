@@ -40,7 +40,7 @@ public class LocalFileStorageService
             using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream, cancellationToken);
 
-            _logger.LogInformation(LogTemplates.FileOperation.FileSaved, filePath);
+            _logger.LogDebug(LogTemplates.FileOperation.FileSaved, filePath);
             return filePath;
         }
         catch (Exception ex)
@@ -67,7 +67,7 @@ public class LocalFileStorageService
             using var stream = new FileStream(filePath, FileMode.Create);
             await fileStream.CopyToAsync(stream, cancellationToken);
 
-            _logger.LogInformation(LogTemplates.FileOperation.FileSavedFromStream, filePath);
+            _logger.LogDebug(LogTemplates.FileOperation.FileSavedFromStream, filePath);
             return filePath;
         }
         catch (Exception ex)
@@ -99,7 +99,7 @@ public class LocalFileStorageService
             if (FileExists(filePath))
             {
                 File.Delete(filePath);
-                _logger.LogInformation(LogTemplates.FileOperation.FileDeleted, filePath);
+                _logger.LogDebug(LogTemplates.FileOperation.FileDeleted, filePath);
                 return true;
             }
             return false;

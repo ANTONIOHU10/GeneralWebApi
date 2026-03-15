@@ -26,13 +26,13 @@ public class CSVExportService(ILogger<CSVExportService> logger, IUserRepository 
 
             await csvWriter.WriteRecordsAsync(data);
             await streamWriter.FlushAsync();
-            _logger.LogInformation(LogTemplates.CSVExport.ExportCompleted, fileName);
+            _logger.LogDebug(LogTemplates.CSVExport.ExportCompleted, fileName);
 
             return memoryStream.ToArray();
         }
         catch (Exception ex)
         {
-            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "custom data", ex.Message);
+            _logger.LogError(ex, LogTemplates.CSVExport.ExportFailed, "custom data", ex.Message);
             throw;
         }
     }
@@ -46,13 +46,13 @@ public class CSVExportService(ILogger<CSVExportService> logger, IUserRepository 
     {
         try
         {
-            _logger.LogInformation(LogTemplates.CSVExport.ExportStarted, "FileDocuments");
+            _logger.LogDebug(LogTemplates.CSVExport.ExportStarted, "FileDocuments");
             var fileDocuments = await _fileDocumentRepository.GetAllAsync(cancellationToken);
             return await ExportToCSVAsync(fileDocuments, "fileDocuments.csv");
         }
         catch (Exception ex)
         {
-            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "FileDocuments", ex.Message);
+            _logger.LogError(ex, LogTemplates.CSVExport.ExportFailed, "FileDocuments", ex.Message);
             throw;
         }
     }
@@ -61,13 +61,13 @@ public class CSVExportService(ILogger<CSVExportService> logger, IUserRepository 
     {
         try
         {
-            _logger.LogInformation(LogTemplates.CSVExport.ExportStarted, "Products");
+            _logger.LogDebug(LogTemplates.CSVExport.ExportStarted, "Products");
             var products = await _productRepository.GetAllAsync(cancellationToken);
             return await ExportToCSVAsync(products, "products.csv");
         }
         catch (Exception ex)
         {
-            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "Products", ex.Message);
+            _logger.LogError(ex, LogTemplates.CSVExport.ExportFailed, "Products", ex.Message);
             throw;
         }
     }
@@ -76,13 +76,13 @@ public class CSVExportService(ILogger<CSVExportService> logger, IUserRepository 
     {
         try
         {
-            _logger.LogInformation(LogTemplates.CSVExport.ExportStarted, "Users");
+            _logger.LogDebug(LogTemplates.CSVExport.ExportStarted, "Users");
             var users = await _userRepository.GetAllAsync(cancellationToken);
             return await ExportToCSVAsync(users, "users.csv");
         }
         catch (Exception ex)
         {
-            _logger.LogError(LogTemplates.CSVExport.ExportFailed, "Users", ex.Message);
+            _logger.LogError(ex, LogTemplates.CSVExport.ExportFailed, "Users", ex.Message);
             throw;
         }
     }

@@ -35,7 +35,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             var result = await _dbSet.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation(LogTemplates.Repository.EntityAdded, typeof(T).Name, entity.Id);
+            _logger.LogDebug(LogTemplates.Repository.EntityAdded, typeof(T).Name, entity.Id);
             return result.Entity;
         }
         catch (Exception ex)
@@ -60,7 +60,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             await _dbSet.AddRangeAsync(entityList, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation(LogTemplates.Repository.EntitiesAdded, entityList.Count, typeof(T).Name);
+            _logger.LogDebug(LogTemplates.Repository.EntitiesAdded, entityList.Count, typeof(T).Name);
             return entityList;
         }
         catch (Exception ex)
@@ -96,7 +96,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
         try
         {
             var entities = await _dbSet.ToListAsync(cancellationToken);
-            _logger.LogInformation(LogTemplates.Repository.EntitiesRetrieved, typeof(T).Name, entities.Count);
+            _logger.LogDebug(LogTemplates.Repository.EntitiesRetrieved, typeof(T).Name, entities.Count);
             return entities;
         }
         catch (Exception ex)
@@ -116,7 +116,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             _dbSet.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation(LogTemplates.Repository.EntityUpdated, typeof(T).Name, entity.Id);
+            _logger.LogDebug(LogTemplates.Repository.EntityUpdated, typeof(T).Name, entity.Id);
             return entity;
         }
         catch (Exception ex)
@@ -141,7 +141,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
             _dbSet.UpdateRange(entityList);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation(LogTemplates.Repository.EntitiesUpdated, entityList.Count, typeof(T).Name);
+            _logger.LogDebug(LogTemplates.Repository.EntitiesUpdated, entityList.Count, typeof(T).Name);
             return entityList;
         }
         catch (Exception ex)
@@ -165,7 +165,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation(LogTemplates.Repository.EntitySoftDeleted, typeof(T).Name, entity.Id);
+            _logger.LogDebug(LogTemplates.Repository.EntitySoftDeleted, typeof(T).Name, entity.Id);
             return entity;
         }
         catch (Exception ex)
@@ -192,7 +192,7 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntit
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation(LogTemplates.Repository.EntitiesSoftDeleted, entityList.Count, typeof(T).Name);
+            _logger.LogDebug(LogTemplates.Repository.EntitiesSoftDeleted, entityList.Count, typeof(T).Name);
             return entityList;
         }
         catch (Exception ex)

@@ -71,7 +71,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError(LogTemplates.DocumentController.FileUploadError, ex.Message);
+            _log.LogError(ex, LogTemplates.DocumentController.FileUploadError, ex.Message);
             return BadRequest(DocumentResponse.UploadFailed(ex.Message));
         }
     }
@@ -96,7 +96,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError(LogTemplates.DocumentController.StreamUploadError, ex.Message);
+            _log.LogError(ex, LogTemplates.DocumentController.StreamUploadError, ex.Message);
             return BadRequest(DocumentResponse.UploadFailed(ex.Message));
         }
     }
@@ -117,7 +117,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError(LogTemplates.DocumentController.GetFilesError, ex.Message);
+            _log.LogError(ex, LogTemplates.DocumentController.GetFilesError, ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }
@@ -164,7 +164,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError(LogTemplates.DocumentController.UpdateFileContentError, id, ex.Message);
+            _log.LogError(ex, LogTemplates.DocumentController.UpdateFileContentError, id, ex.Message);
             return BadRequest(ApiResponse<FileDocument>.ErrorResult(ex.Message));
         }
     }
@@ -210,7 +210,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError(LogTemplates.DocumentController.DownloadFileError, id, ex.Message);
+            _log.LogError(ex, LogTemplates.DocumentController.DownloadFileError, id, ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }
@@ -277,7 +277,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError(LogTemplates.DocumentController.DeleteFileError, id, ex.Message);
+            _log.LogError(ex, LogTemplates.DocumentController.DeleteFileError, id, ex.Message);
             return BadRequest(ApiResponse<FileDeleteResponse>.ErrorResult(ex.Message));
         }
     }
@@ -315,7 +315,7 @@ public class DocumentController : BaseController
         }
         catch (Exception ex)
         {
-            _log.LogError(LogTemplates.DocumentController.ExportCSVError, ex.Message);
+            _log.LogError(ex, LogTemplates.DocumentController.ExportCSVError, ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
         }
     }

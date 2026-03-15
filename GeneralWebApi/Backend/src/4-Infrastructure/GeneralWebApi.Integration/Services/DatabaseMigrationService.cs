@@ -26,7 +26,7 @@ public class DatabaseMigrationService : IDatabaseMigrationService
             var created = await _context.Database.EnsureCreatedAsync(cancellationToken);
             if (created)
             {
-                _logger.LogInformation(LogTemplates.Database.DatabaseCreated);
+                _logger.LogDebug(LogTemplates.Database.DatabaseCreated);
                 return true;
             }
         }
@@ -46,7 +46,7 @@ public class DatabaseMigrationService : IDatabaseMigrationService
             var deleted = await _context.Database.EnsureDeletedAsync(cancellationToken);
             if (deleted)
             {
-                _logger.LogInformation(LogTemplates.Database.DatabaseDeleted);
+                _logger.LogDebug(LogTemplates.Database.DatabaseDeleted);
                 return true;
             }
 
@@ -65,7 +65,7 @@ public class DatabaseMigrationService : IDatabaseMigrationService
         try
         {
             await _context.Database.MigrateAsync(cancellationToken);
-            _logger.LogInformation(LogTemplates.Database.DatabaseMigrated);
+            _logger.LogDebug(LogTemplates.Database.DatabaseMigrated);
             return true;
         }
         catch (Exception ex)

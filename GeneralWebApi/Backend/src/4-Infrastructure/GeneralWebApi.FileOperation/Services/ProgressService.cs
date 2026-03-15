@@ -59,7 +59,7 @@ public class ProgressService : IProgressService
         Console.WriteLine($" Upload completed: {uploadId} -> {Path.GetFileName(filePath)}");
 
         // log
-        _logger.LogInformation(LogTemplates.FileOperation.UploadCompleted, uploadId, filePath);
+        _logger.LogDebug(LogTemplates.FileOperation.UploadCompleted, uploadId, filePath);
         await Task.CompletedTask;
     }
 
@@ -81,7 +81,7 @@ public class ProgressService : IProgressService
         Console.WriteLine($" Upload started: {fileName} ({fileSizeMB:F1}MB) | ID: {uploadId}");
 
         // log
-        _logger.LogInformation(LogTemplates.FileOperation.UploadStarted, uploadId, fileName, fileSizeMB);
+        _logger.LogDebug(LogTemplates.FileOperation.UploadStarted, uploadId, fileName, fileSizeMB);
         await Task.CompletedTask;
     }
 

@@ -94,7 +94,7 @@ public class FileCommonService : IFileCommonService
 
     public async Task<FileDocument> DeleteFileByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation(LogTemplates.FileOperation.FileDeletionStarted, id);
+        _logger.LogDebug(LogTemplates.FileOperation.FileDeletionStarted, id);
 
         try
         {
@@ -111,7 +111,7 @@ public class FileCommonService : IFileCommonService
             // Delete from database
             var deletedFile = await _fileDocumentRepository.DeleteAsync(id, cancellationToken);
 
-            _logger.LogInformation(LogTemplates.FileOperation.FileDeleted, fileDocument.FilePath);
+            _logger.LogDebug(LogTemplates.FileOperation.FileDeleted, fileDocument.FilePath);
             return deletedFile;
         }
         catch (Exception ex) when (ex is not FileNotFoundException)
@@ -123,14 +123,14 @@ public class FileCommonService : IFileCommonService
 
     public async Task<IEnumerable<FileDocument>> DeleteAllFilesAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation(LogTemplates.FileOperation.BulkDeletionStarted);
+        _logger.LogDebug(LogTemplates.FileOperation.BulkDeletionStarted);
 
         try
         {
             var allFiles = await _fileDocumentRepository.GetAllFileDocumentsAsync(cancellationToken);
             var deletedFiles = new List<FileDocument>();
 
-            _logger.LogInformation(LogTemplates.FileOperation.BulkDeletionInProgress, allFiles.Count());
+            _logger.LogDebug(LogTemplates.FileOperation.BulkDeletionInProgress, allFiles.Count());
 
             foreach (var file in allFiles)
             {
@@ -142,7 +142,7 @@ public class FileCommonService : IFileCommonService
                 deletedFiles.Add(deletedFile);
             }
 
-            _logger.LogInformation(LogTemplates.FileOperation.BulkDeletionCompleted, deletedFiles.Count);
+            _logger.LogDebug(LogTemplates.FileOperation.BulkDeletionCompleted, deletedFiles.Count);
             return deletedFiles;
         }
         catch (Exception ex)

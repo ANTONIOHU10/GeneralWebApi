@@ -10,6 +10,7 @@ public static class LogTemplates
     public const string EndPointFailed = "Endpoint failed: {Endpoint} with error: {Error}";
     public const string RateLimitExceeded = "Rate limit exceeded: {Endpoint} by {UserId}";
     public const string RequestProcessingError = "An error occurred while processing the request";
+    public const string UnhandledException = "Unhandled exception {Method} {Path}: {ExceptionType}";
     public const string TestEndpointWorking = "Test endpoint {Version} is working";
 
     public static class DocumentController

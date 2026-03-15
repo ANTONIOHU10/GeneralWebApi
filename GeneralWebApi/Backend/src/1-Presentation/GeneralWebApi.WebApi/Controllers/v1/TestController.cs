@@ -25,7 +25,7 @@ public class TestController : BaseController
     [AllowAnonymous]
     public ActionResult<ApiResponse<TestResponse>> Test()
     {
-        _log.LogInformation(LogTemplates.TestEndpointWorking, "v1");
+        _log.LogDebug(LogTemplates.TestEndpointWorking, "v1");
         //_log.LogWarning("Test endpoint is working");
         //_log.LogError("Test endpoint is working");
         //_log.LogCritical(new Exception("Test endpoint is working"), "Test endpoint is working");

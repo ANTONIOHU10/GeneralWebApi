@@ -141,6 +141,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
                 .ThenInclude(e => e.Department)
                 .Include(u => u.Employee)
                 .ThenInclude(e => e.Position)
+                .AsSplitQuery()
                 .Select(u => new UserWithEmployeeDto
                 {
                     UserId = u.Id,
@@ -179,6 +180,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
                 .ThenInclude(e => e.Department)
                 .Include(u => u.Employee)
                 .ThenInclude(e => e.Position)
+                .AsSplitQuery()
                 .Select(u => new UserWithEmployeeDto
                 {
                     UserId = u.Id,

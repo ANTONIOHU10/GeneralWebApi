@@ -133,20 +133,20 @@
     }
   }
 
-  .public-footer {
-    background-color: var(--bg-secondary);
-    border-top: 1px solid var(--border-color);
-    padding: 2rem;
-    text-align: center;
-    margin-top: auto;
+//   .public-footer {
+//     background-color: var(--bg-secondary);
+//     border-top: 1px solid var(--border-color);
+//     padding: 2rem;
+//     text-align: center;
+//     margin-top: auto;
 
-    p {
-      margin: 0;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-  }
-}
+//     p {
+//       margin: 0;
+//       color: var(--text-secondary);
+//       font-size: 0.9rem;
+//     }
+//   }
+// }
 
 // Dark theme - ensure all public layout elements have dark background
 .dark-theme .app-public-layout,
