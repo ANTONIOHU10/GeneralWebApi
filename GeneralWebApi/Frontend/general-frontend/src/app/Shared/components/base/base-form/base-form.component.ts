@@ -211,9 +211,10 @@ export class BaseFormComponent implements OnInit, OnChanges, OnDestroy {
 
   // 这个钩子 初始化第一次接受父组件传递的配置，然后当父组件传递的配置发生变化时，重新初始化表单
   ngOnChanges(changes: SimpleChanges): void {
-    // Only reinitialize if config reference changes (not if fields are updated)
-    // This prevents reinitialization when options are dynamically updated
-    if (changes['config'] && this.config && changes['config'].firstChange) {
+    // Reinitialize form whenever config reference changes so that
+    // dynamically created forms (e.g. after async translation load)
+    // can render their fields correctly.
+    if (changes['config'] && this.config) {
       this.initializeForm();
     } else if (changes['formData'] && this.form && this.formData) {
       // Update form values when formData changes
