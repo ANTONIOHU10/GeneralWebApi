@@ -143,10 +143,12 @@ app.UseGlobalExceptionHandling();
 
 app.UseHttpsRedirection();
 
+app.UseDefaultFiles();  // let the browser request the index.html file as the default file
+
+
 // enable serving static files from wwwroot (Angular frontend)
 app.UseStaticFiles();
 
-app.UseDefaultFiles();  // let the browser request the index.html file as the default file
 
 app.UseCustomAuthentication();
 
