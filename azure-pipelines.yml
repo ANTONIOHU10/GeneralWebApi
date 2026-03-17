@@ -1,6 +1,4 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
+# ASP.NET + Angular build pipeline
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 
 trigger:
@@ -8,49 +6,67 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
-  
-# Unused variables
+
 variables:
-  solution: '**/*.sln'
+  # Root folder of the solution inside repo
+  rootDir: 'GeneralWebApi'
+
+  # Angular paths
+  angularProjectPath: '$(rootDir)/Frontend/general-frontend'
+  angularDistPath: '$(angularProjectPath)/dist/general-frontend'
+
+  # .NET paths
+  solutionPath: '$(rootDir)/Backend/GeneralWebApi.sln'
+  webProjectPath: '$(rootDir)/Backend/src/1-Presentation/GeneralWebApi.WebApi/GeneralWebApi.csproj'
+  webRootTarget: '$(Build.SourcesDirectory)/$(rootDir)/Backend/src/1-Presentation/GeneralWebApi.WebApi/wwwroot'
+
+  # Build options
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
-
 # Install Node
 - task: NodeTool@0
+  displayName: 'Use Node.js 20.x'
   inputs:
     versionSource: 'spec'
     versionSpec: '20.x'
 
 # Install Angular dependencies
-- script: npm install 
-  workingDirectory: Frontend/general-frontend
-  displayName: Install Angular packages
+- script: npm install
+  workingDirectory: '$(Build.SourcesDirectory)/$(angularProjectPath)'
+  displayName: 'Install Angular packages'
+  # disable husky
+  env:
+    HUSKY: 0
 
 # Build Angular
 - script: npm run build -- --configuration test
-  workingDirectory: Frontend/general-frontend
-  displayName: Build Angular packages
+  workingDirectory: '$(Build.SourcesDirectory)/$(angularProjectPath)'
+  displayName: 'Build Angular app'
 
 # Copy Angular dist to wwwroot
 - task: CopyFiles@2
+  displayName: 'Copy Angular dist to wwwroot'
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/Frontend/general-frontend/dist/general-frontend'
+    SourceFolder: '$(Build.SourcesDirectory)/$(angularDistPath)'
     Contents: '**'
-    TargetFolder: '$(Build.SourcesDirectory)/Backend/src/1-Presentation/GeneralWebApi.WebApi/wwwroot'
+    TargetFolder: '$(webRootTarget)'
     OverWrite: true
 
-# Install .NET
+# Install .NET SDK
 - task: UseDotNet@2
+  displayName: 'Use .NET SDK 9.x'
   inputs:
     packageType: 'sdk'
     version: '9.x'
 
 # Restore .NET dependencies
-- script: dotnet restore Backend/GeneralWebApi.sln
-  displayName: Restore .NET packages
+- script: dotnet restore $(solutionPath)
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Restore .NET packages'
 
-# Publish
-- script: dotnet publish Backend/src/1-Presentation/GeneralWebApi.WebApi/GeneralWebApi.csproj -c Release -o $(Build.ArtifactStagingDirectory)
-  displayName: Publish .NET
+# Publish Web API
+- script: dotnet publish $(webProjectPath) -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Publish .NET Web API'
