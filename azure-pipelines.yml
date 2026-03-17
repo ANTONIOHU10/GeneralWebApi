@@ -36,6 +36,9 @@ steps:
 - script: npm install
   workingDirectory: '$(Build.SourcesDirectory)/$(angularProjectPath)'
   displayName: 'Install Angular packages'
+  # disable husky
+  env:
+    HUSKY: 0
 
 # Build Angular
 - script: npm run build -- --configuration test
