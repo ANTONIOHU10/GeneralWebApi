@@ -18,6 +18,7 @@ using GeneralWebApi.HttpClient.Extensions;
 using GeneralWebApi.Scheduler.Extensions;
 using GeneralWebApi.Email.Extensions;
 using GeneralWebApi.Middleware;
+using GeneralWebApi.Integration.Services;
 
 // from dotnet6+, the WebApplication will create a ConfigurationBuilder to read the appsettings.json file
 var builder = WebApplication.CreateBuilder(args);
@@ -119,6 +120,33 @@ builder.Services.AddEmailService(builder.Configuration);
 builder.Services.AddGlobalExceptionHandling();
 
 var app = builder.Build();
+
+// run database migrations on startup when enabled in configuration
+var runMigrations = builder.Configuration.GetSection("Database").GetValue<bool>("RunMigrationsOnStartup");
+if (runMigrations)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
+        try
+        {
+            var migrationService = services.GetRequiredService<IDatabaseMigrationService>();
+            var migrated = await migrationService.MigrateAsync();
+
+            if (!migrated)
+            {
+                logger.LogError("Database migration on startup failed. Check logs for details.");
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while running database migrations on startup.");
+            throw;
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
