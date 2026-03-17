@@ -29,7 +29,7 @@ import { PermissionListComponent } from './features/permissions/permission-list/
 import { AuditLogListComponent } from './features/audit-logs/audit-log-list/audit-log-list.component';
 import { SystemMonitorComponent } from './features/system-monitor/system-monitor/system-monitor.component';
 import { SecurityAuditComponent } from './features/security-audit/security-audit/security-audit.component';
-import { BackupComponent } from './features/backup/backup/backup.component';
+import { BackupComponent } from './features/backup-component/backup.component';
 import { NotificationDemoComponent } from './features/demo/notification-demo/notification-demo.component';
 import { BaseComponentsDemoComponent } from './features/demo/base-components-demo/base-components-demo.component';
 import { PrivatePageContainerDemoComponent } from './features/demo/private-page-container-demo/private-page-container-demo.component';
