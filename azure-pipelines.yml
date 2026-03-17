@@ -70,3 +70,12 @@ steps:
 - script: dotnet publish $(webProjectPath) -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Publish .NET Web API'
+
+
+# Publish artifact for manual deployment
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish build artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
