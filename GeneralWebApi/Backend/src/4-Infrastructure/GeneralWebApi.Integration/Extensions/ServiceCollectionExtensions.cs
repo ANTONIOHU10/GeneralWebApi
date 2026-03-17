@@ -72,10 +72,14 @@ public static class ServiceCollectionExtensions
                         }
                     }
                 )
+                // EF Core 9: sync and async seed delegates are both required when using async seeding with MigrateAsync.
                 .UseSeeding((context, _) =>
                 {
-                    //ProductSeeder.SeedAsync((ApplicationDbContext)context).Wait();
-                    UserSeeder.SeedAsync((ApplicationDbContext)context).Wait();
+                    UserSeeder.SeedAsync((ApplicationDbContext)context).GetAwaiter().GetResult();
+                })
+                .UseAsyncSeeding(async (context, _, cancellationToken) =>
+                {
+                    await UserSeeder.SeedAsync((ApplicationDbContext)context);
                 });
 
 
