@@ -113,8 +113,8 @@
   border-radius: $border-radius-xl;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
   z-index: 10000;
-  /* Cap height to viewport so dropdown never overflows screen; single scroll area */
-  max-height: min(400px, 75vh);
+  /* Cap height to viewport so dropdown never overflows screen; single scroll area with viewport margin */
+  max-height: min(200px, 50vh);
   overflow-y: auto;
   overflow-x: hidden;
   animation: dropdown-enter 0.2s $ease-out;
@@ -131,6 +131,12 @@
     background: var(--border-secondary);
     border-radius: 3px;
   }
+}
+
+// Overlay panel rendered by CDK for the dropdown.
+// Needs to sit above modals and other content layers.
+.base-select-overlay-panel {
+  z-index: 13000 !important;
 }
 
 @keyframes dropdown-enter {

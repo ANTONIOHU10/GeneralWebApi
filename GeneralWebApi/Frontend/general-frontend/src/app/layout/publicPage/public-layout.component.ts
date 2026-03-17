@@ -3,14 +3,13 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
-import { FooterComponent } from '../../Shared/components/footer/footer.component';
 
 @Component({
   standalone: true,
   selector: 'app-public-layout',
   templateUrl: './public-layout.component.html',
   styleUrls: ['./public-layout.component.scss'],
-  imports: [CommonModule, RouterOutlet, FooterComponent],
+  imports: [CommonModule, RouterOutlet],
 })
 export class PublicLayoutComponent {
   private router = inject(Router);

@@ -11,7 +11,7 @@ import {
   ElementRef,
   ViewChild,
   inject,
-  } from '@angular/core';
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ControlValueAccessor,
@@ -20,6 +20,11 @@ import {
 } from '@angular/forms';
 // Direct import to avoid circular dependency issues
 import { BaseLoadingComponent } from '../base-loading/base-loading.component';
+import {
+  ConnectedPosition,
+  OverlayModule,
+  ScrollStrategyOptions,
+} from '@angular/cdk/overlay';
 
 export interface SelectOption {
   value: unknown;
@@ -32,7 +37,7 @@ export interface SelectOption {
 @Component({
   selector: 'app-base-select',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseLoadingComponent],
+  imports: [CommonModule, FormsModule, BaseLoadingComponent, OverlayModule],
   templateUrl: './base-select.component.html',
   styleUrls: ['./base-select.component.scss'],
   providers: [
@@ -45,6 +50,7 @@ export interface SelectOption {
 })
 export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   private readonly elementRef = inject(ElementRef);
+  private readonly scrollStrategyOptions = inject(ScrollStrategyOptions);
 
   @ViewChild('selectWrapper') selectWrapper!: ElementRef<HTMLElement>;
 
@@ -73,8 +79,26 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
   filteredOptions: SelectOption[] = [];
   groupedOptions: { name: string; options: SelectOption[] }[] = [];
 
-  /** Fixed position for dropdown to escape overflow containers (e.g. layout-content-area) */
-  dropdownPosition: Record<string, string> | null = null;
+  /** Overlay positions for dropdown relative to trigger element */
+  overlayPositions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 4,
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -4,
+    },
+  ];
+
+  /** Scroll strategy to reposition overlay on scroll */
+  scrollStrategy = this.scrollStrategyOptions.reposition();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onChange = (_value: unknown) => {
@@ -116,28 +140,9 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
   }
 
   /** Close dropdown when clicking outside the component */
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.isOpen) return;
-    const target = event.target as Node;
-    const host = this.elementRef.nativeElement as Node;
-    if (host.contains(target)) return;
-    this.closeDropdown();
-  }
-
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
     if (this.isOpen) this.closeDropdown();
-  }
-
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
-    if (this.isOpen && this.dropdownPosition) this.updateDropdownPosition();
-  }
-
-  @HostListener('window:resize')
-  onWindowResize(): void {
-    if (this.isOpen && this.dropdownPosition) this.updateDropdownPosition();
   }
 
   ngOnInit(): void {
@@ -155,35 +160,14 @@ export class BaseSelectComponent implements ControlValueAccessor, OnInit, OnChan
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       this.dropdownOpen.emit();
-      setTimeout(() => this.updateDropdownPosition(), 0);
     } else {
-      this.dropdownPosition = null;
       this.dropdownClose.emit();
     }
   }
 
-  private updateDropdownPosition(): void {
-    if (!this.selectWrapper?.nativeElement || !this.isOpen) return;
-    const rect = this.selectWrapper.nativeElement.getBoundingClientRect();
-    const gap = 4;
-    const bottomMargin = 12;
-    const spaceBelow = window.innerHeight - rect.bottom - gap - bottomMargin;
-    const maxHeightPx = Math.min(320, Math.max(180, spaceBelow));
-    this.dropdownPosition = {
-      position: 'fixed',
-      top: `${rect.bottom + gap}px`,
-      left: `${rect.left}px`,
-      width: `${rect.width}px`,
-      minWidth: `${rect.width}px`,
-      maxHeight: `${maxHeightPx}px`,
-      overflowY: 'auto',
-    };
-  }
-
-  private closeDropdown(): void {
+  closeDropdown(): void {
     if (!this.isOpen) return;
     this.isOpen = false;
-    this.dropdownPosition = null;
     this.dropdownClose.emit();
   }
 

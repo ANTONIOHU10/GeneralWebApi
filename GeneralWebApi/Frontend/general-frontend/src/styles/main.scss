@@ -156,3 +156,12 @@ body {
 ::-webkit-scrollbar-corner {
   background: var(--bg-secondary);
 }
+
+// ===========================================
+// Angular CDK Overlay Global Layer
+// Ensure overlays (dropdowns, dialogs) sit above cards/modals
+// ===========================================
+
+.cdk-overlay-container {
+  z-index: 2000 !important;
+}
