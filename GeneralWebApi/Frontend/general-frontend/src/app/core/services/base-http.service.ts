@@ -5,6 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { ApiResponse } from 'app/contracts/common/api-response';
+import { RuntimeConfigService } from '@core/config/runtime-config.service';
 
 /**
  * Base HTTP Service - Provides common HTTP operations with unified response handling
@@ -40,7 +41,8 @@ import { ApiResponse } from 'app/contracts/common/api-response';
 })
 export class BaseHttpService {
   protected http = inject(HttpClient);
-  protected baseUrl = environment.apiUrl;
+  private readonly runtimeConfig = inject(RuntimeConfigService);
+  protected baseUrl = this.runtimeConfig.config.apiUrl || environment.apiUrl;
 
   /**
    * Build query parameters from object

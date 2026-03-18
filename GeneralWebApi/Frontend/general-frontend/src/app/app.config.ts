@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection, inject } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -21,6 +21,7 @@ import { httpErrorInterceptor } from '@core/interceptors/http-error.interceptor'
 import { EmployeeEffects } from './store/employee/employee.effects';
 import { DepartmentEffects } from './store/department/department.effects';
 import { PositionEffects } from './store/position/position.effects';
+import { RuntimeConfigService } from '@core/config/runtime-config.service';
 
 export const appConfig: ApplicationConfig = {
   // global dependencies injection for app.component.ts
@@ -51,5 +52,15 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
     }),
     provideRouterStore(),
+
+    // Load runtime config before app bootstrap (e.g. API base URL).
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: () => {
+        const runtimeConfig = inject(RuntimeConfigService);
+        return () => runtimeConfig.load();
+      },
+    },
   ],
 };

@@ -185,6 +185,24 @@ app.UseCustomAuthentication();
 app.UseMiddleware<AuditMiddleware>();
 app.MapControllers();
 
+// Runtime frontend config (served before SPA fallback).
+// Override via environment variable: Frontend__ApiUrl
+app.MapGet("/app-config", (IConfiguration configuration) =>
+{
+    var apiUrl = configuration["Frontend:ApiUrl"];
+    if (string.IsNullOrWhiteSpace(apiUrl))
+    {
+        apiUrl = "/api/v1";
+    }
+
+    return Results.Ok(new
+    {
+        apiUrl,
+        environment = app.Environment.EnvironmentName,
+        timestampUtc = DateTime.UtcNow,
+    });
+});
+
 // SPA fallback: serve index.html for non-API routes (e.g. /login)
 app.MapFallbackToFile("index.html");
 app.UseRateLimiter();

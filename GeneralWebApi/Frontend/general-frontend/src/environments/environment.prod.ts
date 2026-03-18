@@ -1,7 +1,10 @@
 // Production environment configuration
 export const environment = {
   production: true,
-  apiUrl: 'https://your-production-domain.com/api/v1',
+  //this is the default api url for the production environment
+  // but the first step is to use runtime config service to fetch the api url from the backend
+  // if the runtime config service is not available, use the default api url
+  apiUrl: 'https://generalwebapi-gwddatbmdxg6f5eu.swedencentral-01.azurewebsites.net',
   appName: 'GeneralWebApi Frontend',
   version: '1.0.0',
   enableLogging: false,
