@@ -1,0 +1,13 @@
+{
+  "/app-config": {
+    "target": "https://localhost:7297",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/api": {
+    "target": "https://localhost:7297",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
+

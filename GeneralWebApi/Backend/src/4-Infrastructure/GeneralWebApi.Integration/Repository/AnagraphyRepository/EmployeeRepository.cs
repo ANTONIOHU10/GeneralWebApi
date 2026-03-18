@@ -50,13 +50,12 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         countQuery = ApplySearchFilters(countQuery, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo, firstName, lastName, email, employeeNumber, phone, isManager);
         var totalCount = await countQuery.CountAsync(cancellationToken);
 
-        // Data query: use AsSplitQuery() to avoid cartesian explosion from Include(Contracts), and AsNoTracking() for read-only list
+        // Data query: keep list queries lightweight (avoid Include(Contracts) which can explode query cost)
         var query = GetActiveAndEnabledEntities()
             .AsNoTracking()
             .Include(e => e.Department)
             .Include(e => e.Position)
             .Include(e => e.Manager)
-            .Include(e => e.Contracts)
             .AsSplitQuery();
 
         query = ApplySearchFilters(query, searchTerm, departmentId, positionId, employmentStatus, hireDateFrom, hireDateTo, firstName, lastName, email, employeeNumber, phone, isManager);
