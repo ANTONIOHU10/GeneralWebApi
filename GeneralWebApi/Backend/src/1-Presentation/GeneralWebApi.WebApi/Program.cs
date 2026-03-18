@@ -184,6 +184,9 @@ app.UseCustomAuthentication();
 // Must be after authentication so we can get user information
 app.UseMiddleware<AuditMiddleware>();
 app.MapControllers();
+
+// SPA fallback: serve index.html for non-API routes (e.g. /login)
+app.MapFallbackToFile("index.html");
 app.UseRateLimiter();
 
 app.Run();
