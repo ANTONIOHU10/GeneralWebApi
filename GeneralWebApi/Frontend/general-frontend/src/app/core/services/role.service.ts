@@ -62,7 +62,9 @@ export interface RoleSearch {
   providedIn: 'root',
 })
 export class RoleService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/roles`;
+  private get endpoint(): string {
+    return '/roles';
+  }
 
   /**
    * Get list of roles

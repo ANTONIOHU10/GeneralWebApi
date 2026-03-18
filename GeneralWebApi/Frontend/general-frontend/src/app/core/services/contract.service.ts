@@ -15,7 +15,9 @@ import { ApiResponse } from 'app/contracts/common/api-response';
   providedIn: 'root',
 })
 export class ContractService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/contracts`;
+  private get endpoint(): string {
+    return '/contracts';
+  }
 
   // Transform backend data format to frontend format
   private transformBackendContract(backendContract: BackendContract): Contract {

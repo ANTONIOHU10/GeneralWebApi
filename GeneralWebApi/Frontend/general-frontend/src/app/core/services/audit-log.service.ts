@@ -56,7 +56,9 @@ export interface AuditLogSearch {
   providedIn: 'root',
 })
 export class AuditLogService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/AuditLogs`;
+  private get endpoint(): string {
+    return '/AuditLogs';
+  }
 
   /**
    * Get paged audit logs from backend

@@ -17,7 +17,9 @@ import { PagedResult } from 'app/contracts/contracts/contract.model';
   providedIn: 'root',
 })
 export class TaskService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/tasks`;
+  private get endpoint(): string {
+    return '/tasks';
+  }
 
   // Transform backend data format to frontend format
   private transformBackendTask(backendTask: BackendTask): Task {

@@ -29,7 +29,9 @@ export interface EmployeeActionOptions<TResult = void> {
   providedIn: 'root',
 })
 export class EmployeeService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/employees`;
+  private get endpoint(): string {
+    return '/employees';
+  }
   private actionService = inject(ActionService);
 
   // 转换后端数据格式到前端格式

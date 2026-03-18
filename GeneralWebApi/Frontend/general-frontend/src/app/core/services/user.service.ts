@@ -21,7 +21,9 @@ export interface UserWithEmployee {
   providedIn: 'root',
 })
 export class UserService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/users`;
+  private get endpoint(): string {
+    return '/users';
+  }
 
   /**
    * Get list of users with employee information

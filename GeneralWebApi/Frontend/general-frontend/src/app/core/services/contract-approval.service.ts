@@ -19,7 +19,9 @@ import { ContractService } from './contract.service';
   providedIn: 'root',
 })
 export class ContractApprovalService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/contracts`;
+  private get endpoint(): string {
+    return '/contracts';
+  }
   private contractService = inject(ContractService);
 
   // Transform backend data format to frontend format

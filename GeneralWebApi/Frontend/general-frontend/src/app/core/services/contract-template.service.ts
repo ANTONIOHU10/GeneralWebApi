@@ -16,7 +16,9 @@ import {
   providedIn: 'root',
 })
 export class ContractTemplateService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/contract-templates`;
+  private get endpoint(): string {
+    return '/contract-templates';
+  }
 
   /** Map backend list item to frontend ContractTemplate (list view - missing full content) */
   private mapListItemToTemplate(dto: BackendContractTemplateListDto): ContractTemplate {

@@ -20,7 +20,9 @@ import { RuntimeConfigService } from '@core/config/runtime-config.service';
  * ```typescript
  * @Injectable({ providedIn: 'root' })
  * export class MyService extends BaseHttpService {
- *   private readonly endpoint = `${this.baseUrl}/my-resource`;
+ *   private get endpoint(): string {
+ *     return this.apiUrl('/my-resource');
+ *   }
  * 
  *   getItems(): Observable<Item[]> {
  *     return this.get<Item[]>(this.endpoint);
@@ -42,7 +44,10 @@ import { RuntimeConfigService } from '@core/config/runtime-config.service';
 export class BaseHttpService {
   protected http = inject(HttpClient);
   private readonly runtimeConfig = inject(RuntimeConfigService);
-  protected baseUrl = this.runtimeConfig.config.apiUrl || environment.apiUrl;
+
+  protected get apiBaseUrl(): string {
+    return this.runtimeConfig.config.apiUrl || environment.apiUrl;
+  }
 
   /**
    * Build query parameters from object
@@ -106,7 +111,7 @@ export class BaseHttpService {
   /**
    * Build full URL from endpoint
    * If endpoint starts with http:// or https://, use it as-is
-   * Otherwise, combine with baseUrl
+   * Otherwise, combine with the current (runtime) API base URL
    */
   protected buildUrl(endpoint: string): string {
     if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
@@ -115,8 +120,26 @@ export class BaseHttpService {
     // Remove leading slash from endpoint if baseUrl already ends with slash
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     // Remove trailing slash from baseUrl
-    const cleanBaseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
+    const baseUrl = this.apiBaseUrl;
+    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+
+    // Avoid double-prefix when endpoint is already rooted at the (relative) API base URL.
+    // Example: baseUrl "/api/v1" + endpoint "/api/v1/auth/login" should not become "/api/v1/api/v1/auth/login".
+    if (cleanBaseUrl.startsWith('/')) {
+      if (cleanEndpoint === cleanBaseUrl || cleanEndpoint.startsWith(`${cleanBaseUrl}/`)) {
+        return cleanEndpoint;
+      }
+    }
     return `${cleanBaseUrl}${cleanEndpoint}`;
+  }
+
+  /**
+   * Builds a URL against the API base URL returned by runtime configuration.
+   * Use this instead of caching `${this.apiBaseUrl}/...` in fields, because runtime
+   * config can load after services are instantiated.
+   */
+  protected apiUrl(path: string): string {
+    return this.buildUrl(path);
   }
 
   /**

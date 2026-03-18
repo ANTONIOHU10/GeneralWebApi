@@ -15,7 +15,9 @@ import { ApiResponse } from 'app/contracts/common/api-response';
   providedIn: 'root',
 })
 export class PositionService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/positions`;
+  private get endpoint(): string {
+    return '/positions';
+  }
 
   // Transform backend position data format to frontend format
   private transformBackendPosition(backendPosition: BackendPosition): Position {

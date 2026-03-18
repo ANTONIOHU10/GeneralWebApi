@@ -20,7 +20,9 @@ export interface FileUploadResponse {
   providedIn: 'root',
 })
 export class DocumentService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/document`;
+  private get endpoint(): string {
+    return '/document';
+  }
 
   /**
    * Upload a file to the server
@@ -58,7 +60,7 @@ export class DocumentService extends BaseHttpService {
    * @returns File download URL
    */
   getFileDownloadUrl(fileId: number): string {
-    return `${this.baseUrl}/document/files/download/${fileId}`;
+    return this.buildUrl(`/document/files/download/${fileId}`);
   }
 
   /**

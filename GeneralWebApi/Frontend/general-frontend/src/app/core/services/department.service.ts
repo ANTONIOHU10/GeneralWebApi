@@ -15,7 +15,9 @@ import { ApiResponse } from 'app/contracts/common/api-response';
   providedIn: 'root',
 })
 export class DepartmentService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/departments`;
+  private get endpoint(): string {
+    return '/departments';
+  }
 
   // Transform backend department data format to frontend format
   private transformBackendDepartment(backendDepartment: BackendDepartment): Department {

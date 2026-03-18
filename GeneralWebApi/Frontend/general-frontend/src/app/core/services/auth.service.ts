@@ -29,7 +29,9 @@ import { decodeJwt } from '@core/utils/jwt.util';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseHttpService {
   private token = inject(TokenService);
-  private readonly endpoint = `${this.baseUrl}/auth`;
+  private get endpoint(): string {
+    return '/auth';
+  }
 
   // Login - automatically extracts data and handles token storage
   login(payload: LoginRequest): Observable<LoginData> {

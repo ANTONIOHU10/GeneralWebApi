@@ -62,7 +62,9 @@ export interface PermissionSearch {
   providedIn: 'root',
 })
 export class PermissionService extends BaseHttpService {
-  private readonly endpoint = `${this.baseUrl}/permissions`;
+  private get endpoint(): string {
+    return '/permissions';
+  }
 
   /**
    * Get list of permissions
