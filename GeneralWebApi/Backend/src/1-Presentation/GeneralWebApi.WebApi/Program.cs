@@ -93,7 +93,7 @@ builder.Services.AddCustomDocumentHelper();
 builder.Services.AddSignalRService();
 
 // add cors
-builder.Services.AddCORS();
+builder.Services.AddCORS(builder.Configuration);
 
 // add validators
 builder.Services.AddValidators();
